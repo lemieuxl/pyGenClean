@@ -1,0 +1,1053 @@
+#!/usr/bin/env python2.7
+
+import os
+import sys
+import math
+import shutil
+import random
+import StringIO
+import argparse
+import subprocess
+from collections import defaultdict
+
+import numpy as npy
+
+from PlinkUtils import createRowFromPlinkSpacedOutput
+
+def main(argString=None):
+    """Check for duplicated markers in a tfam/tped/map file.
+
+    Here are the steps for duplicated samples.
+
+    1.  Reads the ``map`` file to gather marker's position.
+    2.  Read the ``tfam`` file.
+    3.  Find the duplicated markers using the ``map`` file.
+    4.  Process the ``tped`` file. Write a file containing unique markers in
+        ``prefix.unique_snps`` (``tfam`` and ``tped``). Keep in memory
+        information about the duplicated markers (``tped``).
+    5.  If there are no duplicated markers, the file ``prefix.unique_snps``
+        (``tped`` and ``tfam``) are copied to ``prefix.final``.
+    6.  If there are duplicated markers, print a ``tped`` and ``tfam`` file
+        containing the duplicated markers.
+    7.  Compute the frequency of the duplicated markers (using Plink) and read
+        the output file.
+    8.  Compute the concordance and completion of each of the duplicated
+        markers.
+    9.  Create a file containing the summary of the statistics (completion and
+        concordance) and create a file containing problems.
+    10. 
+
+    """
+    # Getting and checking the options
+    args = parseArgs(argString)
+    checkArgs(args)
+
+    print "   - Options used:"
+    for key, value in vars(args).iteritems():
+        print "      --{} {}".format(key, value)
+
+    # Reading the tfam file
+    print "   - Reading MAP file"
+    mapF = readMAP(args.tfile + ".map", args.out)
+
+    # Reading the tfam file
+    print "   - Reading TFAM file"
+    tfam = readTFAM(args.tfile + ".tfam")
+    
+    # Find duplicated samples
+    print "   - Finding duplicated SNPs"
+    uniqueSNPs = findDuplicates(mapF)
+
+    # Process the TPED file
+    print "   - Reading TPED file"
+    tped, duplicatedSNPs = processTPED(uniqueSNPs, mapF,
+                                       args.tfile + ".tped",
+                                       args.tfile + ".tfam", args.out)
+
+    if len(tped) == 0:
+        print "   - There are no duplicated SNPs"
+        print "      - Creating final TFAM"
+        # Copying the files
+        # The TFAM
+        try:
+            shutil.copy(args.out + ".unique_snps.tfam",
+                        args.out + ".final.tfam")
+        except IOError:
+            msg = "%s.unique_snps.tfam: can't copy file to " \
+                  "%s.final.tfam" % (args.out, args.out)
+            raise ProgramError(msg)
+
+        # The TPED
+        print "      - Creating final TPED"
+        try:
+            shutil.copy(args.out + ".unique_snps.tped",
+                        args.out + ".final.tped")
+        except IOError:
+            msg = "%s.unique_snps.tped: can't copy file to " \
+                  "%s.final.tped" % (args.out, args.out)
+            raise ProgramError(msg)
+
+    else:
+        # We print the TPED and TFAM for the duplicated SNPs
+        print "   - Printing duplicated SNPs TPED and TFAM files"
+        printDuplicatedTPEDandTFAM(tped, args.tfile + ".tfam", args.out)
+
+        # Computing the frequency of the duplicated SNPs
+        print "   - Computing duplicated SNPs' frequencies"
+        dupSNPsFreq = computeFrequency(args.out + ".duplicated_snps",
+                                       args.out)
+
+        # Compute statistics
+        print "   - Computing concordance and completion of duplicated SNPs"
+        completion, concordance = computeStatistics(tped, tfam, duplicatedSNPs)
+
+        # Print the statistics
+        print ("   - Printing duplicated SNPs summary file and finding errors\n"
+               "     within duplicates")
+        snpsToComplete = printProblems(completion, concordance, tped,
+                                       duplicatedSNPs, dupSNPsFreq, args.out,
+                                       args.frequence_difference)
+
+        # Print the concordance file
+        print "   - Printing concordance file"
+        printConcordance(concordance, args.out, tped, duplicatedSNPs)
+
+        # Choose the best SNP
+        print "   - Choosing best SNP for each duplicates"
+        chosenSNPs, comp, conc = chooseBestSnps(tped, duplicatedSNPs,
+                                                completion, concordance,
+                                                args.out)
+
+        # Complete the SNPs
+        print ("   - Completing chosen duplicates (removing discordant\n"
+               "     genotypes)")
+        newTPED, snpToRemove = createAndCleanTPED(tped, tfam, duplicatedSNPs,
+                                                  args.out, chosenSNPs, comp,
+                                                  conc, snpsToComplete,
+                                                  args.tfile + ".tfam",
+                                                  args.snp_completion_threshold,
+                                                  args.snp_concordance_threshold)
+
+        # Creates the final tped
+        print "   - Writing final TPED and TFAM file"
+        createFinalTPEDandTFAM(newTPED, args.out + ".unique_snps",
+                               args.out, snpToRemove)
+
+
+def createFinalTPEDandTFAM(tped, toReadPrefix, prefix, snpToRemove):
+    """Creates the final TPED and TFAM."""
+    # First, copying the tfam
+    try:
+        shutil.copy(toReadPrefix + ".tfam", prefix + ".final.tfam")
+    except IOError:
+        msg = "%(toReadPrefix)s.tfam: can't copy file to " \
+              "%(prefix)s.final.tfam" % locals()
+        raise ProgramError(msg)
+
+    # Next, copy the tped, and append at the end
+    try:
+        shutil.copy(toReadPrefix + ".tped", prefix + ".final.tped")
+    except IOError:
+        msg = "%(toReadPrefix)s.tped: can't copy fil to " \
+              "%(prefix)s.final.tped" % locals()
+        raise ProgramError(msg)
+    tpedFile = None
+    try:
+        tpedFile = open(prefix + ".final.tped", "a")
+    except IOError:
+        msg = "%(prefix)s.final.tped: can't append to file" % locals()
+        raise ProgramError(msg)
+    for i, row in enumerate(tped):
+        if i not in snpToRemove:
+            print >>tpedFile, "\t".join(row)
+    tpedFile.close()
+
+
+def createAndCleanTPED(tped, tfam, snps, prefix, chosenSNPs, completion,
+                       concordance, snpsToComplete, tfamFileName, completionT,
+                       concordanceT):
+    """Complete a TPED for duplicated SNPs."""
+    zeroedOutFile = None
+    try:
+        zeroedOutFile = open(prefix + ".zeroed_out", "w")
+    except IOError:
+        msg = "%(prefix).zeroed_out: can't write file" % locals()
+        raise ProgramError(msg) 
+    print >>zeroedOutFile, "\t".join(["famID", "indID", "snpID"])
+
+    notGoodEnoughFile = None
+    try:
+        notGoodEnoughFile = open(prefix + ".not_good_enough", "w")
+    except IOError:
+        msg = "%(prefix)s.not_good_enough: can't write file" % locals()
+        raise ProgramError(msg)
+    print >>notGoodEnoughFile, "\t".join(["name", "reason"])
+
+    removedFile = None
+    try:
+        removedFile = open(prefix + ".removed_duplicates", "w")
+    except IOError:
+        msg = "%(prefix)s.removed_duplicates: can't write file" % locals()
+        raise ProgramError(msg)
+
+    notGoodEnoughSnps = set()
+
+    # Split the tped in 'snpInfo' and 'genotypes'
+    snpInfo = tped[:,:4]
+    genotypes = tped[:,4:]
+
+    # The sed of index we want to get rid of at the end
+    getRidOfIndex = set()
+
+    for snpID, indexes in snps.iteritems():
+        if snpID not in snpsToComplete:
+            # We don't want to complete this SNP, so we continue to next SNP
+            continue
+
+        # Getting the completion
+        completionToRemove = set(npy.where(completion[indexes] < \
+                                                completionT)[0])
+        for k in completionToRemove:
+            notGoodEnoughSnps.add((snpInfo[indexes][k,1], "completion"))
+
+        # Getting the concordance
+        concordanceToRemove = set(npy.where(concordance[snpID] < \
+                                                concordanceT)[0])
+        for k in concordanceToRemove:
+            notGoodEnoughSnps.add((snpInfo[indexes][k,1], "concordance"))
+
+        # These will be the indexes to remove
+        indexesToRemove = set()
+        for index in completionToRemove | concordanceToRemove:
+            indexesToRemove.add(indexes[index])
+
+        # These are the indexes to keep
+        indexesToKeep = []
+        for index in indexes:
+            if index not in indexesToRemove:
+                indexesToKeep.append(index)
+
+        # Getting the chosen SNP
+        chosenOne = chosenSNPs[snpID]
+        if chosenOne not in set(indexesToKeep):
+            # The chosen SNP is not a good SNP, so we go to next SNP
+            print "      - %s choosen but not good enough" % snpInfo[chosenOne,1]
+            continue
+
+        # Now cycling through the genotypes
+        nbSamples = genotypes.shape[1]
+        for sampleIndex in xrange(nbSamples):
+            # We need to remove the no call and keep the unique genotypes
+            curGenotypes = genotypes[indexesToKeep,sampleIndex]
+            cleanedCurGenotypes = curGenotypes[npy.where(curGenotypes != "0 0")]
+            uniqueCleanedCurGenotypes = npy.unique(cleanedCurGenotypes)
+
+            # Checking the number of unique genotypes
+            toComplete = False
+            if len(uniqueCleanedCurGenotypes) > 1:
+                # There are more than one unique genotype (except 0 0)
+                # len = 0 means all were 0 0
+                # len = 1 means they are all the same
+                # len > 1 means discordance (might need to flip)
+                # Just need to check the order of the alleles
+                possibleAlleles = [set() for k in xrange(len(uniqueCleanedCurGenotypes))]
+                for k, geno in enumerate(uniqueCleanedCurGenotypes):
+                    possibleAlleles[k] |= set(geno.split(" "))
+                allEqual = True
+                for k in xrange(len(possibleAlleles)):
+                    for l in xrange(k+1, len(possibleAlleles)):
+                        if possibleAlleles[k] != possibleAlleles[l]:
+                            allEqual = False
+
+                if not allEqual:
+                    # The genotypes are not all equal, we set the chosen
+                    # genotype to null (0 0)
+                    tped[chosenOne,sampleIndex+4] = "0 0"
+                    print >>zeroedOutFile, "\t".join([tfam[sampleIndex,0],
+                                                      tfam[sampleIndex,1],
+                                                      snpInfo[chosenOne,1]])
+                elif genotypes[chosenOne,sampleIndex] == "0 0":
+                    toComplete = True
+            elif (len(uniqueCleanedCurGenotypes) == 1) and (genotypes[chosenOne,sampleIndex] == "0 0"):
+                toComplete = True
+
+            if toComplete:
+                # We complete the current individual
+                tped[chosenOne,sampleIndex+4] = uniqueCleanedCurGenotypes[0]
+
+        # We keep only the chose one
+        for index in indexes:
+            if index != chosenOne:
+                getRidOfIndex.add(index)
+                print >>removedFile, snpInfo[index,1]
+
+    # Writing the not good enough file
+    for item in notGoodEnoughSnps:
+        print >>notGoodEnoughFile, "\t".join(item)
+
+    # Closing the output files
+    zeroedOutFile.close()
+    notGoodEnoughFile.close()
+
+    # Printing the chosen file
+    try:
+        shutil.copy(tfamFileName, prefix + ".chosen_snps.tfam")
+    except IOError:
+        msg = "%(tfamFileName)s: can't copy file to " \
+              "%(prefix)s.chosen_snps.tfam" % locals()
+        raise ProgramError(msg)
+    chosenFile = None
+    try:
+        chosenFile = open(prefix + ".chosen_snps.tped", "w")
+    except IOError:
+        msg = "%(prefix)s.chosen_snps.tped: can't write file" % locals()
+        raise ProgramError(msg)
+    for chosenOne in chosenSNPs.itervalues():
+        snpID = (tped[chosenOne,0], tped[chosenOne,3])
+        if snpID in snpsToComplete:
+            print >>chosenFile, "\t".join(tped[chosenOne])
+    chosenFile.close()
+
+    return tped, getRidOfIndex
+
+
+def chooseBestSnps(tped, snps, trueCompletion, trueConcordance, prefix):
+    """Choose the best duplicates according to the completion rate."""
+    # The output files
+    chosenFile = None
+    try:
+        chosenFile = open(prefix + ".chosen_snps.info", "w")
+    except IOError:
+        msg = "%(prefix)s.chosen_snps.info: can't write file" % locals()
+        raise ProgramError(msg)
+
+    excludedFile = None
+    try:
+        excludedFile = open(prefix + ".not_choosen_snps.info", "w")
+    except IOError:
+        msg = "%(prefix)s.not_choosen_snps.info: can't write file" % locals()
+        raise ProgramError(msg)
+
+    # Computing the completion
+    completion = npy.true_divide(trueCompletion[0], trueCompletion[1])
+
+    # For each duplicated SNPs
+    chosenIndexes = {}
+    snpConcordance = {}
+    for snp, indexes in snps.iteritems():
+        # Getting the completion for those duplicated SNPs
+        currCompletion = completion[indexes]
+
+        # Sorting those completion
+        sortedCompletionInsexes = npy.argsort(currCompletion)
+
+        # Getting the concordance
+        concordance = npy.true_divide(trueConcordance[snp][0],
+                                      trueConcordance[snp][1])
+
+        currConcordance = [[] for i in xrange(len(indexes))]
+        for i in xrange(len(indexes)):
+            indexToKeep = list(set(range(len(indexes))) - set([i]))
+            currConcordance[i] = npy.mean(concordance[i, indexToKeep])
+        currConcordance = npy.array(currConcordance)
+        if snp not in snpConcordance:
+            snpConcordance[snp] = currConcordance
+
+        # Sorting the concordance
+        sortedConcordanceIndexes = npy.argsort(currConcordance)
+
+        # Trying to find the best duplicate to keep
+        nbToCheck = 1
+        chosenIndex = None
+        while nbToCheck <= len(indexes):
+            # Getting the `nbToCheck` best value (higher to lower)
+            completionValue = currCompletion[sortedCompletionInsexes[nbToCheck*-1]]
+            concordanceValue = currConcordance[sortedConcordanceIndexes[nbToCheck*-1]]
+
+            # Getting the indexes to consider
+            completionToConsider = set(npy.where(currCompletion >= \
+                                                    completionValue)[0])
+            concordanceToConsider = set(npy.where(currConcordance >= \
+                                                    concordanceValue)[0])
+
+            # Getting the intersection of the indexes
+            toConsider = concordanceToConsider & completionToConsider
+            if len(toConsider) >= 1:
+                chosenIndex = random.choice(list(toConsider))
+                break
+            nbToCheck += 1
+
+        if chosenIndex is None:
+            msg = "Could not choose the best snp ID"
+            raise ProgramError(msg)
+
+        # Printing the chosen SNPs
+        print >>chosenFile, tped[indexes[chosenIndex],1]
+
+        # Printing the excluded SNPs
+        for i, index in enumerate(indexes):
+            if i != chosenIndex:
+                print >>excludedFile, tped[index,1]
+
+        chosenIndexes[snp] = indexes[chosenIndex]
+
+    # Closing the output files
+    chosenFile.close()
+    excludedFile.close()
+
+    return chosenIndexes, completion, snpConcordance
+
+
+def computeFrequency(prefix, outPrefix):
+    """Computes the frequency of the SNPs using Plink."""
+    # The plink command
+    plinkCommand = ["plink", "--noweb", "--tfile", prefix, "--freq", "--out",
+                    outPrefix + ".duplicated_snps"]
+    runCommand(plinkCommand)
+
+    # Reading the frequency file
+    snpFreq = {}
+    try:
+        with open(outPrefix + ".duplicated_snps.frq", "r") as inputFile:
+            headerIndex = None
+            for i, line in enumerate(inputFile):
+                row = createRowFromPlinkSpacedOutput(line)
+                if i == 0:
+                    # This is the header
+                    headerIndex = dict([(row[j], j) \
+                                            for j in xrange(len(row))])
+                    
+                    # Checking the column titles
+                    for columnTitle in ["SNP", "MAF", "A1", "A2"]:
+                        if columnTitle not in headerIndex:
+                            msg = "%(outPrefix)s.duplicated_snps.frq: no " \
+                                  "column called %(columnTitle)s" % locals()
+                            raise ProgramError(msg)
+                else:
+                    # This is data
+                    snpName = row[headerIndex["SNP"]]
+                    maf = row[headerIndex["MAF"]]
+                    a1 = row[headerIndex["A1"]]
+                    a2 = row[headerIndex["A2"]]
+                    try:
+                        if maf == "NA":
+                            maf = 0.0
+                        else:
+                            maf = float(maf)
+                    except ValueError:
+                        msg = "%(outPrefix)s.duplicated_snps.frq: %(maf)s: " \
+                              "not a valid MAF" % locals()
+                        raise ProgramError(msg)
+                    snpFreq[snpName] = (maf, (a1, a2))
+    except IOError:
+        msg = "%(outPrefix)s.duplicated_snps.freq: no such file" % locals()
+        raise ProgramError(msg)
+
+    return snpFreq
+
+
+def runCommand(command):
+    """Run the command in Plink."""
+    output = None
+    try:
+        output = subprocess.check_output(command,
+                                         stderr=subprocess.STDOUT, shell=False)
+    except subprocess.CalledProcessError:
+        msg = "plink: couldn't run plink\n"
+        msg += " ".join(command)
+        raise ProgramError(msg)
+
+
+def printDuplicatedTPEDandTFAM(tped, tfamFileName, outPrefix):
+    """Print the duplicated SNPs TPED and TFAM."""
+    # Copying the tfam file
+    try:
+        shutil.copy(tfamFileName, outPrefix + ".duplicated_snps.tfam")
+    except IOError:
+        msg = "%(tfamFileName)s: can't copy file to " \
+              "%(outPrefix)s.duplicated_snps.tfam" % locals()
+        raise ProgramError(msg)
+
+    # Writing the tped
+    tpedFile = None
+    try:
+        tpedFile = open(outPrefix + ".duplicated_snps.tped", "w")
+    except IOError:
+        msg = "%(outPrefix)s.duplicated_snps.tped: can't write " \
+              "file" % locals()
+        raise ProgramError(msg)
+    for row in tped:
+        print >>tpedFile, "\t".join(row)
+    tpedFile.close()
+
+
+def printConcordance(concordance, prefix, tped, snps):
+    """Print the concordance."""
+    outFile = None
+    try:
+        outFile = open(prefix + ".concordance", "w")
+    except IOError:
+        msg = "%s: can't write file" % prefix + ".concordance"
+        raise ProgramError(msg)
+
+    for snpID in concordance.iterkeys():
+        print >>outFile, "#" + "\t".join(list(snpID) + \
+                                         list(tped[snps[snpID],1]))
+        
+        # Doing the division
+        true_concordance = npy.true_divide(concordance[snpID][0],
+                                           concordance[snpID][1])
+
+        output = StringIO.StringIO()
+        npy.savetxt(output, true_concordance, delimiter="\t", fmt="%.8f")
+        print >>outFile, output.getvalue().rstrip("\r\n")
+
+    outFile.close()
+
+
+def printProblems(completion, concordance, tped, snps, frequencies, prefix,
+                  diffFreq):
+    """Print the statistics."""
+
+    completionPercentage = npy.true_divide(completion[0], completion[1])
+
+    outSummary = None
+    try:
+        outSummary = open(prefix + ".summary", "w")
+    except IOError:
+        msg = "%s: can't write file" % prefix + ".summary"
+        raise ProgramError
+
+    # Prints the header of the summary file
+    print >>outSummary, "\t".join(["chr", "pos", "name", "alleles", "status",
+                                "% completion", "completion",
+                                "mean concordance"])
+
+    # The data structure containing the problems
+    problems = {}
+    for snpID, indexes in snps.iteritems():
+        for i, index in enumerate(indexes):
+            # The SNP information (chromosome and position)
+            toPrint = list(snpID)
+
+            # The name of the SNP
+            snpName = tped[index, 1]
+            toPrint.append(snpName)
+
+            # The frequency of the SNP
+            snpFreq, mafAlleles = frequencies[snpName]
+
+            # A list of the other SNP name with problems
+            otherSnpNameWithProblem = set()
+
+            # The alleles
+            alleles = set()
+            otherAlleles = set()
+            status = []
+            for genotype in npy.unique(tped[index,4:]):
+                alleles |= set(genotype.split(" "))
+            if "0" in alleles:
+                alleles.remove("0")
+            for j in xrange(i+1, len(indexes)):
+                otherIndex = indexes[j]
+                otherSnpName = tped[otherIndex, 1]
+
+                # The frequency of the other SNP
+                otherSnpFreq, otherMafAlleles = frequencies[otherSnpName]
+
+                # Checking the alleles
+                for genotype in npy.unique(tped[otherIndex,4:]):
+                    otherAlleles |= set(genotype.split(" "))
+                if "0" in otherAlleles:
+                    otherAlleles.remove("0")
+                if alleles != otherAlleles:
+                    if len(alleles) == len(otherAlleles):
+                        # Same number of alleles
+                        # Try the flipped ones
+                        otherAlleles = flipGenotype(otherAlleles)
+                        if alleles == otherAlleles:
+                            if len(alleles) == 1:
+                                status.append("homo_flip")
+                                otherSnpNameWithProblem.add(otherSnpName)
+                            else:
+                                status.append("flip")
+                                otherSnpNameWithProblem.add(otherSnpName)
+                        else:
+                            status.append("problem")
+                            otherSnpNameWithProblem.add(otherSnpName)
+                    else:
+                        # Different number of alleles
+                        if len(alleles & otherAlleles) == 1:
+                            status.append("homo_hetero")
+                            otherSnpNameWithProblem.add(otherSnpName)
+                        else:
+                            # Try the flipped one
+                            otherAlleles = flipGenotype(otherAlleles)
+                            if len(alleles & otherAlleles) == 1:
+                                status.append("homo_hetero_flip")
+                                otherSnpNameWithProblem.add(otherSnpName)
+                            else:
+                                status.append("problem")
+                                otherSnpNameWithProblem.add(otherSnpName)
+                else:
+                    # The alleles are the same, so we check the frequency
+                    if mafAlleles[0] != otherMafAlleles[0]:
+                        # They don't have the same minor allele
+                        status.append("diff_minor_allele")
+                        otherSnpNameWithProblem.add(otherSnpName)
+                    elif math.fabs(snpFreq - otherSnpFreq) > diffFreq:
+                        # They don't have same frequency
+                        status.append("diff_frequency")
+                        otherSnpNameWithProblem.add(otherSnpName)
+
+            alleles = list(alleles)
+            alleles.sort()
+            if len(alleles) == 1:
+                alleles.append(alleles[0])
+            toPrint.append(" ".join(alleles))
+            toPrint.append(";".join(status))
+
+            # The completion
+            toPrint.append("%.8f" % completionPercentage[index])
+            toPrint.append("%d/%d" % (completion[0][index],
+                                      completion[1][index]))
+
+            # The concordance
+            indexToKeep = list(set(range(len(indexes))) - set([i]))
+            currConcordance = npy.true_divide(concordance[snpID][0][i, indexToKeep],
+                                              concordance[snpID][1][i, indexToKeep])
+            currConcordance = npy.mean(currConcordance)
+            toPrint.append("%.8f" % currConcordance)
+            print >>outSummary, "\t".join(toPrint)
+
+            # Now updating the problems data structure
+            if len(status) != len(otherSnpNameWithProblem):
+                msg = "There is a problem with the problematic SNPs"
+                raise ProgramError(msg)
+
+            if len(status) > 0:
+                if snpID not in problems:
+                    tmp = {"snpNames": {snpName}, "problems": set()}
+                    problems[snpID] = tmp
+
+                # We have problems
+                problems[snpID]["snpNames"] |= otherSnpNameWithProblem
+                problems[snpID]["problems"] |= set(status)
+
+    outSummary.close()
+
+    outProblems = None
+    try:
+        outProblems = open(prefix + ".problems", "w")
+    except IOError:
+        msg = "%s: can't write file" % prefix + ".problems"
+        raise ProgramError
+
+    # Printing the header of the problem file...
+    print >>outProblems, "\t".join(["chr", "pos", "name", "status"])
+    for snpID in problems.iterkeys():
+        toPrint = list(snpID)
+        toPrint.append(";".join(list(problems[snpID]["snpNames"])))
+        toPrint.append(";".join(list(problems[snpID]["problems"])))
+        print >>outProblems, "\t".join(toPrint)
+
+    outProblems.close()
+
+    # Returning the SNPs to complete
+    return set(snps.keys()) - set(problems.keys())
+
+
+def computeStatistics(tped, tfam, snps):
+    """Computes the completion and concordance of each SNPs."""
+    # The completion data type
+    completion = npy.array([[0 for i in xrange(len(tped))],
+                            [0 for i in xrange(len(tped))]])
+
+    # The concordance data type
+    concordance = {}
+    for snpID in snps.keys():
+        nbDup = len(snps[snpID])
+        concordance[snpID] = [npy.asmatrix(npy.zeros((nbDup, nbDup),
+                                                      dtype=int)),
+                              npy.asmatrix(npy.zeros((nbDup, nbDup),
+                                                      dtype=int))]
+
+    # The women and the no sex
+    menIndex = npy.where(tfam[:,4] == "1")
+    womenIndex = npy.where(tfam[:,4] == "2")
+    noSexIndex = npy.where(tfam[:,4] == "0")
+
+    for snpID, indexes in snps.iteritems():
+        nbDup = len(indexes)
+        currGenotypes = tped[indexes,4:]
+        chromosome, position = snpID
+        
+##         if chromosome == "24":
+##             # Remove the heterozygous men
+##             menToRemove = getIndexOfHeteroMen(currGenotypes, menIndex)
+##             # Remove the women and the no sex
+##             currGenotypes = npy.delete(currGenotypes,
+##                                        npy.hstack((womenIndex, noSexIndex,
+##                                                    menToRemove)), 1)
+##         elif chromosome == "23":
+##             # Remove the heterozygous men
+##             menToRemove = getIndexOfHeteroMen(currGenotypes, menIndex)
+##             # Remove the no sex
+##             currGenotypes = npy.delete(currGenotypes,
+##                                        npy.hstack((noSexIndex, menToRemove)),
+##                                        1)
+
+        for i in xrange(nbDup):
+            # Compute completion here
+            completion[0][indexes[i]] = len(npy.where(currGenotypes[i] != "0 0")[0])
+            completion[1][indexes[i]] = len(currGenotypes[i])
+            for j in xrange(i+1, nbDup):
+                # Compute concordance here
+                # Removing samples with at least one null genotype
+                nullGenotypeIndexes = npy.where(npy.any(currGenotypes[[i,j]] == "0 0", 0))
+                subGenotypes = npy.delete(currGenotypes, nullGenotypeIndexes, 1)
+
+                # Finding the errors in the subseted genotypes
+                errorIndexes = npy.where(subGenotypes[i] != subGenotypes[j])[0]
+                nbDiff = len(errorIndexes)
+
+                for k in errorIndexes:
+                    # Getting the genotypes
+                    genotype1 = set(subGenotypes[i,k].split(" "))
+                    genotype2 = set(subGenotypes[j,k].split(" "))
+
+                    # Checking for flips
+                    if len(genotype1) == len(genotype2):
+                        # Both have the same number of different alleles,
+                        # so they might be flipped
+                        genotype2 = flipGenotype(genotype2)
+                        if genotype1 == genotype2:
+                            # The genotypes are equivalent after the flip
+                            nbDiff -= 1
+
+                # Updating the concordance
+                nbTot = len(subGenotypes[i])
+                concordance[snpID][0][i,j] = nbTot - nbDiff
+                concordance[snpID][0][j,i] = nbTot - nbDiff
+                if nbTot == 0:
+                    # We will have a division by 0...
+                    nbTot = 1
+                concordance[snpID][1][i,j] = nbTot
+                concordance[snpID][1][j,i] = nbTot
+
+    for snpID in concordance.iterkeys():
+        for i in range(len(concordance[snpID][0])):
+            concordance[snpID][0][i,i] = 1
+            concordance[snpID][1][i,i] = 1
+
+    return completion, concordance
+
+
+def getIndexOfHeteroMen(genotypes, menIndex):
+    """Get the indexes of heterozygous men."""
+    toRemove = set()
+    for i in menIndex[0]:
+        for genotype in [set(j.split(" ")) for j in genotypes[:,i]]:
+            if len(genotype) != 1:
+                # We have an heterozygous
+                toRemove.add(i)
+
+    toRemove = list(toRemove)
+    toRemove.sort()
+
+    return (npy.array(toRemove, dtype=int),)
+
+
+def flipGenotype(genotype):
+    """Flips a genotype."""
+    newGenotype = set()
+    for allele in genotype:
+        if allele == "A":
+            newGenotype.add("T")
+        elif allele == "C":
+            newGenotype.add("G")
+        elif allele == "T":
+            newGenotype.add("A")
+        elif allele == "G":
+            newGenotype.add("C")
+        else:
+            msg = "%(allele)s: unkown allele" % locals()
+            raise ProgramError(msg)
+
+    return newGenotype
+
+
+## def processTPED(uniqueSNPs, duplicatedSNPs, mapF, fileName, tfam, prefix):
+def processTPED(uniqueSNPs, mapF, fileName, tfam, prefix):
+    """Process the TPED file."""
+    # Copying the tfam file
+    try:
+        shutil.copy(tfam, prefix + ".unique_snps.tfam")
+    except IOError:
+        msg = "%s: can't write file" % prefix + ".unique_snps.tfam"
+        raise ProgramError(msg)
+
+    tped = []
+    updatedSNPs = defaultdict(list)
+    outputFile = None
+    try:
+        outputFile = open(prefix + ".unique_snps.tped", "w")
+    except IOError:
+        msg = "%s: can't write to file" % prefix + ".unique_snps.tped"
+        raise ProgramError(msg)
+    nbSNP = 0
+    with open(fileName, 'r') as inputFile:
+        for line in inputFile:
+            nbSNP += 1
+            row = line.rstrip("\r\n").split("\t")
+            snpInfo = row[:4]
+            genotype = [i.upper() for i in row[4:]]
+
+            chromosome = snpInfo[0]
+            position = snpInfo[3]
+
+            if (chromosome, position) in uniqueSNPs:
+                # Printing the new TPED file (unique SNPs only)
+                print >>outputFile, "\t".join(snpInfo + genotype)
+            else:
+                # Saving the TPED file (duplicated samples only)
+                currPos = len(tped)
+                tped.append(tuple(snpInfo + genotype))
+                updatedSNPs[(chromosome, position)].append(currPos)
+    outputFile.close()
+
+    if len(mapF) != nbSNP:
+        msg = "%(fileName)s: no the same number of SNPs than MAP " \
+              "file" % locals()
+        raise ProgramError(msg)
+
+    tped = npy.array(tped)
+
+    return tped, updatedSNPs
+
+
+def findDuplicates(mapF):
+    """Finds the duplicates in a MAP.
+
+    :param mapF: representation of a MAP file.
+    :type mapF: list of tuple of string
+
+    :returns: two maps, containing unique and duplicated SNPs positions.
+
+    """
+    uSNPs = {}
+    dSNPs = defaultdict(list)
+    for i, row in enumerate(mapF):
+        chromosome = row[0]
+        position = row[3]
+        snpID = (chromosome, position)
+        if snpID not in uSNPs:
+            # This is the first time we see this sample
+            uSNPs[snpID] = i
+        else:
+            # We have seen this sample at least once...
+            if snpID not in dSNPs:
+                # This is the second time we see this sample...
+                dSNPs[snpID].extend([uSNPs[snpID], i])
+            else:
+                # We have seen this sample multiple times
+                dSNPs[snpID].append(i)
+
+    # Removing the duplicates from the unique samples
+    for snpID in dSNPs.iterkeys():
+        if snpID in uSNPs:
+            del uSNPs[snpID]
+
+    return uSNPs
+
+
+def readTFAM(fileName):
+    """Reads the TFAM file.
+
+    :param fileName: the name of the TFAM file.
+    :type fileName: string
+
+    :returns: a list of tuples, representing the TFAM file.
+
+    """
+    # Saving the TFAM file
+    tfam = None
+    with open(fileName, 'r') as inputFile:
+        tfam = [tuple(i.rstrip("\r\n").split("\t")) for i in inputFile.readlines()]
+
+    tfam = npy.array(tfam)
+
+    return tfam
+
+
+def readMAP(fileName, prefix):
+    """Reads the MAP file.
+
+    :param fileName: the name of the MAP file.
+    :type fileName: string
+
+    :returns: a list of tuples, representing the MAP file.
+
+    """
+    # Saving the MAP file
+    mapF = None
+    with open(fileName, 'r') as inputFile:
+        mapF = [tuple(i.rstrip("\r\n").split("\t")) for i in inputFile.readlines()]
+
+    # Test for uniqueness of names
+    marker_names = npy.array([i[1] for i in mapF])
+    nb_with_same_name = len(marker_names) - len(npy.unique(marker_names))
+    if nb_with_same_name > 0:
+        print ("      - {} markers with same "
+               "name".format(nb_with_same_name))
+        u, indices = npy.unique(marker_names, return_index=True)
+        duplicated_indices = npy.setdiff1d(npy.arange(len(marker_names)),
+                                           indices)
+        duplicated_indices = npy.in1d(marker_names,
+                                      marker_names[duplicated_indices])
+        marker_chr_pos = npy.array([(i[0], i[3]) for i in mapF],
+                                   dtype=[("chr", int),
+                                          ("pos", int)])[duplicated_indices]
+        marker_names = marker_names[duplicated_indices]
+        try:
+            duplicated_marker_names = open(prefix + ".duplicated_marker_names",
+                                           "w")
+        except IOError:
+            msg = "{}.duplicated_marker_names: can't write file".format(prefix)
+            raise ProgramError(msg)
+        for i in xrange(len(marker_names)):
+            print >>duplicated_marker_names, "\t".join([marker_names[i]] +
+                                                       map(str,
+                                                           marker_chr_pos[i]))
+        duplicated_marker_names.close()
+
+    return mapF
+
+
+def checkArgs(args):
+    """Checks the arguments and options.
+
+    :param args: a :py:class:`Namespace` object containing the options of the
+                 program.
+    :type args: :py:class:`argparse.Namespace`
+
+    :returns: ``True`` if everything was OK.
+
+    If there is a problem with an option, an exception is raised using the
+    :py:class:`ProgramError` class, a message is printed
+    to the :class:`sys.stderr` and the program exists with code 1.
+
+    """
+    # Checking the input files
+    for suffix in [".tped", ".tfam", ".map"]:
+        fileName = args.tfile + suffix
+        if not os.path.isfile(fileName):
+            msg = "%(fileName)s: no such file" % locals()
+            raise ProgramError(msg)
+
+    # Checking the concordance threshold
+    if (args.snp_concordance_threshold < 0) or (args.snp_concordance_threshold > 1):
+        msg = "snp-concordance-threshold: must be between 0 and 1 " \
+              "(not %f)" % args.snp_concordance_threshold
+        raise ProgramError(msg)
+
+    # Checking the completion threshold
+    if (args.snp_completion_threshold < 0) or (args.snp_completion_threshold > 1):
+        msg = "snp-completion-threshold: must be between 0 and 1 " \
+              "(not %f)" % args.snp_completion_threshold
+        raise ProgramError(msg)
+
+    # Checking the difference in frequency
+    if (args.frequence_difference < 0) or (args.frequence_difference > 1):
+        msg = ("{}: maximal frequency difference: value must be between 0 and "
+               "1 (inclusively)".format())
+        raise ProgramError(msg)
+
+    return True
+
+
+def parseArgs(argString=None): # pragma: no cover
+    """Parses the command line options and arguments.
+
+    :returns: A :py:class:`numpy.Namespace` object created by
+              the :py:mod:`argparse` module. It contains the values of the
+              different options.
+
+    ===============  ======  ===================================================
+        Options       Type                     Description
+    ===============  ======  ===================================================
+    ===============  ======  ===================================================
+
+    .. note::
+        No option check is done here (except for the one automatically done by
+        argparse). Those need to be done elsewhere (see :py:func:`checkArgs`).
+
+    """
+    args = None
+    if argString is None:
+        args = parser.parse_args()
+    else:
+        args = parser.parse_args(argString)
+
+    return args
+
+
+class ProgramError(Exception):
+    """An :py:class:`Exception` raised in case of a problem.
+    
+    :param msg: the message to print to the user before exiting.
+    :type msg: string
+
+    """
+    def __init__(self, msg):
+        """Construction of the :py:class:`ProgramError` class.
+
+        :param msg: the message to print to the user
+        :type msg: string
+
+        """
+        self.message = str(msg)
+
+    def __str__(self):
+        return self.message
+
+
+# The parser object
+prog = "duplicated_snps"
+desc = """Extract and work with duplicated SNPs."""
+parser = argparse.ArgumentParser(description=desc, prog=prog)
+
+# The INPUT files
+group = parser.add_argument_group("Input File")
+group.add_argument("--tfile", type=str, metavar="FILE", required=True,
+                   help=("The input file prefix (will find the tped and tfam "
+                         "file by appending the prefix to .tped and .tfam, "
+                         "respectively."))
+# The options
+group = parser.add_argument_group("Options")
+group.add_argument("--snp-completion-threshold", type=float, metavar="FLOAT",
+                    default=0.9, help=("The completion threshold to consider "
+                                       "a replicate when choosing the best "
+                                       "replicates. [default: %(default).1f]"))
+group.add_argument("--snp-concordance-threshold", type=float, metavar="FLOAT",
+                   default=0.98, help=("The concordance threshold to consider "
+                                       "a replicate when choosing the best "
+                                       "replicates. [default: %(default).2f]"))
+group.add_argument("--frequence_difference", type=float, metavar="FLOAT",
+                   default=0.05, help=("The maximum difference in frequency "
+                                       "between duplicated markers [default: "
+                                       "%(default).2f]"))
+# The OUTPUT files
+group = parser.add_argument_group("Output File")
+group.add_argument("--out", type=str, metavar="FILE", default="dup_snps",
+                   help=("The prefix of the output files. [default: "
+                         "%(default)s]"))
+
+if __name__ == "__main__":
+    try:
+        main()
+    except KeyboardInterrupt:
+        print >>sys.stderr, "Cancelled by user"
+        sys.exit(0)
+    except ProgramError as e:
+        parser.error(e.message)
