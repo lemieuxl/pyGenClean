@@ -332,7 +332,6 @@ def run_remove_IBS(in_prefix, in_type, out_prefix, options):
 
     # We run the script
     try:
-        print options
         remove_IBS.main(options)
     except remove_IBS.ProgramError as e:
         msg = "remove_IBS: {}".format(e)
