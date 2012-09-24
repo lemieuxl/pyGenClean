@@ -332,6 +332,7 @@ def run_remove_IBS(in_prefix, in_type, out_prefix, options):
 
     # We run the script
     try:
+        print options
         remove_IBS.main(options)
     except remove_IBS.ProgramError as e:
         msg = "remove_IBS: {}".format(e)
@@ -649,7 +650,11 @@ def read_config_file(filename):
             if variable_name != "script":
                 options.append("--" + variable_name)
                 if variable_value is not None:
-                    options.append(variable_value)
+                    if variable_name == "indep-pairwise":
+                        # This is a special option
+                        options.extend(variable_value.split(" "))
+                    else:
+                        options.append(variable_value)
 
         # Saving the configuration
         configuration[section] = (script_name, options)

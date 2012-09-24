@@ -506,10 +506,7 @@ def checkArgs(args):
             raise ProgramError(msg)
 
     # Check the indep-pairwise option
-    if len(args.indep_pairwise) != 3:
-        msg = "indep-pairwise: need three arguments"
-        raise ProgramError(msg)
-    # The two first must be int
+    # The two first must be int, the last one float
     try:
         for i in xrange(2):
             tmp = int(args.indep_pairwise[i])
@@ -607,7 +604,7 @@ group.add_argument("--genome-only", action="store_true",
 group.add_argument("--min-nb-snp", type=int, metavar="INT", default=10000,
                    help=("The minimum number of markers needed to compute IBS "
                          "values. [Default: %(default)d]"))
-group.add_argument("--indep-pairwise", type=str, metavar="STR", nargs="+",
+group.add_argument("--indep-pairwise", type=str, metavar="STR", nargs=3,
                    default=["50", "5", "0.1"],
                    help=("Three numbers: window size, window shift and the r2 "
                          "threshold. [default: %(default)s]"))
