@@ -418,6 +418,16 @@ def findFlippedSNPs(frqFile1, frqFile2, outPrefix):
         msg = "%(outPrefix)s.snp_to_remove: can't write file" % locals()
         raise ProgramError(msg)
 
+    toRemoveOutputFileExplanation = None
+    try:
+        toRemoveOutputFileExplanation = open(outPrefix + ".snp_to_remove.explanation", "w")
+        print >>toRemoveOutputFileExplanation, "\t".join(["Name", "Reason",
+                                                          "Alleles 1",
+                                                          "Alleles 2"])
+    except IOError:
+        msg = "%(outPrefix)s.snp_to_remove: can't write file" % locals()
+        raise ProgramError(msg)
+
     for snpName in allelesFile1.iterkeys():
         alleles1 = allelesFile1[snpName]
         alleles2 = allelesFile2[snpName]
@@ -427,6 +437,10 @@ def findFlippedSNPs(frqFile1, frqFile2, outPrefix):
             if ({"A", "T"} == alleles1) or ({"C", "G"} == alleles1) or ({"A", "T"} == alleles2) or ({"C", "G"} == alleles2):
                 # We can't flip those..., so we remove them
                 print >>toRemoveOutputFile, snpName
+                print >>toRemoveOutputFileExplanation, "\t".join([snpName,
+                                                                  "Undetermined",
+                                                                  "".join(alleles1),
+                                                                  "".join(alleles2)])
             else:
                 if alleles1 != alleles2:
                     # Let's try the flip one
@@ -436,14 +450,23 @@ def findFlippedSNPs(frqFile1, frqFile2, outPrefix):
                     else:
                         # Those SNP are discordant...
                         print >>toRemoveOutputFile, snpName
+                        print >toRemoveOutputFileExplanation, "\t".join([snpName,
+                                                                         "Invalid",
+                                                                         "".join(alleles1),
+                                                                         "".join(alleles2)])
         else:
             # We want to remove this SNP, because there is at least one
             # homozygous individual
             print >>toRemoveOutputFile, snpName
+            print >>toRemoveOutputFileExplanation, "\t".join([snpName,
+                                                              "Homozygous",
+                                                              "".join(alleles1),
+                                                              "".join(alleles2)])
 
     # Closing output files
     toFlipOutputFile.close()
     toRemoveOutputFile.close()
+    toRemoveOutputFileExplanation.close()
 
 
 def computeFrequency(prefix, outPrefix):
