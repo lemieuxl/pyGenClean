@@ -450,10 +450,10 @@ def findFlippedSNPs(frqFile1, frqFile2, outPrefix):
                     else:
                         # Those SNP are discordant...
                         print >>toRemoveOutputFile, snpName
-                        print >toRemoveOutputFileExplanation, "\t".join([snpName,
-                                                                         "Invalid",
-                                                                         "".join(alleles1),
-                                                                         "".join(alleles2)])
+                        print >>toRemoveOutputFileExplanation, "\t".join([snpName,
+                                                                          "Invalid",
+                                                                          "".join(alleles1),
+                                                                          "".join(alleles2)])
         else:
             # We want to remove this SNP, because there is at least one
             # homozygous individual
