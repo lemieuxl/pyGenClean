@@ -3,6 +3,7 @@
 import re
 import os
 import sys
+import gzip
 import shutil
 import argparse
 import subprocess
@@ -62,13 +63,12 @@ def main(argString=None):
         print "   - Computing gold standard frequencies"
         computeFrequency(gold_input_prefix,
                          gold_input_prefix + ".frequency")
-        print "   - Computing source panel frequencies"
-        computeFrequency(args.out + ".source_panel",
-                         args.out + ".source_panel.frequency")
+
+        print "   - Reading the source manifest"
+        source_alleles = read_manifest(args.source_manifest)
 
         print "   - Finding SNPs to flip or to exclude from gold standard"
-        findFlippedSNPs(gold_input_prefix + ".frequency.frq",
-                        args.out + ".source_panel.frequency.frq",
+        findFlippedSNPs(gold_input_prefix + ".frequency.frq", source_alleles,
                         args.out)
 
         # Excluding SNPs
@@ -111,6 +111,29 @@ def main(argString=None):
                            gold_input_prefix + ".cleaned",
                            args.out + ".source_panel.cleaned", same_samples,
                            args.sge, args.out)
+
+
+def read_manifest(file_name):
+    """Reads Illumina manifest."""
+    alleles = {}
+    open_function = open
+    if file_name.endswith(".gz"):
+        open_function = gzip.open
+    with open_function(file_name, 'r') as input_file:
+        header_index = dict([(col_name, i) for i, col_name in
+                                    enumerate(input_file.readline().rstrip("\r\n").split("\t"))])
+        for col_name in {"Name", "SNP"}:
+            if col_name not in header_index:
+                msg = "{}: no column named {}".format(file_name, col_name)
+                raise ProgramError(msg)
+
+        for line in input_file:
+            row = line.rstrip("\r\n").split("\t")
+            marker_name = row[header_index["Name"]]
+            allele1, allele2 = row[header_index["SNP"]].split("/")
+            alleles[marker_name] = {allele1[1], allele2[0]}
+
+    return alleles
 
 
 def compute_statistics(out_dir, gold_prefix, source_prefix, same_samples,
@@ -364,43 +387,35 @@ def renameSNPs(inPrefix, updateFileName, outPrefix):
     runCommand(plinkCommand)
 
 
-def findFlippedSNPs(frqFile1, frqFile2, outPrefix):
+def findFlippedSNPs(goldFrqFile1, sourceAlleles, outPrefix):
     """Find flipped SNPs and flip them in the data1."""
-    allelesFiles = [{}, {}]
-    files = [frqFile1, frqFile2]
-    for k, fileName in enumerate(files):
-        try:
-            with open(fileName, "r") as inputFile:
-                headerIndex = None
-                for i, line in enumerate(inputFile):
-                    row = createRowFromPlinkSpacedOutput(line)
+    goldAlleles = {}
+    with open(goldFrqFile1, "r") as inputFile:
+        headerIndex = None
+        for i, line in enumerate(inputFile):
+            row = createRowFromPlinkSpacedOutput(line)
 
-                    if i == 0:
-                        # This is the header
-                        headerIndex = dict([(row[j], j) \
-                                                for j in xrange(len(row))])
+            if i == 0:
+                # This is the header
+                headerIndex = dict([(row[j], j) \
+                                        for j in xrange(len(row))])
 
-                        # Checking the columns
-                        for columnName in ["SNP", "A1", "A2"]:
-                            if columnName not in headerIndex:
-                                msg = "%(fileName)s: no column named " \
-                                      "%(columnName)s" % locals()
-                                raise ProgramError(msg)
-                    else:
-                        snpName = row[headerIndex["SNP"]]
-                        allele1 = row[headerIndex["A1"]]
-                        allele2 = row[headerIndex["A2"]]
+                # Checking the columns
+                for columnName in ["SNP", "A1", "A2"]:
+                    if columnName not in headerIndex:
+                        msg = "%(fileName)s: no column named " \
+                                "%(columnName)s" % locals()
+                        raise ProgramError(msg)
+            else:
+                snpName = row[headerIndex["SNP"]]
+                allele1 = row[headerIndex["A1"]]
+                allele2 = row[headerIndex["A2"]]
 
-                        alleles = set([allele1, allele2])
-                        if "0" in alleles:
-                            alleles.remove("0")
+                alleles = set([allele1, allele2])
+                if "0" in alleles:
+                    alleles.remove("0")
 
-                        allelesFiles[k][snpName] = alleles
-        except IOError:
-            msg = "%(fileName)s: no such file" % locals()
-            raise ProgramError(msg)
-
-    allelesFile1, allelesFile2 = allelesFiles
+                goldAlleles[snpName] = alleles
 
     # Finding the SNPs to flip
     toFlipOutputFile = None
@@ -428,9 +443,9 @@ def findFlippedSNPs(frqFile1, frqFile2, outPrefix):
         msg = "%(outPrefix)s.snp_to_remove: can't write file" % locals()
         raise ProgramError(msg)
 
-    for snpName in allelesFile1.iterkeys():
-        alleles1 = allelesFile1[snpName]
-        alleles2 = allelesFile2[snpName]
+    for snpName in goldAlleles.iterkeys():
+        alleles1 = goldAlleles[snpName]
+        alleles2 = sourceAlleles[snpName]
 
         if (len(alleles1) == 2) and (len(alleles2) == 2):
             # Both are heterozygous
@@ -743,6 +758,12 @@ def checkArgs(args):
         msg = "{}: no such file".format(args.same_samples)
         raise ProgramError(msg)
 
+    # Check for the manifests
+    if args.source_manifest is not None:
+            if not os.path.isfile(args.source_manifest):
+                msg = "{}: no such file".format(args.source_manifest)
+                raise ProgramError(msg)
+
     return True
 
 
@@ -812,6 +833,9 @@ group.add_argument("--same-samples", type=str, metavar="FILE", required=True,
                          "the gold standard and the source panel. One line by "
                          "identity and tab separated. For each row, first "
                          "sample is Gold Standard, second is source panel."))
+group.add_argument("--source-manifest", type=str, metavar="FILE",
+                   help="The manifest for the source.")
+
 # The options
 group = parser.add_argument_group("Options")
 group.add_argument("--sge", action="store_true",
