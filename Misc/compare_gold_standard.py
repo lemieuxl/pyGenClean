@@ -119,7 +119,7 @@ def read_manifest(file_name):
     open_function = open
     if file_name.endswith(".gz"):
         open_function = gzip.open
-    with open_function(file_name, 'r') as input_file:
+    with open_function(file_name, 'rb') as input_file:
         header_index = dict([(col_name, i) for i, col_name in
                                     enumerate(input_file.readline().rstrip("\r\n").split("\t"))])
         for col_name in {"Name", "SNP"}:

@@ -14,6 +14,7 @@ mpl.use("Agg")
 import matplotlib.pyplot as plt
 plt.ioff()
 from PlinkUtils import createRowFromPlinkSpacedOutput
+from StatGenDataCleanUp.Step9.merge_related_samples import merge_related_samples
 
 def main(argString=None):
     # Getting and checking the options
@@ -213,6 +214,9 @@ def extractRelatedIndividuals(fileName, outPrefix, ibs2_ratio_threshold):
     # Closing the output and input files
     inputFile.close()
     outputFile.close()
+
+    # Merging the related individals
+    merge_related_samples(outPrefix + ".related_individuals", outPrefix, False)
 
     # Creating the numpy array
     data = npy.array(data, dtype=[("IBS2_RATIO", float), ("Z1", float),
