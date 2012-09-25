@@ -832,7 +832,7 @@ group.add_argument("--same-samples", type=str, metavar="FILE", required=True,
                          "the gold standard and the source panel. One line by "
                          "identity and tab separated. For each row, first "
                          "sample is Gold Standard, second is source panel."))
-group.add_argument("--source-manifest", type=str, metavar="FILE", required=True
+group.add_argument("--source-manifest", type=str, metavar="FILE", required=True,
                    help="The manifest for the source.")
 
 # The options
