@@ -759,10 +759,9 @@ def checkArgs(args):
         raise ProgramError(msg)
 
     # Check for the manifests
-    if args.source_manifest is not None:
-            if not os.path.isfile(args.source_manifest):
-                msg = "{}: no such file".format(args.source_manifest)
-                raise ProgramError(msg)
+    if not os.path.isfile(args.source_manifest):
+        msg = "{}: no such file".format(args.source_manifest)
+        raise ProgramError(msg)
 
     return True
 
@@ -833,7 +832,7 @@ group.add_argument("--same-samples", type=str, metavar="FILE", required=True,
                          "the gold standard and the source panel. One line by "
                          "identity and tab separated. For each row, first "
                          "sample is Gold Standard, second is source panel."))
-group.add_argument("--source-manifest", type=str, metavar="FILE",
+group.add_argument("--source-manifest", type=str, metavar="FILE", required=True
                    help="The manifest for the source.")
 
 # The options
