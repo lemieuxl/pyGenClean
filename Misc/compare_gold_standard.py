@@ -64,8 +64,13 @@ def main(argString=None):
         computeFrequency(gold_input_prefix,
                          gold_input_prefix + ".frequency")
 
-        print "   - Reading the source manifest"
-        source_alleles = read_manifest(args.source_manifest)
+        source_alleles = None
+        if args.source_manifest is not None:
+            print "   - Reading the source manifest"
+            source_alleles = read_source_manifest(args.source_manifest)
+        else:
+            print "   - Reading the allele file"
+            source_alleles = read_source_alleles(args.source_alleles)
 
         print "   - Finding SNPs to flip or to exclude from gold standard"
         findFlippedSNPs(gold_input_prefix + ".frequency.frq", source_alleles,
@@ -113,7 +118,7 @@ def main(argString=None):
                            args.sge, args.out)
 
 
-def read_manifest(file_name):
+def read_source_manifest(file_name):
     """Reads Illumina manifest."""
     alleles = {}
     open_function = open
@@ -122,7 +127,7 @@ def read_manifest(file_name):
     with open_function(file_name, 'rb') as input_file:
         header_index = dict([(col_name, i) for i, col_name in
                                     enumerate(input_file.readline().rstrip("\r\n").split("\t"))])
-        for col_name in {"Name", "SNP"}:
+        for col_name in {"Name", "SNP", "IlmnStrand"}:
             if col_name not in header_index:
                 msg = "{}: no column named {}".format(file_name, col_name)
                 raise ProgramError(msg)
@@ -130,10 +135,89 @@ def read_manifest(file_name):
         for line in input_file:
             row = line.rstrip("\r\n").split("\t")
             marker_name = row[header_index["Name"]]
-            allele1, allele2 = row[header_index["SNP"]].split("/")
-            alleles[marker_name] = {allele1[1], allele2[0]}
+            the_alleles = row[header_index["SNP"]]
+            strand = row[header_index["IlmnStrand"]]
+            if (the_alleles == "[D/I]") or (the_alleles == "[I/D]"):
+                # This is an indel, so we skip it
+                continue
+            top_alleles = illumina_to_snp(strand, the_alleles)
+            allele1, allele2 = top_alleles.split(" ")
+            alleles[marker_name] = {allele1, allele2}
 
     return alleles
+
+
+def read_source_alleles(file_name):
+    """Reads an allele file."""
+    alleles = {}
+    open_function = open
+    if file_name.endswith(".gz"):
+        open_function = gzip.open
+    with open_function(file_name, 'rb') as input_file:
+        for line in input_file:
+            row = line.rstrip("\r\n").split("\t")
+            marker_name = row[0]
+            allele1, allele2 = row[1].split(" ")
+            alleles[marker_name] = {allele1, allele2}
+
+    return alleles
+
+
+def illumina_to_snp(strand, snp):
+    """Return the TOP strand of the marker.
+    
+    Function that takes a strand (TOP or BOT) and a SNP (e.g. : [A/C]) and
+    returns a space separated AlleleA[space]AlleleB string.
+
+    :param strand: Either "TOP" or "BOT"
+    :type strand: str
+
+    :param snp: Either [A/C], [A/T], [G/C], [T/C], [A/G], [C/G], [T/A] or [T/G].
+    :type snp: str
+
+    :returns: The nucleotide for allele A and the nucleotide for allele B (space separated)
+    :rtype: str
+
+    """
+
+    # This correspondancy matrix converts the alleles 
+    # from the annotation file to the appropriate
+    # alleles for TOP strand.
+    # This dictates most of the bahavior for this script.
+    # Modify it to customize allele conversion.
+    illumina_correspondance = {
+        "[A/C]": {
+            "TOP": "A C",
+        },
+        "[A/G]": {
+            "TOP": "A G",
+        },
+        "[T/C]": {
+            "BOT": "A G",
+        },
+        "[T/G]": {
+            "BOT": "A C",
+        },
+        "[A/T]": {
+            "TOP": "A T",
+            "BOT": "T A",
+        },
+        "[C/G]": {
+            "TOP": "C G",
+            "BOT": "G C",
+        },
+        "[G/C]": {
+            "TOP": "G C",
+            "BOT": "C G",
+        },
+        "[T/A]": {
+            "TOP": "T A",
+            "BOT": "A T",
+        },
+    }
+
+    return illumina_correspondance[snp][strand]
+
 
 
 def compute_statistics(out_dir, gold_prefix, source_prefix, same_samples,
@@ -449,7 +533,7 @@ def findFlippedSNPs(goldFrqFile1, sourceAlleles, outPrefix):
 
         if (len(alleles1) == 2) and (len(alleles2) == 2):
             # Both are heterozygous
-            if ({"A", "T"} == alleles1) or ({"C", "G"} == alleles1) or ({"A", "T"} == alleles2) or ({"C", "G"} == alleles2):
+            if ({"A", "T"} == alleles1 and {"A", "T"} == alleles2) or ({"C", "G"} == alleles1 and {"C", "G"} == alleles2):
                 # We can't flip those..., so we remove them
                 print >>toRemoveOutputFile, snpName
                 print >>toRemoveOutputFileExplanation, "\t".join([snpName,
@@ -473,10 +557,16 @@ def findFlippedSNPs(goldFrqFile1, sourceAlleles, outPrefix):
             # We want to remove this SNP, because there is at least one
             # homozygous individual
             print >>toRemoveOutputFile, snpName
+            tmp_allele1 = "".join(alleles1)
+            if len(alleles1) == 1:
+                tmp_allele1 += tmp_allele1
+            tmp_allele2 = "".join(alleles1)
+            if len(alleles1) == 1:
+                tmp_allele2 += tmp_allele2
             print >>toRemoveOutputFileExplanation, "\t".join([snpName,
                                                               "Homozygous",
-                                                              "".join(alleles1),
-                                                              "".join(alleles2)])
+                                                              tmp_allele1,
+                                                              tmp_allele2])
 
     # Closing output files
     toFlipOutputFile.close()
@@ -758,10 +848,24 @@ def checkArgs(args):
         msg = "{}: no such file".format(args.same_samples)
         raise ProgramError(msg)
 
-    # Check for the manifests
-    if not os.path.isfile(args.source_manifest):
-        msg = "{}: no such file".format(args.source_manifest)
+    # Check we have either a manifest or a allele file
+    if (args.source_manifest is None) and (args.source_alleles is None):
+        msg = ("need an allele file (either an Illumina manifest "
+               "[--source-manifest] or a file containing alleles for each "
+               "marker [--source-alleles]")
         raise ProgramError(msg)
+    if (args.source_manifest is not None) and (args.source_alleles is not None):
+        msg = ("use either --source-manifest or --source-alleles, not both")
+        raise ProgramError(msg)
+    # Check for the manifests
+    if args.source_manifest is not None:
+        if not os.path.isfile(args.source_manifest):
+            msg = "{}: no such file".format(args.source_manifest)
+            raise ProgramError(msg)
+    if args.source_alleles is not None:
+        if not os.path.isfile(args.source_alleles):
+            msg = "{}: no such file".format(args.source_alleles)
+            raise ProgramError(msg)
 
     return True
 
@@ -832,8 +936,13 @@ group.add_argument("--same-samples", type=str, metavar="FILE", required=True,
                          "the gold standard and the source panel. One line by "
                          "identity and tab separated. For each row, first "
                          "sample is Gold Standard, second is source panel."))
-group.add_argument("--source-manifest", type=str, metavar="FILE", required=True,
-                   help="The manifest for the source.")
+group.add_argument("--source-manifest", type=str, metavar="FILE",
+                   help="The illumina marker manifest.")
+group.add_argument("--source-alleles", type=str, metavar="FILE",
+                   help=("A file containing the source alleles (TOP). Two "
+                         "columns (separated by tabulation, one with the "
+                         "marker name, the other with the alleles (separated "
+                         "by space). No header."))
 
 # The options
 group = parser.add_argument_group("Options")
