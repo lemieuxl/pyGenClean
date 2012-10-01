@@ -7,12 +7,9 @@ import argparse
 
 import numpy as npy
 
-desc = """Plots the gender using intensities"""
-parser = argparse.ArgumentParser(description=desc)
-
-def main():
+def main(argString=None):
     # Getting and checking the options
-    args = parseArgs()
+    args = parseArgs(argString)
     checkArgs(args)
 
     data = None
@@ -434,7 +431,7 @@ def checkArgs(args):
     return True
 
 
-def parseArgs(): # pragma: no cover
+def parseArgs(argString=None): # pragma: no cover
     """Parses the command line options and arguments.
 
     :returns: A :py:class:`numpy.Namespace` object created by
@@ -451,58 +448,13 @@ def parseArgs(): # pragma: no cover
         argparse). Those need to be done elsewhere (see :py:func:`checkArgs`).
 
     """
-    # The INPUT files
-    group = parser.add_argument_group("Input File")
-    group.add_argument("--bfile", type=str, metavar="FILE",
-                       help=("The plink binary file containing information "
-                             "about markers and individuals. Must be specified "
-                             "if '--summarized-intensities' is not."))
-    group.add_argument("--intensities", type=str, metavar="FILE",
-                       help=("A file containing alleles intensities for each "
-                             "of the markers located on the X and Y "
-                             "chromosome. Must be specified if "
-                             "'--summarized-intensities' is not."))
-    group.add_argument("--summarized-intensities", type=str, metavar="FILE",
-                       help=("The prefix of six files (prefix.ok_females.txt, "
-                             "prefix.ok_males.txt, prefix.ok_unknowns.txt, "
-                             "problematic_females.txt, problematic_males.txt "
-                             "and problematic_unknowns.txt) containing "
-                             "summarized chr23 and chr24 intensities. Must be "
-                             "specified if '--bfile' and '--intensities' are "
-                             "not."))
-    group.add_argument("--sex-problems", type=str, metavar="FILE",
-                       help=("The file containing indivuduals with sex "
-                             "problems. This file is not read if the option "
-                             "'summarized-intensities' is used."))
-
-    # The options
-    group = parser.add_argument_group("Options")
-    addCustomOptions(group)
-
-    # The OUTPUT files
-    group = parser.add_argument_group("Output File")
-    group.add_argument("--out", type=str, metavar="FILE",
-                       default="sexcheck",
-                       help="The prefix of the output files (which will be " \
-                            "a Plink binary file. [default: %(default)s]")
-
-    args = parser.parse_args()
+    args = None
+    if argString is None:
+        args = parser.parse_args()
+    else:
+        args = parser.parse_args(argString)
 
     return args
-
-
-def addCustomOptions(parser):
-    """Add custom options to a parser."""
-    parser.add_argument("--format", type=str, metavar="FORMAT", default="png",
-                        choices=["png", "ps", "pdf", "X11"],
-                        help=("The output file format (png, ps, pdf, or X11 "
-                              "formats are available). [default: %(default)s]"))
-    parser.add_argument("--xlabel", type=str, metavar="STRING",
-                        default="X intensity",
-                        help="The label of the X axis. [default: %(default)s]")
-    parser.add_argument("--ylabel", type=str, metavar="STRING",
-                        default="Y intensity",
-                        help="The label of the Y axis. [default: %(default)s]")
 
 
 class ProgramError(Exception):
@@ -524,7 +476,54 @@ class ProgramError(Exception):
     def __str__(self):
         return self.message
 
+# The parser object
+prog = "gender_plot"
+desc = """Plots the gender using intensities"""
+parser = argparse.ArgumentParser(description=desc, prog=prog)
 
+# The INPUT files
+group = parser.add_argument_group("Input File")
+group.add_argument("--bfile", type=str, metavar="FILE", required=True,
+                    help=("The plink binary file containing information "
+                            "about markers and individuals. Must be specified "
+                            "if '--summarized-intensities' is not."))
+group.add_argument("--intensities", type=str, metavar="FILE",
+                    help=("A file containing alleles intensities for each "
+                            "of the markers located on the X and Y "
+                            "chromosome. Must be specified if "
+                            "'--summarized-intensities' is not."))
+group.add_argument("--summarized-intensities", type=str, metavar="FILE",
+                    help=("The prefix of six files (prefix.ok_females.txt, "
+                            "prefix.ok_males.txt, prefix.ok_unknowns.txt, "
+                            "problematic_females.txt, problematic_males.txt "
+                            "and problematic_unknowns.txt) containing "
+                            "summarized chr23 and chr24 intensities. Must be "
+                            "specified if '--bfile' and '--intensities' are "
+                            "not."))
+group.add_argument("--sex-problems", type=str, metavar="FILE", required=True,
+                    help=("The file containing indivuduals with sex "
+                            "problems. This file is not read if the option "
+                            "'summarized-intensities' is used."))
+# The options
+group = parser.add_argument_group("Options")
+group.add_argument("--format", type=str, metavar="FORMAT", default="png",
+                    choices=["png", "ps", "pdf", "X11"],
+                    help=("The output file format (png, ps, pdf, or X11 "
+                            "formats are available). [default: %(default)s]"))
+group.add_argument("--xlabel", type=str, metavar="STRING",
+                    default="X intensity",
+                    help="The label of the X axis. [default: %(default)s]")
+group.add_argument("--ylabel", type=str, metavar="STRING",
+                    default="Y intensity",
+                    help="The label of the Y axis. [default: %(default)s]")
+# The OUTPUT files
+group = parser.add_argument_group("Output File")
+group.add_argument("--out", type=str, metavar="FILE",
+                    default="sexcheck",
+                    help="The prefix of the output files (which will be " \
+                        "a Plink binary file. [default: %(default)s]")
+
+args = parser.parse_args()
 if __name__ == "__main__":
     try:
         main()
