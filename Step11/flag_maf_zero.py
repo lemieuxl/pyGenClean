@@ -27,12 +27,8 @@ def main(argString=None):
 
 def findSnpWithMaf0(freqFileName, prefix):
     """Finds SNPs with MAF of 0 and put them in a file."""
-    outputFile = None
-    try:
-        outputFile = open(prefix + ".list", "w")
-    except IOError:
-        msg = "%(prefix)s.list: can't write file" % locals()
-        raise ProgramError(msg)
+    maf_0_set = set()
+    na_set = ()
 
     try:
         with open(freqFileName, "r") as inputFile:
@@ -56,13 +52,43 @@ def findSnpWithMaf0(freqFileName, prefix):
 
                     if snpMAF == "0":
                         # We want to flag this SNP
-                        print >>outputFile, snpName
+                        maf_0_set.add(snpName)
+
+                    elif snpMAF == "NA":
+                        # We want to flag this SNP, because the MAF est NA
+                        na_set.add(snpName)
+
     except IOError:
         msg = "%(freqFileName)s: no such file" % locals()
         raise ProgramError(msg)
 
     # Closing the output file
     outputFile.close()
+
+    # Creating the output files
+    if len(maf_0_set) == 0:
+        print "      - There are no markers with MAF 0"
+    else:
+        print "      - There are {} markers with MAF 0".format(len(maf_0_set))
+    outputFile = None
+    try:
+        with open(prefix + ".list", "w") as output_file:
+            for marker_name in maf_0_set:
+                print >>output_file, marker_name
+    except IOError:
+        msg = "{}.list: can't write file".format(prefix)
+        raise ProgramError(msg)
+
+    if len(na_set) > 0:
+        print "      - There are {} markers with NA MAF".format(len(na_set))
+        try:
+            with open(prefix + ".na_list", "w") as output_file:
+                for marker_name in na_set:
+                    print >>output_file, marker_name
+        except IOError:
+            msg = "{}.na_list: can't write file".format(prefix)
+            raise ProgramError(msg)
+
 
 
 def computeFrequency(options):
