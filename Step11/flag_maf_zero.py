@@ -62,9 +62,6 @@ def findSnpWithMaf0(freqFileName, prefix):
         msg = "%(freqFileName)s: no such file" % locals()
         raise ProgramError(msg)
 
-    # Closing the output file
-    outputFile.close()
-
     # Creating the output files
     if len(maf_0_set) == 0:
         print "      - There are no markers with MAF 0"
