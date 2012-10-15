@@ -28,7 +28,7 @@ def main(argString=None):
 def findSnpWithMaf0(freqFileName, prefix):
     """Finds SNPs with MAF of 0 and put them in a file."""
     maf_0_set = set()
-    na_set = ()
+    na_set = set()
 
     try:
         with open(freqFileName, "r") as inputFile:
