@@ -235,7 +235,7 @@ group.add_argument("--format", type=str, metavar="FORMAT", default="png",
 group.add_argument("--bins", type=int, metavar="INT", default=100,
                    help=("The number of bins for the histogram. [default: "
                          "%(default)d]"))
-group.add_argument("--xlim", type=float, metavar="F F", nargs=2,
+group.add_argument("--xlim", type=float, metavar="FLOAT", nargs=2,
                    help=("The limit of the x axis (floats)."))
 group.add_argument("--ymax", type=float, metavar="FLOAT",
                    help=("The maximal Y value."))
