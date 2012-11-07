@@ -67,9 +67,6 @@ def compute_heterozygosity(in_prefix, nb_samples):
             # Adding to number of markers for each samples (excluding no calls)
             nb_markers += genotypes != "0 0"
 
-            if nb_markers[0] >= 10000:
-                break
-
     return npy.true_divide(heterozygosity, nb_markers)
 
 
