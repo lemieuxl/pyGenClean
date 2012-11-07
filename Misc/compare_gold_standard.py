@@ -963,6 +963,7 @@ group.add_argument("--out", type=str, metavar="FILE",
                    default="compare_with_gold",
                    help=("The prefix of the output files. [default: "
                          "%(default)s]"))
+
 if __name__ == "__main__":
     try:
         main()
