@@ -134,12 +134,13 @@ def plot_heterozygosity(heterozygosity, options):
                 "Variance ({:.4})".format(the_variance)],
                 loc="best", prop={"size": 11})
 
-        # The xlim
-        if options.xlim is not None:
-            ax.set_xlim(options.xlim)
         # The ylim
         if options.ymax is not None:
             ax.set_ylim(0.0, options.ymax)
+
+    # The xlim
+    if options.xlim is not None:
+        ax.set_xlim(options.xlim)
 
     # Saving the figure
     if options.format == "X11":
