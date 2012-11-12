@@ -81,7 +81,10 @@ def plot_heterozygosity(heterozygosity, options):
         plt.ioff()
 
     # Creating the figure and ax
-    fig, ax = plt.subplots(1, 1, figsize=(13.5, 8))
+    figsize = (13.5, 8)
+    if options.boxplot:
+        figsize = (13.5, 4)
+    fig, ax = plt.subplots(1, 1, figsize=figsize)
 
     # Setting subplot properties
     ax.xaxis.set_ticks_position("bottom")
@@ -95,43 +98,57 @@ def plot_heterozygosity(heterozygosity, options):
     ax.set_title(("Heterozygosity rate distribution "
                   "({:,} samples)".format(len(heterozygosity))), weight="bold")
     ax.set_xlabel("Heterozygosity rate")
-    ax.set_ylabel("Proportion")
 
     # Plotting the histogram
-    ax.hist(heterozygosity, bins=options.bins, color="#0099CC",
-            histtype="stepfilled",  
-            weights=npy.zeros_like(heterozygosity) + 1.0 / len(heterozygosity))
+    if options.boxplot:
+        # Specific settings for the boxplot
+        ax.yaxis.set_ticks_position("none")
+        ax.spines["left"].set_visible(False)
+        ax.set_yticklabels([])
+        fig.subplots_adjust(bottom=0.18)
 
-    # Plotting the mean, the median and the variance
-    the_mean = npy.mean(heterozygosity)
-    the_median = npy.median(heterozygosity)
-    the_variance = npy.power(npy.std(heterozygosity), 2)
-    mean_line = ax.axvline(the_mean, color="#CC0000", ls="--", lw=2,
-                           clip_on=False)
-    median_line = ax.axvline(the_median, color="#FF8800", ls="--", lw=2,
-                             clip_on=False)
-    variance_line = ax.axvline(the_variance, color="#FFFFFF", ls="--", lw=0,
-                               clip_on=False)
-    ax.legend([mean_line, median_line, variance_line],
-              ["Mean ({:.4})".format(the_mean),
-               "Median ({:.4})".format(the_median),
-               "Variance ({:.4})".format(the_variance)],
-              loc="best", prop={"size": 11})
+        # The boxplot
+        ax.boxplot(heterozygosity, notch=True, vert=False)
+    else:
+        # Specific settings for the histogram
+        ax.set_ylabel("Proportion")
 
-    # The xlim
-    if options.xlim is not None:
-        ax.set_xlim(options.xlim)
-    # The ylim
-    if options.ymax is not None:
-        ax.set_ylim(0.0, options.ymax)
+        # The histogram
+        ax.hist(heterozygosity, bins=options.bins, color="#0099CC",
+                histtype="stepfilled",  
+                weights=npy.zeros_like(heterozygosity) + 1.0 / len(heterozygosity))
 
-    # Adding the mean of the heterozygosity
+        # Plotting the mean, the median and the variance
+        the_mean = npy.mean(heterozygosity)
+        the_median = npy.median(heterozygosity)
+        the_variance = npy.power(npy.std(heterozygosity), 2)
+        mean_line = ax.axvline(the_mean, color="#CC0000", ls="--", lw=2,
+                            clip_on=False)
+        median_line = ax.axvline(the_median, color="#FF8800", ls="--", lw=2,
+                                clip_on=False)
+        variance_line = ax.axvline(the_variance, color="#FFFFFF", ls="--", lw=0,
+                                clip_on=False)
+        ax.legend([mean_line, median_line, variance_line],
+                ["Mean ({:.4})".format(the_mean),
+                "Median ({:.4})".format(the_median),
+                "Variance ({:.4})".format(the_variance)],
+                loc="best", prop={"size": 11})
+
+        # The xlim
+        if options.xlim is not None:
+            ax.set_xlim(options.xlim)
+        # The ylim
+        if options.ymax is not None:
+            ax.set_ylim(0.0, options.ymax)
 
     # Saving the figure
     if options.format == "X11":
         plt.show()
     else:
-        plt.savefig("{}.{}".format(options.out, options.format), dpi=300)
+        file_name = "{}.{}".format(options.out, options.format)
+        if options.boxplot:
+            file_name = "{}_boxplot.{}".format(options.out, options.format)
+        plt.savefig(file_name, dpi=300)
 
 def checkArgs(args):
     """Checks the arguments and options.
@@ -225,6 +242,8 @@ group.add_argument("--tfile", type=str, metavar="FILE", required=True,
                    help="The prefix of the transposed file")
 # The options
 group = parser.add_argument_group("Options")
+group.add_argument("--boxplot", action="store_true",
+                   help=("Draw a boxplot instead of a histogram."))
 group.add_argument("--format", type=str, metavar="FORMAT", default="png",
                     choices=["png", "ps", "pdf", "X11"],
                     help=("The output file format (png, ps, pdf, or X11 "
