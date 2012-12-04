@@ -42,13 +42,24 @@ def main(argString=None):
         # Compare the BIM files
         print ("   - Creating the flagged SNP list for "
                "{}".format(customThreshold))
-        compareBIMfiles(args.bfile + ".bim",
-                        args.out + ".threshold_" + customThreshold + ".bim",
-                        args.out + ".snp_flag_threshold_" + customThreshold)
+        custom_snps = compareBIMfiles(args.bfile + ".bim",
+                                      args.out + ".threshold_" + customThreshold + ".bim",
+                                      args.out + ".snp_flag_threshold_" + customThreshold)
         print "   - Creating the flagged SNP list for {}".format(args.hwe)
-        compareBIMfiles(args.bfile + ".bim",
-                        args.out + ".threshold_" + args.hwe + ".bim",
-                        args.out + ".snp_flag_threshold_" + args.hwe)
+        hwe_snps = compareBIMfiles(args.bfile + ".bim",
+                                   args.out + ".threshold_" + args.hwe + ".bim",
+                                   args.out + ".snp_flag_threshold_" + args.hwe)
+
+        print ("   - Creating the in between SNP list ([{}, "
+               "{}[)".format(args.hwe, customThreshold))
+        file_name = args.out + ".snp_flag_threshold_between_{}-{}".format(args.hwe,
+                                                                          customThreshold)
+        try:
+            with open(file_name, 'wb') as output_file:
+                print >>output_file, "\n".join(hwe_snps - custom_snps)
+        except IOError:
+            msg = "{}: can't write file".format(file_name)
+            raise ProgramError(msg)
 
 
 def compareBIMfiles(beforeFileName, afterFileName, outputFileName):
@@ -68,6 +79,8 @@ def compareBIMfiles(beforeFileName, afterFileName, outputFileName):
 
     # Finding the differences
     CompareBIM.compareSNPs(beforeBIM, afterBIM, options.out)
+
+    return beforeBIM - afterBIM
 
 
 def computeNumberOfMarkers(inputFileName):
