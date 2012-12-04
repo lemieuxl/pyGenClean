@@ -110,12 +110,16 @@ def merge_related_samples(file_name, out_prefix, no_status):
         remaining_samples |= group - {choosen}
 
     # Printing the files
-    with open(out_prefix + ".choosen_related_individuals", "wb") as choosen_file:
-        for sample_id in choosen_samples:
-            print >>choosen_file, "\t".join(sample_id)
-    with open(out_prefix + ".discarded_related_individuals", "wb") as discarded_file:
-        for sample_id in remaining_samples:
-            print >>discarded_file, "\t".join(sample_id)
+    try:
+        with open(out_prefix + ".choosen_related_individuals", "wb") as choosen_file:
+            for sample_id in choosen_samples:
+                print >>choosen_file, "\t".join(sample_id)
+        with open(out_prefix + ".discarded_related_individuals", "wb") as discarded_file:
+            for sample_id in remaining_samples:
+                print >>discarded_file, "\t".join(sample_id)
+    except IOError:
+        msg = "{}: can't write files".format(out_prefix + ".*")
+        raise ProgramError(msg)
 
     # Closing the output file
     output_file.close()
