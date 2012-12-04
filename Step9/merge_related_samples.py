@@ -3,6 +3,7 @@
 import os
 import sys
 import gzip
+import random
 import argparse
 
 def main(argString=None):
@@ -80,16 +81,19 @@ def merge_related_samples(file_name, out_prefix, no_status):
     # Printing the output file
     output_file = None
     try:
-        output_file = open(out_prefix + ".merged_related_individuals", 'w')
+        output_file = open(out_prefix + ".merged_related_individuals", 'wb')
         to_print = ["index", "FID1", "IID1", "FID2", "IID2"]
         if not no_status:
             to_print.append("status")
         print >>output_file, "\t".join(to_print)
     except IOError:
-        msg = "{}: can't write file".format(out_prefix + ".merged_related_individuals")
+        msg = "{}: can't write file".format(out_prefix +
+                                            ".merged_related_individuals")
         raise ProgramError(msg)
 
     # Iterating on the groups
+    choosen_samples = set()
+    remaining_samples = set()
     for i, group in enumerate(final_samples_set):
         index = str(i+1)
         for sample_1, sample_2 in status.iterkeys():
@@ -99,6 +103,19 @@ def merge_related_samples(file_name, out_prefix, no_status):
                 if not no_status:
                     to_print.append(status[(sample_1, sample_2)])
                 print >>output_file, "\t".join(to_print)
+
+        # Choose a random sample from the group
+        choosen = random.choice(list(group))
+        choosen_samples.add(choosen)
+        remaining_samples |= group - {choosen}
+
+    # Printing the files
+    with open(out_prefix + ".choosen_related_individuals", "wb") as choosen_file:
+        for sample_id in choosen_samples:
+            print >>choosen_file, "\t".join(sample_id)
+    with open(out_prefix + ".discarded_related_individuals", "wb") as discarded_file:
+        for sample_id in remaining_samples:
+            print >>discarded_file, "\t".join(sample_id)
 
     # Closing the output file
     output_file.close()
