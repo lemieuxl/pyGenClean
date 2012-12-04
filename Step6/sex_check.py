@@ -7,6 +7,8 @@ import subprocess
 
 import numpy as npy
 
+import StatGenDataCleanUp.Step6.gender_plot as gender_plot
+import StatGenDataCleanUp.Step6.baf_lrr_plot as baf_lrr_plot
 from PlinkUtils import createRowFromPlinkSpacedOutput
 
 def main(argString=None):
@@ -31,9 +33,9 @@ def main(argString=None):
         # Reading plink "check-sex" output file
         print "   - Reading Plink's sex check output to find sex problems"
         hasSexProblems = readCheckSexFile(args.out + ".sexcheck",
-                                        args.out + ".list_problem_sex",
-                                        args.out + ".list_problem_sex_ids",
-                                        args.femaleF, args.maleF)
+                                          args.out + ".list_problem_sex",
+                                          args.out + ".list_problem_sex_ids",
+                                          args.femaleF, args.maleF)
 
     if hasSexProblems is not None and hasSexProblems:
         # Run plink to recode chr 23 in a ped format
@@ -54,6 +56,51 @@ def main(argString=None):
             computeNoCall(args.out + ".chr24_recodeA.raw")
         else:
             print "   - Not enough markers on chr24"
+
+        # If required, let's plot the gender plot
+        if args.gender_plot:
+            print "   - Creating the gender plot"
+            createGenderPlot(args.bfile, args.sex_chr_intensities,
+                             args.out + ".list_problem_sex",
+                             args.gender_plot_format, args.out)
+
+        # If required, let's plot the LRR and BAF plot
+        if args.lrr_baf:
+            print "   - Creating the LRR and BAF plot"
+            createLrrBafPlot(args.bfile, args.lrr_baf_raw_dir,
+                             args.out + ".list_problem_sex_ids",
+                             args.lrr_baf_format, args.out)
+
+
+def createGenderPlot(bfile, intensities, problematic_samples, format,
+                     out_prefix):
+    """Creates the gender plot."""
+    gender_plot_options = ["--bfile", bfile, "--intensities", intensities,
+                           "--sex-problems", problematic_samples, "--format",
+                           format, "--out", out_prefix]
+    try:
+        gender_plot.main(gender_plot_options)
+    except gender_plot.ProgramError as e:
+        msg = "gender plot: {}".format(e)
+        raise ProgramError(msg)
+
+
+def createLrrBafPlot(bfile, raw_dir, problematic_samples, format, out_prefix):
+    """Creates the LRR and BAF plot."""
+    # First, we create an output directory
+    dir_name = out_prefix + ".LRR_BAF"
+    if not os.path.isdir(dir_name):
+        os.mkdir(dir_name)
+
+    # The options
+    baf_lrr_plot_options = ["--problematic-samples", problematic_samples,
+                            "--raw-dir", raw_dir, "--format", format, "--out",
+                            os.path.join(dir_name, "baf_lrr")]
+    try:
+        baf_lrr_plot.main(baf_lrr_plot_options)
+    except baf_lrr_plot.ProgramError as e:
+        msg = "BAF LRR plot: {}".format(e)
+        raise ProgramError(msg)
 
 
 def checkBim(fileName, minNumber, chromosome):
@@ -324,6 +371,12 @@ def checkArgs(args):
                "positive".format(args.nbChr23))
         raise ProgramError(msg)
 
+    # If we ask for LRR and BAF, we need a directory
+    if args.lrr_baf:
+        if not os.path.isdir(args.lrr_baf_raw_dir):
+            msg = "{}: no such directory".format(args.lrr_baf_raw_dir)
+            raise ProgramError(msg)
+
     return True
 
 
@@ -394,6 +447,32 @@ group.add_argument("--nbChr23", type=int, metavar="INT", default=50,
                     help=("The minimum number of markers on chromosome 23 "
                           "before computing Plink's sex check [default: "
                           "%(default)d]"))
+group = parser.add_argument_group("Gender Plot")
+group.add_argument("--gender-plot", action="store_true",
+                   help=("Create the gender plot (summarized chr Y "
+                         "intensities in function of summarized chr X "
+                         "intensities) for problematic samples."))
+group.add_argument("--sex-chr-intensities", type=str, metavar="FILE",
+                   help=("A file containing alleles intensities for each of "
+                         "the markers located on the X and Y chromosome for "
+                         "the gender plot."))
+group.add_argument("--gender-plot-format", type=str, metavar="FORMAT", default="png",
+                   choices=["png", "ps", "pdf", "X11"],
+                   help=("The output file format for the gender plot (png, "
+                         "ps, pdf, or X11 formats are available). "
+                         "[default: %(default)s]"))
+group = parser.add_argument_group("LRR and BAF Plot")
+group.add_argument("--lrr-baf", action="store_true",
+                   help=("Create the LRR and BAF plot for problematic "
+                         "samples"))
+group.add_argument("--lrr-baf-raw-dir", type=str, metavar="DIR",
+                   help=("Directory or list of directories containing "
+                         "information about every samples (BAF and LRR)."))
+group.add_argument("--lrr-baf-format", type=str, metavar="FORMAT", default="png",
+                   choices=["png", "ps", "pdf", "X11"],
+                   help=("The output file format for the LRR and BAF plot "
+                         "(png, ps, pdf, or X11 formats are available). "
+                         "[default: %(default)s]"))
 # The OUTPUT files
 group = parser.add_argument_group("Output File")
 group.add_argument("--out", type=str, metavar="FILE", default="sexcheck",

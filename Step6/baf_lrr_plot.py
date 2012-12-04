@@ -291,8 +291,6 @@ group.add_argument("--out", type=str, metavar="FILE",
                     help=("The prefix of the output files. [default: "
                             "%(default)s]"))
 
-args = parser.parse_args()
-
 if __name__ == "__main__":
     try:
         main()

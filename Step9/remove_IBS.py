@@ -9,10 +9,6 @@ import subprocess
 from collections import defaultdict
 
 import numpy as npy
-import matplotlib as mpl
-mpl.use("Agg")
-import matplotlib.pyplot as plt
-plt.ioff()
 from PlinkUtils import createRowFromPlinkSpacedOutput
 from StatGenDataCleanUp.Step9.merge_related_samples import merge_related_samples
 
@@ -66,6 +62,11 @@ def main(argString=None):
 
 def plot_related_data(x, y, code, ylabel, fileName, options):
     """Plot Z1 and Z2 in function of IBS2* ratio."""
+    import matplotlib as mpl
+    mpl.use("Agg")
+    import matplotlib.pyplot as plt
+    plt.ioff()
+
     fig = plt.figure()
     ax = fig.add_subplot(111)
 
