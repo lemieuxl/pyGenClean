@@ -67,7 +67,7 @@ def plot_baf_lrr(file_names, options):
     """Plot BAF and LRR for a list of files."""
     # importing important stuff
     import matplotlib as mpl
-    if options.format != "X11":
+    if options.format != "X11" and mpl.get_backend() != "agg":
         mpl.use("Agg")
     import matplotlib.pyplot as plt
     if options.format != "X11":

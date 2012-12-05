@@ -63,7 +63,8 @@ def main(argString=None):
 def plot_related_data(x, y, code, ylabel, fileName, options):
     """Plot Z1 and Z2 in function of IBS2* ratio."""
     import matplotlib as mpl
-    mpl.use("Agg")
+    if mpl.get_backend() != "agg":
+        mpl.use("Agg")
     import matplotlib.pyplot as plt
     plt.ioff()
 

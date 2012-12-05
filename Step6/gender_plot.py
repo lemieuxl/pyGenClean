@@ -107,7 +107,7 @@ def plot_gender(data, options):
         raise ProgramError(msg)
 
     import matplotlib as mpl
-    if options.format != "X11":
+    if options.format != "X11" and mpl.get_backend() != "agg":
         mpl.use("Agg")
     import matplotlib.pyplot as plt
     if options.format != "X11":
