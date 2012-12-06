@@ -85,14 +85,16 @@ def find_outliers(mds, centers, center_info, ref_pop, options):
     # Plotting each of the clusters with the initial center
     cluster_outlyingness = []
     cluster_max_distances = []
+    plots = []
     for label in xrange(3):
         # Subsetting the data
         subset_mds = mds[k_means.labels_ == label]
         subset_data = data[k_means.labels_ == label]
 
         # Plotting the cluster
-        axe.plot(subset_mds["c1"], subset_mds["c2"], "o", mec=colors[label],
-                 mfc=colors[label], ms=1)
+        p, = axe.plot(subset_mds["c1"], subset_mds["c2"], "o",
+                      mec=colors[label], mfc=colors[label], ms=1)
+        plots.append(p)
 
         # Plotting the cluster center (the real one)
         axe.plot(centers[label][0], centers[label][1], "o", mec="#000000",
@@ -103,6 +105,10 @@ def find_outliers(mds, centers, center_info, ref_pop, options):
         max_distance = npy.max(distances)
         cluster_outlyingness.append(npy.true_divide(distances, max_distance))
         cluster_max_distances.append(max_distance)
+
+    # The legend
+    axe.legend(plots, ref_pop_name, "best", numpoints=1, fancybox=True,
+               fontsize=8).get_frame().set_alpha(0.5)
 
     # Saving the figure
     if options.format == "X11":
@@ -127,6 +133,7 @@ def find_outliers(mds, centers, center_info, ref_pop, options):
     axe.set_ylabel(options.yaxis)
 
     # Plotting each of the clusters with the initial center
+    plots = []
     for label in xrange(3):
         # Subsetting the data
         subset_mds = mds[k_means.labels_ == label]
@@ -137,8 +144,9 @@ def find_outliers(mds, centers, center_info, ref_pop, options):
         outliers = (outlyingness > 0.216).flatten()
 
         # Plotting the cluster (without outliers)
-        axe.plot(subset_mds[~outliers]["c1"], subset_mds[~outliers]["c2"], "o",
-                 mec=colors[label], mfc=colors[label], ms=1)
+        p, = axe.plot(subset_mds[~outliers]["c1"], subset_mds[~outliers]["c2"],
+                      "o", mec=colors[label], mfc=colors[label], ms=1)
+        plots.append(p)
 
         # Plotting the cluster (only outliers)
         axe.plot(subset_mds[outliers]["c1"], subset_mds[outliers]["c2"], "o",
@@ -152,6 +160,10 @@ def find_outliers(mds, centers, center_info, ref_pop, options):
         distances = euclidean_distances(subset_data, centers[label])
         max_distance = npy.max(distances)
         cluster_outlyingness.append(npy.true_divide(distances, max_distance))
+
+    # The legend
+    axe.legend(plots, ref_pop_name, "best", numpoints=1, fancybox=True,
+               fontsize=8).get_frame().set_alpha(0.5)
 
     # Saving the figure
     if options.format == "X11":
