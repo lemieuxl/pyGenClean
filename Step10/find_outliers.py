@@ -75,13 +75,16 @@ def find_outliers(mds, centers, center_info, ref_pop, options):
     axe.set_xlabel(options.xaxis)
     axe.set_ylabel(options.yaxis)
 
+    # The population name
+    ref_pop_name = ["CEU", "YRI", "JPT-CHB"]
+
     # The colors
     colors = ["#CC0000", "#669900", "#0099CC"]
+    outlier_colors = ["#FFCACA", "#E2F0B6", "#C5EAF8"]
 
     # Plotting each of the clusters with the initial center
-    cluster_distances = []
-    cluster_means = []
-    cluster_stds = []
+    cluster_outlyingness = []
+    cluster_max_distances = []
     for label in xrange(3):
         # Subsetting the data
         subset_mds = mds[k_means.labels_ == label]
@@ -95,17 +98,66 @@ def find_outliers(mds, centers, center_info, ref_pop, options):
         axe.plot(centers[label][0], centers[label][1], "o", mec="#000000",
                  mfc="#FFBB33", ms=6)
 
-        # Computing the distances
+        # Computing the distances and outlyingness
         distances = euclidean_distances(subset_data, centers[label])
-        cluster_distances.append(distances)
-        cluster_means.append(npy.mean(distances))
-        cluster_stds.append(npy.std(distances))
+        max_distance = npy.max(distances)
+        cluster_outlyingness.append(npy.true_divide(distances, max_distance))
+        cluster_max_distances.append(max_distance)
 
     # Saving the figure
     if options.format == "X11":
         plt.show()
     else:
         plt.savefig("{}.before.{}".format(options.out, options.format), dpi=300)
+
+    # Creating the figure and axes
+    fig, axe = plt.subplots(1, 1)
+
+    # Setting the axe
+    axe.xaxis.set_ticks_position("bottom")
+    axe.yaxis.set_ticks_position("left")
+    axe.spines["top"].set_visible(False)
+    axe.spines["right"].set_visible(False)
+    axe.spines["bottom"].set_position(("outward", 9))
+    axe.spines["left"].set_position(("outward", 9))
+
+    # Setting the title and labels
+    axe.set_title("After finding outliers", weight="bold")
+    axe.set_xlabel(options.xaxis)
+    axe.set_ylabel(options.yaxis)
+
+    # Plotting each of the clusters with the initial center
+    for label in xrange(3):
+        # Subsetting the data
+        subset_mds = mds[k_means.labels_ == label]
+        subset_data = data[k_means.labels_ == label]
+        outlyingness = cluster_outlyingness[label]
+
+        # Finding the outliers
+        outliers = (outlyingness > 0.216).flatten()
+
+        # Plotting the cluster (without outliers)
+        axe.plot(subset_mds[~outliers]["c1"], subset_mds[~outliers]["c2"], "o",
+                 mec=colors[label], mfc=colors[label], ms=1)
+
+        # Plotting the cluster (only outliers)
+        axe.plot(subset_mds[outliers]["c1"], subset_mds[outliers]["c2"], "o",
+                 mec=outlier_colors[label], mfc=outlier_colors[label], ms=1)
+
+        # Plotting the cluster center (the real one)
+        axe.plot(centers[label][0], centers[label][1], "o", mec="#000000",
+                 mfc="#FFBB33", ms=6)
+
+        # Computing the distances and outlyingness
+        distances = euclidean_distances(subset_data, centers[label])
+        max_distance = npy.max(distances)
+        cluster_outlyingness.append(npy.true_divide(distances, max_distance))
+
+    # Saving the figure
+    if options.format == "X11":
+        plt.show()
+    else:
+        plt.savefig("{}.after.{}".format(options.out, options.format), dpi=300)
 
     # Finding the cluster number for CEU
     ceu_mds = mds["pop"] == "CEU"
