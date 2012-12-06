@@ -599,6 +599,7 @@ def read_config_file(filename):
     """Reads the configuration file."""
     # Creating the config parser
     config = ConfigParser.RawConfigParser(allow_no_value=True)
+    config.optionxform = str
     config.read(filename)
 
     # Checking the section names
