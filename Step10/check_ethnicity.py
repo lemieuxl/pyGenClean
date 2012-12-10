@@ -8,6 +8,7 @@ import subprocess
 import PlinkUtils.plot_MDS as PlotMDS
 from PlinkUtils import createRowFromPlinkSpacedOutput
 import StatGenDataCleanUp.Step9.remove_IBS as TheStep9
+import StatGenDataCleanUp.Step10.find_outliers as find_outliers
 from StatGenDataCleanUp.Step2.duplicated_snps import flipGenotype
  
 class Dummy(object):
@@ -104,6 +105,24 @@ def main(argString=None):
     print "   - Creating the MDS plot"
     plotMDS(args.out + ".mds.mds", args.out + ".mds",
             args.out + ".population_file", args)
+
+    # Finding the outliers
+    find_the_outliers(args.out + ".mds.mds", args.out + ".population_file",
+                      args.outliers_of, args.multiplier, args.out)
+
+
+def find_the_outliers(mds_file_name, population_file_name, ref_pop_name,
+                  multiplier, out_prefix):
+    """Finds the outliers of a given population."""
+    options = ["--mds", mds_file_name, "--population-file",
+               population_file_name, "--outliers-of", ref_pop_name,
+               "--multiplier", multiplier, "--out", out_prefix]
+
+    try:
+        find_outliers.main(options)
+    except find_outliers.ProgramError as e:
+        msg = "find_outliers: {}".format(e)
+        raise ProgramError(msg)
 
 
 def createPopulationFile(inputFiles, labels, outputFileName):
@@ -671,6 +690,9 @@ group.add_argument("--line-per-file-for-sge", type=int, metavar="INT",
 group.add_argument("--nb-components", type=int, metavar="INT", default=10,
                     help=("The number of component to compute. [default: "
                           "%(default)d]"))
+# The outlier options
+group = parser.add_argument_group("Outlier Options")
+find_outliers.add_custom_options(group)
 # The MDS plotting options
 group = parser.add_argument_group("MDS Plot Options")
 PlotMDS.addCustomOptions(group)

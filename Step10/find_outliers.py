@@ -356,6 +356,26 @@ def parseArgs(argString=None): # pragma: no cover
     return args
 
 
+def add_custom_options(parser):
+    """Adds custom options to a parser."""
+    parser.add_argument("--outliers-of", type=str, metavar="POP", default="CEU",
+                        choices=["CEU", "YRI", "JPT-CHB"],
+                        help=("Finds the ouliers of this population. "
+                              "[default: %(default)s]"))
+    parser.add_argument("--multiplier", type=float, metavar="FLOAT", default=1.9,
+                        help=("To find the outliers, we look for more than "
+                              "x times the cluster standard deviation. "
+                              "[default: %(default).1f]"))
+    parser.add_argument("--xaxis", type=str, metavar="COMPONENT", default="C1",
+                        choices=["C{}".format(i) for i in xrange(1, 11)],
+                        help=("The component to use for the X axis. "
+                              "[default: %(default)s]"))
+    parser.add_argument("--yaxis", type=str, metavar="COMPONENT", default="C2",
+                        choices=["C{}".format(i) for i in xrange(1, 11)],
+                        help=("The component to use for the Y axis. "
+                              "[default: %(default)s]"))
+
+
 class ProgramError(Exception):
     """An :py:class:`Exception` raised in case of a problem.
     
@@ -389,28 +409,13 @@ group.add_argument("--population-file", type=str, metavar="FILE", required=True,
                    help=("A population file containing the following columns "
                         "(without a header): FID, IID and POP. POP should be "
                         "one of 'CEU', 'JPT-CHB', 'YRI' and SOURCE."))
-group.add_argument("--outliers-of", type=str, metavar="POP", default="CEU",
-                   choices=["CEU", "YRI", "JPT-CHB"],
-                   help=("Finds the ouliers of this population. "
-                         "[default: %(default)s]"))
-group.add_argument("--multiplier", type=float, metavar="FLOAT", default=1.9,
-                   help=("To find the outliers, we look for more than "
-                         "x times the cluster standard deviation. "
-                         "[default: %(default)f]"))
 # The options
 group = parser.add_argument_group("Options")
+add_custom_options(group)
 group.add_argument("--format", type=str, metavar="FORMAT", default="png",
                     choices=["png", "ps", "pdf"],
                     help=("The output file format (png, ps, or pdf "
                           "formats are available). [default: %(default)s]"))
-group.add_argument("--xaxis", type=str, metavar="COMPONENT", default="C1",
-                   choices=["C{}".format(i) for i in xrange(1, 11)],
-                   help=("The component to use for the X axis. "
-                         "[default: %(default)s]"))
-group.add_argument("--yaxis", type=str, metavar="COMPONENT", default="C2",
-                   choices=["C{}".format(i) for i in xrange(1, 11)],
-                   help=("The component to use for the Y axis. "
-                         "[default: %(default)s]"))
 # The OUTPUT files
 group = parser.add_argument_group("Output File")
 group.add_argument("--out", type=str, metavar="FILE",
