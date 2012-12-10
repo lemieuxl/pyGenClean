@@ -29,14 +29,18 @@ def main(argString=None):
     print "   - Finding reference population centers"
     centers, center_info = find_ref_centers(mds)
 
-##     # Computing 20 clusters to find biggest radius
-##     print "   - Finding biggest radius of 20 clusters"
-##     radius = find_biggest_radius(mds)
-##     print "      - Max={}".format(radius)
-
     # Computes three clusters using KMeans and the reference cluster centers
-    print "   - Finding outliers for the {} population".format(args.outliers_of)
-    find_outliers(mds, centers, center_info, args.outliers_of, args)
+    print "   - Finding outliers"
+    outliers = find_outliers(mds, centers, center_info, args.outliers_of, args)
+    print ("   - There are {} outliers for the {} "
+           "population".format(len(outliers), args.outliers_of))
+    try:
+        with open(args.out + ".outliers", 'wb') as output_file:
+            for sample_id in outliers:
+                print >>output_file, "\t".join(sample_id)
+    except IOError:
+        msg = "{}: can't write file".format(args.out + ".outliers")
+        raise ProgramError(msg)
 
 
 def find_outliers(mds, centers, center_info, ref_pop, options):
@@ -48,6 +52,7 @@ def find_outliers(mds, centers, center_info, ref_pop, options):
     import matplotlib.pyplot as plt
     if options.format != "X11":
         plt.ioff()
+    import matplotlib.mlab as mlab
 
     from sklearn.cluster import KMeans
     from sklearn.metrics.pairwise import euclidean_distances
@@ -60,20 +65,41 @@ def find_outliers(mds, centers, center_info, ref_pop, options):
     k_means.fit_predict(data)
 
     # Creating the figure and axes
-    fig, axe = plt.subplots(1, 1)
+    fig_before, axe_before = plt.subplots(1, 1)
+    fig_after, axe_after = plt.subplots(1, 1)
+    fig_outliers, axe_outliers = plt.subplots(1, 1)
 
     # Setting the axe
-    axe.xaxis.set_ticks_position("bottom")
-    axe.yaxis.set_ticks_position("left")
-    axe.spines["top"].set_visible(False)
-    axe.spines["right"].set_visible(False)
-    axe.spines["bottom"].set_position(("outward", 9))
-    axe.spines["left"].set_position(("outward", 9))
+    axe_before.xaxis.set_ticks_position("bottom")
+    axe_before.yaxis.set_ticks_position("left")
+    axe_before.spines["top"].set_visible(False)
+    axe_before.spines["right"].set_visible(False)
+    axe_before.spines["bottom"].set_position(("outward", 9))
+    axe_before.spines["left"].set_position(("outward", 9))
+    axe_after.xaxis.set_ticks_position("bottom")
+    axe_after.yaxis.set_ticks_position("left")
+    axe_after.spines["top"].set_visible(False)
+    axe_after.spines["right"].set_visible(False)
+    axe_after.spines["bottom"].set_position(("outward", 9))
+    axe_after.spines["left"].set_position(("outward", 9))
+    axe_outliers.xaxis.set_ticks_position("bottom")
+    axe_outliers.yaxis.set_ticks_position("left")
+    axe_outliers.spines["top"].set_visible(False)
+    axe_outliers.spines["right"].set_visible(False)
+    axe_outliers.spines["bottom"].set_position(("outward", 9))
+    axe_outliers.spines["left"].set_position(("outward", 9))
 
     # Setting the title and labels
-    axe.set_title("Before finding outliers", weight="bold")
-    axe.set_xlabel(options.xaxis)
-    axe.set_ylabel(options.yaxis)
+    axe_before.set_title("Before finding outliers", weight="bold")
+    axe_before.set_xlabel(options.xaxis)
+    axe_before.set_ylabel(options.yaxis)
+    axe_after.set_title("After finding outliers\n($> {} "
+                        "\\sigma$)".format(options.multiplier), weight="bold")
+    axe_after.set_xlabel(options.xaxis)
+    axe_after.set_ylabel(options.yaxis)
+    axe_outliers.set_title("Outliers", weight="bold")
+    axe_outliers.set_xlabel(options.xaxis)
+    axe_outliers.set_ylabel(options.yaxis)
 
     # The population name
     ref_pop_name = ["CEU", "YRI", "JPT-CHB"]
@@ -83,149 +109,112 @@ def find_outliers(mds, centers, center_info, ref_pop, options):
     outlier_colors = ["#FFCACA", "#E2F0B6", "#C5EAF8"]
 
     # Plotting each of the clusters with the initial center
-    cluster_outlyingness = []
-    cluster_max_distances = []
-    plots = []
+    plots_before = []
+    plots_after = []
+    plots_outliers = []
+    plot_outliers = None
+    plot_not_outliers = None
+    outliers_set = set()
     for label in xrange(3):
         # Subsetting the data
         subset_mds = mds[k_means.labels_ == label]
         subset_data = data[k_means.labels_ == label]
 
         # Plotting the cluster
-        p, = axe.plot(subset_mds["c1"], subset_mds["c2"], "o",
-                      mec=colors[label], mfc=colors[label], ms=1)
-        plots.append(p)
+        p, = axe_before.plot(subset_mds["c1"], subset_mds["c2"], "o",
+                             mec=colors[label], mfc=colors[label], ms=2,
+                             clip_on=False)
+        plots_before.append(p)
 
         # Plotting the cluster center (the real one)
-        axe.plot(centers[label][0], centers[label][1], "o", mec="#000000",
-                 mfc="#FFBB33", ms=6)
+        axe_before.plot(centers[label][0], centers[label][1], "o",
+                        mec="#000000", mfc="#FFBB33", ms=6, clip_on=False)
 
-        # Computing the distances and outlyingness
+        # Computing the distances
         distances = euclidean_distances(subset_data, centers[label])
-        max_distance = npy.max(distances)
-        cluster_outlyingness.append(npy.true_divide(distances, max_distance))
-        cluster_max_distances.append(max_distance)
 
-    # The legend
-    axe.legend(plots, ref_pop_name, "best", numpoints=1, fancybox=True,
-               fontsize=8).get_frame().set_alpha(0.5)
+        # Finding the outliers (that are not in the reference populations
+        sigma = npy.sqrt(npy.true_divide(npy.sum(distances ** 2),
+                                         len(distances) - 1))
+        outliers = npy.logical_and((distances > options.multiplier * sigma).flatten(),
+                                   subset_mds != ref_pop_name[label])
+        print "      - {} outliers for the {} cluster".format(npy.sum(outliers),
+                                                              ref_pop_name[label])
 
-    # Saving the figure
-    if options.format == "X11":
-        plt.show()
-    else:
-        plt.savefig("{}.before.{}".format(options.out, options.format), dpi=300)
+        # Saving the outliers
+        if ref_pop_name[label] != options.outliers_of:
+            # This is not the population we want, hence everybody is an outlier
+            # (we don't include the reference population).
+            outlier_mds = subset_mds[subset_mds["pop"] != ref_pop_name[label]]
+            outliers_set |= set([(i["fid"], i["iid"]) for i in outlier_mds])
 
-    # Creating the figure and axes
-    fig, axe = plt.subplots(1, 1)
+            # Plotting all samples that are not part of the reference
+            # populations
+            axe_outliers.plot(subset_mds["c1"][subset_mds["pop"] != ref_pop_name[label]],
+                              subset_mds["c2"][subset_mds["pop"] != ref_pop_name[label]],
+                              "o", mec="#555555", mfc="#555555", ms=2,
+                              clip_on=False)
+        else:
+            # This is the population we want, hence only the real outliers are
+            # outliers (we don't include the reference population)
+            outlier_mds = subset_mds[npy.logical_and(subset_mds["pop"] != ref_pop_name[label],
+                                                     outliers)]
 
-    # Setting the axe
-    axe.xaxis.set_ticks_position("bottom")
-    axe.yaxis.set_ticks_position("left")
-    axe.spines["top"].set_visible(False)
-    axe.spines["right"].set_visible(False)
-    axe.spines["bottom"].set_position(("outward", 9))
-    axe.spines["left"].set_position(("outward", 9))
+            # Plotting the outliers
+            plot_outliers, = axe_outliers.plot(outlier_mds["c1"],
+                                               outlier_mds["c2"], "o",
+                                               mec="#555555", mfc="#555555",
+                                               ms=2, clip_on=False)
 
-    # Setting the title and labels
-    axe.set_title("After finding outliers", weight="bold")
-    axe.set_xlabel(options.xaxis)
-    axe.set_ylabel(options.yaxis)
-
-    # Plotting each of the clusters with the initial center
-    plots = []
-    for label in xrange(3):
-        # Subsetting the data
-        subset_mds = mds[k_means.labels_ == label]
-        subset_data = data[k_means.labels_ == label]
-        outlyingness = cluster_outlyingness[label]
-
-        # Finding the outliers
-        outliers = (outlyingness > 0.216).flatten()
+            # Plotting the not outliers
+            plot_not_outliers, = axe_outliers.plot(subset_mds["c1"][npy.logical_and(~outliers, subset_mds["pop"] != ref_pop_name[label])],
+                                                   subset_mds["c2"][npy.logical_and(~outliers, subset_mds["pop"] != ref_pop_name[label])],
+                                                   "o", mec="#FFBB33",
+                                                   mfc="#FFBB33", ms=2,
+                                                   clip_on=False)
+            outliers_set |= set([(i["fid"], i["iid"]) for i in outlier_mds])
 
         # Plotting the cluster (without outliers)
-        p, = axe.plot(subset_mds[~outliers]["c1"], subset_mds[~outliers]["c2"],
-                      "o", mec=colors[label], mfc=colors[label], ms=1)
-        plots.append(p)
+        p, = axe_after.plot(subset_mds[~outliers]["c1"],
+                            subset_mds[~outliers]["c2"], "o", mec=colors[label],
+                            mfc=colors[label], ms=2, clip_on=False)
+        plots_after.append(p)
 
         # Plotting the cluster (only outliers)
-        axe.plot(subset_mds[outliers]["c1"], subset_mds[outliers]["c2"], "o",
-                 mec=outlier_colors[label], mfc=outlier_colors[label], ms=1)
+        axe_after.plot(subset_mds[outliers]["c1"], subset_mds[outliers]["c2"],
+                       "o", mec=outlier_colors[label],
+                       mfc=outlier_colors[label], ms=2, clip_on=False)
+
+        # Plotting only the reference populations
+        p, = axe_outliers.plot(subset_mds["c1"][subset_mds["pop"] == ref_pop_name[label]],
+                               subset_mds["c2"][subset_mds["pop"] == ref_pop_name[label]],
+                               "o", mec=colors[label], mfc=colors[label], ms=2,
+                               clip_on=False)
+        plots_outliers.append(p)
 
         # Plotting the cluster center (the real one)
-        axe.plot(centers[label][0], centers[label][1], "o", mec="#000000",
-                 mfc="#FFBB33", ms=6)
+        axe_after.plot(centers[label][0], centers[label][1], "o", mec="#000000",
+                       mfc="#FFBB33", ms=6)
 
-        # Computing the distances and outlyingness
-        distances = euclidean_distances(subset_data, centers[label])
-        max_distance = npy.max(distances)
-        cluster_outlyingness.append(npy.true_divide(distances, max_distance))
-
-    # The legend
-    axe.legend(plots, ref_pop_name, "best", numpoints=1, fancybox=True,
-               fontsize=8).get_frame().set_alpha(0.5)
+    # The legends
+    axe_before.legend(plots_before, ref_pop_name, "best", numpoints=1,
+                      fancybox=True, fontsize=8).get_frame().set_alpha(0.5)
+    axe_after.legend(plots_after, ref_pop_name, "best", numpoints=1,
+                     fancybox=True, fontsize=8).get_frame().set_alpha(0.5)
+    axe_outliers.legend(plots_outliers + [plot_not_outliers, plot_outliers],
+                        ref_pop_name + ["SOURCE", "OUTLIERS"], "best",
+                        numpoints=1, fancybox=True,
+                        fontsize=8).get_frame().set_alpha(0.5)
 
     # Saving the figure
-    if options.format == "X11":
-        plt.show()
-    else:
-        plt.savefig("{}.after.{}".format(options.out, options.format), dpi=300)
+    fig_before.savefig("{}.before.{}".format(options.out, options.format),
+                       dpi=300)
+    fig_after.savefig("{}.after.{}".format(options.out, options.format),
+                      dpi=300)
+    fig_outliers.savefig("{}.outliers.{}".format(options.out, options.format),
+                         dpi=300)
 
-    # Finding the cluster number for CEU
-    ceu_mds = mds["pop"] == "CEU"
-    ceu_label = npy.unique(k_means.labels_[ceu_mds])
-
-##     # Changing the labels
-##     new_labels = k_means.labels_.copy()
-##     for label in xrange(3):
-##         outliers = npy.logical_or(cluster_distances[label] >
-##                                     cluster_means[label] +
-##                                     options.multiply_std_by *
-##                                     cluster_stds[label],
-##                                   cluster_distances[label] <
-##                                     cluster_means[label] -
-##                                     options.multiply_std_by *
-##                                     cluster_stds[label])
-##         print new_labels[k_means.labels_ == label][outliers.flatten()] = label - 100
-## 
-##     print npy.unique(new_labels)
-
-def find_biggest_radius(mds):
-    """Finds the biggest radius after KMeans with 20 clusters."""
-    # Formatting the data
-    data = npy.array(zip(mds["c1"], mds["c2"]))
-
-    # Configuring and runnning the KMeans
-    k_means = KMeans(init="k-means++", n_clusters=20, n_init=300)
-    k_means.fit(data)
-
-    # Finding the bigguest radius (skipping clusters with less than 5
-    # invididuals)
-    biggest_radius = 0
-    for label in npy.unique(k_means.labels_):
-        # Getting the subset of MDS for this cluster
-        current_cluster_mds = mds[k_means.labels_ == label]
-
-        # Skip if less than 5 individuals
-        if len(current_cluster_mds) <= 5:
-            continue
-
-        # This is the center for this cluster
-        current_cluster_center = k_means.cluster_centers_[label]
-
-        # Computing the distance between each point of this cluster and the
-        # center
-        current_distances = euclidean_distances(data[k_means.labels_ == label],
-                                                current_cluster_center)
-
-        # The maximal distance
-        current_max_distance = npy.max(current_distances)
-
-        # Is this the maximal distance
-        if current_max_distance > biggest_radius:
-            biggest_radius = current_max_distance
-
-    return biggest_radius
+    return outliers_set
 
 
 def find_ref_centers(mds):
@@ -235,6 +224,7 @@ def find_ref_centers(mds):
     yri_mds = mds[mds["pop"] == "YRI"]
     asn_mds = mds[mds["pop"] == "JPT-CHB"]
 
+    # Computing the centers
     centers = [[npy.mean(ceu_mds["c1"]), npy.mean(ceu_mds["c2"])],
                [npy.mean(yri_mds["c1"]), npy.mean(yri_mds["c2"])],
                [npy.mean(asn_mds["c1"]), npy.mean(asn_mds["c2"])]]
@@ -308,128 +298,6 @@ def read_population_file(file_name):
 
     return pops
 
-
-## def plot_baf_lrr(file_names, options):
-##     """Plot BAF and LRR for a list of files."""
-##     # importing important stuff
-##     import matplotlib as mpl
-##     if options.format != "X11" and mpl.get_backend() != "agg":
-##         mpl.use("Agg")
-##     import matplotlib.pyplot as plt
-##     if options.format != "X11":
-##         plt.ioff()
-## 
-##     # For each of the sample/files
-##     for sample, file_name in file_names.iteritems():
-##         data = []
-## 
-##         # Reading the file
-##         open_func = open
-##         if file_name.endswith(".gz"):
-##             open_func = gzip.open
-##         with open_func(file_name, 'rb') as input_file:
-##             header_index = dict([(col_name, i) for i, col_name in
-##                                     enumerate(input_file.readline().rstrip("\r\n").split("\t"))])
-##             for col_name in {"Chr", "Position", "B Allele Freq", "Log R Ratio"}:
-##                 if col_name not in header_index:
-##                     msg = "{}: no column named {}".format(file_name, col_name)
-##                     raise ProgramError(msg)
-## 
-##             # Reading the dat
-##             for line in input_file:
-##                 row = line.rstrip("\r\n").split("\t")
-##                 
-##                 # We only need X and Y chromosomes
-##                 chromosome = encode_chromosome(row[header_index["Chr"]])
-##                 if chromosome not in {"X", "Y"}:
-##                     continue
-## 
-##                 # The position
-##                 position = row[header_index["Position"]]
-##                 try:
-##                     position = int(position)
-##                 except ValueError:
-##                     msg = "{}: impossible position {}".format(file_name,
-##                                                               position)
-##                     raise ProgramError(msg)
-## 
-##                 # The BAF
-##                 baf = row[header_index["B Allele Freq"]]
-##                 try:
-##                     baf = float(baf)
-##                 except ValueError:
-##                     msg = "{}: impossible baf {}".format(file_name, baf)
-##                     raise ProgramError(msg)
-## 
-##                 # The LRR
-##                 lrr = row[header_index["Log R Ratio"]]
-##                 try:
-##                     lrr = float(lrr)
-##                 except ValueError:
-##                     msg = "{}: impossible lrr {}".format(file_name, lrr)
-##                     raise ProgramError(msg)
-## 
-##                 # Saving the data
-##                 data.append((chromosome, position, lrr, baf))
-## 
-##         # Creating the numpy array
-##         data = npy.array(data, dtype=[("chr", "a1"), ("pos", int),
-##                                       ("lrr", float), ("baf", float)])
-## 
-##         # Creating the figure and axes
-##         fig, axes = plt.subplots(2, 2, figsize=(20, 8))
-##         plt.subplots_adjust(left=0.05, right=0.97, wspace=0.15, hspace=0.3)
-##         fig.suptitle(sample, fontsize=16, weight="bold")
-## 
-##         # Setting subplot properties
-##         for ax in axes.flatten():
-##             ax.xaxis.set_ticks_position("bottom")
-##             ax.yaxis.set_ticks_position("left")
-##             ax.spines["top"].set_visible(False)
-##             ax.spines["right"].set_visible(False)
-##             ax.spines["bottom"].set_position(("outward", 9))
-##             ax.spines["left"].set_position(("outward", 9))
-## 
-##         # Separating the axes
-##         x_lrr_ax, x_baf_ax, y_lrr_ax, y_baf_ax = axes.flatten(order='F')
-## 
-##         # Printing the X chromosome
-##         curr_chr = data["chr"] == "X"
-##         x_lrr_ax.plot(data["pos"][curr_chr]/1000000.0, data["lrr"][curr_chr],
-##                       "o", ms=1, mec="#0099CC",
-##                       mfc="#0099CC")[0].set_clip_on(False)
-##         x_baf_ax.plot(data["pos"][curr_chr]/1000000.0, data["baf"][curr_chr],
-##                       "o", ms=1, mec="#669900",
-##                       mfc="#669900")[0].set_clip_on(False)
-##         x_lrr_ax.axhline(y=0, color="#000000", ls="--", lw=1.2)
-##         x_baf_ax.axhline(y=0.5, color="#000000", ls="--", lw=1.2)
-##         x_lrr_ax.set_ylabel("LRR", weight="bold")
-##         x_baf_ax.set_ylabel("BAF", weight="bold")
-##         x_baf_ax.set_xlabel("Position (Mb)", weight="bold")
-##         x_lrr_ax.set_title("Chromosome X", weight="bold")
-## 
-##         # Printing the X chromosome
-##         curr_chr = data["chr"] == "Y"
-##         y_lrr_ax.plot(data["pos"][curr_chr]/1000000.0, data["lrr"][curr_chr],
-##                       "o", ms=1, mec="#0099CC",
-##                       mfc="#0099CC")[0].set_clip_on(False)
-##         y_baf_ax.plot(data["pos"][curr_chr]/1000000.0, data["baf"][curr_chr],
-##                       "o", ms=1, mec="#669900",
-##                       mfc="#669900")[0].set_clip_on(False)
-##         y_lrr_ax.axhline(y=0, color="#000000", ls="--", lw=1.2)
-##         y_baf_ax.axhline(y=0.5, color="#000000", ls="--", lw=1.2)
-##         y_lrr_ax.set_ylabel("LRR", weight="bold")
-##         y_baf_ax.set_ylabel("BAF", weight="bold")
-##         y_baf_ax.set_xlabel("Position (Mb)", weight="bold")
-##         y_lrr_ax.set_title("Chromosome Y", weight="bold")
-## 
-##         # Saving the figure
-##         if options.format == "X11":
-##             plt.show()
-##         else:
-##             plt.savefig("{}_{}_lrr_baf.{}".format(options.out, sample,
-##                                                   options.format),
-##                         dpi=300)
 
 def checkArgs(args):
     """Checks the arguments and options.
@@ -525,14 +393,15 @@ group.add_argument("--outliers-of", type=str, metavar="POP", default="CEU",
                    choices=["CEU", "YRI", "JPT-CHB"],
                    help=("Finds the ouliers of this population. "
                          "[default: %(default)s]"))
-group.add_argument("--multiply-std-by", type=int, metavar="INT", default=4,
+group.add_argument("--multiplier", type=float, metavar="FLOAT", default=1.9,
                    help=("To find the outliers, we look for more than "
-                         "mean +- (x * std). [default: %(default)d]"))
+                         "x times the cluster standard deviation. "
+                         "[default: %(default)f]"))
 # The options
 group = parser.add_argument_group("Options")
 group.add_argument("--format", type=str, metavar="FORMAT", default="png",
-                    choices=["png", "ps", "pdf", "X11"],
-                    help=("The output file format (png, ps, pdf, or X11 "
+                    choices=["png", "ps", "pdf"],
+                    help=("The output file format (png, ps, or pdf "
                           "formats are available). [default: %(default)s]"))
 group.add_argument("--xaxis", type=str, metavar="COMPONENT", default="C1",
                    choices=["C{}".format(i) for i in xrange(1, 11)],
