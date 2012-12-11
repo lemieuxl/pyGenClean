@@ -116,7 +116,7 @@ def find_the_outliers(mds_file_name, population_file_name, ref_pop_name,
     """Finds the outliers of a given population."""
     options = ["--mds", mds_file_name, "--population-file",
                population_file_name, "--outliers-of", ref_pop_name,
-               "--multiplier", multiplier, "--out", out_prefix]
+               "--multiplier", str(multiplier), "--out", out_prefix]
 
     try:
         find_outliers.main(options)
