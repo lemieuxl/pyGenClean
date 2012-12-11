@@ -274,6 +274,15 @@ def splitFile(inputFileName, linePerFile, outPrefix):
                         msg = "tmp.list%d: can't write file" % nbTmpFile
                         raise ProgramError(msg)
         tmpFile.close()
+
+        # Check if the number of line is zero (hence the last file is empty)
+        if nbLine == 0:
+            # We delete the last file
+            file_name = outPrefix + "_tmp.list{}".format(nbTmpFile)
+            if os.path.isfile(file_name):
+                os.remove(file_name)
+            nbTmpFile -= 1
+
     except IOError:
         msg = "%s: no such file" % inputFileName
         raise ProgramError(msg)
