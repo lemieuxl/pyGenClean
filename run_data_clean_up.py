@@ -23,10 +23,14 @@ import StatGenDataCleanUp.Step12.flag_hw as flag_hw
 import StatGenDataCleanUp.Misc.compare_gold_standard as compare_gold_standard
 import PlinkUtils.subset_data as SubsetData
 
+prog_version = "1.2.2"
+
 def main():
     # Getting and checking the options
     args = parse_args()
     check_args(args)
+
+    print "Data Clean Up version {}".format(prog_version)
 
     # Reading the configuration file
     order, conf = read_config_file(args.conf)
@@ -722,7 +726,7 @@ class ProgramError(Exception):
 
 # The parser object
 prog = "run_data_clean_up"
-desc = """Runs the data clean up."""
+desc = """Runs the data clean up (version {}).""".format(prog_version)
 parser = argparse.ArgumentParser(description=desc, prog=prog)
 group = parser.add_argument_group("Input File")
 group.add_argument("--bfile", type=str, metavar="FILE",
