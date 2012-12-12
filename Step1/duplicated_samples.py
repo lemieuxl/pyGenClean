@@ -533,15 +533,15 @@ def computeStatistics(tped, tfam, samples, oldSamples, prefix):
 
     We don't compute completion and concordance for markers on chromosome 24 is
     sample is female.
-    
-    Completion
-    ----------
+
+
+    **Completion**
 
     We consider a genotype as being missing if sample is male and marker is
     heterozygous on chromosome 23 and 24. Also, code for missing genotype is 0.
 
-    Concordance
-    -----------
+
+    **Concordance**
 
     For each samples, we find the duplicated ones, and compute the mean
     concordance by pairs. For each marker, if both are genotypes are not

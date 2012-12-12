@@ -31,7 +31,7 @@ def main(argString=None):
 
 
 def extractSignificantSNPs(prefix):
-    """Extract significant SNPs in the *.fisher file."""
+    """Extract significant SNPs in the fisher file."""
     fileNames = glob.glob(prefix + ".*.assoc.fisher")
 
     snpNames = set()

@@ -469,8 +469,7 @@ def run_subset_data(in_prefix, in_type, out_prefix, options):
         required_type = "file"
     if "--is-bfile" in set(options):
         required_type = "bfile"
-    check_input_files(in_prefix, in_type, required_type,
-                      os.path.basename(out_prefix))
+    check_input_files(in_prefix, in_type, required_type)
 
     # We need to inject the name of the input file and the name of the output
     # prefix
@@ -495,7 +494,14 @@ def run_subset_data(in_prefix, in_type, out_prefix, options):
 
 
 def run_command(command):
-    """Run a command using subprocesses."""
+    """Run a command using subprocesses.
+
+    :param command: the command to run.
+    :type command: list of string
+
+    Tries to run a command. If it fails, raise a :py:class:`ProgramError`.
+
+    """
     output = None
     try:
         output = subprocess.check_output(command, stderr=subprocess.STDOUT,
@@ -505,8 +511,23 @@ def run_command(command):
         raise ProgramError(msg)
 
 
-def check_input_files(prefix, the_type, required_type, name):
-    """Check that the file is of a certain file type."""
+def check_input_files(prefix, the_type, required_type):
+    """Check that the file is of a certain file type.
+
+    :param prefix: the prefix of the input files.
+    :type prefix: string
+    :param the_type: the type of the input files (bfile, tfile or file).
+    :type the_type: string
+    :param required_type: the required type of the input files (bfile, tfile or
+                          file).
+    :type required_type: string
+
+    :returns: ``True`` if everything is OK.
+
+    Checks if the files are of the required type, according to their current
+    type.
+
+    """
     # The files required for each type
     bfile_type = {".bed", ".bim", ".fam"}
     tfile_type = {".tped", ".tfam"}
@@ -592,7 +613,14 @@ def check_input_files(prefix, the_type, required_type, name):
 
 
 def all_files_exist(file_list):
-    """Check if all files exist."""
+    """Check if all files exist.
+
+    :param file_list: the names of files to check.
+    :type file_list: list of string
+
+    :returns: ``True`` if all files exist, ``False`` otherwise.
+
+    """
     all_exist = True
     for filename in file_list:
         all_exist = all_exist and os.path.isfile(filename)
@@ -600,7 +628,54 @@ def all_files_exist(file_list):
 
 
 def read_config_file(filename):
-    """Reads the configuration file."""
+    """Reads the configuration file.
+
+    :param filename: the name of the file containing the configuration.
+    :type filename: string
+
+    :returns: A tuple where the first element is a list of sections, and the
+              second element is a map containing the configuration (options and
+              values).
+
+    The structure of the configuration file is important. Here is an example of
+    a configuration file::
+
+        [1] # Computes statistics on duplicated samples
+        script = duplicated_samples
+
+        [2] # Removes samples according to missingness
+        script = sample_missingness
+
+        [3] # Removes markers according to missingness
+        script = snp_missingness
+
+        [4] # Removes samples according to missingness (98%)
+        script = sample_missingness 
+        mind = 0.02
+
+        [5] # Performs a sex check
+        script = sex_check
+
+        [6] # Flags markers with MAF=0
+        script = flag_maf_zero
+
+        [7] # Flags markers according to Hardy Weinberg
+        script = flag_hw
+
+        [8] # Subset the dataset (excludes markers and remove samples)
+        script = subset
+        exclude = .../filename
+        rempove = .../filename
+
+    Sections are in square brackets and must be ``integer``. The section number
+    represent the step at which the script will be run (*i.e.* from the smallest
+    number to the biggest). The sections must be continous.
+
+    Each section contains the script names (``script`` variable) and options of
+    the script (all other variables) (*e.g.* section 4 runs the
+    :py:mod:`sample_missingness` script with option ``mind`` sets to 0.02).
+
+    """
     # Creating the config parser
     config = ConfigParser.RawConfigParser(allow_no_value=True)
     config.optionxform = str
@@ -667,7 +742,18 @@ def read_config_file(filename):
 
 
 def check_args(args):
-    """Checks the arguments and options."""
+    """Checks the arguments and options.
+
+    :param args: an object containing the options and arguments of the program.
+    :type args: :py:class:`Namespace`
+
+    :returns: ``True`` if everything was OK.
+
+    If there is a problem with an option, an exception is raised using the
+    :py:class:`ProgramError` class, a message is printed to the
+    :class:`sys.stderr` and the program exits with error code 1.
+
+    """
     # Checking the configuration file
     if not os.path.isfile(args.conf):
         msg = "{}: no such file".format(args.conf)
@@ -700,7 +786,29 @@ def check_args(args):
 
 
 def parse_args():
-    """Parses the command line options and arguments."""
+    """Parses the command line options and arguments.
+
+    :returns: A :py:class:`numpy.Namespace` object created by the
+             :py:mod:`argparse` module. It contains the values of the different
+             options.
+
+    ===============   =======  ================================================
+        Options        Type                      Description
+    ===============   =======  ================================================
+    ``--bfile``       String   The input binary file prefix from Plink.
+    ``--tfile``       String   The input transposed file prefix from Plink.
+    ``--file``        String   The input file prefix from Plink.
+    ``--conf``        String   The parameter file for the data clean up.
+    ``--overwrite``   Boolean  Overwrites output directories without asking the
+                               user.
+    ===============   =======  ================================================
+
+    .. note::
+        No option check is done here (except for the one automatically done by
+        :py:mod:`argparse`). Those need to be done elsewhere (see
+        :py:func:`checkArgs`).
+
+    """
     return parser.parse_args()
 
 
