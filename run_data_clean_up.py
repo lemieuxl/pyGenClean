@@ -26,6 +26,27 @@ import PlinkUtils.subset_data as SubsetData
 prog_version = "1.2.2"
 
 def main():
+    """The main function.
+
+    These are the steps performed for the data clean up:
+
+    1. Prints the version number.
+    2. Reads the configuration file (:py:func:`read_config_file`).
+    3. Creates a new directory with ``data_clean_up`` as prefix and the date and
+       time as suffix. In the improbable event that the directory already
+       exists, asks the user the permission to overwrite it.
+    4. Check the input file type (``bfile``, ``tfile`` or ``file``).
+    5. Creates an intermediate directory with the section as prefix and the
+       script name as suffix (inside the previous directory).
+    6. Runs the required script in order (according to the configuration file
+       section).
+
+    .. note::
+
+        The main function is not responsible to check if the required files
+        exist. This should be done in the ``run`` functions.
+
+    """
     # Getting and checking the options
     args = parse_args()
     check_args(args)
@@ -88,7 +109,28 @@ def main():
 
 
 def run_duplicated_samples(in_prefix, in_type, out_prefix, options):
-    """Runs step1 (duplicated samples)."""
+    """Runs step1 (duplicated samples).
+
+    :param in_prefix: the prefix of the input files.
+    :param in_type: the type of the input files.
+    :param out_prefix: the output prefix.
+    :param options: the options needed.
+
+    :type in_prefix: string
+    :type in_type: string
+    :type out_prefix: string
+    :type options: list of strings
+
+    :returns: a tuple containing the prefix of the output files (the input
+              prefix for the next script) and the type of the output files
+              (``tfile``).
+
+    This function calls the :py:mod:`Step1.duplicated_samples` module. The
+    required file type for this module is ``tfile``, hence the need to use the
+    :py:func:`check_input_files` to check if the file input file type is the
+    good one, or to create it if needed.
+
+    """
     # Creating the output directory
     os.mkdir(out_prefix)
 
@@ -114,7 +156,33 @@ def run_duplicated_samples(in_prefix, in_type, out_prefix, options):
 
 
 def run_duplicated_snps(in_prefix, in_type, out_prefix, options):
-    """Runs step2 (duplicated snps)."""
+    """Runs step2 (duplicated snps).
+
+    :param in_prefix: the prefix of the input files.
+    :param in_type: the type of the input files.
+    :param out_prefix: the output prefix.
+    :param options: the options needed.
+
+    :type in_prefix: string
+    :type in_type: string
+    :type out_prefix: string
+    :type options: list of strings
+
+    :returns: a tuple containing the prefix of the output files (the input
+              prefix for the next script) and the type of the output files
+              (``tfile``).
+
+    This function calls the :py:mod:`Step2.duplicated_snps` module. The
+    required file type for this module is ``tfile``, hence the need to use the
+    :py:func:`check_input_files` to check if the file input file type is the
+    good one, or to create it if needed.
+
+    .. note::
+
+        This function creates a ``map`` file, needed for the
+        :py:mod:`Step2.duplicated_snps` module.
+
+    """
     # Creating the output directory
     os.mkdir(out_prefix)
 
@@ -158,7 +226,28 @@ def run_duplicated_snps(in_prefix, in_type, out_prefix, options):
 
 
 def run_noCall_hetero_snps(in_prefix, in_type, out_prefix, options):
-    """Runs step 3 (clean no call and hetero)."""
+    """Runs step 3 (clean no call and hetero).
+
+    :param in_prefix: the prefix of the input files.
+    :param in_type: the type of the input files.
+    :param out_prefix: the output prefix.
+    :param options: the options needed.
+
+    :type in_prefix: string
+    :type in_type: string
+    :type out_prefix: string
+    :type options: list of strings
+
+    :returns: a tuple containing the prefix of the output files (the input
+              prefix for the next script) and the type of the output files
+              (``tfile``).
+
+    This function calls the :py:mod:`Step3.clean_noCall_hetero_snps` module. The
+    required file type for this module is ``tfile``, hence the need to use the
+    :py:func:`check_input_files` to check if the file input file type is the
+    good one, or to create it if needed.
+
+    """
     # Creating the output directory
     os.mkdir(out_prefix)
 
@@ -184,7 +273,28 @@ def run_noCall_hetero_snps(in_prefix, in_type, out_prefix, options):
 
 
 def run_sample_missingness(in_prefix, in_type, out_prefix, options):
-    """Runs step4 (clean mind)."""
+    """Runs step4 (clean mind).
+
+    :param in_prefix: the prefix of the input files.
+    :param in_type: the type of the input files.
+    :param out_prefix: the output prefix.
+    :param options: the options needed.
+
+    :type in_prefix: string
+    :type in_type: string
+    :type out_prefix: string
+    :type options: list of strings
+
+    :returns: a tuple containing the prefix of the output files (the input
+              prefix for the next script) and the type of the output files
+              (``bfile``).
+
+    This function calls the :py:mod:`Step4.sample_missingness` module. The
+    required file type for this module is either a ``bfile`` or a ``tfile``,
+    hence the need to use the :py:func:`check_input_files` to check if the file
+    input file type is the good one, or to create it if needed.
+
+    """
     # Creating the output directory
     os.mkdir(out_prefix)
 
@@ -214,7 +324,28 @@ def run_sample_missingness(in_prefix, in_type, out_prefix, options):
 
 
 def run_snp_missingness(in_prefix, in_type, out_prefix, options):
-    """Run step5 (clean geno)."""
+    """Run step5 (clean geno).
+
+    :param in_prefix: the prefix of the input files.
+    :param in_type: the type of the input files.
+    :param out_prefix: the output prefix.
+    :param options: the options needed.
+
+    :type in_prefix: string
+    :type in_type: string
+    :type out_prefix: string
+    :type options: list of strings
+
+    :returns: a tuple containing the prefix of the output files (the input
+              prefix for the next script) and the type of the output files
+              (``bfile``).
+
+    This function calls the :py:mod:`Step5.snp_missingness` module. The required
+    file type for this module is ``bfile``, hence the need to use the
+    :py:func:`check_input_files` to check if the file input file type is the
+    good one, or to create it if needed.
+
+    """
     # Creating the output directory
     os.mkdir(out_prefix)
 
@@ -240,7 +371,33 @@ def run_snp_missingness(in_prefix, in_type, out_prefix, options):
 
 
 def run_sex_check(in_prefix, in_type, out_prefix, options):
-    """Runs step6 (sexcheck)."""
+    """Runs step6 (sexcheck).
+
+    :param in_prefix: the prefix of the input files.
+    :param in_type: the type of the input files.
+    :param out_prefix: the output prefix.
+    :param options: the options needed.
+
+    :type in_prefix: string
+    :type in_type: string
+    :type out_prefix: string
+    :type options: list of strings
+
+    :returns: a tuple containing the prefix of the output files (the input
+              prefix for the next script) and the type of the output files
+              (``bfile``).
+
+    This function calls the :py:mod:`Step6.sex_check` module. The required
+    file type for this module is ``bfile``, hence the need to use the
+    :py:func:`check_input_files` to check if the file input file type is the
+    good one, or to create it if needed.
+
+    .. note::
+
+        The :py:mod:`Step6.sex_check` module doesn't return usable output files.
+        Hence, this function returns the input file prefix and its type.
+
+    """
     # Creating the output directory
     os.mkdir(out_prefix)
 
@@ -267,7 +424,33 @@ def run_sex_check(in_prefix, in_type, out_prefix, options):
 
 
 def run_plate_bias(in_prefix, in_type, out_prefix, options):
-    """Runs step7 (plate bias)."""
+    """Runs step7 (plate bias).
+
+    :param in_prefix: the prefix of the input files.
+    :param in_type: the type of the input files.
+    :param out_prefix: the output prefix.
+    :param options: the options needed.
+
+    :type in_prefix: string
+    :type in_type: string
+    :type out_prefix: string
+    :type options: list of strings
+
+    :returns: a tuple containing the prefix of the output files (the input
+              prefix for the next script) and the type of the output files
+              (``bfile``).
+
+    This function calls the :py:mod:`Step7.plate_bias` module. The required file
+    type for this module is ``bfile``, hence the need to use the
+    :py:func:`check_input_files` to check if the file input file type is the
+    good one, or to create it if needed.
+
+    .. note::
+
+        The :py:mod:`Step7.plate_bias` module doesn't return usable output files.
+        Hence, this function returns the input file prefix and its type.
+
+    """
     # Creating the output directory
     os.mkdir(out_prefix)
 
@@ -294,7 +477,28 @@ def run_plate_bias(in_prefix, in_type, out_prefix, options):
 
 
 def run_remove_heterozygous_haploid(in_prefix, in_type, out_prefix, options):
-    """Runs step8 (remove heterozygous haploid)."""
+    """Runs step8 (remove heterozygous haploid).
+
+    :param in_prefix: the prefix of the input files.
+    :param in_type: the type of the input files.
+    :param out_prefix: the output prefix.
+    :param options: the options needed.
+
+    :type in_prefix: string
+    :type in_type: string
+    :type out_prefix: string
+    :type options: list of strings
+
+    :returns: a tuple containing the prefix of the output files (the input
+              prefix for the next script) and the type of the output files
+              (``bfile``).
+
+    This function calls the :py:mod:`Step8.remove_heterozygous_haploid` module.
+    The required file type for this module is ``bfile``, hence the need to use
+    the :py:func:`check_input_files` to check if the file input file type is the
+    good one, or to create it if needed.
+
+    """
     # Creating the output directory
     os.mkdir(out_prefix)
 
@@ -320,7 +524,33 @@ def run_remove_heterozygous_haploid(in_prefix, in_type, out_prefix, options):
 
 
 def run_remove_IBS(in_prefix, in_type, out_prefix, options):
-    """Runs step9 (remove IBS)."""
+    """Runs step9 (remove IBS).
+
+    :param in_prefix: the prefix of the input files.
+    :param in_type: the type of the input files.
+    :param out_prefix: the output prefix.
+    :param options: the options needed.
+
+    :type in_prefix: string
+    :type in_type: string
+    :type out_prefix: string
+    :type options: list of strings
+
+    :returns: a tuple containing the prefix of the output files (the input
+              prefix for the next script) and the type of the output files
+              (``bfile``).
+
+    This function calls the :py:mod:`Step9.remove_IBS` module. The required file
+    type for this module is ``bfile``, hence the need to use the
+    :py:func:`check_input_files` to check if the file input file type is the
+    good one, or to create it if needed.
+
+    .. note::
+
+        The :py:mod:`Step9.remove_IBS` module doesn't return usable output
+        files. Hence, this function returns the input file prefix and its type.
+
+    """
     # Creating the output directory
     os.mkdir(out_prefix)
 
@@ -347,7 +577,33 @@ def run_remove_IBS(in_prefix, in_type, out_prefix, options):
 
 
 def run_check_ethnicity(in_prefix, in_type, out_prefix, options):
-    """Runs step10 (check ethnicity)."""
+    """Runs step10 (check ethnicity).
+
+    :param in_prefix: the prefix of the input files.
+    :param in_type: the type of the input files.
+    :param out_prefix: the output prefix.
+    :param options: the options needed.
+
+    :type in_prefix: string
+    :type in_type: string
+    :type out_prefix: string
+    :type options: list of strings
+
+    :returns: a tuple containing the prefix of the output files (the input
+              prefix for the next script) and the type of the output files
+              (``bfile``).
+
+    This function calls the :py:mod:`Step10.check_ethnicity` module. The
+    required file type for this module is ``bfile``, hence the need to use the
+    :py:func:`check_input_files` to check if the file input file type is the
+    good one, or to create it if needed.
+
+    .. note::
+
+        The :py:mod:`Step10.check_ethnicity` module doesn't return usable output
+        files. Hence, this function returns the input file prefix and its type.
+
+    """
     # Creating the output directory
     os.mkdir(out_prefix)
 
@@ -374,7 +630,33 @@ def run_check_ethnicity(in_prefix, in_type, out_prefix, options):
 
 
 def run_flag_maf_zero(in_prefix, in_type, out_prefix, options):
-    """Runs step11 (flag MAF zero)."""
+    """Runs step11 (flag MAF zero).
+
+    :param in_prefix: the prefix of the input files.
+    :param in_type: the type of the input files.
+    :param out_prefix: the output prefix.
+    :param options: the options needed.
+
+    :type in_prefix: string
+    :type in_type: string
+    :type out_prefix: string
+    :type options: list of strings
+
+    :returns: a tuple containing the prefix of the output files (the input
+              prefix for the next script) and the type of the output files
+              (``bfile``).
+
+    This function calls the :py:mod:`Step11.flag_maf_zero` module. The required
+    file type for this module is ``bfile``, hence the need to use the
+    :py:func:`check_input_files` to check if the file input file type is the
+    good one, or to create it if needed.
+
+    .. note::
+
+        The :py:mod:`Step11.flag_maf_zero` module doesn't return usable output
+        files. Hence, this function returns the input file prefix and its type.
+
+    """
     # Creating the output directory
     os.mkdir(out_prefix)
 
@@ -401,7 +683,33 @@ def run_flag_maf_zero(in_prefix, in_type, out_prefix, options):
 
 
 def run_flag_hw(in_prefix, in_type, out_prefix, options):
-    """Runs step12 (flag HW)."""
+    """Runs step12 (flag HW).
+
+    :param in_prefix: the prefix of the input files.
+    :param in_type: the type of the input files.
+    :param out_prefix: the output prefix.
+    :param options: the options needed.
+
+    :type in_prefix: string
+    :type in_type: string
+    :type out_prefix: string
+    :type options: list of strings
+
+    :returns: a tuple containing the prefix of the output files (the input
+              prefix for the next script) and the type of the output files
+              (``bfile``).
+
+    This function calls the :py:mod:`Step12.flag_hw` module. The required file
+    type for this module is ``bfile``, hence the need to use the
+    :py:func:`check_input_files` to check if the file input file type is the
+    good one, or to create it if needed.
+
+    .. note::
+
+        The :py:mod:`Step12.flag_hw` module doesn't return usable output files.
+        Hence, this function returns the input file prefix and its type.
+
+    """
     # Creating the output directory
     os.mkdir(out_prefix)
 
@@ -428,7 +736,34 @@ def run_flag_hw(in_prefix, in_type, out_prefix, options):
 
 
 def run_compare_gold_standard(in_prefix, in_type, out_prefix, options):
-    """Compares with a gold standard data set (compare_gold_standard."""
+    """Compares with a gold standard data set (compare_gold_standard.
+
+    :param in_prefix: the prefix of the input files.
+    :param in_type: the type of the input files.
+    :param out_prefix: the output prefix.
+    :param options: the options needed.
+
+    :type in_prefix: string
+    :type in_type: string
+    :type out_prefix: string
+    :type options: list of strings
+
+    :returns: a tuple containing the prefix of the output files (the input
+              prefix for the next script) and the type of the output files
+              (``bfile``).
+
+    This function calls the :py:mod:`Misc.compare_gold_standard` module. The
+    required file type for this module is ``bfile``, hence the need to use the
+    :py:func:`check_input_files` to check if the file input file type is the
+    good one, or to create it if needed.
+
+    .. note::
+
+        The :py:mod:`Misc.compare_gold_standard` module doesn't return usable
+        output files. Hence, this function returns the input file prefix and its
+        type.
+
+    """
     # Creating the output directory
     os.mkdir(out_prefix)
 
@@ -455,7 +790,32 @@ def run_compare_gold_standard(in_prefix, in_type, out_prefix, options):
 
 
 def run_subset_data(in_prefix, in_type, out_prefix, options):
-    """Subsets the data."""
+    """Subsets the data.
+
+    :param in_prefix: the prefix of the input files.
+    :param in_type: the type of the input files.
+    :param out_prefix: the output prefix.
+    :param options: the options needed.
+
+    :type in_prefix: string
+    :type in_type: string
+    :type out_prefix: string
+    :type options: list of strings
+
+    :returns: a tuple containing the prefix of the output files (the input
+              prefix for the next script) and the type of the output files
+              (``bfile``).
+
+    This function calls the :py:mod:`PlinkUtils.subset_data` module. The
+    required file type for this module is ``bfile``, hence the need to use the
+    :py:func:`check_input_files` to check if the file input file type is the
+    good one, or to create it if needed.
+
+    .. note::
+
+        The output file type is the same as the input file type.
+
+    """
     # Creating the output directory
     os.mkdir(out_prefix)
 
@@ -497,9 +857,14 @@ def run_command(command):
     """Run a command using subprocesses.
 
     :param command: the command to run.
-    :type command: list of string
+
+    :type command: list of strings
 
     Tries to run a command. If it fails, raise a :py:class:`ProgramError`.
+
+    .. warning::
+
+        The variable ``command`` should be a list of strings (no other type).
 
     """
     output = None
@@ -515,17 +880,19 @@ def check_input_files(prefix, the_type, required_type):
     """Check that the file is of a certain file type.
 
     :param prefix: the prefix of the input files.
-    :type prefix: string
     :param the_type: the type of the input files (bfile, tfile or file).
-    :type the_type: string
     :param required_type: the required type of the input files (bfile, tfile or
                           file).
+
+    :type prefix: string
+    :type the_type: string
     :type required_type: string
 
     :returns: ``True`` if everything is OK.
 
     Checks if the files are of the required type, according to their current
-    type.
+    type. The available types are ``bfile`` (binary), ``tfile`` (transposed) and
+    ``file`` (normal).
 
     """
     # The files required for each type
@@ -616,7 +983,8 @@ def all_files_exist(file_list):
     """Check if all files exist.
 
     :param file_list: the names of files to check.
-    :type file_list: list of string
+
+    :type file_list: list of strings
 
     :returns: ``True`` if all files exist, ``False`` otherwise.
 
@@ -631,6 +999,7 @@ def read_config_file(filename):
     """Reads the configuration file.
 
     :param filename: the name of the file containing the configuration.
+
     :type filename: string
 
     :returns: A tuple where the first element is a list of sections, and the
@@ -673,7 +1042,25 @@ def read_config_file(filename):
 
     Each section contains the script names (``script`` variable) and options of
     the script (all other variables) (*e.g.* section 4 runs the
-    :py:mod:`sample_missingness` script with option ``mind`` sets to 0.02).
+    ``sample_missingness`` script (:py:func:`run_sample_missingness`) with
+    option ``mind`` sets to 0.02).
+
+    Here is a list of the available scripts:
+
+    * ``duplicated_samples`` (:py:func:`run_duplicated_samples`)
+    * ``duplicated_snps`` (:py:func:`run_duplicated_snps`)
+    * ``noCall_hetero_snps`` (:py:func:`run_noCall_hetero_snps`)
+    * ``sample_missingness`` (:py:func:`run_sample_missingness`)
+    * ``snp_missingness`` (:py:func:`run_snp_missingness`)
+    * ``sex_check`` (:py:func:`run_sex_check`)
+    * ``plate_bias`` (:py:func:`run_plate_bias`)
+    * ``remove_heterozygous_haploid`` (:py:func:`run_remove_heterozygous_haploid`)
+    * ``remove_IBS`` (:py:func:`run_remove_IBS`)
+    * ``check_ethnicity`` (:py:func:`run_check_ethnicity`)
+    * ``flag_maf_zero`` (:py:func:`run_flag_maf_zero`)
+    * ``flag_hw`` (:py:func:`run_flag_hw`)
+    * ``subset`` (:py:func:`run_subset_data`)
+    * ``compare_gold_standard`` (:py:func:`run_compare_gold_standard`)
 
     """
     # Creating the config parser
@@ -745,6 +1132,7 @@ def check_args(args):
     """Checks the arguments and options.
 
     :param args: an object containing the options and arguments of the program.
+
     :type args: :py:class:`Namespace`
 
     :returns: ``True`` if everything was OK.
