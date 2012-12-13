@@ -13,26 +13,42 @@ import numpy as npy
 def main(argString=None):
     """Check for duplicated samples in a tfam/tped file.
 
-    Here are the steps for duplicated samples.
+    :param argString: the options
 
-    1.  Reads the ``tfam`` file.
-    2.  Seperate the duplicated samples from the unique samples.
-    3.  Writes the unique samples into a file named
-        ``prefix.unique_samples.tfam``.
-    4.  Reads the ``tped`` file and write into ``prefix.unique_samples.tped`` the
-        pedigree file for the unique samples. Saves in memory the pedigree for
-        the duplicated samples. Updates the indexes of the duplicated samples.
-    5.  If there are no duplicated samples, simply copies the files
+    :type argString: list of strings
+
+    Here are the steps for the duplicated samples step.
+
+    1.  Prints the options.
+    2.  Reads the ``tfam`` file (:py:func:`readTFAM`).
+    3.  Seperate the duplicated samples from the unique samples
+        (:py:func:`findDuplicates`).
+    4.  Writes the unique samples into a file named
+        ``prefix.unique_samples.tfam`` (:py:func:`printUniqueTFAM`).
+    5.  Reads the ``tped`` file and write into ``prefix.unique_samples.tped``
+        the pedigree file for the unique samples (:py:func:`processTPED`). Saves
+        in memory the pedigree for the duplicated samples. Updates the indexes
+        of the duplicated samples.
+    6.  If there are no duplicated samples, simply copies the files
         ``prefix.unique_samples`` (``tped`` and ``tfam``) to
         ``prefix.final.tfam`` and ``prefix..final.tped``, respectively.
-    6.  Computes the completion (for each of the duplicated samples) and the
-        concordance of each sample pairs.
-    7.  We print statistics (concordance and completion).
-    8.  We print the concordance matrix for each duplicated samples.
-    9.  We print the the ``tped`` and the ``tfam`` file for the duplicated
+    7.  Computes the completion (for each of the duplicated samples) and the
+        concordance of each sample pairs (:py:func:`computeStatistics`).
+    8.  Prints statistics (concordance and completion)
+        (:py:func:`printStatistics`).
+    9.  We print the concordance matrix for each duplicated samples
+        (:py:func:`printConcordance`).
+    10. We print the the ``tped`` and the ``tfam`` file for the duplicated
         samples (``prefix.duplicated_samples``)
-    10. Choose the best of each duplicates (to keep and to complete) according
-        to completion and concordance.
+        (:py:func:`printDuplicatedTPEDandTFAM`)
+    11. Choose the best of each duplicates (to keep and to complete) according
+        to completion and concordance (:py:func:`chooseBestDuplicates`).
+    12. Creates a unique ``tped`` and ``tfam`` from the duplicated samples by
+        completing the best chosen one with the other samples
+        (:py:func:`createAndCleanTPED`).
+    13. Merge the two tfiles together (``prefix.unique_samples`` and
+        ``prefix.chosen_samples``) to create the final files (``prefix.final``)
+        (:py:func:`addToTPEDandTFAM`).
 
     """
     # Getting and checking the options
@@ -126,7 +142,33 @@ def main(argString=None):
 
 
 def addToTPEDandTFAM(tped, tfam, prefix, toAddPrefix):
-    """Add the tped and the tfam to the prefix.tped and prefix.tfam."""
+    """Append a tfile to another, creating a new one.
+
+    :param tped: the ``tped`` that will be appended to the other one.
+    :param tfam: the ``tfam`` that will be appended to the other one.
+    :param prefix: the prefix of all the files.
+    :param toAddPrefix: the prefix of the final file.
+
+    :type tped: :py:class:`numpy.array`
+    :type tfam: :py:class:`numpy.array`
+    :type prefix: string
+    :type toAddPrefix: string
+
+    Here are the steps of this function:
+
+    1. Writes the ``tped`` into ``prefix.chosen_samples.tped``.
+    2. Writes the ``tfam`` into ``prefix.chosen_samples.tfam``.
+    3. Copies the previous ``tfam`` (``toAddPrefix.tfam``) into the final
+       ``tfam`` (``prefix.final.tfam``).
+    4. Append the ``tfam`` to the final ``tfam`` (``prefix.final.tfam``).
+    5. Reads the previous ``tped`` (``toAddPrefix.tped``) and append the new
+       ``tped`` to it, writing the final one (``prefix.final.tped``).
+
+    .. warning::
+
+        The ``tped`` and ``tfam`` variables need to contain at least one sample.
+
+    """
     # First, writing the chosen tped
     tpedFile = None
     try:
@@ -193,7 +235,44 @@ def addToTPEDandTFAM(tped, tfam, prefix, toAddPrefix):
 def createAndCleanTPED(tped, tfam, samples, oldSamples, chosenSamples,
                        prefix, completion, completionT, concordance,
                        concordanceT):
-    """Complete a TPED for duplicate samples."""
+    """Complete a TPED for duplicate samples.
+
+    :param tped: the ``tped`` containing the duplicated samples.
+    :param tfam: the ``tfam`` containing the duplicated samples.
+    :param samples: the updated position of the samples in the ``tped``
+                    containing only duplicated samples.
+    :param oldSamples: the original duplicated sample positions.
+    :param chosenSamples: the position of the chosen samples.
+    :param prefix: the prefix of all the files.
+    :param completion: the completion of each of the duplicated samples.
+    :param completionT: the completion threshold.
+    :param concordance: the pairwise concordance of each of the duplicated
+                        samples.
+    :param concordanceT: the concordance threshold.
+
+    :type tped: :py:class:`numpy.array`
+    :type tfam: :py:class:`numpy.array`
+    :type samples: dict
+    :type oldSamples: dict
+    :type chosenSamples: dict
+    :type prefix: string
+    :type completion: :py:class:`numpy.array`
+    :type completionT: float
+    :type concordance: dict
+    :type concordanceT: float
+
+    Using a ``tped`` containing duplicated samples, it creates a ``tped``
+    containing unique samples by completing a chosen sample with the other
+    replicates.
+
+    .. note::
+
+        A chosen sample is not completed using bad replicates (those that
+        don't have a concordance or a completion higher than a certain
+        threshold). The bad replicates are written in the file
+        ``prefix.not_good_enough``.
+
+    """
     zeroedOutFile = None
     try:
         zeroedOutFile = open(prefix + ".zeroed_out", "w")
@@ -321,9 +400,41 @@ def createAndCleanTPED(tped, tfam, samples, oldSamples, chosenSamples,
 def chooseBestDuplicates(tped, samples, oldSamples, completion,
                         concordance_all, prefix):
     """Choose the best duplicates according to the completion rate.
-    
-    Describe what the f*** is going on here...
-    
+
+    :param tped: the ``tped`` containing the duplicated samples.
+    :param samples: the updated position of the samples in the tped containing
+                    only duplicated samples.
+    :param oldSamples: the original duplicated sample positions.
+    :param completion: the completion of each of the duplicated samples.
+    :param concordance_all: the concordance of every duplicated samples.
+    :param prefix: the prefix of all the files.
+
+    :type tped: :py:class:`numpy.array`
+    :type samples: dict
+    :type oldSamples: dict
+    :type completion: :py:class:`numpy.array`
+    :type concordance_all: dict
+    :type prefix: string
+
+    :returns: a tuple where the first element is a list of the chosen samples'
+              indexes, the second on is the completion and the last one is the
+              concordance (a map).
+
+    These are the setps to find the best diplicated sample:
+
+    1. Sort the list of concordances.
+    2. Sort the list of completions.
+    3. Choose the best of the concordance and put in a set.
+    4. Choose the best of the completion and put it in a set.
+    5. Compute the intersection of the two sets. If there is one sample or more,
+       then randomly choose one sample.
+    6. If the intesection doesn't contain at leats one sample, redo steps 3 and
+       4, but increase the number of chosen best by one. Redo step 5 and 6 (if
+       required).
+
+    The chosen samples are written in ``prefix.chosen_samples.info``. The rest
+    are written in ``prefix.excluded_samples.info``.
+
     """
     # The output files
     chosenFile = None
@@ -413,7 +524,26 @@ def chooseBestDuplicates(tped, samples, oldSamples, completion,
 
 
 def printDuplicatedTPEDandTFAM(tped, tfam, samples, oldSamples, prefix):
-    """Print the TPED and TFAM of the duplicated samples."""
+    """Print the TPED and TFAM of the duplicated samples.
+
+    :param tped: the ``tped`` containing duplicated samples.
+    :param tfam: the ``tfam`` containing duplicated samples.
+    :param samples: the updated position of the samples in the tped containing
+                    only duplicated samples.
+    :param oldSamples: the original duplicated sample positions.
+    :param prefix: the prefix of all the files.
+
+    :type tped: :py:class:`numpy.array`
+    :type tfam: :py:class:`numpy.array`
+    :type samples: dict
+    :type oldSamples: dict
+    :type prefix: string
+
+    The ``tped`` and ``tfam`` files are written in
+    ``prefix.duplicated_samples.tped`` and ``prefix.duplicated_samples.tfam``,
+    respectively.
+
+    """
     # Print the TPED
     outputTPED = None
     try:
@@ -447,7 +577,25 @@ def printDuplicatedTPEDandTFAM(tped, tfam, samples, oldSamples, prefix):
 
 
 def printConcordance(concordance, prefix):
-    """Print the concordance."""
+    """Print the concordance.
+
+    :param concordance: the concordance of each sample.
+    :param prefix: the prefix of all the files.
+
+    :type concordance: dict
+    :type prefix: string
+
+    :returns: the concordance percentage (dict)
+
+    The concordance is the number of genotypes that are equal when comparing a
+    duplicated samples with another one, divided by the total number of
+    genotypes (excluding genotypes that are no call [*i.e.* ``0``]). If a
+    duplicated sample has 100% of no calls, the concordance will be zero.
+
+    The file ``prefix.concordance`` will contain :math:`N \\times N` matrices
+    for each set of duplicated samples.
+
+    """
     outFile = None
     try:
         outFile = open(prefix + ".concordance", "w")
@@ -478,7 +626,28 @@ def printConcordance(concordance, prefix):
 
 
 def printStatistics(completion, concordance, tpedSamples, oldSamples, prefix):
-    """Print the statistics."""
+    """Print the statistics in a file.
+
+    :param completion: the completion of each duplicated samples.
+    :param concordance: the concordance of each duplicated samples.
+    :param tpedSamples: the updated position of the samples in the tped
+                        containing only duplicated samples.
+    :param oldSamples: the original duplicated sample positions.
+    :param prefix: the prefix of all the files.
+
+    :type completion: :py:class:`numpy.array`
+    :type concordance: dict
+    :type tpedSamples: dict
+    :type oldSamples: dict
+    :type prefix: string
+
+    :returns: the completion for each duplicated samples, as a
+              :py:class:`numpy.array`.
+
+    Prints the statistics (completion of each samples and pairwise concordance
+    between duplicated samples) in a file (``prefix.summary``).
+
+    """
 
     # Compute the completion percentage on none zero values
     none_zero_indexes = npy.where(completion[1] != 0)
@@ -531,23 +700,74 @@ def printStatistics(completion, concordance, tpedSamples, oldSamples, prefix):
 def computeStatistics(tped, tfam, samples, oldSamples, prefix):
     """Computes the completion and concordance of each samples.
 
-    We don't compute completion and concordance for markers on chromosome 24 is
-    sample is female.
+    :param tped: the ``tped`` containing duplicated samples.
+    :param tfam: the ``tfam`` containing duplicated samples.
+    :param samples: the updated position of the samples in the tped containing
+                    only duplicated samples.
+    :param oldSamples: the original duplicated sample positions.
+    :param prefix: the prefix of all the files.
+
+    :type tped: :py:class:`numpy.array`
+    :type tfam: :py:class:`numpy.array`
+    :type samples: dict
+    :type oldSamples: dict
+    :type prefix: string
+
+    :returns: a tuple containing the completion (:py:class:`numpy.array`) as first
+              element, and the concordance (:py:class:`dict`) as last element.
+
+    Reads the ``tped`` file and compute the completion for each duplicated
+    sampls and the pairwise concordance between duplicated samples.
+
+    .. note::
+
+        The completion and concordance computation excludes a markers if it's on
+        chromosome 24 and if the sample is a female.
+
+    .. note::
+
+        A missing genotype is encoded by ``0``.
+
+    .. note::
+
+        No percentage is computed here, only the numbers. Percentages are
+        computing in other functions: :py:func:`printStatistics`, for
+        completion, and :py:func:`printConcordance`, for concordance.
 
 
     **Completion**
 
-    We consider a genotype as being missing if sample is male and marker is
-    heterozygous on chromosome 23 and 24. Also, code for missing genotype is 0.
+    Computes the completion of none zero values (where all genotypes of at least
+    one duplicated sample are no call [*i.e.* ``0``]). The completion of sample
+    :math:`i` (*i.e.* :math:`Completion_i`) is the number of genotypes that have
+    a call divided by the total number of genotypes (the set :math:`G_i`):
+
+    .. math::
+
+        Completion_i = \\frac{||g \\in G_i\\textrm{ where }g \\neq 0||}{||G_i||}
+
+    .. note::
+
+        We consider a genotype as being missing if the sample is a male and if a
+        marker on chromosome 23 or 24 is heterozygous.
 
 
     **Concordance**
 
-    For each samples, we find the duplicated ones, and compute the mean
-    concordance by pairs. For each marker, if both are genotypes are not
-    missing, we add one to the total number of compared markers. If both
-    genotypes are the same, we add one to the number of concordant calls. We
-    write the observed genotype difference in the file ``prefix.diff``.
+    Computes the pairwise concordance between duplicated samples. For each
+    marker, if both genotypes are not missing, we add one to the total number of
+    compared markers. If both genotypes are the same, we add one to the number
+    of concordant calls. We write the observed genotype difference in the file
+    ``prefix.diff``. The concordance between sample :math:`i` and :math:`j`
+    (*i.e.* :math:`Concordance_{i,j}`) is the number of genotypes that are equal
+    divided by the total number of genotypes (excluding the no calls):
+
+    .. math::
+
+        Concordance_{i,j} = \\frac{||g \\in G_i \\cup G_j \\textrm{ where } g_i = g_j||}
+                                  {||g \\in G_i \\cup G_j \\textrm{ where } g \\neq 0||}
+
+    
 
     """
     # The diff file containing the genotype differences between a pair of
@@ -654,7 +874,27 @@ def computeStatistics(tped, tfam, samples, oldSamples, prefix):
 
 
 def processTPED(uniqueSamples, duplicatedSamples, fileName, prefix):
-    """Process the TPED file."""
+    """Process the TPED file.
+
+    :param uniqueSamples: the position of unique samples.
+    :param duplicatedSamples: the position of duplicated samples.
+    :param fileName: the name of the file.
+    :param prefix: the prefix of all the files.
+
+    :type uniqueSamples: dict
+    :type duplicatedSamples: collections.defaultdict
+    :type fileName: string
+    :type prefix: string
+
+    :returns: a tuple containing the ``tped`` (:py:class:`numpy.array`) as first
+              element, and the updated positions of the duplicated samples
+              (:py:class:`dict`)
+
+    Reads the entire ``tped`` and prints another one containing only unique
+    samples (``prefix.unique_samples.tped``). It then creates a
+    :py:class:`numpy.array` containing the duplicated samples.
+
+    """
     # Getting the indexes
     uI = sorted(uniqueSamples.values())
     dI = []
@@ -702,12 +942,11 @@ def printUniqueTFAM(tfam, samples, prefix):
     """Prints a new TFAM with only unique samples.
 
     :param tfam: a representation of a TFAM file.
-    :type tfam: list of tuple of string
-
-    :param samples: a map of sample position
-    :type samples: map of int
-
+    :param samples: the position of the samples
     :param prefix: the prefix of the output file name
+
+    :type tfam: list of tuples of strings
+    :type samples: dict
     :type prefix: string
 
     """
@@ -724,10 +963,11 @@ def printUniqueTFAM(tfam, samples, prefix):
 def findDuplicates(tfam):
     """Finds the duplicates in a TFAM.
 
-    :param tfam: representation of a TFAM file.
+    :param tfam: representation of a ``tfam`` file.
     :type tfam: list of tuple of string
 
-    :returns: two map, containing unique and duplicated samples position.
+    :returns: two :py:class:`dict`, containing unique and duplicated samples
+              position.
 
     """
     uSamples = {}
@@ -757,10 +997,11 @@ def findDuplicates(tfam):
 def readTFAM(fileName):
     """Reads the TFAM file.
 
-    :param fileName: the name of the TFAM file.
+    :param fileName: the name of the ``tfam`` file.
+
     :type fileName: string
 
-    :returns: a list of tuples, representing the TFAM file.
+    :returns: a list of tuples, representing the ``tfam`` file.
 
     """
     # Saving the TFAM file
@@ -776,15 +1017,16 @@ def readTFAM(fileName):
 def checkArgs(args):
     """Checks the arguments and options.
 
-    :param args: a :py:class:`Namespace` object containing the options of the
+    :param args: a :py:class:`argparse.Namespace` object containing the options of the
                  program.
+
     :type args: :py:class:`argparse.Namespace`
 
     :returns: ``True`` if everything was OK.
 
     If there is a problem with an option, an exception is raised using the
-    :py:class:`ProgramError` class, a message is printed
-    to the :class:`sys.stderr` and the program exists with code 1.
+    :py:class:`ProgramError` class, a message is printed to the
+    :class:`sys.stderr` and the program exists with code 1.
 
     """
     # Checking the input files
@@ -812,14 +1054,22 @@ def checkArgs(args):
 def parseArgs(argString=None): # pragma: no cover
     """Parses the command line options and arguments.
 
-    :returns: A :py:class:`numpy.Namespace` object created by
+    :param argString: the options
+
+    :type argString: list of strings
+
+    :returns: A :py:class:`argparse.Namespace` object created by
               the :py:mod:`argparse` module. It contains the values of the
               different options.
 
-    ===============  ======  ===================================================
-        Options       Type                     Description
-    ===============  ======  ===================================================
-    ===============  ======  ===================================================
+    ================================== ====== ==========================================
+                  Options               Type                Description
+    ================================== ====== ==========================================
+    ``--tfile``                        string The input file prefix (of type ``tfile``).
+    ``--sample-completion-threshold``  float  The completion threshold.
+    ``--sample-concordance-threshold`` float  The concordance threshold.
+    ``--out``                          string The prefix of the output files.
+    ================================== ====== ==========================================
 
     .. note::
         No option check is done here (except for the one automatically done by
@@ -839,6 +1089,7 @@ class ProgramError(Exception):
     """An :py:class:`Exception` raised in case of a problem.
     
     :param msg: the message to print to the user before exiting.
+
     :type msg: string
 
     """

@@ -1133,7 +1133,7 @@ def check_args(args):
 
     :param args: an object containing the options and arguments of the program.
 
-    :type args: :py:class:`Namespace`
+    :type args: :py:class:`argparse.Namespace`
 
     :returns: ``True`` if everything was OK.
 
@@ -1176,9 +1176,9 @@ def check_args(args):
 def parse_args():
     """Parses the command line options and arguments.
 
-    :returns: A :py:class:`numpy.Namespace` object created by the
-             :py:mod:`argparse` module. It contains the values of the different
-             options.
+    :returns: A :py:class:`argparse.Namespace` object created by the
+              :py:mod:`argparse` module. It contains the values of the different
+              options.
 
     ===============   =======  ================================================
         Options        Type                      Description
