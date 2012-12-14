@@ -12,6 +12,27 @@ class Dummy(object):
     pass
 
 def main(argString=None):
+    """The main function.
+
+    :param argString: the options.
+
+    :type argString: list of strings
+
+    These are the steps performed by this module:
+
+    1. Prints the options of the module.
+    2. Computes the number of markers in the input file
+       (:py:func:`computeNumberOfMarkers`).
+    3. If there are no markers, the module stops.
+    4. Computes the Bonferroni therhold (:math:`0.05 / \\textrm{nbMarkers}`).
+    5. Runs Plink to find failed markers with the Bonferroni threshold.
+    6. Runs Plink to find failed markers with the default threshold.
+    7. Compares the ``bim`` files for the Bonferroni threshold.
+    8. Compares the ``bim`` files for the default threshold.
+    9. Computes the "in between" marker list, which is the markers from the
+       default threshold and the Bonferonni threshold.
+
+    """
     # Getting and checking the options
     args = parseArgs(argString)
     checkArgs(args)
@@ -63,7 +84,25 @@ def main(argString=None):
 
 
 def compareBIMfiles(beforeFileName, afterFileName, outputFileName):
-    """Compare two BIM files for differences."""
+    """Compare two BIM files for differences.
+
+    :param beforeFileName: the name of the file before modification.
+    :param afterFileName: the name of the file after modification.
+    :param outputFileName: the name of the output file (containing the
+                           differences between the ``before`` and the ``after``
+                           files.
+
+    :type beforeFileName: string
+    :type afterFileName: string
+    :type outputFileName: string
+
+    :returns: the number of differences between the two files.
+
+    The ``bim`` files contain the list of markers in a given dataset. The
+    ``before`` file should have more markers than the ``after`` file. The
+    ``after`` file should be a subset of the markers in the ``before`` file.
+
+    """
     # Creating the options
     options = Dummy()
     options.before = beforeFileName
@@ -84,7 +123,15 @@ def compareBIMfiles(beforeFileName, afterFileName, outputFileName):
 
 
 def computeNumberOfMarkers(inputFileName):
-    """Count the number of line in a BIM file."""
+    """Count the number of marker (line) in a BIM file.
+
+    :param inputFileName: the name of the ``bim`` file.
+
+    :type inputFileName: string
+
+    :returns: the number of marker in the ``bim`` file.
+
+    """
     nbLine = 0
     with open(inputFileName, "r") as inputFile:
         nbLine = len(inputFile.readlines())
@@ -93,14 +140,40 @@ def computeNumberOfMarkers(inputFileName):
 
 
 def computeHWE(prefix, threshold, outPrefix):
-    """Compute the frequency using Plink."""
+    """Compute the Hardy Weinberg test using Plink.
+
+    :param prefix: the prefix of all the files.
+    :param threshold: the Hardy Weinberg threshold.
+    :param outPrefix: the prefix of the output file.
+
+    :type prefix: string
+    :type threshold: string
+    :type outPrefix: string
+
+    Uses Plink to exclude markers that failed the Hardy-Weinberg test at a
+    specified significance threshold.
+
+    """
     plinkCommand = ["plink", "--noweb", "--bfile", prefix, "--hwe", threshold,
                     "--make-bed", "--out", outPrefix]
     runCommand(plinkCommand)
 
 
 def runCommand(command):
-    """Run a command."""
+    """Run a command.
+
+    :param command: the command to run.
+
+    :type command: list of strings
+
+    Tries to run a command. If it fails, raise a :py:class:`ProgramError`. This
+    function uses the :py:mod:`subprocess` module.
+
+    .. warning::
+
+        The variable ``command`` should be a list of stings (no other type).
+
+    """
     output = None
     try:
         output = subprocess.check_output(command,
@@ -113,15 +186,16 @@ def runCommand(command):
 def checkArgs(args):
     """Checks the arguments and options.
 
-    :param args: a :py:class:`Namespace` object containing the options of the
-                 program.
+    :param args: a :py:class:`argparse.Namespace` object containing the options
+                 of the program.
+
     :type args: :py:class:`argparse.Namespace`
 
     :returns: ``True`` if everything was OK.
 
     If there is a problem with an option, an exception is raised using the
-    :py:class:`ProgramError` class, a message is printed
-    to the :class:`sys.stderr` and the program exists with code 1.
+    :py:class:`ProgramError` class, a message is printed to the
+    :py:class:`sys.stderr` and the program exists with code 1.
 
     """
     # Check if we have the tped and the tfam files
@@ -147,14 +221,21 @@ def checkArgs(args):
 def parseArgs(argString=None): # pragma: no cover
     """Parses the command line options and arguments.
 
-    :returns: A :py:class:`numpy.Namespace` object created by
+    :param argString: the options.
+
+    :type argString: list of strings
+
+    :returns: A :py:class:`argparse.Namespace` object created by
               the :py:mod:`argparse` module. It contains the values of the
               different options.
 
-    ===============  ======  ===================================================
-        Options       Type                     Description
-    ===============  ======  ===================================================
-    ===============  ======  ===================================================
+    =========== ====== ==========================================
+      Options    Type                     Description
+    =========== ====== ==========================================
+    ``--bfile`` string The input file prefix (binary Plink file).
+    ``--hwe``   float  The Hardy-Weinberg equilibrium threshold.
+    ``--out``   string The prefix of the output files.
+    =========== ====== ==========================================
 
     .. note::
         No option check is done here (except for the one automatically done by
@@ -174,6 +255,7 @@ class ProgramError(Exception):
     """An :py:class:`Exception` raised in case of a problem.
     
     :param msg: the message to print to the user before exiting.
+
     :type msg: string
 
     """
