@@ -8,6 +8,20 @@ import subprocess
 from PlinkUtils import createRowFromPlinkSpacedOutput
 
 def main(argString=None):
+    """The main function.
+
+    :param argString: the options.
+
+    :type argString: list of strings
+
+    These are the steps:
+
+    1. Prints the options.
+    2. Computes the frequencies using Plinl (:py:func:`computeFrequency`).
+    3. Finds markers with MAF of 0, and saves them in a file
+       (:py:func:`findSnpWithMaf0`).
+
+    """
     # Getting and checking the options
     args = parseArgs(argString)
     checkArgs(args)
@@ -26,7 +40,18 @@ def main(argString=None):
 
 
 def findSnpWithMaf0(freqFileName, prefix):
-    """Finds SNPs with MAF of 0 and put them in a file."""
+    """Finds SNPs with MAF of 0 and put them in a file.
+
+    :param freqFileName: the name of the frequency file.
+    :param prefix: the prefix of all the files.
+
+    :type freqFileName: string
+    :type prefix: string
+
+    Reads a frequency file from Plink, and find marquers with a minor allele
+    frequency of zero.
+
+    """
     maf_0_set = set()
     na_set = set()
 
@@ -89,7 +114,13 @@ def findSnpWithMaf0(freqFileName, prefix):
 
 
 def computeFrequency(options):
-    """Compute the frequency of the SNPs."""
+    """Compute the frequency of the SNPs.
+
+    :param options: the options.
+
+    :type options: argparse.Namespace
+
+    """
     # The plink command
     plinkCommand = ["plink", "--noweb", "--bfile", options.bfile,
                     "--freq", "--out", options.out]
@@ -106,15 +137,16 @@ def computeFrequency(options):
 def checkArgs(args):
     """Checks the arguments and options.
 
-    :param args: a :py:class:`Namespace` object containing the options of the
-                 program.
-    :type args: :py:class:`argparse.Namespace`
+    :param args: a :py:class:`argparse.Namespace` object containing the options
+                 of the program.
+
+    :type args: argparse.Namespace
 
     :returns: ``True`` if everything was OK.
 
     If there is a problem with an option, an exception is raised using the
-    :py:class:`ProgramError` class, a message is printed
-    to the :class:`sys.stderr` and the program exists with code 1.
+    :py:class:`ProgramError` class, a message is printed to the
+    :class:`sys.stderr` and the program exists with code 1.
 
     """
     # Check if we have the tped and the tfam files
@@ -129,14 +161,20 @@ def checkArgs(args):
 def parseArgs(argString=None): # pragma: no cover
     """Parses the command line options and arguments.
 
-    :returns: A :py:class:`numpy.Namespace` object created by
-              the :py:mod:`argparse` module. It contains the values of the
-              different options.
+    :param argString: the options.
 
-    ===============  ======  ===================================================
-        Options       Type                     Description
-    ===============  ======  ===================================================
-    ===============  ======  ===================================================
+    :type argString: list of strings
+
+    :returns: A :py:class:`argparse.Namespace` object created by the
+              :py:mod:`argparse` module. It contains the values of the different
+              options.
+
+    =========== ====== ==========================================
+      Options    Type                 Description
+    =========== ====== ==========================================
+    ``--bfile`` string The input file prefix (Plink binary file).
+    ``--out``   string The prefix of the output files.
+    =========== ====== ==========================================
 
     .. note::
         No option check is done here (except for the one automatically done by
@@ -156,6 +194,7 @@ class ProgramError(Exception):
     """An :py:class:`Exception` raised in case of a problem.
     
     :param msg: the message to print to the user before exiting.
+
     :type msg: string
 
     """
