@@ -42,7 +42,6 @@ def main():
        section).
 
     .. note::
-
         The main function is not responsible to check if the required files
         exist. This should be done in the ``run`` functions.
 
@@ -178,7 +177,6 @@ def run_duplicated_snps(in_prefix, in_type, out_prefix, options):
     good one, or to create it if needed.
 
     .. note::
-
         This function creates a ``map`` file, needed for the
         :py:mod:`Step2.duplicated_snps` module.
 
@@ -393,7 +391,6 @@ def run_sex_check(in_prefix, in_type, out_prefix, options):
     good one, or to create it if needed.
 
     .. note::
-
         The :py:mod:`Step6.sex_check` module doesn't return usable output files.
         Hence, this function returns the input file prefix and its type.
 
@@ -446,7 +443,6 @@ def run_plate_bias(in_prefix, in_type, out_prefix, options):
     good one, or to create it if needed.
 
     .. note::
-
         The :py:mod:`Step7.plate_bias` module doesn't return usable output files.
         Hence, this function returns the input file prefix and its type.
 
@@ -546,7 +542,6 @@ def run_remove_IBS(in_prefix, in_type, out_prefix, options):
     good one, or to create it if needed.
 
     .. note::
-
         The :py:mod:`Step9.remove_IBS` module doesn't return usable output
         files. Hence, this function returns the input file prefix and its type.
 
@@ -599,7 +594,6 @@ def run_check_ethnicity(in_prefix, in_type, out_prefix, options):
     good one, or to create it if needed.
 
     .. note::
-
         The :py:mod:`Step10.check_ethnicity` module doesn't return usable output
         files. Hence, this function returns the input file prefix and its type.
 
@@ -652,7 +646,6 @@ def run_flag_maf_zero(in_prefix, in_type, out_prefix, options):
     good one, or to create it if needed.
 
     .. note::
-
         The :py:mod:`Step11.flag_maf_zero` module doesn't return usable output
         files. Hence, this function returns the input file prefix and its type.
 
@@ -705,7 +698,6 @@ def run_flag_hw(in_prefix, in_type, out_prefix, options):
     good one, or to create it if needed.
 
     .. note::
-
         The :py:mod:`Step12.flag_hw` module doesn't return usable output files.
         Hence, this function returns the input file prefix and its type.
 
@@ -758,7 +750,6 @@ def run_compare_gold_standard(in_prefix, in_type, out_prefix, options):
     good one, or to create it if needed.
 
     .. note::
-
         The :py:mod:`Misc.compare_gold_standard` module doesn't return usable
         output files. Hence, this function returns the input file prefix and its
         type.
@@ -812,7 +803,6 @@ def run_subset_data(in_prefix, in_type, out_prefix, options):
     good one, or to create it if needed.
 
     .. note::
-
         The output file type is the same as the input file type.
 
     """
@@ -863,7 +853,6 @@ def run_command(command):
     Tries to run a command. If it fails, raise a :py:class:`ProgramError`.
 
     .. warning::
-
         The variable ``command`` should be a list of strings (no other type).
 
     """

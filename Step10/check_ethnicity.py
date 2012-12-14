@@ -15,6 +15,43 @@ class Dummy(object):
     pass
 
 def main(argString=None):
+    """The main function.
+
+    :param argString: the options.
+
+    :type argString: list of strings
+
+    These are the steps of this module:
+
+    1.  Prints the options.
+    2.  Finds the overlapping markers between the three reference panels and the
+        source panel (:py:func:`findOverlappingSNPsWithReference`).
+    3.  Extract the required markers from all the data sets
+        (:py:func:`extractSNPs`).
+    4.  Combines the three reference panels together
+        (:py:func:`combinePlinkBinaryFiles`).
+    5.  Renames the reference panel's marker names to that they are the same as
+        the source panel (:py:func:`renameSNPs`).
+    6.  Compute the frequency of all the markers from the reference and the
+        source panels (:py:func:`computeFrequency`).
+    7.  Finds the markers to flip in the reference panel (when compared to the
+        source panel) (:py:func:`findFlippedSNPs`).
+    8.  Excludes the unflippable markers from the reference and the source
+        panels (:py:func:`excludeSNPs`).
+    9.  Flips the markers that need flipping in ther reference panel
+        (:py:func:`flipSNPs`).
+    10. Combines the reference and the source panels
+        (:py:func:`combinePlinkBinaryFiles`).
+    11. Runs part of :py:mod:`Step9.remove_IBS` on the combined data set
+        (:py:func:`runTheStep9`).
+    12. Creates the ``mds`` file from the combined data set and the result of
+        previous step (:py:func:`createMDSFile`).
+    13. Creates the population file (:py:func:`createPopulationFile`).
+    14. Plots the ``mds`` values (:py:func:`plotMDS`).
+    15. Finds the outliers of a given reference population
+        (:py:func:`find_the_outliers`).
+
+    """
     # Getting and checking the options
     args = parseArgs(argString)
     checkArgs(args)
@@ -112,8 +149,28 @@ def main(argString=None):
 
 
 def find_the_outliers(mds_file_name, population_file_name, ref_pop_name,
-                  multiplier, out_prefix):
-    """Finds the outliers of a given population."""
+                      multiplier, out_prefix):
+    """Finds the outliers of a given population.
+
+    :param mds_file_name: the name of the ``mds`` file.
+    :param population_file_name: the name of the population file.
+    :param ref_pop_name: the name of the reference population for which to find
+                         outliers from.
+    :param multiplier: the multiplier of the cluster standard deviation to
+                       modify the strictness of the outlier removal procedure.
+    :param out_prefix: the prefix of the output file.
+
+    :type mds_file_name: string
+    :type population_file_name: string
+    :type ref_pop_name: string
+    :type multiplier: float
+    :type out_prefix: string
+
+    Uses the :py:mod:`Step10.find_outliers` modules to find outliers. It
+    requires the ``mds`` file created by :py:func:`createMDSFile` and the
+    population file created by :py:func:`createPopulationFile`.
+
+    """
     options = ["--mds", mds_file_name, "--population-file",
                population_file_name, "--outliers-of", ref_pop_name,
                "--multiplier", str(multiplier), "--out", out_prefix]
@@ -126,7 +183,24 @@ def find_the_outliers(mds_file_name, population_file_name, ref_pop_name,
 
 
 def createPopulationFile(inputFiles, labels, outputFileName):
-    """Creates a population file."""
+    """Creates a population file.
+
+    :param inputFiles: the list of input files.
+    :param labels: the list of labels (corresponding to the input files).
+    :param outputFileName: the name of the output file.
+
+    :type inputFiles: list of strings
+    :type labels: list of strings
+    :type outputFileName: string
+
+    The ``inputFiles`` is in reality a list of ``tfam`` files composed of
+    samples. For each of those ``tfam`` files, there is a label associated with
+    it (representing the name of the population).
+
+    The output file consists of one row per sample, with the following three
+    columns: the family ID, the individual ID and the population of each sample.
+
+    """
     outputFile = None
     try:
         outputFile = open(outputFileName, 'w')
@@ -159,7 +233,22 @@ def createPopulationFile(inputFiles, labels, outputFileName):
 
 
 def plotMDS(inputFileName, outPrefix, populationFileName, options):
-    """Plots the MDS value."""
+    """Plots the MDS value.
+
+    :param inputFileName: the name of the ``mds`` file.
+    :param outPrefix: the prefix of the output files.
+    :param populationFileName: the name of the population file.
+    :param options: the options
+
+    :type inputFileName: string
+    :type outPrefix: string
+    :type populationFileName: string
+    :type options: argparse.Namespace
+
+    Plots the ``mds`` value according to the ``inputFileName`` file (``mds``)
+    and the ``populationFileName`` (the population file).
+
+    """
     # The options
     plotMDS_options = Dummy()
     plotMDS_options.file = inputFileName
@@ -201,14 +290,45 @@ def plotMDS(inputFileName, outPrefix, populationFileName, options):
 
 
 def createMDSFile(nb_components, inPrefix, outPrefix, genomeFileName):
-    """Creates a MDS file using Plink."""
+    """Creates a MDS file using Plink.
+
+    :param nb_components: the number of component.
+    :param inPrefix: the prefix of the input file.
+    :param outPrefix: the prefix of the output file.
+    :param genomeFileName: the name of the ``genome`` file.
+
+    :type nb_components: int
+    :type inPrefix: string
+    :type outPrefix: string
+    :type genomeFileName: string
+
+    Using Plink, computes the MDS values for each individul using the
+    ``inPrefix``, ``genomeFileName`` and the number of components. The results
+    are save using the ``outPrefix`` prefix.
+
+    """
     plinkCommand = ["plink", "--noweb", "--bfile", inPrefix, "--read-genome",
                     genomeFileName, "--cluster", "--mds-plot",
                     str(nb_components), "--out", outPrefix]
     runCommand(plinkCommand)
 
 def runTheStep9(inputPrefix, outPrefix, options):
-    """Run the Step9 of the data clean up."""
+    """Run the Step9 of the data clean up.
+
+    :param inputPrefix: the prefix of the input file.
+    :param outPrefix: the prefix of the output file.
+    :param options: the options
+
+    :type inputPrefix: string
+    :type outPrefix: string
+    :type options: argparse.Namespace
+
+    :returns: the prefix of the new bfile.
+
+    Runs :py:mod:`Step9.remove_IBS` using the ``inputPrefix`` files and
+    ``options`` options, and saves the results using the ``outPrefix`` prefix.
+
+    """
     # The options
     new_options = ["--bfile", inputPrefix, "--genome-only",
                    "--min-nb-snp", str(options.min_nb_snp),
@@ -235,7 +355,15 @@ def runTheStep9(inputPrefix, outPrefix, options):
 
 
 def allFileExists(fileList):
-    """Check that all file exists."""
+    """Check that all file exists.
+
+    :param fileList: the list of file to check.
+
+    :type fileList: list of strings
+
+    Check if all the files in ``fileList`` exists.
+
+    """
     allExists = True
     for fileName in fileList:
         allExists = allExists and os.path.isfile(fileName)
@@ -243,21 +371,62 @@ def allFileExists(fileList):
 
 
 def flipSNPs(inPrefix, outPrefix, flipFileName):
-    """Flip SNPs using Plink."""
+    """Flip SNPs using Plink.
+
+    :param inPrefix: the prefix of the input file.
+    :param outPrefix: the prefix of the output file.
+    :param flipFileName: the name of the file containing the markers to flip.
+
+    :type inPrefix: string
+    :type outPrefix: string
+    :type flipFileName: string
+
+    Using Plink, flip a set of markers in ``inPrefix``, and saves the results in
+    ``outPrefix``. The lis of markers to be flipped is in ``flipFileName``.
+
+    """
     plinkCommand = ["plink", "--noweb", "--bfile", inPrefix, "--flip",
                     flipFileName, "--make-bed", "--out", outPrefix]
     runCommand(plinkCommand)
 
 
 def excludeSNPs(inPrefix, outPrefix, exclusionFileName):
-    """Exclude some SNPs using Plink."""
+    """Exclude some SNPs using Plink.
+
+    :param inPrefix: the prefix of the input file.
+    :param outPrefix: the prefix of the output file.
+    :param exclusionFileName: the name of the file containing the markers to be
+                              excluded.
+
+    :type inPrefix: string
+    :type outPrefix: string
+    :type exclusionFileName: string
+
+    Using Plink, exclude a list of markers from ``inPrefix``, and saves the
+    results in ``outPrefix``. The list of markers are in ``exclusionFileName``.
+
+    """
     plinkCommand = ["plink", "--noweb", "--bfile", inPrefix, "--exclude",
                     exclusionFileName, "--make-bed", "--out", outPrefix]
     runCommand(plinkCommand)
 
 
 def renameSNPs(inPrefix, updateFileName, outPrefix):
-    """Updates the name of the SNPs using Plink."""
+    """Updates the name of the SNPs using Plink.
+
+    :param inPrefix: the prefix of the input file.
+    :param updateFileName: the name of the file containing the updated marker
+                           names.
+    :param outPrefix: the prefix of the output file.
+
+    :type inPrefix: string
+    :type updateFileName: string
+    :type outPrefix: string
+
+    Using Plink, changes the name of the markers in ``inPrefix`` using
+    ``updateFileName``. It saves the results in ``outPrefix``.
+
+    """
     plinkCommand = ["plink", "--noweb", "--bfile", inPrefix, "--update-map",
                     updateFileName, "--update-name", "--make-bed", "--out",
                     outPrefix]
@@ -265,7 +434,29 @@ def renameSNPs(inPrefix, updateFileName, outPrefix):
 
 
 def findFlippedSNPs(frqFile1, frqFile2, outPrefix):
-    """Find flipped SNPs and flip them in the data1."""
+    """Find flipped SNPs and flip them in the data.
+
+    :param frqFile1: the name of the first frequency file.
+    :param frqFile2: the name of the second frequency file.
+    :param outPrefix: the prefix of the output files.
+
+    :type frqFile1: string
+    :type frqFile2: string
+    :type outPrefix: string
+
+    By reading two frequency files (``frqFile1`` and ``frqFile2``), it finds a
+    list of markers that need to be flipped so that the first file becomes
+    comparable with the second one. Also finds marker that need to be removed.
+
+    A marker needs to be flipped in one of the two data set if the two markers
+    are not comparable (same minor allele), but become comparable if we flip one
+    of them.
+
+    A marker will be removed if it is all homozygous in at least one data set.
+    It will also be removed if it's impossible to determine the phase of the
+    marker (*e.g.* if the two alleles are ``A`` and ``T`` or ``C`` and ``G``).
+
+    """
     allelesFiles = [{}, {}]
     files = [frqFile1, frqFile2]
     for k, fileName in enumerate(files):
@@ -347,14 +538,38 @@ def findFlippedSNPs(frqFile1, frqFile2, outPrefix):
 
 
 def computeFrequency(prefix, outPrefix):
-    """Compute the frequency using Plink."""
+    """Compute the frequency using Plink.
+
+    :param prefix: the prefix of the file binary file for which we need to
+                   compute frequencies.
+    :param outPrefix: the prefix of the output files.
+
+    :type prefix: string
+    :type outPrefix: string
+
+    Uses Plink to compute the frequency of all the markers in the ``prefix``
+    binary file.
+
+    """
     plinkCommand = ["plink", "--noweb", "--bfile", prefix, "--freq", "--out",
                     outPrefix]
     runCommand(plinkCommand)
 
 
 def combinePlinkBinaryFiles(prefixes, outPrefix):
-    """Combine plink binary files."""
+    """Combine Plink binary files.
+
+    :param prefixes: a list of the prefix of the files that need to be combined.
+    :param outPrefix: the prefix of the output file (the combined file).
+
+    :type prefixes: list of strings
+    :type outPrefix: string
+
+    It uses Plink to merge a list of binary files (which is a list of prefixes
+    (strings)), and create the final data set which as ``outPrefix`` as the
+    prefix.
+
+    """
     # The first file is the bfile, the others are the ones to merge
     outputFile = None
     try:
@@ -377,7 +592,33 @@ def combinePlinkBinaryFiles(prefixes, outPrefix):
 
 
 def findOverlappingSNPsWithReference(prefix, referencePrefixes, outPrefix):
-    """Find the overlapping SNPs in 4 different data sets."""
+    """Find the overlapping SNPs in 4 different data sets.
+
+    :param prefix: the prefix of all the files.
+    :param referencePrefixes: the prefix of the reference population files.
+    :param outPrefix: the prefix of the output files.
+
+    :type prefix: string
+    :type referencePrefixes: list of strings
+    :type outPrefix: string
+
+    It starts by reading the ``bim`` file of the source data set
+    (``prefix.bim``). It finds all the markers (excluding the duplicated ones).
+    Then it reads all of the reference population ``bim`` files
+    (``referencePrefixes.bim``) and find all the markers that were found in the
+    source data set.
+
+    It creates three output files:
+
+    * ``outPrefix.ref_snp_to_extract``: the name of the markers that needs to be
+      extracted from the three reference panels.
+    * ``outPrefix.source_snp_to_extract``: the name of the markers that needs to
+      be extracted from the source panel.
+    * ``outPrefix.update_names``: a file (readable by Plink) that will help in
+      changing the names of the selected markers in the reference panels, so
+      that they become comparable with the source panel.
+
+    """
     # Reading the main file
     sourceSnpToExtract = {}
     duplicates = set()
@@ -457,7 +698,25 @@ def findOverlappingSNPsWithReference(prefix, referencePrefixes, outPrefix):
 
 def extractSNPs(snpToExtractFileName, referencePrefixes, popNames, outPrefix,
                 runSGE):
-    """Extract a list of SNPs using Plink."""
+    """Extract a list of SNPs using Plink.
+
+    :param snpToExtractFileName: the name of the file which contains the markers
+                                 to extract from the original data set.
+    :param referencePrefixes: a list containing the three reference population
+                              prefixes (the original data sets).
+    :param popNames: a list containing the three reference population names.
+    :param outPrefix: the prefix of the output file.
+    :param runSGE: Whether using SGE or not.
+
+    :type snpToExtractFileName: string
+    :type referencePrefixes: list of string
+    :type popNames: list of string
+    :type outPrefix: string
+    :type runSGE: boolean
+
+    Using Plink, extract a set of markers from a list of prefixes.
+
+    """
     s = None
     jobIDs = []
     jobTemplates = []
@@ -523,7 +782,19 @@ def extractSNPs(snpToExtractFileName, referencePrefixes, popNames, outPrefix,
 
 
 def runCommand(command):
-    """Run a command."""
+    """Run a command.
+
+    :param command: the command to run.
+
+    :type command: list of strings
+
+    Tries to run a command. If it fails, raise a :py:class:`ProgramError`. This
+    function uses the :py:mod:`subprocess` module.
+
+    .. warning::
+        The variable ``command`` should be a list fo strings (no other type).
+
+    """
     output = None
     try:
         output = subprocess.check_output(command,
@@ -536,15 +807,15 @@ def runCommand(command):
 def checkArgs(args):
     """Checks the arguments and options.
 
-    :param args: a :py:class:`Namespace` object containing the options of the
-                 program.
-    :type args: :py:class:`argparse.Namespace`
+    :param args: an object containing the options of the program.
+
+    :type args: argparse.Namespace
 
     :returns: ``True`` if everything was OK.
 
     If there is a problem with an option, an exception is raised using the
-    :py:class:`ProgramError` class, a message is printed
-    to the :class:`sys.stderr` and the program exists with code 1.
+    :py:class:`ProgramError` class, a message is printed to the
+    :py:class:`sys.stderr` and the program exists with code 1.
 
     """
     # Check if we have the tped and the tfam files
@@ -602,14 +873,46 @@ def checkArgs(args):
 def parseArgs(argString=None): # pragma: no cover
     """Parses the command line options and arguments.
 
-    :returns: A :py:class:`numpy.Namespace` object created by
+    :param argString: the options.
+
+    :type argString: list of string
+
+    :returns: A :py:class:`argparse.Namespace` object created by
               the :py:mod:`argparse` module. It contains the values of the
               different options.
 
-    ===============  ======  ===================================================
-        Options       Type                     Description
-    ===============  ======  ===================================================
-    ===============  ======  ===================================================
+    =========================== ====== ========================================
+              Options            Type               Description
+    =========================== ====== ========================================
+    ``--bfile``                 string The input file prefix (Plink binary
+                                       file).
+    ``--ceu-bfile``             string The input file prefix for the CEU
+                                       population (Plink binary file).
+    ``--yri-bfile``             string The input file prefix for the YRI
+                                       population (Plink binary file).
+    ``--jpt-chb-bfile``         string The input file prefix for the JPT-CHB
+                                       population (Plink binary file).
+    ``--min-nb-snp``            int    The minimum number of markers needed to
+                                       compute IBS.
+    ``--indep-pairwise``        string Three numbers: window size, window shift
+                                       and the r2 threshold.
+    ``--maf``                   string Restrict to SNPs with MAF >= threshold.
+    ``--sge``                   bool   Use SGE for parallelization.
+    ``--line-per-file-for-sge`` int    The number of line per file for SGE task
+                                       array.
+    ``--nb-components``         int    The number of component to compute.
+    ``--outliers-of``           string Finds the ouliers of this population.
+    ``--multiplier``            float  To find the outliers, we look for more
+                                       than x times the cluster standard
+                                       deviation.
+    ``--xaxis``                 string The component to use for the X axis.
+    ``--yaxis``                 string The component to use for the Y axis.
+    ``--format``                string The output file format.
+    ``--title``                 string The title of the MDS plot.
+    ``--xlabel``                string The label of the X axis.
+    ``--ylabel``                string The label of the Y axis.
+    ``--out``                   string The prefix of the output files.
+    =========================== ====== ========================================
 
     .. note::
         No option check is done here (except for the one automatically done by
@@ -629,6 +932,7 @@ class ProgramError(Exception):
     """An :py:class:`Exception` raised in case of a problem.
     
     :param msg: the message to print to the user before exiting.
+
     :type msg: string
 
     """
@@ -636,6 +940,7 @@ class ProgramError(Exception):
         """Construction of the :py:class:`ProgramError` class.
 
         :param msg: the message to print to the user
+
         :type msg: string
 
         """

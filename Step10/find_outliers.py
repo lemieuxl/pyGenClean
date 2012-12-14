@@ -9,6 +9,26 @@ import numpy as npy
 from PlinkUtils import createRowFromPlinkSpacedOutput as create_row
 
 def main(argString=None):
+    """The main function.
+
+    :param argString: the options.
+
+    :type argString: list of strings
+
+    These are the steps of the modules:
+
+    1. Prints the options.
+    2. Reads the population file (:py:func:`read_population_file`).
+    3. Reads the ``mds`` file (:py:func:`read_mds_file`).
+    4. Computes the three reference population clusters' centers
+       (:py:func:`find_ref_centers`).
+    5. Computes three clusters according to the reference population clusters'
+       centers, and finds the outliers of a given reference population
+       (:py:func:`find_outliers`). This steps also produce three different
+       plots.
+    6. Writes outlieres in a file (``prefix.outleirs``).
+
+    """
     # Getting and checking the options
     args = parseArgs(argString)
     checkArgs(args)
@@ -44,7 +64,52 @@ def main(argString=None):
 
 
 def find_outliers(mds, centers, center_info, ref_pop, options):
-    """Finds the outliers for a given population."""
+    """Finds the outliers for a given population.
+
+    :param mds: the ``mds`` information about each samples.
+    :param centers: the centers of the three reference population clusters.
+    :param center_info: the label of the three reference population clusters.
+    :param ref_pop: the reference population for which we need the outliers
+                    from.
+    :param options: the options
+
+    :type mds: numpy.recarray
+    :type centers: numpy.array
+    :type center_info: dict
+    :type ref_pop: string
+    :type options: argparse.Namespace
+
+    :returns: a :py:class:`set` of outliers from the ``ref_pop`` population.
+
+    Perform a ``KMeans`` classification using the three centers from the three
+    reference population cluster.
+
+    Samples are outliers of the required reference population (``ref_pop``) if:
+
+    * the sample is part of another reference population cluster;
+    * the sample is an outlier of the desired reference population
+      (``ref_pop``).
+
+    A sample is an outlier of a given cluster :math:`C_j` if the distance
+    between this sample and the center of the cluster :math:`C_j` (:math:`O_j`) is
+    bigger than a constant times the cluster's standard deviation
+    :math:`\\sigma_j`.
+
+    .. math::
+        \\sigma_j = \\sqrt{\\frac{\\sum{d(s_i,O_j)^2}}{||C_j|| - 1}}
+
+    where :math:`||C_j||` is the number of samples in the cluster :math:`C_j`,
+    and :math:`d(s_i,O_j)` is the distance between the sample :math:`s_i` and
+    the center :math:`O_j` of the cluster :math:`C_j`.
+
+    .. math::
+        d(s_i, O_j) = \\sqrt{(x_{O_j} - x_{s_i})^2 + (y_{O_j} - y_{s_i})^2}
+
+    Using a constant equals to one ensure we remove 100% of the outliers from
+    the cluster. Using a constant of 1.6 or 1.9 ensures we remove 99% and 95% of
+    outliers, respectively (an error rate of 1% and 5%, respectively).
+
+    """
     # Importing matplotlib for plotting purpuses
     import matplotlib as mpl
     if options.format != "X11" and mpl.get_backend() != "agg":
@@ -218,7 +283,26 @@ def find_outliers(mds, centers, center_info, ref_pop, options):
 
 
 def find_ref_centers(mds):
-    """Finds the center of the three reference clusters."""
+    """Finds the center of the three reference clusters.
+
+    :param mds: the ``mds`` information about each samples.
+
+    :type mds: numpy.recarray
+
+    :returns: a tuple with a :py:class:`numpy.array` containing the centers of
+              the three reference population cluster as first element, and a
+              :py:class:`dict` containing the label of each of the three
+              reference population clsuter.
+
+    First, we extract the ``mds`` values of each of the three reference
+    populations. The, we compute the center of each of those clusters by
+    computing the means.
+
+    .. math::
+        \\textrm{Cluster}_\\textrm{pop} = \\left(\\frac{\\sum_{i=1}^n x_i}{n},
+                                                 \\frac{\\sum_{i=1}^n y_i}{n}\\right)
+
+    """
     # Computing the centers of each of the reference clusters
     ceu_mds = mds[mds["pop"] == "CEU"]
     yri_mds = mds[mds["pop"] == "YRI"]
@@ -233,7 +317,27 @@ def find_ref_centers(mds):
 
 
 def read_mds_file(file_name, c1, c2, pops):
-    """Reads a MDS file."""
+    """Reads a MDS file.
+
+    :param file_name: the name of the ``mds`` file.
+    :param c1: the first component to read (x axis).
+    :param c2: the second component to read (y axis).
+    :param pops: the population of each sample.
+
+    :type file_name: string
+    :type c1: string
+    :type c2: string
+    :type pops: dict
+
+    :returns: a :py:class:`numpy.recarray` (one sample per line) with the
+              information about the family ID, the individual ID, the first
+              component to extract, the second component to extract and the
+              population.
+
+    The ``mds`` file is the result of Plink (as produced by the
+    :py:mod:`Step10.check_ethnicity` module).
+
+    """
     mds = []
     max_fid = 0
     max_iid = 0
@@ -276,7 +380,26 @@ def read_mds_file(file_name, c1, c2, pops):
 
 
 def read_population_file(file_name):
-    """Reads the population file."""
+    """Reads the population file.
+
+    :param file_name: the name of the population file.
+
+    :type file_name: string
+
+    :returns: a :py:class:`dict` containing the population for each of the
+              samples.
+
+    The population file should contain three columns:
+
+    1. The family ID.
+    2. The individual ID.
+    3. The population of the file (one of ``CEU``, ``YRI``, ``JPT-CHB`` or
+       ``SOURCE``).
+
+    The outliers are from the ``SOURCE`` population, when compared to one of the
+    three reference population (``CEU``, ``YRI`` or ``JPT-CHB``).
+
+    """
     pops = {}
     required_pops = {"CEU", "YRI", "JPT-CHB", "SOURCE"}
     with open(file_name, 'rb') as input_file:
@@ -302,15 +425,16 @@ def read_population_file(file_name):
 def checkArgs(args):
     """Checks the arguments and options.
 
-    :param args: a :py:class:`Namespace` object containing the options of the
-                 program.
-    :type args: :py:class:`argparse.Namespace`
+    :param args: a :py:class:`argparse.Namespace` object containing the options
+                 of the program.
+
+    :type args: argparse.Namespace
 
     :returns: ``True`` if everything was OK.
 
     If there is a problem with an option, an exception is raised using the
-    :py:class:`ProgramError` class, a message is printed
-    to the :class:`sys.stderr` and the program exists with code 1.
+    :py:class:`ProgramError` class, a message is printed to the
+    :class:`sys.stderr` and the program exists with code 1.
 
     """
     # Checking the input files
@@ -333,14 +457,28 @@ def checkArgs(args):
 def parseArgs(argString=None): # pragma: no cover
     """Parses the command line options and arguments.
 
-    :returns: A :py:class:`numpy.Namespace` object created by
-              the :py:mod:`argparse` module. It contains the values of the
-              different options.
+    :param argString: the options.
 
-    ===============  ======  ===================================================
-        Options       Type                     Description
-    ===============  ======  ===================================================
-    ===============  ======  ===================================================
+    :type argString: list of string
+
+    :returns: A :py:class:`argparse.Namespace` object created by the
+              :py:mod:`argparse` module. It contains the values of the different
+              options.
+
+    ===================== ====== ===============================================
+            Options        Type                   Description
+    ===================== ====== ===============================================
+    ``--mds``             string The MDS file from Plink.
+    ``--population-file`` string A population file from
+                                 :py:mod:`Step10.check_ethnicity` module.
+    ``--format``          string The output file format (png, ps, or pdf.
+    ``--out``             string The prefix of the output files.
+    ``--outliers-of``     string Finds the ouliers of this population.
+    ``--multiplier``      float  To find the outliers, we look for more than
+                                 :math:`x` times the cluster standard deviation.
+    ``--xaxis``           string The component to use for the X axis.
+    ``--yaxis``           string The component to use for the Y axis.
+    ===================== ====== ===============================================
 
     .. note::
         No option check is done here (except for the one automatically done by
@@ -357,7 +495,13 @@ def parseArgs(argString=None): # pragma: no cover
 
 
 def add_custom_options(parser):
-    """Adds custom options to a parser."""
+    """Adds custom options to a parser.
+
+    :param parser: the parser to which to add options.
+
+    :type parser: argparse.ArgumentParser
+
+    """
     parser.add_argument("--outliers-of", type=str, metavar="POP", default="CEU",
                         choices=["CEU", "YRI", "JPT-CHB"],
                         help=("Finds the ouliers of this population. "
@@ -380,6 +524,7 @@ class ProgramError(Exception):
     """An :py:class:`Exception` raised in case of a problem.
     
     :param msg: the message to print to the user before exiting.
+
     :type msg: string
 
     """
@@ -387,6 +532,7 @@ class ProgramError(Exception):
         """Construction of the :py:class:`ProgramError` class.
 
         :param msg: the message to print to the user
+
         :type msg: string
 
         """

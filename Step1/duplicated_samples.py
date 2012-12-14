@@ -165,7 +165,6 @@ def addToTPEDandTFAM(tped, tfam, prefix, toAddPrefix):
        ``tped`` to it, writing the final one (``prefix.final.tped``).
 
     .. warning::
-
         The ``tped`` and ``tfam`` variables need to contain at least one sample.
 
     """
@@ -266,7 +265,6 @@ def createAndCleanTPED(tped, tfam, samples, oldSamples, chosenSamples,
     replicates.
 
     .. note::
-
         A chosen sample is not completed using bad replicates (those that
         don't have a concordance or a completion higher than a certain
         threshold). The bad replicates are written in the file
@@ -720,16 +718,13 @@ def computeStatistics(tped, tfam, samples, oldSamples, prefix):
     sampls and the pairwise concordance between duplicated samples.
 
     .. note::
-
         The completion and concordance computation excludes a markers if it's on
         chromosome 24 and if the sample is a female.
 
     .. note::
-
         A missing genotype is encoded by ``0``.
 
     .. note::
-
         No percentage is computed here, only the numbers. Percentages are
         computing in other functions: :py:func:`printStatistics`, for
         completion, and :py:func:`printConcordance`, for concordance.
@@ -743,11 +738,9 @@ def computeStatistics(tped, tfam, samples, oldSamples, prefix):
     a call divided by the total number of genotypes (the set :math:`G_i`):
 
     .. math::
-
         Completion_i = \\frac{||g \\in G_i\\textrm{ where }g \\neq 0||}{||G_i||}
 
     .. note::
-
         We consider a genotype as being missing if the sample is a male and if a
         marker on chromosome 23 or 24 is heterozygous.
 
@@ -763,7 +756,6 @@ def computeStatistics(tped, tfam, samples, oldSamples, prefix):
     divided by the total number of genotypes (excluding the no calls):
 
     .. math::
-
         Concordance_{i,j} = \\frac{||g \\in G_i \\cup G_j \\textrm{ where } g_i = g_j||}
                                   {||g \\in G_i \\cup G_j \\textrm{ where } g \\neq 0||}
 

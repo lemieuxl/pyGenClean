@@ -170,7 +170,6 @@ def runCommand(command):
     function uses the :py:mod:`subprocess` module.
 
     .. warning::
-
         The variable ``command`` should be a list of stings (no other type).
 
     """
