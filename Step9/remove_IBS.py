@@ -490,7 +490,19 @@ def selectSNPsAccordingToLD(options):
 
 
 def runCommand(command):
-    """Run a command."""
+    """Run a command.
+
+    :param command: the command to run.
+
+    :type command: list of strings
+
+    Tries to run a command. If it fails, raise a :py:class:`ProgramError`. This
+    function uses the :py:mod:`subprocess` module.
+
+    .. warning::
+        The variable ``command`` should be a list of strings (no other type).
+
+    """
     output = None
     try:
         output = subprocess.check_output(command,
@@ -503,15 +515,15 @@ def runCommand(command):
 def checkArgs(args):
     """Checks the arguments and options.
 
-    :param args: a :py:class:`Namespace` object containing the options of the
-                 program.
+    :param args: an object containing the options of the program.
+
     :type args: :py:class:`argparse.Namespace`
 
     :returns: ``True`` if everything was OK.
 
     If there is a problem with an option, an exception is raised using the
-    :py:class:`ProgramError` class, a message is printed
-    to the :class:`sys.stderr` and the program exists with code 1.
+    :py:class:`ProgramError` class, a message is printed to the
+    :class:`sys.stderr` and the program exists with code 1.
 
     """
     # Check if we have the tped and the tfam files
@@ -558,14 +570,32 @@ def checkArgs(args):
 def parseArgs(argString=None): # pragma: no cover
     """Parses the command line options and arguments.
 
-    :returns: A :py:class:`numpy.Namespace` object created by
+    :param argString: the options.
+
+    :type argString: list of strings
+
+    :returns: A :py:class:`argparse.Namespace` object created by
               the :py:mod:`argparse` module. It contains the values of the
               different options.
 
-    ===============  ======  ===================================================
+    =========================== ====== ========================================
         Options       Type                     Description
-    ===============  ======  ===================================================
-    ===============  ======  ===================================================
+    =========================== ====== ========================================
+    ``--bfile``                 string The input file prefix (Plink binary
+                                       file).
+    ``--genome-only``           bool   Only create the genome file.
+    ``--min-nb-snp``            int    The minimum number of markers needed to
+                                       compute IBS values.
+    ``--indep-pairwise``        string Three numbers: window size, window shift
+                                       and the r2 threshold.
+    ``--maf``                   string Restrict to SNPs with MAF >= threshold.
+    ``--ibs2-ratio``            float  The initial IBS2* ratio (the minimum
+                                       value to show in the plot.
+    ``--sge``                   bool   Use SGE for parallelization.
+    ``--line-per-file-for-sge`` int    The number of line per file for SGE task
+                                       array.
+    ``--out``                   string The prefix of the output files.
+    =========================== ====== ========================================
 
     .. note::
         No option check is done here (except for the one automatically done by
@@ -585,6 +615,7 @@ class ProgramError(Exception):
     """An :py:class:`Exception` raised in case of a problem.
     
     :param msg: the message to print to the user before exiting.
+
     :type msg: string
 
     """
@@ -592,6 +623,7 @@ class ProgramError(Exception):
         """Construction of the :py:class:`ProgramError` class.
 
         :param msg: the message to print to the user
+
         :type msg: string
 
         """

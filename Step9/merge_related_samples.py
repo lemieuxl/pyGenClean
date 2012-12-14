@@ -7,6 +7,13 @@ import random
 import argparse
 
 def main(argString=None):
+    """The main function of the module.
+
+    :param argString: the options.
+
+    :type argString: list of strings
+
+    """
     # Getting and checking the options
     args = parseArgs(argString)
     checkArgs(args)
@@ -15,7 +22,20 @@ def main(argString=None):
 
 
 def merge_related_samples(file_name, out_prefix, no_status):
-    """Merge related samples."""
+    """Merge related samples.
+
+    :param file_name: the name of the input file.
+    :param out_prefix: the prefix of the output files.
+    :param no_status: is there a status column in the file?
+
+    :type file_name: string
+    :type out_prefix: string
+    :type no_status: boolean
+
+    In the ouput file, there are a pair of samples per line. Hence, one can
+    find related individuals by merging overlapping pairs.
+
+    """
     # What we need to save
     status = {}
     samples_sets = []
@@ -128,15 +148,15 @@ def merge_related_samples(file_name, out_prefix, no_status):
 def checkArgs(args):
     """Checks the arguments and options.
 
-    :param args: a :py:class:`Namespace` object containing the options of the
-                 program.
-    :type args: :py:class:`argparse.Namespace`
+    :param args: a an object containing the options of the program.
+
+    :type args: argparse.Namespace
 
     :returns: ``True`` if everything was OK.
 
     If there is a problem with an option, an exception is raised using the
-    :py:class:`ProgramError` class, a message is printed
-    to the :class:`sys.stderr` and the program exists with code 1.
+    :py:class:`ProgramError` class, a message is printed to the
+    :class:`sys.stderr` and the program exists with code 1.
 
     """
     if not os.path.isfile(args.ibs_related):
@@ -149,14 +169,22 @@ def checkArgs(args):
 def parseArgs(argString=None): # pragma: no cover
     """Parses the command line options and arguments.
 
-    :returns: A :py:class:`numpy.Namespace` object created by
-              the :py:mod:`argparse` module. It contains the values of the
-              different options.
+    :param argString: the options.
 
-    ===============  ======  ===================================================
-        Options       Type                     Description
-    ===============  ======  ===================================================
-    ===============  ======  ===================================================
+    :type argString: list of strings
+
+    :returns: A :py:class:`argparse.Namespace` object created by the
+              :py:mod:`argparse` module. It contains the values of the different
+              options.
+
+    ================= ====== ================================================
+         Options       Type                  Description
+    ================= ====== ================================================
+    ``--ibs-related`` string The input file containing related individuals
+                             according to IBS value.
+    ``--no-status``   bool   The input file doesn't have a ``status`` column.
+    ``--out``         string The prefix of the output files.
+    ================= ====== ================================================
 
     .. note::
         No option check is done here (except for the one automatically done by
@@ -176,6 +204,7 @@ class ProgramError(Exception):
     """An :py:class:`Exception` raised in case of a problem.
     
     :param msg: the message to print to the user before exiting.
+
     :type msg: string
 
     """
@@ -183,6 +212,7 @@ class ProgramError(Exception):
         """Construction of the :py:class:`ProgramError` class.
 
         :param msg: the message to print to the user
+
         :type msg: string
 
         """
