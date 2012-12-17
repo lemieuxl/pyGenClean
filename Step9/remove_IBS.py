@@ -13,6 +13,30 @@ from PlinkUtils import createRowFromPlinkSpacedOutput
 from StatGenDataCleanUp.Step9.merge_related_samples import merge_related_samples
 
 def main(argString=None):
+    """The main funciton of this module.
+
+    :param argString: the options.
+
+    :type argString: list of strings
+
+    Here are the steps for this function:
+
+    1. Prints the options.
+    2. Uses Plink to extract markers according to LD
+       (:py:func:`selectSNPsAccordingToLD`).
+    3. Checks if there is enough markers after pruning
+       (:py:func:`checkNumberOfSNP`). If not, then quits.
+    4. Extract markers according to LD (:py:func:`extractSNPs`).
+    5. Runs Plink with the ``genome`` option (:py:func:`runGenome`). Quits here
+       if the user asker only for the ``genome`` file.
+    6. Finds related individuals and gets values for plotting
+       (:py:func:`extractRelatedIndividuals`).
+    7. Plots ``Z1`` in function of ``IBS2 ratio`` for related individuals
+       (:py:func:`plot_related_data`).
+    8. Plots ``Z2`` in function of ``IBS2 ratio`` for related individuals
+       (:py:func:`plot_related_data`).
+
+    """
     # Getting and checking the options
     args = parseArgs(argString)
     checkArgs(args)
@@ -33,7 +57,7 @@ def main(argString=None):
         print "        Stopping now"
 
     else:
-        # Remove the SNPs
+        # Extract the SNPs
         print "   - Extracting the SNPs using Plink"
         newBfile = extractSNPs(snpsToExtract, args)
 
@@ -61,7 +85,37 @@ def main(argString=None):
 
 
 def plot_related_data(x, y, code, ylabel, fileName, options):
-    """Plot Z1 and Z2 in function of IBS2* ratio."""
+    """Plot Z1 and Z2 in function of IBS2* ratio.
+
+    :param x: the x axis of the plot (``IBS2 ratio``).
+    :param y: the y axis of the plot (either ``z1`` or ``z2``).
+    :param code: the code of the relatedness of each sample pair.
+    :param ylabel: the label of the y axis (either ``z1`` or ``z2``).
+    :param fileName: the name of the output file.
+    :param options: the options.
+
+    :type x: numpy.array of floats
+    :type y: numpy.array of floats
+    :type code: numpy.array of strings
+    :type ylabel: string
+    :type fileName: string
+    :type options: argparse.Namespace
+
+    There are four different relation codes (represented by 4 different color in
+    the plots:
+
+    ==== =============================================== ===========
+    Code                    Relation                        Color
+    ==== =============================================== ===========
+    1    Full-sbis                                       ``#CC0000``
+    2    Half-sibs or Grand-parent-Child or Uncle-Nephew ``#0099CC``
+    3    Parent-Child                                    ``#FF8800``
+    4    Twins or Duplicated samples                     ``#9933CC``
+    ==== =============================================== ===========
+
+    Sample pairs with unknown relation are plotted using ``#669900`` as color.
+
+    """
     import matplotlib as mpl
     if mpl.get_backend() != "agg":
         mpl.use("Agg")
@@ -117,7 +171,68 @@ def plot_related_data(x, y, code, ylabel, fileName, options):
 
 
 def extractRelatedIndividuals(fileName, outPrefix, ibs2_ratio_threshold):
-    """Extract related individuals according IBS2* ratio."""
+    """Extract related individuals according IBS2* ratio.
+
+    :param fileName: the name of the input file.
+    :param outPrefix: the prefix of the output files.
+    :param ibs2_ratio_threshold: the ibs2 ratio threshold (tells if sample pair
+                                 is related or not).
+
+    :type fileName: string
+    :type outPrefix: string
+    :type ibs2_ratio_threshold: float
+
+    :returns: a :py:class:`numpy.recarray` data set containing (for each related
+              sample pair) the ``ibs2 ratio``, ``Z1``, ``Z2`` and the type of
+              relatedness.
+
+    Reads a ``genome`` file (provided by :py:func:`runGenome`) and extract
+    related sample pairs according to ``IBS2 ratio``.
+
+    A ``genome`` file contains at leat the following information for each sample
+    pair:
+
+    * **FID1:** the family ID of the first sample in the pair.
+    * **IID1:** the individual ID of the first sample in the pair.
+    * **FID2:** the family ID of the second sample in the pair.
+    * **IID2:** the individual ID of the second sample in the pair.
+    * **Z0:** the probability that :math:`IBD = 0`.
+    * **Z1:** the probability that :math:`IBD = 1`.
+    * **Z2:** the probability that :math:`IBD = 2`.
+    * **HOMHOM:** the number of :math:`IBS = 0` SNP pairs used in ``PPC`` test.
+    * **HETHET:** the number of :math:`IBS = 2` het/het SNP pairs in ``PPC``
+      test.
+
+    The ``IBS2 ratio`` is computed using the following formula:
+
+    .. math::
+        \\textrm{IBS2 ratio} = \\frac{\\textrm{HETHET}}
+                                     {\\textrm{HOMHOM} + \\textrm{HETHET}}
+
+    If the ``IBS2 ratio`` is higher than the threshold, the samples in the pair
+    are related. The following values help in finding the relatedness of the
+    sample pair.
+
+    +---------------------------------------+-----------------------+------+
+    |           Values                      |        Relation       | Code |
+    +=======================================+=======================+======+
+    | :math:`0.17 \\leq z_0 \\leq 0.33` and   | Full-sibs             | 1    |
+    | :math:`0.40 \\leq z_1 \\leq 0.60`       |                       |      |
+    +---------------------------------------+-----------------------+------+
+    | :math:`0.40 \\leq z_0 \\leq 0.60` and   | Half-sibs or          | 2    |
+    | :math:`0.40 \\leq z_1 \\leq 0.60`       | Grand-parent-Child or |      |
+    |                                       | Uncle-Nephew          |      |
+    +---------------------------------------+-----------------------+------+
+    | :math:`z_0 \\leq 0.05` and             | Parent-Child          | 3    |
+    | :math:`z_1 \\geq 0.95` and             |                       |      |
+    | :math:`z_2 \\leq 0.05`                 |                       |      |
+    +---------------------------------------+-----------------------+------+
+    | :math:`z_0 \\leq 0.05` and             | Twins or Duplicated   | 4    |
+    | :math:`z_1 \\leq 0.05` and             | samples               |      |
+    | :math:`z_2 \\geq 0.95`                 |                       |      |
+    +---------------------------------------+-----------------------+------+
+
+    """
     # The output file
     outputFile = None
     try:
@@ -229,7 +344,21 @@ def extractRelatedIndividuals(fileName, outPrefix, ibs2_ratio_threshold):
 
 
 def checkNumberOfSNP(fileName, minimumNumber):
-    """Check there is enough SNPs in the file (with minimum)."""
+    """Check there is enough SNPs in the file (with minimum).
+
+    :param fileName: the name of the file.
+    :param minimumNumber: the minimum number of markers that needs to be in the
+                          file.
+
+    :type fileName: string
+    :type minimumNumber: int
+
+    :returns: ``True`` if there is enough markers in the file, ``False``
+              otherwise.
+
+    Reads the number of markers (number of lines) in a file.
+
+    """
     nbSNP = 0
     try:
         with open(fileName, 'r') as inputFile:
@@ -245,7 +374,22 @@ def checkNumberOfSNP(fileName, minimumNumber):
 
 
 def splitFile(inputFileName, linePerFile, outPrefix):
-    """Split a file."""
+    """Split a file.
+
+    :param inputFileName: the name of the input file.
+    :param linePerFile: the number of line per file (after splitting).
+    :param outPrefix: the prefix of the output files.
+
+    :type inputFileName: string
+    :type linePerFile: int
+    :type outPrefix: string
+
+    :returns: the number of created temporary files.
+
+    Splits a file (``inputFileName`` into multiple files containing at most
+    ``linePerFile`` lines.
+
+    """
     nbTmpFile = 1
     nbLine = 0
     tmpFile = None
@@ -291,7 +435,24 @@ def splitFile(inputFileName, linePerFile, outPrefix):
 
 
 def runGenome(bfile, options):
-    """Run the genome command from plink."""
+    """Runs the genome command from plink.
+
+    :param bfile: the input file prefix.
+    :param options: the options.
+
+    :type bfile: string
+    :type options: argparse.Namespace
+
+    :returns: the name of the ``genome`` file.
+
+    Runs Plink with the ``genome`` option. If the user asks for SGE
+    (``options.sge`` is True), a frequency file is first created by plink. Then,
+    the input files are splitted in ``options.line_per_file_for_sge`` and Plink
+    is called (using the ``genome`` option) on the cluster using SGE
+    (:py:func:`runGenomeSGE`). After the analysis, Plink's output files and logs
+    are merged using :py:func:`mergeGenomeLogFiles`.
+
+    """
     outPrefix = options.out + ".genome"
     if options.sge:
         # We run genome using SGE
@@ -318,7 +479,19 @@ def runGenome(bfile, options):
 
 
 def mergeGenomeLogFiles(outPrefix, nbSet):
-    """Merge genome and log files together."""
+    """Merge genome and log files together.
+
+    :param outPrefix: the prefix of the output files.
+    :param nbSet: The number of set of files to merge together.
+
+    :type outPrefix: string
+    :type nbSet: int
+
+    :returns: the name of the output file (the ``genome`` file).
+
+    After merging, the files are deleted to save space.
+
+    """
     outputFile = None
     try:
         outputFile = open(outPrefix + ".genome", "w")
@@ -405,7 +578,21 @@ def mergeGenomeLogFiles(outPrefix, nbSet):
 
 
 def runGenomeSGE(bfile, freqFile, nbJob, outPrefix):
-    """Runs the genome command from plink, on SGE."""
+    """Runs the genome command from plink, on SGE.
+
+    :param bfile: the prefix of the input file.
+    :param freqFile: the name of the frequency file (from Plink).
+    :param nbJob: the number of jobs to launch.
+    :param outPrefix: the prefix of all the output files.
+
+    :type bfile: string
+    :type freqFile: string
+    :type nbJob: int
+    :type outPrefix: string
+
+    Runs Plink with the ``genome`` options on the cluster (using SGE).
+
+    """
     # Add the environment variable for DRMAA package
     if "DRMAA_LIBRARY_PATH" not in os.environ:
         os.environ["DRMAA_LIBRARY_PATH"] = "/shares/data/sge/lib/lx24-amd64/libdrmaa.so.1.0"
@@ -468,7 +655,17 @@ def runGenomeSGE(bfile, freqFile, nbJob, outPrefix):
 
 
 def extractSNPs(snpsToExtract, options):
-    """Remove SNPs using Plink."""
+    """Extract markers using Plink.
+
+    :param snpsToExtract: the name of the file containing markers to extract.
+    :param options: the options
+
+    :type snpsToExtract: string
+    :type options: argparse.Namespace
+
+    :returns: the prefix of the output files.
+
+    """
     outPrefix = options.out + ".pruned_data"
     plinkCommand = ["plink", "--noweb", "--bfile", options.bfile, "--extract",
                     snpsToExtract, "--make-bed", "--out", outPrefix]
@@ -477,7 +674,15 @@ def extractSNPs(snpsToExtract, options):
 
 
 def selectSNPsAccordingToLD(options):
-    """Compute LD using Plink."""
+    """Compute LD using Plink.
+
+    :param options: the options.
+
+    :type options: argparse.Namespace
+
+    :returns: the name of the output file (from Plink).
+
+    """
     # The plink command
     outPrefix = options.out + ".pruning_" + options.indep_pairwise[2]
     plinkCommand = ["plink", "--noweb", "--bfile", options.bfile, "--maf",
@@ -517,7 +722,7 @@ def checkArgs(args):
 
     :param args: an object containing the options of the program.
 
-    :type args: :py:class:`argparse.Namespace`
+    :type args: argparse.Namespace
 
     :returns: ``True`` if everything was OK.
 
