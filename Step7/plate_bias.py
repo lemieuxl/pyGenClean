@@ -9,6 +9,22 @@ import subprocess
 from PlinkUtils import createRowFromPlinkSpacedOutput
 
 def main(argString=None):
+    """The main function of this module.
+
+    :param argString: the options.
+
+    :type argString: list of strings
+
+    These are the steps:
+
+    1. Runs a plate bias analysis using Plink
+       (:py:func:`executePlateBiasAnalysis`).
+    2. Extracts the list of significant markers after plate bias analysis
+       (:py:func:`extractSignificantSNPs`).
+    3. Computes the frequency of all significant markers after plate bias
+       analysis (:py:func:`computeFrequencyOfSignificantSNPs`).
+
+    """
     # Getting and checking the options
     args = parseArgs(argString)
     checkArgs(args)
@@ -31,7 +47,17 @@ def main(argString=None):
 
 
 def extractSignificantSNPs(prefix):
-    """Extract significant SNPs in the fisher file."""
+    """Extract significant SNPs in the fisher file.
+
+    :param prefix: the prefix of the input file.
+
+    :type prefix: string
+
+    Reads a list of significant markers (``prefix.assoc.fisher``) after plate
+    bias analysis with Plink. Writes a file (``prefix.significant_SNPs.txt``)
+    containing those significant markers.
+
+    """
     fileNames = glob.glob(prefix + ".*.assoc.fisher")
 
     snpNames = set()
@@ -69,7 +95,16 @@ def extractSignificantSNPs(prefix):
 
 
 def computeFrequencyOfSignificantSNPs(options):
-    """Remove significant SNPs using Plink."""
+    """Computes the frequency of the significant markers.
+
+    :param options: the options.
+
+    :type options: argparse.Namespace
+
+    Extract a list of markers (significant after plate bias analysis) and
+    computes their frequencies.
+
+    """
     # The plink command
     plinkCommand = ["plink", "--noweb", "--bfile", options.bfile, "--extract",
                     options.out + ".significant_SNPs.txt", "--freq", "--out",
@@ -78,7 +113,13 @@ def computeFrequencyOfSignificantSNPs(options):
     
 
 def executePlateBiasAnalysis(options):
-    """Run Plink with the following options."""
+    """Execute the plate bias analysis with Plink.
+
+    :param options: the options.
+
+    :type options: argparse.Namespace
+
+    """
     # The plink command
     plinkCommand = ["plink", "--noweb", "--bfile", options.bfile,
                     "--loop-assoc", options.loop_assoc, "--fisher",
@@ -87,7 +128,19 @@ def executePlateBiasAnalysis(options):
 
 
 def runCommand(command):
-    """Run a command."""
+    """Run a command.
+
+    :param command: the command to run.
+
+    :type command: list of strings
+
+    Tries to run a command. If it fails, raise a :py:class:`ProgramError`. This
+    function uses the :py:mod:`subprocess` module.
+
+    .. warning::
+        The variable ``command`` should be a list of strings (no other type).
+
+    """
     output = None
     try:
         output = subprocess.check_output(command,
@@ -100,15 +153,15 @@ def runCommand(command):
 def checkArgs(args):
     """Checks the arguments and options.
 
-    :param args: a :py:class:`Namespace` object containing the options of the
-                 program.
-    :type args: :py:class:`argparse.Namespace`
+    :param args: an object containing the options of the program.
+
+    :type args: argparse.Namespace
 
     :returns: ``True`` if everything was OK.
 
     If there is a problem with an option, an exception is raised using the
-    :py:class:`ProgramError` class, a message is printed
-    to the :class:`sys.stderr` and the program exists with code 1.
+    :py:class:`ProgramError` class, a message is printed to the
+    :class:`sys.stderr` and the program exists with code 1.
 
     """
     # Check if we have the tped and the tfam files
@@ -128,14 +181,24 @@ def checkArgs(args):
 def parseArgs(argString=None): # pragma: no cover
     """Parses the command line options and arguments.
 
-    :returns: A :py:class:`numpy.Namespace` object created by
-              the :py:mod:`argparse` module. It contains the values of the
-              different options.
+    :param argString: the options.
 
-    ===============  ======  ===================================================
-        Options       Type                     Description
-    ===============  ======  ===================================================
-    ===============  ======  ===================================================
+    :type argString: list of strings
+
+    :returns: A :py:class:`argparse.Namespace` object created by the
+              :py:mod:`argparse` module. It contains the values of the different
+              options.
+
+    ================ ====== ==================================================
+        Options       Type                    Description
+    ================ ====== ==================================================
+    ``--bfile``      string The input file prefix (Plink binary).
+    ``--loop-assoc`` string The file containing the plate organization of each
+                            samples.
+    ``--pfilter``    float  The significance threshold used for the plate
+                            effect.
+    ``--out``        string The prefix of the output files.
+    ================ ====== ==================================================
 
     .. note::
         No option check is done here (except for the one automatically done by
@@ -155,6 +218,7 @@ class ProgramError(Exception):
     """An :py:class:`Exception` raised in case of a problem.
     
     :param msg: the message to print to the user before exiting.
+
     :type msg: string
 
     """
@@ -162,6 +226,7 @@ class ProgramError(Exception):
         """Construction of the :py:class:`ProgramError` class.
 
         :param msg: the message to print to the user
+
         :type msg: string
 
         """
