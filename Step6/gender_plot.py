@@ -8,6 +8,26 @@ import argparse
 import numpy as npy
 
 def main(argString=None):
+    """The main function of the module.
+
+    :param argString: the options.
+
+    :type argString: list of strings
+
+    These are the steps:
+
+    1. Prints the options.
+    2. If there are ``summarized_intensities`` provided, reads the files
+       (:py:func:`read_summarized_intensities`) and skips to step 7.
+    3. Reads the ``bim`` file to get markers on the sexual chromosomes
+       (:py:func:`read_bim`).
+    4. Reads the ``fam`` file to get gender (:py:func:`read_fam`).
+    5. Reads the file containing samples with sex problems
+       (:py:func:`read_sex_problems`).
+    6. Reads the intensities and summarizes them (:py:func:`read_intensities`).
+    7. Plots the summarized intensities (:py:func:`plot_gender`).
+
+    """
     # Getting and checking the options
     args = parseArgs(argString)
     checkArgs(args)
@@ -35,7 +55,18 @@ def main(argString=None):
 
 
 def read_sex_problems(file_name):
-    """Reads the sex problem file."""
+    """Reads the sex problem file.
+
+    :param file_name: the name of the file containing sex problems.
+
+    :type file_name: string
+
+    :returns: a :py:class:`frozenset` containing samples with sex problem.
+
+    If there is no ``file_name`` (*i.e.* is ``None``), then an empty
+    :py:class:`frozenset` is returned.
+
+    """
     if file_name is None:
         return frozenset()
 
@@ -43,13 +74,32 @@ def read_sex_problems(file_name):
     with open(file_name, 'r') as input_file:
         header_index = dict([(col_name, i) for i, col_name
                                 in enumerate(input_file.readline().rstrip("\r\n").split("\t"))])
+        if "IID" not in header_index:
+            msg = "{}: no column named IID".format(file_name)
+            raise ProgramError(msg)
+
         problems = frozenset([i.rstrip("\r\n").split("\t")[header_index["IID"]] for i
                                 in input_file.readlines()])
     return problems
 
 
 def encode_chr(chromosome):
-    """Encodes chromosomes."""
+    """Encodes chromosomes.
+
+    :param chromosome: the chromosome to encode.
+
+    :type chromosome: string
+
+    :returns: the encoded chromosome as :py:class:`int`.
+
+    It changes ``X``, ``Y``, ``XY`` and ``MT`` to ``23``, ``24``, ``25`` and
+    ``26``, respectively. It changes everything else as :py:class:`int`.
+
+    If :py:class:`ValueError` is raised, then :py:class:`ProgramError` is
+    also raised. If a chromosome as a value below 1 or above 26, a
+    :py:class:`ProgramError` is raised.
+
+    """
     if chromosome == "X":
         return 23
     if chromosome == "Y":
@@ -69,7 +119,18 @@ def encode_chr(chromosome):
 
 
 def encode_gender(gender):
-    """Encodes the gender."""
+    """Encodes the gender.
+
+    :param gender: the gender to encode.
+
+    :type gender: string
+
+    :returns: the encoded gender.
+
+    It changes ``1`` and ``2`` to ``Male`` and ``Female`` respectively. It
+    encodes everything else to ``Unknown``.
+
+    """
     if gender == "1":
         return "Male"
     if gender == "2":
@@ -78,7 +139,19 @@ def encode_gender(gender):
 
 
 def read_bim(file_name):
-    """Reads the BIM file to gather marker names."""
+    """Reads the BIM file to gather marker names.
+
+    :param file_name: the name of the ``bim`` file.
+
+    :type file_name: string
+
+    :returns: a :py:class:`dict` containing the chromosomal location of each
+              marker on the sexual chromosomes.
+
+    It uses the :py:func:`encode_chr` to encode the chromosomes from ``X`` and
+    ``Y`` to ``23`` and ``24``, respectively.
+
+    """
     marker_names_chr = None
     with open(file_name, 'r') as input_file:
         marker_names_chr = dict([(i[1], encode_chr(i[0])) for i
@@ -89,7 +162,18 @@ def read_bim(file_name):
 
 
 def read_fam(file_name):
-    """Reads the FAM file to gather sample names."""
+    """Reads the FAM file to gather sample names.
+
+    :param file_name: the ``fam`` file to read.
+
+    :type file_name: string
+
+    :returns: a :py:class:`dict` containing the gender of each samples.
+
+    It uses the :py:func:`encode_gender` to encode the gender from ``1``and
+    ``2`` to ``Male`` and ``Female``, respectively.
+
+    """
     sample_names_gender = None
     with open(file_name, 'r') as input_file:
         sample_names_gender = dict([(i[1], encode_gender(i[4])) for i
@@ -99,7 +183,22 @@ def read_fam(file_name):
 
 
 def plot_gender(data, options):
-    """Plots the gender."""
+    """Plots the gender.
+
+    :param data: the data to plot.
+    :param options: the options.
+
+    :type data: numpy.recarray
+    :type options: argparse.Namespace
+
+    Plots the summarized intensities of the markers on the Y chromosomes in
+    function of the markers on the X chromosomes, with problematic samples with
+    different colors.
+
+    Also uses :py:func:`print_data_to_file` ot save the data, so that it is
+    faster to rerun the analysis.
+
+    """
     if data is None:
         # there is a problem...
         msg = ("no data: specify either '--bfile' and '--intensities', or "
@@ -220,7 +319,15 @@ def plot_gender(data, options):
 
 
 def print_data_to_file(data, file_name):
-    """Prints data to file."""
+    """Prints data to file.
+
+    :param data: the data to print.
+    :param file_name: the name of the output file.
+
+    :type data: numpy.recarray
+    :type file_name: string
+
+    """
     try:
         with open(file_name, 'w') as output_file:
             print >>output_file, "\t".join(data.dtype.names)
@@ -231,7 +338,50 @@ def print_data_to_file(data, file_name):
         raise ProgramError(msg)
 
 def read_summarized_intensities(prefix):
-    """Reads the summarized intensities from 6 files."""
+    """Reads the summarized intensities from 6 files.
+
+    :param prefix: the prefix of the six files.
+
+    :type prefix: string
+
+    :returns: a :py:class`numpy.recarray` containing the following columns (for
+              each of the samples): ``sampleID``, ``chr23``, ``chr24``,
+              ``gender`` and ``status``.
+
+    Instead of reading a final report (like :py:func:`read_intensities`), this
+    function reads six files previously created by this module to gather sample
+    information. Here are the content of the six files:
+
+    * ``prefix.ok_females.txt``: information about females without sex problem.
+    * ``prefix.ok_males.txt``: information about males without sex problem.
+    * ``prefix.ok_unknowns.txt``: information about unknown gender without sex
+                                  problem.
+    * ``prefix.problematic_females.txt``: information about females with sex
+                                          problem.
+    * ``prefix.problematic_males.txt``: information about males with sex
+                                        problem.
+    * ``prefix.problematic_unknowns.txt``: information about unknown gender with
+                                           sex problem.
+
+    Each file contains the following columns: ``sampleID``, ``chr23``,
+    ``chr24``, ``gender`` and ``status``.
+
+    The final data set contains the following information for each sample:
+
+    * ``sampleID``: the sample ID.
+    * ``chr23``: the summarized intensities for chromosome 23.
+    * ``chr24``: the summarized intensities for chromosome 24.
+    * ``gender``: the gender of the sample (``Male`` or ``Female``).
+    * ``status``: the status of the sample (``OK`` or ``Problem``).
+
+    The summarized intensitities for a chromosome (:math:`S_{chr}`) is computed
+    using this formula (where :math:`I_{chr}` is the set of all marker
+    intensities on chromosome :math:`chr`):
+
+    .. math::
+        S_{chr} = \\frac{\\sum{I_{chr}}}{||I_{chr}||}
+
+    """
     data = []
     for suffix in {".ok_females.txt", ".ok_males.txt", ".ok_unknowns.txt",
                    ".problematic_females.txt", ".problematic_males.txt",
@@ -282,7 +432,43 @@ def read_summarized_intensities(prefix):
 
 def read_intensities(file_name, needed_markers_chr, needed_samples_gender,
                      sex_problems):
-    """Reads the intensities from a file."""
+    """Reads the intensities from a file.
+
+    :param file_name: the name of the input file.
+    :param needed_markers_chr: the markers that are needed.
+    :param needed_samples_gender: the gender of all the samples.
+    :param sex_problems: the sample with sex problem.
+
+    :type file_name: string
+    :type needed_markers_chr: dict
+    :type needed_samples_gender: dict
+    :type sex_problems: frozenset
+
+    :returns: a :py:class`numpy.recarray` containing the following columns (for
+              each of the samples): ``sampleID``, ``chr23``, ``chr24``,
+              ``gender`` and ``status``.
+
+    Reads the normalized intensities from a final report. The file must contain
+    the following columns: ``SNP Name``, ``Sample ID``, ``X``, ``Y`` and
+    ``Chr``. It then keeps only the required markers (those that are on
+    sexual chromosomes (``23`` or ``24``), encoding `NaN` intensities to zero.
+
+    The final data set contains the following information for each sample:
+
+    * ``sampleID``: the sample ID.
+    * ``chr23``: the summarized intensities for chromosome 23.
+    * ``chr24``: the summarized intensities for chromosome 24.
+    * ``gender``: the gender of the sample (``Male`` or ``Female``).
+    * ``status``: the status of the sample (``OK`` or ``Problem``).
+
+    The summarized intensitities for a chromosome (:math:`S_{chr}`) is computed
+    using this formula (where :math:`I_{chr}` is the set of all marker
+    intensities on chromosome :math:`chr`):
+
+    .. math::
+        S_{chr} = \\frac{\\sum{I_{chr}}}{||I_{chr}||}
+
+    """
     input_file = None
     if file_name.endswith(".gz"):
         input_file = gzip.open(file_name, 'rb')
@@ -380,15 +566,15 @@ def read_intensities(file_name, needed_markers_chr, needed_samples_gender,
 def checkArgs(args):
     """Checks the arguments and options.
 
-    :param args: a :py:class:`Namespace` object containing the options of the
-                 program.
-    :type args: :py:class:`argparse.Namespace`
+    :param args: an object containing the options of the program.
+
+    :type args: argparse.Namespace
 
     :returns: ``True`` if everything was OK.
 
     If there is a problem with an option, an exception is raised using the
-    :py:class:`ProgramError` class, a message is printed
-    to the :class:`sys.stderr` and the program exists with code 1.
+    :py:class:`ProgramError` class, a message is printed to the
+    :class:`sys.stderr` and the program exists with code 1.
 
     """
     # Checking if there are input files
@@ -434,14 +620,33 @@ def checkArgs(args):
 def parseArgs(argString=None): # pragma: no cover
     """Parses the command line options and arguments.
 
-    :returns: A :py:class:`numpy.Namespace` object created by
-              the :py:mod:`argparse` module. It contains the values of the
-              different options.
+    :param argString: the options.
 
-    ===============  ======  ===================================================
-        Options       Type                     Description
-    ===============  ======  ===================================================
-    ===============  ======  ===================================================
+    :type argString: list of strings
+
+    :returns: A :py:class:`argparse.Namespace` object created by the
+              :py:mod:`argparse` module. It contains the values of the different
+              options.
+
+    ============================ ====== ========================================
+               Options            Type                    Description
+    ============================ ====== ========================================
+    ``--bfile``                  string The plink binary file containing
+                                        information about markers and
+                                        individuals.
+    ``--intensities``            string A file containing alleles intensities
+                                        for each of the markers located on the X
+                                        and Y chromosome.
+    ``--summarized-intensities`` string The prefix of six files containing
+                                        summarized chr23 and chr24 intensities.
+    ``--sex-problems``           string The file containing indivuduals with sex
+                                        problems.
+    ``--format``                 string The output file format (png, ps, pdf, or
+                                        X11).
+    ``--xlabel``                 string The label of the X axis.
+    ``--ylabel``                 string The label of the Y axis.
+    ``--out``                    string The prefix of the output files.
+    ============================ ====== ========================================
 
     .. note::
         No option check is done here (except for the one automatically done by
@@ -461,6 +666,7 @@ class ProgramError(Exception):
     """An :py:class:`Exception` raised in case of a problem.
     
     :param msg: the message to print to the user before exiting.
+
     :type msg: string
 
     """
@@ -468,6 +674,7 @@ class ProgramError(Exception):
         """Construction of the :py:class:`ProgramError` class.
 
         :param msg: the message to print to the user
+
         :type msg: string
 
         """

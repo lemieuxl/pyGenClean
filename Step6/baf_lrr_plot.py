@@ -8,6 +8,21 @@ import argparse
 import numpy as npy
 
 def main(argString=None):
+    """The main function of this module.
+
+    :param argString: the options.
+
+    :type argString: list of strings
+
+    These are the steps:
+
+    1. Prints the options.
+    2. Reads the problematic samples (:py:func:`read_problematic_samples`).
+    3. Finds and checks the raw files for each of the problematic samples
+       (:py:func:`check_file_names`).
+    4. Plots the BAF and LRR (:py:func:`plot_baf_lrr`).
+
+    """
     # Getting and checking the options
     args = parseArgs(argString)
     checkArgs(args)
@@ -23,7 +38,22 @@ def main(argString=None):
 
 
 def check_file_names(samples, raw_dir, options):
-    """Check if all files present."""
+    """Check if all files are present.
+
+    :param samples: a list of tuples with the family ID as first element
+                    (string) and sample ID as last element (string).
+    :param raw_dir: the directory containing the raw files.
+    :param options: the options.
+
+    :type samples: list of tuples
+    :type raw_dir: string
+    :type options: argparse.Namespace
+
+    :returns: a dict containing samples as key (a tuple with the family ID as
+              first element and sample ID as last element) and the name of the
+              raw file as element.
+
+    """
     file_names = {}
     for sample in samples:
         the_sample = sample[1]
@@ -42,7 +72,22 @@ def check_file_names(samples, raw_dir, options):
 
 
 def read_problematic_samples(file_name):
-    """Reads a file with sample IDs."""
+    """Reads a file with sample IDs.
+
+    :param file_name: the name of the file containing problematic samples after
+                      sex check.
+
+    :type file_name: string
+
+    :returns: a set of problematic samples (tuple containing the family ID as
+              first element and the sample ID as last element).
+
+    Reads a file containing problematic samples after sex check. The file is
+    provided by the module :py:mod:`Step6.sex_check`. This file contains
+    two columns, the first one being the family ID and the second one, the
+    sample ID.
+
+    """
     problematic_samples = set()
     open_func = open
     if file_name.endswith(".gz"):
@@ -55,7 +100,18 @@ def read_problematic_samples(file_name):
 
 
 def encode_chromosome(chromosome):
-    """Encodes chromosomes."""
+    """Encodes chromosomes.
+
+    :param chromosome: the chromosome to encode.
+
+    :type chromosome: string
+
+    :returns: the encoded chromosome.
+
+    Encodes the sexual chromosomes, from ``23`` and ``24`` to ``X`` and ``Y``,
+    respectively.
+
+    """
     if chromosome == "23":
         return "X"
     if chromosome == "24":
@@ -64,7 +120,18 @@ def encode_chromosome(chromosome):
 
 
 def plot_baf_lrr(file_names, options):
-    """Plot BAF and LRR for a list of files."""
+    """Plot BAF and LRR for a list of files.
+
+    :param file_names: contains the name of the input file for each sample.
+    :param options: the options.
+
+    :type file_names: dict
+    :type options: argparse.Namespace
+
+    Plots the BAF (B Allele Frequency) and LRR (Log R Ratio) of each samples.
+    Only the sexual chromosome are shown.
+
+    """
     # importing important stuff
     import matplotlib as mpl
     if options.format != "X11" and mpl.get_backend() != "agg":
@@ -188,15 +255,15 @@ def plot_baf_lrr(file_names, options):
 def checkArgs(args):
     """Checks the arguments and options.
 
-    :param args: a :py:class:`Namespace` object containing the options of the
-                 program.
-    :type args: :py:class:`argparse.Namespace`
+    :param args: an object containing the options of the program.
+
+    :type args: argparse.Namespace
 
     :returns: ``True`` if everything was OK.
 
     If there is a problem with an option, an exception is raised using the
-    :py:class:`ProgramError` class, a message is printed
-    to the :class:`sys.stderr` and the program exists with code 1.
+    :py:class:`ProgramError` class, a message is printed to the
+    :class:`sys.stderr` and the program exists with code 1.
 
     """
     # Checking the input file
@@ -215,14 +282,26 @@ def checkArgs(args):
 def parseArgs(argString=None): # pragma: no cover
     """Parses the command line options and arguments.
 
-    :returns: A :py:class:`numpy.Namespace` object created by
-              the :py:mod:`argparse` module. It contains the values of the
-              different options.
+    :param argString: the options.
 
-    ===============  ======  ===================================================
-        Options       Type                     Description
-    ===============  ======  ===================================================
-    ===============  ======  ===================================================
+    :type argString: list of strings
+
+    :returns: A :py:class:`argparse.Namespace` object created by the
+              :py:mod:`argparse` module. It contains the values of the different
+              options.
+
+    ========================= ====== ============================================
+              Options          Type                     Description
+    ========================= ====== ============================================
+    ``--problematic-samples`` string The list of sample with sex problems to plot
+    ``--use-full-ids``        bool   Use full sample IDs (famID and indID).
+    ``--full-ids-delimiter``  string The delimiter between famID and indID.
+    ``--raw-dir``             string Directory containing information about
+                                     every samples (BAF and LRR).
+    ``--format``              string The output file format (png, ps, pdf, or
+                                     X11).
+    ``--out``                 string The prefix of the output files.
+    ========================= ====== ============================================
 
     .. note::
         No option check is done here (except for the one automatically done by
@@ -242,6 +321,7 @@ class ProgramError(Exception):
     """An :py:class:`Exception` raised in case of a problem.
     
     :param msg: the message to print to the user before exiting.
+
     :type msg: string
 
     """
@@ -249,6 +329,7 @@ class ProgramError(Exception):
         """Construction of the :py:class:`ProgramError` class.
 
         :param msg: the message to print to the user
+
         :type msg: string
 
         """
@@ -276,8 +357,8 @@ group.add_argument("--full-ids-delimiter", type=str, metavar="CHAR",
                                       "for the raw file names. [default: "
                                       "%(default)s]"))
 group.add_argument("--raw-dir", type=str, metavar="DIR", required=True,
-                   help=("Directory or list of directories containing "
-                         "information about every samples (BAF and LRR)."))
+                   help=("Directory containing information about every samples "
+                         "(BAF and LRR)."))
 # The options
 group = parser.add_argument_group("Options")
 group.add_argument("--format", type=str, metavar="FORMAT", default="png",

@@ -12,6 +12,32 @@ import StatGenDataCleanUp.Step6.baf_lrr_plot as baf_lrr_plot
 from PlinkUtils import createRowFromPlinkSpacedOutput
 
 def main(argString=None):
+    """The main function of the module.
+
+    :param argString: the options.
+
+    :type argString: list of strings
+
+    These are the following steps:
+
+    1.  Prints the options.
+    2.  Chekcs if there are enough markers on the chromosome ``23``
+        (:py:func:`checkBim`). If not, quits here.
+    3.  Runs the sex check analysis using Plink (:py:func:`runPlinkSexCheck`).
+    4.  If there are no sex problems, then quits (:py:func:`readCheckSexFile`).
+    5.  Creates the recoded file for the chromosome ``23``
+        (:py:func:`createPedChr23UsingPlink`).
+    6.  Computes the heterozygosity percentage on the chromosome ``23``
+        (:py:func:`computeHeteroPercentage`).
+    7.  If there are enough markers on chromosome ``24`` (at least 1), creates
+        the recoded file for this chromosome
+        (:py:func:`createPedChr24UsingPlink`).
+    8.  Computes the number of no call on the chromosome ``24``
+        (:py:func:`computeNoCall`).
+    9.  If required, plots the gender plot (:py:func:`createGenderPlot`).
+    10. If required, plots the BAF and LRR plot (:py:func:`createLrrBafPlot`).
+
+    """
     # Getting and checking the options
     args = parseArgs(argString)
     checkArgs(args)
@@ -67,14 +93,31 @@ def main(argString=None):
         # If required, let's plot the LRR and BAF plot
         if args.lrr_baf:
             print "   - Creating the LRR and BAF plot"
-            createLrrBafPlot(args.bfile, args.lrr_baf_raw_dir,
+            createLrrBafPlot(args.lrr_baf_raw_dir,
                              args.out + ".list_problem_sex_ids",
                              args.lrr_baf_format, args.out)
 
 
 def createGenderPlot(bfile, intensities, problematic_samples, format,
                      out_prefix):
-    """Creates the gender plot."""
+    """Creates the gender plot.
+
+    :param bfile: the prefix of the input binary file.
+    :param intensities: the file containing the intensities.
+    :param problematic_samples: the file containing the problematic samples.
+    :param format: the format of the ouput plot.
+    :param out_prefix: the prefix of the output file.
+
+    :type bfile: string
+    :type intensities: string
+    :type problematic_samples: string
+    :type format: string
+    :type out_prefix: string
+
+    Creates the gender plot of the samples using the :py:mod:`Step6.gender_plot`
+    module.
+
+    """
     gender_plot_options = ["--bfile", bfile, "--intensities", intensities,
                            "--sex-problems", problematic_samples, "--format",
                            format, "--out", out_prefix]
@@ -85,8 +128,23 @@ def createGenderPlot(bfile, intensities, problematic_samples, format,
         raise ProgramError(msg)
 
 
-def createLrrBafPlot(bfile, raw_dir, problematic_samples, format, out_prefix):
-    """Creates the LRR and BAF plot."""
+def createLrrBafPlot(raw_dir, problematic_samples, format, out_prefix):
+    """Creates the LRR and BAF plot.
+
+    :param raw_dir: the directory containing the intensities.
+    :param problematic_samples: the file containing the problematic samples.
+    :param format: the format of the plot.
+    :param out_prefix: the prefix of the output file.
+
+    :type raw_dir: string
+    :type problematic_samples: string
+    :type format: string
+    :type out_prefix: string
+
+    Creates the LRR (Log R Ratio) and BAF (B Allele Frequency) of the
+    problematic samples using the :py:mod:`Step6.baf_lrr_plot` module.
+
+    """
     # First, we create an output directory
     dir_name = out_prefix + ".LRR_BAF"
     if not os.path.isdir(dir_name):
@@ -104,7 +162,20 @@ def createLrrBafPlot(bfile, raw_dir, problematic_samples, format, out_prefix):
 
 
 def checkBim(fileName, minNumber, chromosome):
-    """Checks the BIM file for chrN markers."""
+    """Checks the BIM file for chrN markers.
+
+    :param fileName:
+    :param minNumber:
+    :param chromosome:
+
+    :type fileName: string
+    :type minNumber: int
+    :type chromosome: string
+
+    :returns: ``True`` if there are at least ``minNumber`` markers on chromosome
+              ``chromosome``, ``False`` otherwise.
+
+    """
     nbMarkers = 0
     with open(fileName, 'r') as inputFile:
         for line in inputFile:
@@ -117,7 +188,16 @@ def checkBim(fileName, minNumber, chromosome):
 
 
 def computeNoCall(fileName):
-    """Computes the number of no call."""
+    """Computes the number of no call.
+
+    :param fileName: the name of the file
+
+    :type fileName: string
+
+    Reads the ``ped`` file created by Plink using the ``recodeA`` options (see
+    :py:func:`createPedChr24UsingPlink`) and computes the number and percentage
+    of no calls on the chromosome ``24``.
+    """
     outputFile = None
     try:
         outputFile = open(fileName + ".noCall", "w")
@@ -155,7 +235,17 @@ def computeNoCall(fileName):
 
 
 def computeHeteroPercentage(fileName):
-    """Computes the heterozygosity percentage."""
+    """Computes the heterozygosity percentage.
+
+    :param fileName: the name of the input file.
+
+    :type fileName: string
+
+    Reads the ``ped`` file created by Plink using the ``recodeA`` options (see
+    :py:func:`createPedChr23UsingPlink`) and computes the heterozygosity
+    percentage on the chromosome ``23``.
+
+    """
     outputFile = None
     try:
         outputFile = open(fileName + ".hetero", "w")
@@ -204,7 +294,28 @@ def computeHeteroPercentage(fileName):
 
 def readCheckSexFile(fileName, allProblemsFileName, idsFileName, femaleF,
                      maleF):
-    """Reads the Plink check-sex output file."""
+    """Reads the Plink check-sex output file.
+
+    :param fileName: the name of the input file.
+    :param allProblemsFileName: the name of the output file that will contain
+                                all the problems.
+    :param idsFileName: the name of the output file what will contain samples
+                        with sex problems.
+    :param femaleF: the F threshold for females.
+    :param maleF: the F threshold for males.
+
+    :type fileName: string
+    :type allProblemsFileName: string
+    :type idsFileName: string
+    :type femaleF: float
+    :type maleF: float
+
+    :returns: ``True`` if there are sex problems, ``False`` otherwise.
+
+    Reads sex check file provided by :py:func:`runPlinkSexCheck` (Plink) and
+    extract the samples that have sex problems.
+
+    """
     allProblemsFile = None
     try:
         allProblemsFile = open(allProblemsFileName, 'w')
@@ -296,6 +407,10 @@ def readCheckSexFile(fileName, allProblemsFileName, idsFileName, femaleF,
     except IOError:
         msg = "%(fileName)s: no such file"
 
+    # Closing the output files
+    idsFile.close()
+    allProblemsFile.close()
+
     if nbProblems == 0:
         # There are no sex problems to investigate
         print "   - There are no sex problem to investigate..."
@@ -303,13 +418,17 @@ def readCheckSexFile(fileName, allProblemsFileName, idsFileName, femaleF,
         return False
     return True
 
-    # Closing the output files
-    idsFile.close()
-    allProblemsFile.close()
-
 
 def runPlinkSexCheck(options):
-    """Run Plink with the following options."""
+    """Runs Plink to perform a sex check analysis.
+
+    :param options: the options.
+
+    :type options: argparse.Namespace
+
+    Uses Plink to perform a sex check analysis.
+
+    """
     # The plink command
     plinkCommand = ["plink", "--noweb", "--bfile", options.bfile,
                     "--check-sex", "--out", options.out]
@@ -317,15 +436,36 @@ def runPlinkSexCheck(options):
 
 
 def createPedChr23UsingPlink(options):
-    """Run Plink to create a ped format."""
+    """Run Plink to create a ped format.
+
+    :param options: the options.
+
+    :type options: argparse.Namespace
+
+    Uses Plink to create a ``ped`` file of markers on the chromosome ``23``. It
+    uses the ``recodeA`` options to use additive coding. It also subsets the
+    data to keep only samples with sex problems.
+
+    """
     plinkCommand = ["plink", "--noweb", "--bfile", options.bfile, "--chr",
                     "23", "--recodeA", "--keep",
                     options.out + ".list_problem_sex_ids", "--out",
                     options.out + ".chr23_recodeA"]
     runCommand(plinkCommand)
 
+
 def createPedChr24UsingPlink(options):
-    """Run plink to create a ped format."""
+    """Run plink to create a ped format.
+
+    :param options: the options.
+
+    :type options: argparse.Namespace
+
+    Uses Plink to create a ``ped`` file of markers on the chromosome ``24``. It
+    uses the ``recodeA`` options to use additive coding. It also subsets the
+    data to keep only samples with sex problems.
+
+    """
     plinkCommand = ["plink", "--noweb", "--bfile", options.bfile, "--chr",
                     "24", "--recodeA", "--keep",
                     options.out + ".list_problem_sex_ids", "--out",
@@ -334,7 +474,19 @@ def createPedChr24UsingPlink(options):
 
 
 def runCommand(command):
-    """Run the command in Plink."""
+    """Run a command.
+
+    :param command: the command to run.
+
+    :type command: list of strings
+
+    Tries to run a command. If it fails, raise a :py:class:`ProgramError`. This
+    function uses the :py:mod:`subprocess` module.
+
+    .. warning::
+        The variable command should be a list of strings (no other type).
+
+    """
     output = None
     try:
         output = subprocess.check_output(command,
@@ -348,15 +500,14 @@ def runCommand(command):
 def checkArgs(args):
     """Checks the arguments and options.
 
-    :param args: a :py:class:`Namespace` object containing the options of the
-                 program.
-    :type args: :py:class:`argparse.Namespace`
+    :param args: an object containing the options of the program.
+    :type args: argparse.Namespace
 
     :returns: ``True`` if everything was OK.
 
     If there is a problem with an option, an exception is raised using the
-    :py:class:`ProgramError` class, a message is printed
-    to the :class:`sys.stderr` and the program exists with code 1.
+    :py:class:`ProgramError` class, a message is printed to the
+    :class:`sys.stderr` and the program exists with code 1.
 
     """
     # Check if we have the tped and the tfam files
@@ -383,14 +534,33 @@ def checkArgs(args):
 def parseArgs(argString=None): # pragma: no cover
     """Parses the command line options and arguments.
 
-    :returns: A :py:class:`numpy.Namespace` object created by
-              the :py:mod:`argparse` module. It contains the values of the
-              different options.
+    :param argString: the options.
 
-    ===============  ======  ===================================================
-        Options       Type                     Description
-    ===============  ======  ===================================================
-    ===============  ======  ===================================================
+    :type argString: list of strings
+
+    :returns: A :py:class:`argparse.Namespace` object created by the
+              :py:mod:`argparse` module. It contains the values of the different
+              options.
+
+    ========================= ====== ===========================================
+             Options           Type                  Description
+    ========================= ====== ===========================================
+    ``--bfile``               string The input file prefix (Plink binary).
+    ``--femaleF``             float  The female F threshold.
+    ``--maleF``               float  The male F threshold.
+    ``--nbChr23``             int    The minimum number of markers on chromosome
+                                     23 before computing Plink's sex check.
+    ``--gender-plot``         bool   Create the gender plot.
+    ``--sex-chr-intensities`` string A file containing alleles intensities for
+                                     each of the markers located on the X and Y
+                                     chromosome.
+    ``--gender-plot-format``  string The output file format for the gender plot.
+    ``--lrr-baf``             bool   Create the LRR and BAF plot.
+    ``--lrr-baf-raw-dir``     string Directory containing information about
+                                     every samples (BAF and LRR).
+    ``--lrr-baf-format``      string The output file format.
+    ``--out``                 string The prefix of the output files.
+    ========================= ====== ===========================================
 
     .. note::
         No option check is done here (except for the one automatically done by
@@ -410,13 +580,15 @@ class ProgramError(Exception):
     """An :py:class:`Exception` raised in case of a problem.
     
     :param msg: the message to print to the user before exiting.
+
     :type msg: string
 
     """
     def __init__(self, msg):
         """Construction of the :py:class:`ProgramError` class.
 
-        :param msg: the message to print to the user
+        :param msg: the message to print to the user.
+
         :type msg: string
 
         """
