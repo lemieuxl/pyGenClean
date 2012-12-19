@@ -111,6 +111,23 @@ def encode_chromosome(chromosome):
     Encodes the sexual chromosomes, from ``23`` and ``24`` to ``X`` and ``Y``,
     respectively.
 
+    .. note::
+        Only the sexual chromosome are encoded.
+
+    .. testsetup::
+
+        from Step6.baf_lrr_plot import encode_chromosome
+
+    .. doctest::
+
+        >>> encode_chromosome("23")
+        'X'
+        >>> encode_chromosome("24")
+        'Y'
+        >>> encode_chromosome("This is not a chromosome")
+        'This is not a chromosome'
+        
+
     """
     if chromosome == "23":
         return "X"

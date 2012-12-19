@@ -99,6 +99,33 @@ def encode_chr(chromosome):
     also raised. If a chromosome as a value below 1 or above 26, a
     :py:class:`ProgramError` is raised.
 
+    .. testsetup::
+
+        from Step6.gender_plot import encode_chr
+
+    .. doctest::
+
+        >>> [encode_chr(str(i)) for i in range(1, 11)]
+        [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        >>> [encode_chr(str(i)) for i in range(11, 21)]
+        [11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
+        >>> [encode_chr(str(i)) for i in range(21, 27)]
+        [21, 22, 23, 24, 25, 26]
+        >>> [encode_chr(i) for i in ["X", "Y", "XY", "MT"]]
+        [23, 24, 25, 26]
+        >>> encode_chr("0")
+        Traceback (most recent call last):
+            ...
+        ProgramError: 0: invalid chromosome
+        >>> encode_chr("27")
+        Traceback (most recent call last):
+            ...
+        ProgramError: 27: invalid chromosome
+        >>> encode_chr("XX")
+        Traceback (most recent call last):
+            ...
+        ProgramError: XX: invalid chromosome
+
     """
     if chromosome == "X":
         return 23
@@ -112,6 +139,7 @@ def encode_chr(chromosome):
         new_chromosome = int(chromosome)
         if new_chromosome < 1 or new_chromosome > 26:
             msg = "{}: invalid chromosome".format(chromosome)
+            raise ProgramError(msg)
         return new_chromosome
     except ValueError:
         msg = "{}: invalid chromosome".format(chromosome)
@@ -129,6 +157,21 @@ def encode_gender(gender):
 
     It changes ``1`` and ``2`` to ``Male`` and ``Female`` respectively. It
     encodes everything else to ``Unknown``.
+
+    .. testsetup::
+
+        from Step6.gender_plot import encode_gender
+
+    .. doctest::
+
+        >>> encode_gender("1")
+        'Male'
+        >>> encode_gender("2")
+        'Female'
+        >>> encode_gender("0")
+        'Unknown'
+        >>> encode_gender("This is not a gender code")
+        'Unknown'
 
     """
     if gender == "1":
