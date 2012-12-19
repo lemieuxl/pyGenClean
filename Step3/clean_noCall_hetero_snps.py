@@ -8,6 +8,19 @@ import argparse
 import numpy as npy
 
 def main(argString=None):
+    """The main function of the module.
+
+    :param argString: the options.
+
+    :type argString: list of strings
+
+    These are the steps:
+
+    1. Prints the options.
+    2. Reads the ``tfam`` and ``tped`` files and find all heterozygous and all
+       failed markers (:py:func:`processTPEDandTFAM`).
+
+    """
     # Getting and checking the options
     args = parseArgs(argString)
     checkArgs(args)
@@ -22,7 +35,29 @@ def main(argString=None):
 
 
 def processTPEDandTFAM(tped, tfam, prefix):
-    """Process the TPED and TFAMfiles."""
+    """Process the TPED and TFAM files.
+
+    :param tped: the name of the ``tped`` file.
+    :param tfam: the name of the ``tfam`` file.
+    :param prefix: the prefix of the output files.
+
+    :type tped: string
+    :type tfam: string
+    :type prefix: string
+
+    Copies the original ``tfam`` file into ``prefix.tfam``. Then, it reads the
+    ``tped`` file and keeps in memory two sets containing the markers which are
+    all failed or which contains only heterozygous genotypes.
+
+    It creates two output files, ``prefix.allFailed`` and ``prefix.allHetero``,
+    containing the markers that are all failed and are all heterozygous,
+    respectively.
+
+    .. note::
+        All heterozygous markers located on the mithochondrial chromosome are
+        not remove.
+
+    """
     # Copying the tfam file
     try:
         shutil.copy(tfam, prefix + ".tfam")
@@ -94,15 +129,15 @@ def processTPEDandTFAM(tped, tfam, prefix):
 def checkArgs(args):
     """Checks the arguments and options.
 
-    :param args: a :py:class:`Namespace` object containing the options of the
-                 program.
-    :type args: :py:class:`argparse.Namespace`
+    :param args: an object containing the options of the program.
+
+    :type args: argparse.Namespace
 
     :returns: ``True`` if everything was OK.
 
     If there is a problem with an option, an exception is raised using the
-    :py:class:`ProgramError` class, a message is printed
-    to the :class:`sys.stderr` and the program exists with code 1.
+    :py:class:`ProgramError` class, a message is printed to the
+    :class:`sys.stderr` and the program exists with code 1.
 
     """
     # Checking the input files
@@ -118,14 +153,20 @@ def checkArgs(args):
 def parseArgs(argString=None): # pragma: no cover
     """Parses the command line options and arguments.
 
-    :returns: A :py:class:`numpy.Namespace` object created by
-              the :py:mod:`argparse` module. It contains the values of the
-              different options.
+    :param argString: the options.
 
-    ===============  ======  ===================================================
-        Options       Type                     Description
-    ===============  ======  ===================================================
-    ===============  ======  ===================================================
+    :type argString: list of strings
+
+    :returns: A :py:class:`argparse.Namespace` object created by the
+              :py:mod:`argparse` module. It contains the values of the different
+              options.
+
+    =========== ====== ====================================
+      Options    Type              Description
+    =========== ====== ====================================
+    ``--tfile`` string The input file prefix (Plink tfile).
+    ``--out``   string The prefix of the output files
+    =========== ====== ====================================
 
     .. note::
         No option check is done here (except for the one automatically done by
@@ -145,6 +186,7 @@ class ProgramError(Exception):
     """An :py:class:`Exception` raised in case of a problem.
     
     :param msg: the message to print to the user before exiting.
+
     :type msg: string
 
     """
@@ -152,6 +194,7 @@ class ProgramError(Exception):
         """Construction of the :py:class:`ProgramError` class.
 
         :param msg: the message to print to the user
+
         :type msg: string
 
         """

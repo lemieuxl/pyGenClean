@@ -8,6 +8,21 @@ import argparse
 import numpy as npy
 
 def main(argString=None):
+    """The main function of the module.
+
+    :param argString: the options.
+
+    :type argString: list of strings
+
+    These are the steps:
+
+    1. Prints the options.
+    2. Checks the number of samples in the ``tfam`` file
+       (:py:func:`compute_nb_samples`).
+    3. Computes the heterozygosity rate (:py:func:`compute_heterozygosity`).
+    4. Plots the heterozygosity rate (:py:func:`plot_heterozygosity`).
+
+    """
     # Getting and checking the options
     args = parseArgs(argString)
     checkArgs(args)
@@ -23,7 +38,15 @@ def main(argString=None):
 
 
 def compute_nb_samples(in_prefix):
-    """Check the number of samples."""
+    """Check the number of samples.
+
+    :param in_prefix: the prefix of the input file.
+
+    :type in_prefix: string
+
+    :returns: the number of sample in ``prefix.fam``.
+
+    """
     file_name = in_prefix + ".tfam"
     nb = None
     with open(file_name, 'rb') as input_file:
@@ -32,7 +55,32 @@ def compute_nb_samples(in_prefix):
 
 
 def is_heterozygous(genotype):
-    """Tells if a genotype "A B" is heterozygous."""
+    """Tells if a genotype "A B" is heterozygous.
+
+    :param genotype: the genotype to test for heterozygosity.
+
+    :type genotype: string
+
+    :returns: ``True`` if the genotype is heterozygous, ``False`` otherwise.
+
+    The genotype must contain two alleles, separated by a space. It then
+    compares the first allele (``genotype[0]``) with the last one
+    (``genotype[-1]``).
+
+    .. testsetup::
+
+        from Step3.heterozygosity_plot import is_heterozygous
+
+    .. doctest::
+
+        >>> is_heterozygous("A A")
+        False
+        >>> is_heterozygous("G C")
+        True
+        >>> is_heterozygous("0 0") # No call is not heterozygous.
+        False
+
+    """
     return not genotype[0] == genotype[-1]
 
 
@@ -71,7 +119,17 @@ def compute_heterozygosity(in_prefix, nb_samples):
 
 
 def plot_heterozygosity(heterozygosity, options):
-    """Plots the heterozygosity rate distribution."""
+    """Plots the heterozygosity rate distribution.
+
+    :param heterozygosity:
+    :param options: the options.
+
+    :type heterozygosity: numpy.array
+    :type options: argparse.Namespace
+
+    Plots a histogram or a boxplot of the heterozygosity distribution.
+
+    """
     # importing important stuff
     import matplotlib as mpl
     if options.format != "X11" and mpl.get_backend() != "agg":
@@ -154,15 +212,15 @@ def plot_heterozygosity(heterozygosity, options):
 def checkArgs(args):
     """Checks the arguments and options.
 
-    :param args: a :py:class:`Namespace` object containing the options of the
-                 program.
-    :type args: :py:class:`argparse.Namespace`
+    :param args: an object containing the options of the program.
+
+    :type args: argparse.Namespace
 
     :returns: ``True`` if everything was OK.
 
     If there is a problem with an option, an exception is raised using the
-    :py:class:`ProgramError` class, a message is printed
-    to the :class:`sys.stderr` and the program exists with code 1.
+    :py:class:`ProgramError` class, a message is printed to the
+    :class:`sys.stderr` and the program exists with code 1.
 
     """
     # Checking the input file
@@ -189,14 +247,25 @@ def checkArgs(args):
 def parseArgs(argString=None): # pragma: no cover
     """Parses the command line options and arguments.
 
-    :returns: A :py:class:`numpy.Namespace` object created by
-              the :py:mod:`argparse` module. It contains the values of the
-              different options.
+    :param argString: the options.
 
-    ===============  ======  ===================================================
-        Options       Type                     Description
-    ===============  ======  ===================================================
-    ===============  ======  ===================================================
+    :type argString: list of strings
+
+    :returns: A :py:class:`argparse.Namespace` object created by the
+              :py:mod:`argparse` module. It contains the values of the different
+              options.
+
+    ============= ====== ======================================
+       Options     Type              Description
+    ============= ====== ======================================
+    ``--tfile``   string The prefix of the transposed file.
+    ``--boxplot`` bool   Draw a boxplot instead of a histogram.
+    ``--format``  string The output file format.
+    ``--bins``    int    The number of bins for the histogram.
+    ``--xlim``    float  The limit of the x axis.
+    ``--ymax``    float  "The maximal Y value.
+    ``--out``     string The prefix of the output files.
+    ============= ====== ======================================
 
     .. note::
         No option check is done here (except for the one automatically done by
@@ -216,6 +285,7 @@ class ProgramError(Exception):
     """An :py:class:`Exception` raised in case of a problem.
     
     :param msg: the message to print to the user before exiting.
+
     :type msg: string
 
     """
@@ -223,6 +293,7 @@ class ProgramError(Exception):
         """Construction of the :py:class:`ProgramError` class.
 
         :param msg: the message to print to the user
+
         :type msg: string
 
         """
