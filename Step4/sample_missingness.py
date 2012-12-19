@@ -6,6 +6,18 @@ import argparse
 import subprocess
 
 def main(argString=None):
+    """The main function of the module.
+
+    :param argString: the options.
+
+    :type argString: list of strings
+
+    These are the steps:
+
+    1. Prints the options.
+    2. Runs Plink with the ``mind`` option (:py:func:`runPlink`).
+
+    """
     # Getting and checking the options
     args = parseArgs(argString)
     checkArgs(args)
@@ -20,7 +32,13 @@ def main(argString=None):
 
 
 def runPlink(options):
-    """Run Plink with the following options."""
+    """Run Plink with the ``mind`` option.
+
+    :param options: the options.
+
+    :type options: argparse.Namespace
+
+    """
     # The plink command
     plinkCommand = ["plink", "--noweb",
                     "--bfile" if options.is_bfile else "--tfile", options.ifile,
@@ -39,15 +57,15 @@ def runPlink(options):
 def checkArgs(args):
     """Checks the arguments and options.
 
-    :param args: a :py:class:`Namespace` object containing the options of the
-                 program.
-    :type args: :py:class:`argparse.Namespace`
+    :param args: a object containing the options of the program.
+
+    :type args: argparse.Namespace
 
     :returns: ``True`` if everything was OK.
 
     If there is a problem with an option, an exception is raised using the
-    :py:class:`ProgramError` class, a message is printed
-    to the :class:`sys.stderr` and the program exists with code 1.
+    :py:class:`ProgramError` class, a message is printed to the
+    :class:`sys.stderr` and the program exists with code 1.
 
     """
     # Check if we have the tped and the tfam files
@@ -70,14 +88,24 @@ def checkArgs(args):
 def parseArgs(argString=None): # pragma: no cover
     """Parses the command line options and arguments.
 
-    :returns: A :py:class:`numpy.Namespace` object created by
-              the :py:mod:`argparse` module. It contains the values of the
-              different options.
+    :param argString: the options.
 
-    ===============  ======  ===================================================
-        Options       Type                     Description
-    ===============  ======  ===================================================
-    ===============  ======  ===================================================
+    :type argString: list of strings
+
+    :returns: A :py:class:`argparse.Namespace` object created by the
+              :py:mod:`argparse` module. It contains the values of the different
+              options.
+
+    ============== ====== ======================================================
+        Options     Type                     Description
+    ============== ====== ======================================================
+    ``--ifile``    string The input file prefix (either a Plink binary file or a
+                          tfile).
+    ``--is-bfile`` bool   The input file (``--ifile``) is a bfile instead of a
+                          tfile.
+    ``--mind``     float  The missingness threshold.
+    ``--out``      string The prefix of the output files.
+    ============== ====== ======================================================
 
     .. note::
         No option check is done here (except for the one automatically done by
@@ -97,6 +125,7 @@ class ProgramError(Exception):
     """An :py:class:`Exception` raised in case of a problem.
     
     :param msg: the message to print to the user before exiting.
+
     :type msg: string
 
     """
@@ -104,6 +133,7 @@ class ProgramError(Exception):
         """Construction of the :py:class:`ProgramError` class.
 
         :param msg: the message to print to the user
+
         :type msg: string
 
         """
