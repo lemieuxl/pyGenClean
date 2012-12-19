@@ -112,7 +112,7 @@ def encode_chromosome(chromosome):
     respectively.
 
     .. note::
-        Only the sexual chromosome are encoded.
+        Only the sexual chromosomes are encoded.
 
     .. testsetup::
 

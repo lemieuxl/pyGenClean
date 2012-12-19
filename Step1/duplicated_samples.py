@@ -756,7 +756,7 @@ def computeStatistics(tped, tfam, samples, oldSamples, prefix):
     divided by the total number of genotypes (excluding the no calls):
 
     .. math::
-        Concordance_{i,j} = \\frac{||g \\in G_i \\cup G_j \\textrm{ where } g_i = g_j||}
+        Concordance_{i,j} = \\frac{||g \\in G_i \\cup G_j \\textrm{ where } g_i = g_j \\neq 0||}
                                   {||g \\in G_i \\cup G_j \\textrm{ where } g \\neq 0||}
 
     
