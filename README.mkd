@@ -1,17 +1,15 @@
 # StatGen-DataCleanUp #
 
 _easyQC_ is an informatics tool to facilitate and standardize the genetic data
-clean up pipeline with genotyping array data. In conjuction with a source
+clean up pipeline with genotyping array data. In conjunction with a source
 batch-queuing system, the tool minimizes data manipulation errors, it
 accelerates the completion of the data clean up process and it provides
 informative graphics and metrics to guide decision making for statistical
 analysis.
 
 
-## Installation ##
 
-
-### Dependencies ###
+## Dependencies ##
 
 Aside from the standard modules provided by Python 2.7, _easyQC_ requires
 three additional modules:
@@ -20,6 +18,170 @@ three additional modules:
 *   [matplotlib][2]
 *   [drmaa][3]
 
+Those must be installed before installing _easyQC_.
+
+
+
+## Installation ##
+
+These steps describe the installation of a Python virtual environment using the
+[virtualenv][4] module. Then, the installation of NumPy, matplotlib and drmaa
+and the actual _easyQC_ module will be explained in details. Python 2.7 should
+already be installed.
+
+
+
+### Virtual Environment ###
+
+1.  Create a directory that will contain the Python virtual environment.
+
+        $ mkdir ~/Python_virtualenv
+
+2.  Download the latest version of [virtualenv][4], locate and extract the file.
+    Usually, the file should be in the `Downloads` directory.
+
+3.  It is not required to install [virtualenv][4], one can only execute the
+    following command:
+
+        $ python ~/Downloads/virtualenv-*/virtualenv.py \
+            --no-site-packages ~/Python_virtualenv
+
+4.  Activate the newly created virtual environment.
+
+        $ source ~/Python_virtualenv/bin/activate
+
+    The virtual environment is activated if it's name appears at the prompt.
+    Note that to deactivate the virtual environment, either close the terminal
+    or execute the following command:
+
+        $ deactivate
+
+
+
+### NumPy Installation ###
+
+For more information about installation, refer to [NumPy][1]'s website or to the
+`readme` file contained in the downloaded package. Before doing anything, be
+sure that the Python virtual environment is activated.
+
+1.  Download the latest version (above or equal to 1.6.2) of [NumPy][1], locate
+    and extract the file. For example, if the file is located in the `Downloads`
+    directory, execute the following commands:
+
+        $ cd ~/Downloads/
+        $ tar -zxf numpy-*.tar.gz
+        $ cd numpy-*
+
+2.  Be sure that all the prerequisites are installed by executing the following
+    command:
+
+        $ python setup.py config
+
+3.  Compile [NumPy][1] using the following command:
+
+        $ python setup.py build
+
+4.  Once the compilation is complete, execute the following command to install
+    [NumPy][1] in the virtual environment:
+
+        $ python setup.py install
+
+5.  _(optional)_ To check [NumPy][1] installation, the [nose][5] module needs to
+    be install. Note that on a 32bits linux computer, there was a failed test
+    where two arrays were not almost equal to 14 decimals. [Numpy][1] should
+    work just fine. Execute the following three commands to install [nose][5]
+    and test [Numpy][1]:
+
+        $ cd
+        $ pip install nose
+        $ python -c 'import numpy; numpy.test()'
+
+
+
+### matplotlib Installation ###
+
+For more information about installation, refer to [matplotlib][2]'s website or
+to the `readme` file contained in the downloaded package. Before doing anything,
+be sure that the Python virtual environment is activated.
+
+1.  Download the latest version (above or equal to 1.2.0) of [matplotlib][2],
+    locate and extract the file. For example, if the file is located in the
+    `Downloads` directory, execute the following commands:
+
+        $ cd ~/Downloads
+        $ tar -xf matplotlib-*.tar.gz
+        $ cd matplotlib-*
+
+2.  Be sure that all the prerequisites are installed by executing the following
+    command:
+
+        $ python setup.py config
+
+3.  Compile [matplotlib][2] using the following command:
+
+        $ python setup.py build
+
+4.  Once the compilation is complete, execute the following command to install
+    [matplotlib][2] in the virtual environment:
+
+        $ python setup.py install
+
+5.  _(optional)_ To check [matplotlib][2] installation, execute the following
+    two commands (supposing [nose][5] is already installed):
+
+        $ cd
+        $ python -c 'import matplotlib; matplotlib.test()'
+
+
+
+### drmaa Installation ###
+
+If you won't use _easyQC_ on a computer server, with a DRMAA-compliant
+distributed resource management system, this module is optional. Before doing
+anything, be sure that the Python virtual environment is activated.
+
+To install the [drmaa][3] module, simply execute the following command:
+
+    $ pip install drmaa
+
+A specific environment variable needs to be set, so that the [drmaa][3] module
+works correctly. To check if the variable is set, simply execute the following
+command:
+
+    $ echo $DRMAA_LIBRARY_PATH
+
+If nothing is displayed on the screen, you need to locate the file
+`libdrmaa.so*` and set the variable to link to this path.
+
+
+
+### easyQC Installation ###
+
+To install _easyQC_, simply follow the following steps. Before doing anything,
+be sure that the Python virtual environment is activated.
+
+1.  Once the latest version (above or equal to 1.2.0) of _easyQC_ is downloaded,
+    locate and extract the file. For example, if the file is located in the
+    `Downloads` directory, execute the following commands:
+
+        $ cd ~/Downloads
+        $ tar -xf easyQC-*.tar.gz
+        $ cd easyQC-*
+
+2.  Install _easyQC_ by executing the following command:
+
+        $ python setup.py install
+
+3.  To test the installation, simply run the following command:
+
+        $ run_data_clean_up --help
+
+    If everything goes as planned, there should be no error, and the program's
+    usage will be on the terminal.
+
+
 [1]: http://www.numpy.org/
 [2]: http://matplotlib.org/
 [3]: http://code.google.com/p/drmaa-python/
+[4]: http://pypi.python.org/pypi/virtualenv
+[5]: http://pypi.python.org/pypi/nose/
