@@ -16,10 +16,10 @@ analysis.
 Aside from the standard modules provided by Python 2.7, _easyQC_ requires
 three additional modules:
 
-*   NumPy [1]
-*   matplotlib [2]
-*   drmaa [3]
+*   [NumPy][1]
+*   [matplotlib][2]
+*   [drmaa][3]
 
-[1] http://www.numpy.org/
-[2] http://matplotlib.org/
-[3] http://code.google.com/p/drmaa-python/
+[1]: http://www.numpy.org/
+[2]: http://matplotlib.org/
+[3]: http://code.google.com/p/drmaa-python/
