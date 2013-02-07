@@ -1,0 +1,21 @@
+# StatGen-DataCleanUp #
+
+_easyQC_ is an informatics tool to facilitate and standardize the genetic data
+clean up pipeline with genotyping array data. In conjuction with a source
+batch-queuing system, the tool minimizes data manipulation errors, it
+accelerates the completion of the data clean up process and it provides
+informative graphics and metrics to guide decision making for statistical
+analysis.
+
+
+## Installation ##
+
+
+### Dependencies ###
+
+Aside from the standard modules provided by Python 2.7, _easyQC_ requires
+three additional modules:
+
+*   [NumPy][http://www.numpy.org/]
+*   [matplotlib][http://matplotlib.org/]
+*   [drmaa][http://code.google.com/p/drmaa-python/]
