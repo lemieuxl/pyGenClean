@@ -70,7 +70,7 @@ sure that the Python virtual environment is activated.
 
         $ cd ~/Downloads/
         $ tar -zxf numpy-*.tar.gz
-        $ cd numpy-*
+        $ cd numpy-*/
 
 2.  Be sure that all the prerequisites are installed by executing the following
     command:
@@ -108,9 +108,9 @@ be sure that the Python virtual environment is activated.
     locate and extract the file. For example, if the file is located in the
     `Downloads` directory, execute the following commands:
 
-        $ cd ~/Downloads
+        $ cd ~/Downloads/
         $ tar -xf matplotlib-*.tar.gz
-        $ cd matplotlib-*
+        $ cd matplotlib-*/
 
 2.  Be sure that all the prerequisites are installed by executing the following
     command:
@@ -164,9 +164,9 @@ be sure that the Python virtual environment is activated.
     locate and extract the file. For example, if the file is located in the
     `Downloads` directory, execute the following commands:
 
-        $ cd ~/Downloads
+        $ cd ~/Downloads/
         $ tar -xf easyQC-*.tar.gz
-        $ cd easyQC-*
+        $ cd easyQC-*/
 
 2.  Install _easyQC_ by executing the following command:
 
