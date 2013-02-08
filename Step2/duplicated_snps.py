@@ -1381,7 +1381,7 @@ group = parser.add_argument_group("Input File")
 group.add_argument("--tfile", type=str, metavar="FILE", required=True,
                    help=("The input file prefix (will find the tped and tfam "
                          "file by appending the prefix to .tped and .tfam, "
-                         "respectively."))
+                         "respectively. A .map file is also required."))
 # The options
 group = parser.add_argument_group("Options")
 group.add_argument("--snp-completion-threshold", type=float, metavar="FLOAT",
