@@ -13,3 +13,14 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
+# The module version
+__version__ = "1.2.2"
+
+def get_version():
+    """Returns the version of the module.
+
+    :returns: (major, minor, micro)
+
+    """
+
+    return tuple(__version__.split("."))

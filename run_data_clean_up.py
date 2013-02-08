@@ -22,6 +22,7 @@ import argparse
 import subprocess
 import ConfigParser
 
+import StatGenDataCleanUp
 import StatGenDataCleanUp.Step1.duplicated_samples as duplicated_samples
 import StatGenDataCleanUp.Step2.duplicated_snps as duplicated_snps
 import StatGenDataCleanUp.Step3.clean_noCall_hetero_snps as noCall_hetero_snps
@@ -37,7 +38,8 @@ import StatGenDataCleanUp.Step12.flag_hw as flag_hw
 import StatGenDataCleanUp.Misc.compare_gold_standard as compare_gold_standard
 import PlinkUtils.subset_data as SubsetData
 
-prog_version = "1.2.2"
+# Getting the version
+prog_version = ".".join(StatGenDataCleanUp.get_version())
 
 def main():
     """The main function.
