@@ -159,7 +159,7 @@ class ProgramError(Exception):
 
 # The parser object
 prog = "sample_missingess"
-desc = """Comput sample missingness using Plink"""
+desc = """Computes sample missingness using Plink"""
 parser = argparse.ArgumentParser(description=desc, prog=prog)
 
 # The INPUT files

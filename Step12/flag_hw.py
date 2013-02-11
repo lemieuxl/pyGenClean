@@ -44,7 +44,7 @@ def main(argString=None):
     7. Compares the ``bim`` files for the Bonferroni threshold.
     8. Compares the ``bim`` files for the default threshold.
     9. Computes the "in between" marker list, which is the markers from the
-       default threshold and the Bonferonni threshold.
+       default threshold and the Bonferroni threshold.
 
     """
     # Getting and checking the options

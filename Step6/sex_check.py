@@ -35,7 +35,7 @@ def main(argString=None):
     These are the following steps:
 
     1.  Prints the options.
-    2.  Chekcs if there are enough markers on the chromosome ``23``
+    2.  Checks if there are enough markers on the chromosome ``23``
         (:py:func:`checkBim`). If not, quits here.
     3.  Runs the sex check analysis using Plink (:py:func:`runPlinkSexCheck`).
     4.  If there are no sex problems, then quits (:py:func:`readCheckSexFile`).
@@ -119,7 +119,7 @@ def createGenderPlot(bfile, intensities, problematic_samples, format,
     :param bfile: the prefix of the input binary file.
     :param intensities: the file containing the intensities.
     :param problematic_samples: the file containing the problematic samples.
-    :param format: the format of the ouput plot.
+    :param format: the format of the output plot.
     :param out_prefix: the prefix of the output file.
 
     :type bfile: string
@@ -362,7 +362,7 @@ def readCheckSexFile(fileName, allProblemsFileName, idsFileName, femaleF,
                     for columnName in ["STATUS", "PEDSEX", "SNPSEX", "F",
                                        "FID", "IID"]:
                         if columnName not in headerIndex:
-                            msg = "%(fileName)s: no culumn named " \
+                            msg = "%(fileName)s: no column named " \
                                   "%(columnName)s" % locals()
                             raise ProgramError(msg)
                     print >>allProblemsFile, "\t".join(row)

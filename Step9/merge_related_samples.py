@@ -46,7 +46,7 @@ def merge_related_samples(file_name, out_prefix, no_status):
     :type out_prefix: string
     :type no_status: boolean
 
-    In the ouput file, there are a pair of samples per line. Hence, one can
+    In the output file, there are a pair of samples per line. Hence, one can
     find related individuals by merging overlapping pairs.
 
     """
@@ -126,7 +126,7 @@ def merge_related_samples(file_name, out_prefix, no_status):
         raise ProgramError(msg)
 
     # Iterating on the groups
-    choosen_samples = set()
+    chosen_samples = set()
     remaining_samples = set()
     for i, group in enumerate(final_samples_set):
         index = str(i+1)
@@ -139,15 +139,15 @@ def merge_related_samples(file_name, out_prefix, no_status):
                 print >>output_file, "\t".join(to_print)
 
         # Choose a random sample from the group
-        choosen = random.choice(list(group))
-        choosen_samples.add(choosen)
-        remaining_samples |= group - {choosen}
+        chosen = random.choice(list(group))
+        chosen_samples.add(chosen)
+        remaining_samples |= group - {chosen}
 
     # Printing the files
     try:
-        with open(out_prefix + ".choosen_related_individuals", "wb") as choosen_file:
-            for sample_id in choosen_samples:
-                print >>choosen_file, "\t".join(sample_id)
+        with open(out_prefix + ".chosen_related_individuals", "wb") as chosen_file:
+            for sample_id in chosen_samples:
+                print >>chosen_file, "\t".join(sample_id)
         with open(out_prefix + ".discarded_related_individuals", "wb") as discarded_file:
             for sample_id in remaining_samples:
                 print >>discarded_file, "\t".join(sample_id)

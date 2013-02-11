@@ -40,7 +40,7 @@ def main(argString=None):
        centers, and finds the outliers of a given reference population
        (:py:func:`find_outliers`). This steps also produce three different
        plots.
-    6. Writes outlieres in a file (``prefix.outleirs``).
+    6. Writes outliers in a file (``prefix.outliers``).
 
     """
     # Getting and checking the options
@@ -124,7 +124,7 @@ def find_outliers(mds, centers, center_info, ref_pop, options):
     outliers, respectively (an error rate of 1% and 5%, respectively).
 
     """
-    # Importing matplotlib for plotting purpuses
+    # Importing matplotlib for plotting purposes
     import matplotlib as mpl
     if options.format != "X11" and mpl.get_backend() != "agg":
         mpl.use("Agg")
@@ -306,7 +306,7 @@ def find_ref_centers(mds):
     :returns: a tuple with a :py:class:`numpy.array` containing the centers of
               the three reference population cluster as first element, and a
               :py:class:`dict` containing the label of each of the three
-              reference population clsuter.
+              reference population clusters.
 
     First, we extract the ``mds`` values of each of the three reference
     populations. The, we compute the center of each of those clusters by
@@ -426,7 +426,7 @@ def read_population_file(file_name):
 
             # Checking the pop
             if pop not in required_pops:
-                msg = ("{}: sample {}: unknow population "
+                msg = ("{}: sample {}: unknown population "
                        "{}".format(file_name, " ".join(sample_id), pop))
                 raise ProgramError(msg)
 
@@ -487,7 +487,7 @@ def parseArgs(argString=None): # pragma: no cover
                                  :py:mod:`Step10.check_ethnicity` module.
     ``--format``          string The output file format (png, ps, or pdf.
     ``--out``             string The prefix of the output files.
-    ``--outliers-of``     string Finds the ouliers of this population.
+    ``--outliers-of``     string Finds the outliers of this population.
     ``--multiplier``      float  To find the outliers, we look for more than
                                  :math:`x` times the cluster standard deviation.
     ``--xaxis``           string The component to use for the X axis.
@@ -518,7 +518,7 @@ def add_custom_options(parser):
     """
     parser.add_argument("--outliers-of", type=str, metavar="POP", default="CEU",
                         choices=["CEU", "YRI", "JPT-CHB"],
-                        help=("Finds the ouliers of this population. "
+                        help=("Finds the outliers of this population. "
                               "[default: %(default)s]"))
     parser.add_argument("--multiplier", type=float, metavar="FLOAT", default=1.9,
                         help=("To find the outliers, we look for more than "
