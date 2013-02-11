@@ -134,7 +134,7 @@ def main(argString=None):
                "     within duplicates")
         snpsToComplete = printProblems(completion, concordance, tped,
                                        duplicatedSNPs, dupSNPsFreq, args.out,
-                                       args.frequence_difference)
+                                       args.frequency_difference)
 
         # Print the concordance file
         print "   - Printing concordance file"
@@ -1301,7 +1301,7 @@ def checkArgs(args):
         raise ProgramError(msg)
 
     # Checking the difference in frequency
-    if (args.frequence_difference < 0) or (args.frequence_difference > 1):
+    if (args.frequency_difference < 0) or (args.frequency_difference > 1):
         msg = ("{}: maximal frequency difference: value must be between 0 and "
                "1 (inclusively)".format())
         raise ProgramError(msg)
@@ -1330,7 +1330,7 @@ def parseArgs(argString=None): # pragma: no cover
     ``--snp-concordance-threshold`` float  The concordance threshold to consider
                                            a replicate when choosing the best
                                            replicates.
-    ``--frequence_difference``      float  The maximum difference in frequency
+    ``--frequency_difference``      float  The maximum difference in frequency
                                            between duplicated markers.
     ``--out``                       string The prefix of the output files.
     =============================== ====== ====================================
@@ -1394,7 +1394,7 @@ group.add_argument("--snp-concordance-threshold", type=float, metavar="FLOAT",
                                        "a replicate when choosing the best "
                                        "replicates and for composite creation. "
                                        "[default: %(default).2f]"))
-group.add_argument("--frequence_difference", type=float, metavar="FLOAT",
+group.add_argument("--frequency_difference", type=float, metavar="FLOAT",
                    default=0.05, help=("The maximum difference in frequency "
                                        "between duplicated markers [default: "
                                        "%(default).2f]"))

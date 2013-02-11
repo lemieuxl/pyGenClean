@@ -472,14 +472,14 @@ def runGenome(bfile, options):
         # We run genome using SGE
         # We need to create a frequency file using plink
         plinkCommand = ["plink", "--noweb", "--bfile", bfile, "--freq",
-                        "--out", options.out + ".frequence"]
+                        "--out", options.out + ".frequency"]
         runCommand(plinkCommand)
 
         # We need to split the .fam file
         nbJob = splitFile(bfile + ".fam", options.line_per_file_for_sge,
                           outPrefix)
 
-        runGenomeSGE(bfile, options.out + ".frequence.frq", nbJob, outPrefix)
+        runGenomeSGE(bfile, options.out + ".frequency.frq", nbJob, outPrefix)
 
         # Merging genome files
         mergeGenomeLogFiles(outPrefix, nbJob)
