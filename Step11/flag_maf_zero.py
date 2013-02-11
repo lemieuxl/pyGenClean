@@ -62,7 +62,7 @@ def findSnpWithMaf0(freqFileName, prefix):
     :type freqFileName: string
     :type prefix: string
 
-    Reads a frequency file from Plink, and find marquers with a minor allele
+    Reads a frequency file from Plink, and find markers with a minor allele
     frequency of zero.
 
     """

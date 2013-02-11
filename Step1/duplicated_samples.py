@@ -35,7 +35,7 @@ def main(argString=None):
 
     1.  Prints the options.
     2.  Reads the ``tfam`` file (:py:func:`readTFAM`).
-    3.  Seperate the duplicated samples from the unique samples
+    3.  Separate the duplicated samples from the unique samples
         (:py:func:`findDuplicates`).
     4.  Writes the unique samples into a file named
         ``prefix.unique_samples.tfam`` (:py:func:`printUniqueTFAM`).
@@ -52,17 +52,16 @@ def main(argString=None):
         (:py:func:`printStatistics`).
     9.  We print the concordance matrix for each duplicated samples
         (:py:func:`printConcordance`).
-    10. We print the the ``tped`` and the ``tfam`` file for the duplicated
-        samples (``prefix.duplicated_samples``)
-        (:py:func:`printDuplicatedTPEDandTFAM`)
+    10. We print the ``tped`` and the ``tfam`` file for the duplicated samples
+        (``prefix.duplicated_samples``) (:py:func:`printDuplicatedTPEDandTFAM`).
     11. Choose the best of each duplicates (to keep and to complete) according
         to completion and concordance (:py:func:`chooseBestDuplicates`).
     12. Creates a unique ``tped`` and ``tfam`` from the duplicated samples by
         completing the best chosen one with the other samples
         (:py:func:`createAndCleanTPED`).
     13. Merge the two tfiles together (``prefix.unique_samples`` and
-        ``prefix.chosen_samples``) to create the final files (``prefix.final``)
-        (:py:func:`addToTPEDandTFAM`).
+        ``prefix.chosen_samples``) to create the final dataset
+        (``prefix.final``) (:py:func:`addToTPEDandTFAM`).
 
     """
     # Getting and checking the options
@@ -432,7 +431,7 @@ def chooseBestDuplicates(tped, samples, oldSamples, completion,
               indexes, the second on is the completion and the last one is the
               concordance (a map).
 
-    These are the setps to find the best diplicated sample:
+    These are the steps to find the best duplicated sample:
 
     1. Sort the list of concordances.
     2. Sort the list of completions.
@@ -440,7 +439,7 @@ def chooseBestDuplicates(tped, samples, oldSamples, completion,
     4. Choose the best of the completion and put it in a set.
     5. Compute the intersection of the two sets. If there is one sample or more,
        then randomly choose one sample.
-    6. If the intesection doesn't contain at leats one sample, redo steps 3 and
+    6. If the intersection doesn't contain at least one sample, redo steps 3 and
        4, but increase the number of chosen best by one. Redo step 5 and 6 (if
        required).
 
@@ -503,7 +502,7 @@ def chooseBestDuplicates(tped, samples, oldSamples, completion,
             concordanceToConsider = set(npy.where(currConcordance >= \
                                                     concordanceValue)[0])
 
-            # Getting the intesection of the indexes
+            # Getting the intersection of the indexes
             toConsider = concordanceToConsider & completionToConsider
             if len(toConsider) >= 1:
                 chosenIndex = random.choice(list(toConsider))
@@ -519,7 +518,7 @@ def chooseBestDuplicates(tped, samples, oldSamples, completion,
                                        str(indexes[chosenIndex]+1), sample[0],
                                        sample[1]])
 
-        # Printing the excuded samples
+        # Printing the excluded samples
         for i, index in enumerate(indexes):
             if i != chosenIndex:
                 print >>excludedFile, "\t".join([str(oldSamples[sample][i]+1),
@@ -729,7 +728,7 @@ def computeStatistics(tped, tfam, samples, oldSamples, prefix):
               element, and the concordance (:py:class:`dict`) as last element.
 
     Reads the ``tped`` file and compute the completion for each duplicated
-    sampls and the pairwise concordance between duplicated samples.
+    samples and the pairwise concordance between duplicated samples.
 
     .. note::
         The completion and concordance computation excludes a markers if it's on
@@ -1122,18 +1121,22 @@ group = parser.add_argument_group("Input File")
 group.add_argument("--tfile", type=str, metavar="FILE", required=True,
                    help=("The input file prefix (will find the tped and tfam "
                          "file by appending the prefix to .tped and .tfam, "
-                         "respectively."))
+                         "respectively.) The duplicated samples should have "
+                         "the same identification numbers (both family and "
+                         "individual ids.)"))
 # The options
 group = parser.add_argument_group("Options")
 group.add_argument("--sample-completion-threshold", type=float, metavar="FLOAT",
                    default=0.9, help=("The completion threshold to consider a "
                                       "replicate when choosing the best "
-                                      "replicates. [default: %(default).1f]"))
+                                      "replicates and for creating the "
+                                      "composite samples. [default: "
+                                      "%(default).1f]"))
 group.add_argument("--sample-concordance-threshold", type=float,
                    metavar="FLOAT", default=0.97,
                    help=("The concordance threshold to consider a replicate "
-                         "when choosing the best replicates. [default: "
-                         "%(default).2f]"))
+                         "when choosing the best replicates and for creating "
+                         "the composite samples. [default: %(default).2f]"))
 # The OUTPUT files
 group = parser.add_argument_group("Output File")
 group.add_argument("--out", type=str, metavar="FILE",

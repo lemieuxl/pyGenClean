@@ -94,8 +94,8 @@ def main(argString=None):
                                 for i in popNames],
                             args.out + ".reference_panel.ALL")
 
-    # Renaiming the reference file, so that the SNP names are the same
-    print "   - Renaiming reference panel's SNPs to match source panel"
+    # Renaming the reference file, so that the SNP names are the same
+    print "   - Renaming reference panel's SNPs to match source panel"
     renameSNPs(args.out + ".reference_panel.ALL", args.out + ".update_names",
                args.out + ".reference_panel.ALL.rename")
 
@@ -316,7 +316,7 @@ def createMDSFile(nb_components, inPrefix, outPrefix, genomeFileName):
     :type outPrefix: string
     :type genomeFileName: string
 
-    Using Plink, computes the MDS values for each individul using the
+    Using Plink, computes the MDS values for each individual using the
     ``inPrefix``, ``genomeFileName`` and the number of components. The results
     are save using the ``outPrefix`` prefix.
 
@@ -396,7 +396,7 @@ def flipSNPs(inPrefix, outPrefix, flipFileName):
     :type flipFileName: string
 
     Using Plink, flip a set of markers in ``inPrefix``, and saves the results in
-    ``outPrefix``. The lis of markers to be flipped is in ``flipFileName``.
+    ``outPrefix``. The list of markers to be flipped is in ``flipFileName``.
 
     """
     plinkCommand = ["plink", "--noweb", "--bfile", inPrefix, "--flip",
@@ -782,7 +782,7 @@ def extractSNPs(snpToExtractFileName, referencePrefixes, popNames, outPrefix,
             hadProblems.append(retVal.exitStatus == 0)
 
         # The jobs should be finished, so we clean everything
-        # Deleating the job template, and exiting the session
+        # Deleting the job template, and exiting the session
         for jt in jobTemplates:
             s.deleteJobTemplate(jt)
 

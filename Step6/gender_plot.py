@@ -119,18 +119,14 @@ def encode_chr(chromosome):
 
     .. doctest::
 
-        >>> [encode_chr(str(i)) for i in range(1, 11)]
-        [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        >>> [encode_chr(str(i)) for i in range(0, 11)]
+        [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
         >>> [encode_chr(str(i)) for i in range(11, 21)]
         [11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
         >>> [encode_chr(str(i)) for i in range(21, 27)]
         [21, 22, 23, 24, 25, 26]
         >>> [encode_chr(i) for i in ["X", "Y", "XY", "MT"]]
         [23, 24, 25, 26]
-        >>> encode_chr("0")
-        Traceback (most recent call last):
-            ...
-        ProgramError: 0: invalid chromosome
         >>> encode_chr("27")
         Traceback (most recent call last):
             ...
@@ -252,7 +248,7 @@ def plot_gender(data, options):
     function of the markers on the X chromosomes, with problematic samples with
     different colors.
 
-    Also uses :py:func:`print_data_to_file` ot save the data, so that it is
+    Also uses :py:func:`print_data_to_file` to save the data, so that it is
     faster to rerun the analysis.
 
     """
@@ -431,7 +427,7 @@ def read_summarized_intensities(prefix):
     * ``gender``: the gender of the sample (``Male`` or ``Female``).
     * ``status``: the status of the sample (``OK`` or ``Problem``).
 
-    The summarized intensitities for a chromosome (:math:`S_{chr}`) is computed
+    The summarized intensities for a chromosome (:math:`S_{chr}`) is computed
     using this formula (where :math:`I_{chr}` is the set of all marker
     intensities on chromosome :math:`chr`):
 
@@ -518,7 +514,7 @@ def read_intensities(file_name, needed_markers_chr, needed_samples_gender,
     * ``gender``: the gender of the sample (``Male`` or ``Female``).
     * ``status``: the status of the sample (``OK`` or ``Problem``).
 
-    The summarized intensitities for a chromosome (:math:`S_{chr}`) is computed
+    The summarized intensities for a chromosome (:math:`S_{chr}`) is computed
     using this formula (where :math:`I_{chr}` is the set of all marker
     intensities on chromosome :math:`chr`):
 
@@ -585,7 +581,7 @@ def read_intensities(file_name, needed_markers_chr, needed_samples_gender,
                 raise ProgramError(msg)
 
             if chromosome == 23:
-                # Chromsoome 23
+                # Chromosome 23
                 intensities[sampleID][0] += allele_a + allele_b
                 intensities[sampleID][1] += 1
             else:
@@ -696,7 +692,7 @@ def parseArgs(argString=None): # pragma: no cover
                                         and Y chromosome.
     ``--summarized-intensities`` string The prefix of six files containing
                                         summarized chr23 and chr24 intensities.
-    ``--sex-problems``           string The file containing indivuduals with sex
+    ``--sex-problems``           string The file containing individuals with sex
                                         problems.
     ``--format``                 string The output file format (png, ps, pdf, or
                                         X11).
@@ -765,7 +761,7 @@ group.add_argument("--summarized-intensities", type=str, metavar="FILE",
                             "specified if '--bfile' and '--intensities' are "
                             "not."))
 group.add_argument("--sex-problems", type=str, metavar="FILE", required=True,
-                    help=("The file containing indivuduals with sex "
+                    help=("The file containing individuals with sex "
                             "problems. This file is not read if the option "
                             "'summarized-intensities' is used."))
 # The options

@@ -27,7 +27,7 @@ from PlinkUtils import createRowFromPlinkSpacedOutput
 from StatGenDataCleanUp.Step9.merge_related_samples import merge_related_samples
 
 def main(argString=None):
-    """The main funciton of this module.
+    """The main function of this module.
 
     :param argString: the options.
 
@@ -203,8 +203,8 @@ def extractRelatedIndividuals(fileName, outPrefix, ibs2_ratio_threshold):
     Reads a ``genome`` file (provided by :py:func:`runGenome`) and extract
     related sample pairs according to ``IBS2 ratio``.
 
-    A ``genome`` file contains at leat the following information for each sample
-    pair:
+    A ``genome`` file contains at least the following information for each
+    sample pair:
 
     * **FID1:** the family ID of the first sample in the pair.
     * **IID1:** the individual ID of the first sample in the pair.
@@ -301,7 +301,7 @@ def extractRelatedIndividuals(fileName, outPrefix, ibs2_ratio_threshold):
             ibs2_ratio = hethet / (homhom + hethet)
 
             if ibs2_ratio > ibs2_ratio_threshold:
-                # Those paires might be related
+                # Those pairs might be related
                 # Finding the status
                 status = "unknown"
                 code = "5"
@@ -346,7 +346,7 @@ def extractRelatedIndividuals(fileName, outPrefix, ibs2_ratio_threshold):
     inputFile.close()
     outputFile.close()
 
-    # Merging the related individals
+    # Merging the related individuals
     merge_related_samples(outPrefix + ".related_individuals", outPrefix, False)
 
     # Creating the numpy array
@@ -461,8 +461,8 @@ def runGenome(bfile, options):
 
     Runs Plink with the ``genome`` option. If the user asks for SGE
     (``options.sge`` is True), a frequency file is first created by plink. Then,
-    the input files are splitted in ``options.line_per_file_for_sge`` and Plink
-    is called (using the ``genome`` option) on the cluster using SGE
+    the input files are split in ``options.line_per_file_for_sge`` and Plink is
+    called (using the ``genome`` option) on the cluster using SGE
     (:py:func:`runGenomeSGE`). After the analysis, Plink's output files and logs
     are merged using :py:func:`mergeGenomeLogFiles`.
 
@@ -472,14 +472,14 @@ def runGenome(bfile, options):
         # We run genome using SGE
         # We need to create a frequency file using plink
         plinkCommand = ["plink", "--noweb", "--bfile", bfile, "--freq",
-                        "--out", options.out + ".frequence"]
+                        "--out", options.out + ".frequency"]
         runCommand(plinkCommand)
 
         # We need to split the .fam file
         nbJob = splitFile(bfile + ".fam", options.line_per_file_for_sge,
                           outPrefix)
 
-        runGenomeSGE(bfile, options.out + ".frequence.frq", nbJob, outPrefix)
+        runGenomeSGE(bfile, options.out + ".frequency.frq", nbJob, outPrefix)
 
         # Merging genome files
         mergeGenomeLogFiles(outPrefix, nbJob)
