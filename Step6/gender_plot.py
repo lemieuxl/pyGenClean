@@ -151,7 +151,7 @@ def encode_chr(chromosome):
         return 26
     try:
         new_chromosome = int(chromosome)
-        if new_chromosome < 1 or new_chromosome > 26:
+        if new_chromosome < 0 or new_chromosome > 26:
             msg = "{}: invalid chromosome".format(chromosome)
             raise ProgramError(msg)
         return new_chromosome
