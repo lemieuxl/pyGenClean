@@ -68,8 +68,8 @@ def processTPEDandTFAM(tped, tfam, prefix):
     respectively.
 
     .. note::
-        All heterozygous markers located on the mithochondrial chromosome are
-        not remove.
+        All heterozygous markers located on the mitochondrial chromosome are not
+        remove.
 
     """
     # Copying the tfam file

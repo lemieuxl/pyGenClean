@@ -29,7 +29,7 @@ import numpy as npy
 from PlinkUtils import createRowFromPlinkSpacedOutput
 
 def main(argString=None):
-    """The main function of the moduile..
+    """The main function of the module..
 
     Here are the steps for duplicated samples:
 
@@ -53,7 +53,7 @@ def main(argString=None):
     10. Prints the problematic duplicated markers with a file containing the
         summary of the statistics (completion and pairwise concordance)
         (:py:func:`printProblems`).
-    11. Print the pairwise concordance in a file (matrixes)
+    11. Print the pairwise concordance in a file (matrices)
         (:py:func:`printConcordance`).
     12. Choose the best duplicated markers using concordance and completion
         (:py:func:`chooseBestSnps`).
@@ -438,7 +438,7 @@ def chooseBestSnps(tped, snps, trueCompletion, trueConcordance, prefix):
 
     It starts by computing the completion of each markers (dividing the number
     of calls divided by the total number of genotypes). Then, for each of the
-    duplicated markers, we choose the best one acording to completion and
+    duplicated markers, we choose the best one according to completion and
     concordance (see explanation in
     :py:func:`Step1.duplicated_samples.chooseBestDuplicates` for more details).
 
@@ -651,7 +651,7 @@ def printConcordance(concordance, prefix, tped, snps):
 
     :param concordance: the concordance.
     :param prefix: the prefix if the output files.
-    :param tped: a reprsentation of the ``tped`` of duplicated markers.
+    :param tped: a representation of the ``tped`` of duplicated markers.
     :param snps: the position of the duplicated markers in the ``tped``.
 
     :type concordance: dict
@@ -663,7 +663,7 @@ def printConcordance(concordance, prefix, tped, snps):
     duplicated markers, the first line (starting with the `#` signs) contains
     the name of all the markers in the duplicated markers set. Then a :math:`N
     \\times N` matrix is printed to file (where :math:`N` is the number of
-    markers in the dupicated marker list), containing the pairwise concordance.
+    markers in the duplicated marker list), containing the pairwise concordance.
 
     """
     outFile = None
@@ -711,7 +711,7 @@ def printProblems(completion, concordance, tped, snps, frequencies, prefix,
     :returns: a :py:class:`set` containing duplicated markers to complete.
 
     Creates a summary file (``prefix.summary``) containing information about
-    duplucated markers: chromosome, position, name, alleles, status, completion
+    duplicated markers: chromosome, position, name, alleles, status, completion
     percentage, completion number and mean concordance.
 
     The frequency and the minor allele are used to be certain that two
@@ -720,8 +720,8 @@ def printProblems(completion, concordance, tped, snps, frequencies, prefix,
 
     For each duplicated markers:
 
-    1. Contructs the set of available alleles for the first marker.
-    2. Contructs the set of available alleles for the second marker.
+    1. Constructs the set of available alleles for the first marker.
+    2. Constructs the set of available alleles for the second marker.
     3. If the two sets are different, but the number of alleles is the same, we
        try to flip one of the marker. If the two sets are the same, but the
        number of alleles is 1, we set the status to ``homo_flip``. If the
@@ -1084,7 +1084,7 @@ def flipGenotype(genotype):
         elif allele == "G":
             newGenotype.add("C")
         else:
-            msg = "%(allele)s: unkown allele" % locals()
+            msg = "%(allele)s: unknown allele" % locals()
             raise ProgramError(msg)
 
     return newGenotype
@@ -1108,7 +1108,7 @@ def processTPED(uniqueSNPs, mapF, fileName, tfam, prefix):
 
     :returns: a tuple with the representation of the ``tped`` file
               (:py:class:`numpy.array`) as first element, and the updated
-              position of the dupicated markers in the ``tped`` representation.
+              position of the duplicated markers in the ``tped`` representation.
 
     Copies the ``tfam`` file into ``prefix.unique_snps.tfam``. While reading the
     ``tped`` file, creates a new one (``prefix.unique_snps.tped``) containing
@@ -1169,7 +1169,7 @@ def findUniques(mapF):
     :type mapF: list of tuple of string
 
     :returns: a :py:class:`dict` containing unique markers (according to their
-              genomic localistaion).
+              genomic localisation).
 
     """
     uSNPs = {}
@@ -1387,11 +1387,13 @@ group = parser.add_argument_group("Options")
 group.add_argument("--snp-completion-threshold", type=float, metavar="FLOAT",
                     default=0.9, help=("The completion threshold to consider "
                                        "a replicate when choosing the best "
-                                       "replicates. [default: %(default).1f]"))
+                                       "replicates and for composite creation. "
+                                       "[default: %(default).1f]"))
 group.add_argument("--snp-concordance-threshold", type=float, metavar="FLOAT",
                    default=0.98, help=("The concordance threshold to consider "
                                        "a replicate when choosing the best "
-                                       "replicates. [default: %(default).2f]"))
+                                       "replicates and for composite creation. "
+                                       "[default: %(default).2f]"))
 group.add_argument("--frequence_difference", type=float, metavar="FLOAT",
                    default=0.05, help=("The maximum difference in frequency "
                                        "between duplicated markers [default: "
