@@ -106,7 +106,7 @@ def processTPEDandTFAM(tped, tfam, prefix):
                     allFailed.add(snpInfo[1])
                 elif len(set(uniqueGenotypes[0].split(" "))) == 2:
                     # There are two different alleles, hence, hetero
-                    if chromosome != "26":
+                    if chromosome not in {"26", "MT"}:
                         # The SNP is not on a mitochondrial chromosome
                         # (because we want to keep those)
                         allHetero.add(snpInfo[1])
