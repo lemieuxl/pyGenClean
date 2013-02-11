@@ -151,8 +151,7 @@ def run_duplicated_samples(in_prefix, in_type, out_prefix, options):
 
     # We know we need tfile
     required_type = "tfile"
-    check_input_files(in_prefix, in_type, required_type,
-                      os.path.basename(out_prefix))
+    check_input_files(in_prefix, in_type, required_type)
 
     # We need to inject the name of the input file and the name of the output
     # prefix
@@ -202,8 +201,7 @@ def run_duplicated_snps(in_prefix, in_type, out_prefix, options):
 
     # We know we need a tfile
     required_type = "tfile"
-    check_input_files(in_prefix, in_type, required_type,
-                      os.path.basename(out_prefix))
+    check_input_files(in_prefix, in_type, required_type)
 
     # This step require a map file (we now have a tfile)
     if not os.path.isfile(in_prefix + ".map"):
@@ -267,8 +265,7 @@ def run_noCall_hetero_snps(in_prefix, in_type, out_prefix, options):
 
     # We know we need a tfile
     required_type = "tfile"
-    check_input_files(in_prefix, in_type, required_type,
-                      os.path.basename(out_prefix))
+    check_input_files(in_prefix, in_type, required_type)
 
     # We need to inject the name of the input file and the name of the output
     # prefix
@@ -316,8 +313,7 @@ def run_sample_missingness(in_prefix, in_type, out_prefix, options):
     required_type = "tfile"
     if in_type == "bfile":
         required_type = "bfile"
-    check_input_files(in_prefix, in_type, required_type,
-                      os.path.basename(out_prefix))
+    check_input_files(in_prefix, in_type, required_type)
 
     # We need to inject the name of the input file and the name of the output
     # prefix
@@ -365,8 +361,7 @@ def run_snp_missingness(in_prefix, in_type, out_prefix, options):
 
     # We know we need a bfile
     required_type = "bfile"
-    check_input_files(in_prefix, in_type, required_type,
-                      os.path.basename(out_prefix))
+    check_input_files(in_prefix, in_type, required_type)
 
     # We need to inject the name of the input file and the name of the output
     # prefix
@@ -416,8 +411,7 @@ def run_sex_check(in_prefix, in_type, out_prefix, options):
 
     # We know we need a bfile
     required_type = "bfile"
-    check_input_files(in_prefix, in_type, required_type,
-                      os.path.basename(out_prefix))
+    check_input_files(in_prefix, in_type, required_type)
 
     # We need to inject the name of the input file and the name of the output
     # prefix
@@ -468,8 +462,7 @@ def run_plate_bias(in_prefix, in_type, out_prefix, options):
 
     # We know we need bfile
     required_type = "bfile"
-    check_input_files(in_prefix, in_type, required_type,
-                      os.path.basename(out_prefix))
+    check_input_files(in_prefix, in_type, required_type)
 
     # We need to inject the name of the input file and the name of the output
     # prefix
@@ -516,8 +509,7 @@ def run_remove_heterozygous_haploid(in_prefix, in_type, out_prefix, options):
 
     # We know we need bfile
     required_type = "bfile"
-    check_input_files(in_prefix, in_type, required_type,
-                      os.path.basename(out_prefix))
+    check_input_files(in_prefix, in_type, required_type)
 
     # We need to inject the name of the input file and the name of the output
     # prefix
@@ -567,8 +559,7 @@ def run_remove_IBS(in_prefix, in_type, out_prefix, options):
 
     # We know we need bfile
     required_type = "bfile"
-    check_input_files(in_prefix, in_type, required_type,
-                      os.path.basename(out_prefix))
+    check_input_files(in_prefix, in_type, required_type)
 
     # We need to inject the name of the input file and the name of the output
     # prefix
@@ -619,8 +610,7 @@ def run_check_ethnicity(in_prefix, in_type, out_prefix, options):
 
     # We know we need bfile
     required_type = "bfile"
-    check_input_files(in_prefix, in_type, required_type,
-                      os.path.basename(out_prefix))
+    check_input_files(in_prefix, in_type, required_type)
 
     # We need to inject the name of the input file and the name of the output
     # prefix
@@ -671,8 +661,7 @@ def run_flag_maf_zero(in_prefix, in_type, out_prefix, options):
 
     # We know we need bfile
     required_type = "bfile"
-    check_input_files(in_prefix, in_type, required_type,
-                      os.path.basename(out_prefix))
+    check_input_files(in_prefix, in_type, required_type)
 
     # We need to inject the name of the input file and the name of the output
     # prefix
@@ -723,8 +712,7 @@ def run_flag_hw(in_prefix, in_type, out_prefix, options):
 
     # We know we need bfile
     required_type = "bfile"
-    check_input_files(in_prefix, in_type, required_type,
-                      os.path.basename(out_prefix))
+    check_input_files(in_prefix, in_type, required_type)
 
     # We need to inject the name of the input file and the name of the output
     # prefix
@@ -776,8 +764,7 @@ def run_compare_gold_standard(in_prefix, in_type, out_prefix, options):
 
     # We know we need bfile
     required_type = "bfile"
-    check_input_files(in_prefix, in_type, required_type,
-                      os.path.basename(out_prefix))
+    check_input_files(in_prefix, in_type, required_type)
 
     # We need to inject the name of the input file and the name of the output
     # prefix
