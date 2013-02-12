@@ -386,7 +386,8 @@ group = parser.add_argument_group("Input File")
 group.add_argument("--problematic-samples", type=str, metavar="FILE",
                     required=True,
                     help=("A file containing the list of samples with sex "
-                          "problems (family and individual ID required). Uses "
+                          "problems (family and individual ID required, "
+                          "separated by a single tabulation). Uses "
                           "only the individual ID by default, unless "
                           "--use-full-ids is used."))
 group.add_argument("--use-full-ids", action="store_true",
