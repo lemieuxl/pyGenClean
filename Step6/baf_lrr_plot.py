@@ -70,7 +70,13 @@ def check_file_names(samples, raw_dir, options):
     """
     file_names = {}
     for sample in samples:
-        the_sample = sample[1]
+        the_sample = None
+        try:
+            the_sample = sample[1]
+        except IndexError:
+            msg = ("problematic samples file should include both family and "
+                   "individual IDs")
+            raise ProgramError(msg)
         if options.use_full_ids:
             the_sample = options.full_ids_delimiter.join(sample)
 
@@ -379,7 +385,10 @@ parser = argparse.ArgumentParser(description=desc, prog=prog)
 group = parser.add_argument_group("Input File")
 group.add_argument("--problematic-samples", type=str, metavar="FILE",
                     required=True,
-                    help="The list of sample with sex problems to plot.")
+                    help=("A file containing the list of samples with sex "
+                          "problems (family and individual ID required). Uses "
+                          "only the individual ID by default, unless "
+                          "--use-full-ids is used."))
 group.add_argument("--use-full-ids", action="store_true",
                    help=("Use this options to use full sample IDs (famID and "
                          "indID). Otherwise, only the indID will be use."))
