@@ -17,6 +17,8 @@ three additional modules:
 *   [NumPy][1]
 *   [matplotlib][2]
 *   [drmaa][3]
+*   [scipy][7]
+*   [scikit-learn][6]
 
 Those must be installed before installing _easyQC_.
 
@@ -25,9 +27,9 @@ Those must be installed before installing _easyQC_.
 ## Installation ##
 
 These steps describe the installation of a Python virtual environment using the
-[virtualenv][4] module. Then, the installation of NumPy, matplotlib and drmaa
-and the actual _easyQC_ module will be explained in details. Python 2.7 should
-already be installed.
+[virtualenv][4] module. Then, the installation of NumPy, matplotlib, drmaa,
+scipy, scikit-learn and the actual _easyQC_ module will be explained in details.
+Python 2.7 should already be installed.
 
 
 
@@ -46,7 +48,13 @@ already be installed.
         $ python ~/Downloads/virtualenv-*/virtualenv.py \
             --no-site-packages ~/Python_virtualenv
 
-4.  Activate the newly created virtual environment.
+4.  Be sure that there is a `Python2.7` link in the `~/Python_virtualenv`
+    directory. If not, use the following two command:
+
+        $ cd ~/Python_virtualen
+        $ ln -s python python2.7
+
+5.  Activate the newly created virtual environment.
 
         $ source ~/Python_virtualenv/bin/activate
 
@@ -75,16 +83,16 @@ sure that the Python virtual environment is activated.
 2.  Be sure that all the prerequisites are installed by executing the following
     command:
 
-        $ python setup.py config
+        $ python2.7 setup.py config
 
 3.  Compile [NumPy][1] using the following command:
 
-        $ python setup.py build
+        $ python2.7 setup.py build
 
 4.  Once the compilation is complete, execute the following command to install
     [NumPy][1] in the virtual environment:
 
-        $ python setup.py install
+        $ python2.7 setup.py install
 
 5.  _(optional)_ To check [NumPy][1] installation, the [nose][5] module needs to
     be install. Note that on a 32bits linux computer, there was a failed test
@@ -93,8 +101,8 @@ sure that the Python virtual environment is activated.
     and test [Numpy][1]:
 
         $ cd
-        $ pip install nose
-        $ python -c 'import numpy; numpy.test()'
+        $ pip-2.7 install -U nose
+        $ python2.7 -c 'import numpy; numpy.test()'
 
 
 
@@ -115,34 +123,35 @@ be sure that the Python virtual environment is activated.
 2.  Be sure that all the prerequisites are installed by executing the following
     command:
 
-        $ python setup.py config
+        $ python2.7 setup.py config
 
 3.  Compile [matplotlib][2] using the following command:
 
-        $ python setup.py build
+        $ python2.7 setup.py build
 
 4.  Once the compilation is complete, execute the following command to install
     [matplotlib][2] in the virtual environment:
 
-        $ python setup.py install
+        $ python2.7 setup.py install
 
 5.  _(optional)_ To check [matplotlib][2] installation, execute the following
     two commands (supposing [nose][5] is already installed):
 
         $ cd
-        $ python -c 'import matplotlib; matplotlib.test()'
+        $ python2.7 -c 'import matplotlib; matplotlib.test()'
 
 
 
 ### drmaa Installation ###
 
 If you won't use _easyQC_ on a computer server, with a DRMAA-compliant
-distributed resource management system, this module is optional. Before doing
-anything, be sure that the Python virtual environment is activated.
+distributed resource management system, this module is optional (just don't use
+the `sge`option). Before doing anything, be sure that the Python virtual
+environment is activated.
 
 To install the [drmaa][3] module, simply execute the following command:
 
-    $ pip install drmaa
+    $ pip-2.7 install drmaa
 
 A specific environment variable needs to be set, so that the [drmaa][3] module
 works correctly. To check if the variable is set, simply execute the following
@@ -152,6 +161,19 @@ command:
 
 If nothing is displayed on the screen, you need to locate the file
 `libdrmaa.so*` and set the variable to link to this path.
+
+
+
+### scikit-learn Installation ###
+
+Here is how to install [scikit-learn][6]. Before doing anything, be sure that
+the Python virtual environment is activated.
+
+This module requires [scipy][7] to be installed. To install both modules,
+use those two commands.
+
+    $ pip-2.7 install -U scipy
+    $ pip-2.7 install -U scikit-learn
 
 
 
@@ -170,7 +192,7 @@ be sure that the Python virtual environment is activated.
 
 2.  Install _easyQC_ by executing the following command:
 
-        $ python setup.py install
+        $ python2.7 setup.py install
 
 3.  To test the installation, simply run the following command:
 
@@ -185,3 +207,5 @@ be sure that the Python virtual environment is activated.
 [3]: http://code.google.com/p/drmaa-python/
 [4]: http://pypi.python.org/pypi/virtualenv
 [5]: http://pypi.python.org/pypi/nose/
+[6]: http://scikit-learn.org/stable/
+[7]: http://www.scipy.org/
