@@ -615,7 +615,7 @@ def run_check_ethnicity(in_prefix, in_type, out_prefix, options):
     # We need to inject the name of the input file and the name of the output
     # prefix
     options += ["--{}".format(required_type), in_prefix,
-                "--out", os.path.join(out_prefix, "ethnic")]
+                "--out", os.path.join(out_prefix, "ethnicity")]
 
     # We run the script
     try:
