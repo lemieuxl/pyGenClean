@@ -1,7 +1,7 @@
-# StatGen-DataCleanUp #
+# pyGenClean - Automated Data Clean Up #
 
-_easyQC_ is an informatics tool to facilitate and standardize the genetic data
-clean up pipeline with genotyping array data. In conjunction with a source
+_pyGenClean_ is an informatics tool to facilitate and standardize the genetic
+data clean up pipeline with genotyping array data. In conjunction with a source
 batch-queuing system, the tool minimizes data manipulation errors, it
 accelerates the completion of the data clean up process and it provides
 informative graphics and metrics to guide decision making for statistical
@@ -11,7 +11,7 @@ analysis.
 
 ## Dependencies ##
 
-Here are the dependencies that must be installed before _easyQC_:
+Here are the dependencies that must be installed before _pyGenClean_:
 
 *   [Python][1] (>= 2.7, but not 3.0)
 *   [NumPy][2] (>= 1.6.2)
@@ -25,15 +25,16 @@ Here are the dependencies that must be installed before _easyQC_:
 
 ## Installation ##
 
-For Linux users, we recommend installing _easyQC_ in a Python [virtualenv][7]
-(virtual environment).
+For Linux users, we recommend installing _pyGenClean_ in a Python
+[virtualenv][7] (virtual environment).
 
-_easyQC_ should work on Windows and MacOS, even though it hasn't been fully tested for
-full compatibility. It has been tried on Windows XP (32 bits) and Windows 7 (64
-bits, but with a 32 bits Python 2.7 installation) without known problems.
+_pyGenClean_ should work on Windows and MacOS, even though it hasn't been fully
+tested for full compatibility. It has been tried on Windows XP (32 bits) and
+Windows 7 (64 bits, but with a 32 bits Python 2.7 installation) without known
+problems.
 
 For a step by step installation on both Linux and Windows operation systems, see
-_easyQC_ documentation, located [here][9].
+_pyGenClean_ documentation, located [here][9].
 
 
 

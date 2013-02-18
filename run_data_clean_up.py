@@ -1,18 +1,17 @@
 #!/usr/bin/env python2.7
-## This file is part of Foobar.
+## This file is part of pyGenClean.
 ## 
-## Foobar is free software: you can redistribute it and/or modify
-## it under the terms of the GNU General Public License as published by
-## the Free Software Foundation, either version 3 of the License, or
-## (at your option) any later version.
+## pyGenClean is free software: you can redistribute it and/or modify it under
+## the terms of the GNU General Public License as published by the Free Software
+## Foundation, either version 3 of the License, or (at your option) any later
+## version.
 ## 
-## Foobar is distributed in the hope that it will be useful,
-## but WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-## GNU General Public License for more details.
+## pyGenClean is distributed in the hope that it will be useful, but WITHOUT ANY
+## WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+## A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 ## 
-## You should have received a copy of the GNU General Public License
-## along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
+## You should have received a copy of the GNU General Public License along with
+## pyGenClean.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
 import sys
@@ -22,24 +21,24 @@ import argparse
 import subprocess
 import ConfigParser
 
-import StatGenDataCleanUp
-import StatGenDataCleanUp.Step1.duplicated_samples as duplicated_samples
-import StatGenDataCleanUp.Step2.duplicated_snps as duplicated_snps
-import StatGenDataCleanUp.Step3.clean_noCall_hetero_snps as noCall_hetero_snps
-import StatGenDataCleanUp.Step4.sample_missingness as sample_missingness
-import StatGenDataCleanUp.Step5.snp_missingness as snp_missingness
-import StatGenDataCleanUp.Step6.sex_check as sex_check
-import StatGenDataCleanUp.Step7.plate_bias as plate_bias
-import StatGenDataCleanUp.Step8.remove_heterozygous_haploid as remove_heterozygous_haploid
-import StatGenDataCleanUp.Step9.remove_IBS as remove_IBS
-import StatGenDataCleanUp.Step10.check_ethnicity as check_ethnicity
-import StatGenDataCleanUp.Step11.flag_maf_zero as flag_maf_zero
-import StatGenDataCleanUp.Step12.flag_hw as flag_hw
-import StatGenDataCleanUp.Misc.compare_gold_standard as compare_gold_standard
+import pyGenClean
+import pyGenClean.Step1.duplicated_samples as duplicated_samples
+import pyGenClean.Step2.duplicated_snps as duplicated_snps
+import pyGenClean.Step3.clean_noCall_hetero_snps as noCall_hetero_snps
+import pyGenClean.Step4.sample_missingness as sample_missingness
+import pyGenClean.Step5.snp_missingness as snp_missingness
+import pyGenClean.Step6.sex_check as sex_check
+import pyGenClean.Step7.plate_bias as plate_bias
+import pyGenClean.Step8.remove_heterozygous_haploid as remove_heterozygous_haploid
+import pyGenClean.Step9.remove_IBS as remove_IBS
+import pyGenClean.Step10.check_ethnicity as check_ethnicity
+import pyGenClean.Step11.flag_maf_zero as flag_maf_zero
+import pyGenClean.Step12.flag_hw as flag_hw
+import pyGenClean.Misc.compare_gold_standard as compare_gold_standard
 import PlinkUtils.subset_data as SubsetData
 
 # Getting the version
-prog_version = ".".join(StatGenDataCleanUp.get_version())
+prog_version = ".".join(pyGenClean.get_version())
 
 def main():
     """The main function.
