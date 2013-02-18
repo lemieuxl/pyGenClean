@@ -853,7 +853,7 @@ class ProgramError(Exception):
 
 # The parser object
 prog = "find_related_samples"
-desc = """Removes samples according to IBS."""
+desc = """Finds related samples according to IBS values."""
 parser = argparse.ArgumentParser(description=desc, prog=prog)
 
 # The INPUT files
