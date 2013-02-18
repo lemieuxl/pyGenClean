@@ -68,7 +68,7 @@ def main(argString=None):
     print ("   - There are {} outliers for the {} "
            "population".format(len(outliers), args.outliers_of))
     try:
-        with open(args.out + ".outliers", 'wb') as output_file:
+        with open(args.out + ".outliers", 'w') as output_file:
             for sample_id in outliers:
                 print >>output_file, "\t".join(sample_id)
     except IOError:

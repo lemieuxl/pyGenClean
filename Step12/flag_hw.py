@@ -89,7 +89,7 @@ def main(argString=None):
         file_name = args.out + ".snp_flag_threshold_between_{}-{}".format(args.hwe,
                                                                           customThreshold)
         try:
-            with open(file_name, 'wb') as output_file:
+            with open(file_name, 'w') as output_file:
                 print >>output_file, "\n".join(hwe_snps - custom_snps)
         except IOError:
             msg = "{}: can't write file".format(file_name)

@@ -114,7 +114,7 @@ def merge_related_samples(file_name, out_prefix, no_status):
     # Printing the output file
     output_file = None
     try:
-        output_file = open(out_prefix + ".merged_related_individuals", 'wb')
+        output_file = open(out_prefix + ".merged_related_individuals", 'w')
         to_print = ["index", "FID1", "IID1", "FID2", "IID2"]
         if not no_status:
             to_print.append("status")
@@ -144,10 +144,10 @@ def merge_related_samples(file_name, out_prefix, no_status):
 
     # Printing the files
     try:
-        with open(out_prefix + ".chosen_related_individuals", "wb") as chosen_file:
+        with open(out_prefix + ".chosen_related_individuals", "w") as chosen_file:
             for sample_id in chosen_samples:
                 print >>chosen_file, "\t".join(sample_id)
-        with open(out_prefix + ".discarded_related_individuals", "wb") as discarded_file:
+        with open(out_prefix + ".discarded_related_individuals", "w") as discarded_file:
             for sample_id in remaining_samples:
                 print >>discarded_file, "\t".join(sample_id)
     except IOError:
