@@ -267,7 +267,7 @@ group.add_argument("--loop-assoc", type=str, metavar="FILE", required=True,
 group = parser.add_argument_group("Options")
 group.add_argument("--pfilter", type=float, metavar="FLOAT", default=1e-7,
                     help=("The significance threshold used for the plate "
-                          "effect. [default: %(default)e]"))
+                          "effect. [default: %(default).1e]"))
 # The OUTPUT files
 group = parser.add_argument_group("Output File")
 group.add_argument("--out", type=str, metavar="FILE",
