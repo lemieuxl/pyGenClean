@@ -250,9 +250,8 @@ class ProgramError(Exception):
 
 
 # The parser object
-prog = "plate_bias"
 desc = """Check for plate bias."""
-parser = argparse.ArgumentParser(description=desc, prog=prog)
+parser = argparse.ArgumentParser(description=desc)
 
 # The INPUT files
 group = parser.add_argument_group("Input File")
@@ -260,12 +259,12 @@ group.add_argument("--bfile", type=str, metavar="FILE", required=True,
                    help=("The input file prefix (will find the plink binary "
                          "files by appending the prefix to the .bim, .bed "
                          "and .fam files, respectively."))
-# The options
-group = parser.add_argument_group("Options")
 group.add_argument("--loop-assoc", type=str, metavar="FILE", required=True,
                     help=("The file containing the plate organization of "
                           "each samples. Must contains three column (with no "
                           "header): famID, indID and plateName."))
+# The options
+group = parser.add_argument_group("Options")
 group.add_argument("--pfilter", type=float, metavar="FLOAT", default=1e-7,
                     help=("The significance threshold used for the plate "
                           "effect. [default: %(default)e]"))

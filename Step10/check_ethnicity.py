@@ -17,7 +17,6 @@ import os
 import sys
 import argparse
 import subprocess
-import __main__
 
 import PlinkUtils.plot_MDS as PlotMDS
 from PlinkUtils import createRowFromPlinkSpacedOutput
@@ -966,9 +965,8 @@ class ProgramError(Exception):
 
 
 # The parser object
-prog = __main__.__file__
 desc = """Check samples' ethnicity using reference populations and IBS."""
-parser = argparse.ArgumentParser(description=desc, prog=prog)
+parser = argparse.ArgumentParser(description=desc)
 
 # The INPUT files
 group = parser.add_argument_group("Input File")

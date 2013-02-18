@@ -612,9 +612,8 @@ class ProgramError(Exception):
 
 
 # The parser object
-prog = "sex_check"
 desc = """Check sex using Plink"""
-parser = argparse.ArgumentParser(description=desc, prog=prog)
+parser = argparse.ArgumentParser(description=desc)
 
 # The INPUT files
 group = parser.add_argument_group("Input File")

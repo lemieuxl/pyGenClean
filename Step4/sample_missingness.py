@@ -157,9 +157,8 @@ class ProgramError(Exception):
 
 
 # The parser object
-prog = "sample_missingess"
 desc = """Computes sample missingness using Plink"""
-parser = argparse.ArgumentParser(description=desc, prog=prog)
+parser = argparse.ArgumentParser(description=desc)
 
 # The INPUT files
 group = parser.add_argument_group("Input File")

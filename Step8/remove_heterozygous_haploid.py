@@ -138,9 +138,8 @@ class ProgramError(Exception):
 
 
 # The parser object
-prog = "remove_heterozygous_haploid"
 desc = """Removes heterozygous haploid genotypes."""
-parser = argparse.ArgumentParser(description=desc, prog=prog)
+parser = argparse.ArgumentParser(description=desc)
 
 # The INPUT files
 group = parser.add_argument_group("Input File")

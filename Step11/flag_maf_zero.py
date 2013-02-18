@@ -225,9 +225,8 @@ class ProgramError(Exception):
 
 
 # The parser object
-prog = "flag_maf_zero"
 desc = """Flag SNPs with MAF of 0."""
-parser = argparse.ArgumentParser(description=desc, prog=prog)
+parser = argparse.ArgumentParser(description=desc)
 
 # The INPUT files
 group = parser.add_argument_group("Input File")

@@ -852,9 +852,8 @@ class ProgramError(Exception):
 
 
 # The parser object
-prog = "find_related_samples"
 desc = """Finds related samples according to IBS values."""
-parser = argparse.ArgumentParser(description=desc, prog=prog)
+parser = argparse.ArgumentParser(description=desc)
 
 # The INPUT files
 group = parser.add_argument_group("Input File")
@@ -878,7 +877,7 @@ group.add_argument("--maf", type=str, metavar="FLOAT", default="0.05",
                          "%(default)s]"))
 group.add_argument("--ibs2-ratio", type=float, metavar="FLOAT", default=0.8,
                    help=("The initial IBS2* ratio (the minimum value to show "
-                         "in the plot. [default: %(default).1f"))
+                         "in the plot. [default: %(default).1f]"))
 group.add_argument("--sge", action="store_true",
                     help="Use SGE for parallelization.")
 group.add_argument("--line-per-file-for-sge", type=int, metavar="INT",

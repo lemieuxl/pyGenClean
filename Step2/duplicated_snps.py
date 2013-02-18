@@ -1371,9 +1371,8 @@ class ProgramError(Exception):
 
 
 # The parser object
-prog = "duplicated_snps"
 desc = """Extract and work with duplicated SNPs."""
-parser = argparse.ArgumentParser(description=desc, prog=prog)
+parser = argparse.ArgumentParser(description=desc)
 
 # The INPUT files
 group = parser.add_argument_group("Input File")

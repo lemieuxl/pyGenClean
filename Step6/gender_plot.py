@@ -736,9 +736,8 @@ class ProgramError(Exception):
         return self.message
 
 # The parser object
-prog = "gender_plot"
-desc = """Plots the gender using intensities"""
-parser = argparse.ArgumentParser(description=desc, prog=prog)
+desc = """Plots the gender using X and Y chromosomes' intensities"""
+parser = argparse.ArgumentParser(description=desc)
 
 # The INPUT files
 group = parser.add_argument_group("Input File")

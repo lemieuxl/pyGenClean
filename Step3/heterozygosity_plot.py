@@ -316,9 +316,8 @@ class ProgramError(Exception):
         return self.message
 
 # The parser object
-prog = "heterozygosity_plot"
 desc = """Plot the distribution of the heterozygosity ratio."""
-parser = argparse.ArgumentParser(description=desc, prog=prog)
+parser = argparse.ArgumentParser(description=desc)
 
 
 # The INPUT files

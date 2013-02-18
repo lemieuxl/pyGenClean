@@ -236,9 +236,8 @@ class ProgramError(Exception):
 
 
 # The parser object
-prog = "merge_related_samples"
 desc = """Merges related samples according to IBS."""
-parser = argparse.ArgumentParser(description=desc, prog=prog)
+parser = argparse.ArgumentParser(description=desc)
 
 # The INPUT files
 group = parser.add_argument_group("Input File")

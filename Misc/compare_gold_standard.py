@@ -930,9 +930,8 @@ class ProgramError(Exception):
 
 
 # The parser object
-prog = "check_ethnicity"
-desc = """Removes samples according to IBS."""
-parser = argparse.ArgumentParser(description=desc, prog=prog)
+desc = """Compares the dataset with a gold standard."""
+parser = argparse.ArgumentParser(description=desc)
 
 # The INPUT files
 group = parser.add_argument_group("Input File")

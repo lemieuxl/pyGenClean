@@ -555,9 +555,8 @@ class ProgramError(Exception):
         return self.message
 
 # The parser object
-prog = "find_outliers"
 desc = """Finds outliers in SOURCE from CEU samples."""
-parser = argparse.ArgumentParser(description=desc, prog=prog)
+parser = argparse.ArgumentParser(description=desc)
 
 
 # The INPUT files

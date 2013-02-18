@@ -285,9 +285,8 @@ class ProgramError(Exception):
 
 
 # The parser object
-prog = "flag_hw"
 desc = """Flag SNPs with Hardy-Weinberg disequilibrium."""
-parser = argparse.ArgumentParser(description=desc, prog=prog)
+parser = argparse.ArgumentParser(description=desc)
 
 # The INPUT files
 group = parser.add_argument_group("Input File")

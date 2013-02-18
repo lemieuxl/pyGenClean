@@ -375,9 +375,8 @@ class ProgramError(Exception):
         return self.message
 
 # The parser object
-prog = "baf_lrr_plot"
 desc = """Plots the BAF and LRR of problematic samples."""
-parser = argparse.ArgumentParser(description=desc, prog=prog)
+parser = argparse.ArgumentParser(description=desc)
 
 
 # The INPUT files

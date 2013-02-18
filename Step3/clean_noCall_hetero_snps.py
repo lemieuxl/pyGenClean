@@ -218,9 +218,8 @@ class ProgramError(Exception):
 
 
 # The parser object
-prog = "clean_noCall_hetero_snps"
-desc = """Removes "no calls" and only heterozygous SNPs."""
-parser = argparse.ArgumentParser(description=desc, prog=prog)
+desc = """Removes "no calls" only and heterozygous only markers."""
+parser = argparse.ArgumentParser(description=desc)
 
 # The INPUT files
 group = parser.add_argument_group("Input File")
