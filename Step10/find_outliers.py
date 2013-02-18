@@ -577,7 +577,7 @@ group.add_argument("--format", type=str, metavar="FORMAT", default="png",
 # The OUTPUT files
 group = parser.add_argument_group("Output File")
 group.add_argument("--out", type=str, metavar="FILE",
-                    default="ethnic",
+                    default="ethnicity",
                     help=("The prefix of the output files. [default: "
                           "%(default)s]"))
 
