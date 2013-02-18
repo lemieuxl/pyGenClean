@@ -852,7 +852,7 @@ class ProgramError(Exception):
 
 
 # The parser object
-prog = "remove_IBS"
+prog = "find_related_samples"
 desc = """Removes samples according to IBS."""
 parser = argparse.ArgumentParser(description=desc, prog=prog)
 

@@ -30,7 +30,7 @@ import pyGenClean.Step5.snp_missingness as snp_missingness
 import pyGenClean.Step6.sex_check as sex_check
 import pyGenClean.Step7.plate_bias as plate_bias
 import pyGenClean.Step8.remove_heterozygous_haploid as remove_heterozygous_haploid
-import pyGenClean.Step9.remove_IBS as remove_IBS
+import pyGenClean.Step9.find_related_samples as find_related_samples
 import pyGenClean.Step10.check_ethnicity as check_ethnicity
 import pyGenClean.Step11.flag_maf_zero as flag_maf_zero
 import pyGenClean.Step12.flag_hw as flag_hw
@@ -526,8 +526,8 @@ def run_remove_heterozygous_haploid(in_prefix, in_type, out_prefix, options):
     return os.path.join(out_prefix, "without_hh_genotypes"), "bfile"
 
 
-def run_remove_IBS(in_prefix, in_type, out_prefix, options):
-    """Runs step9 (remove IBS).
+def run_find_related_samples(in_prefix, in_type, out_prefix, options):
+    """Runs step9 (find related samples).
 
     :param in_prefix: the prefix of the input files.
     :param in_type: the type of the input files.
@@ -543,14 +543,15 @@ def run_remove_IBS(in_prefix, in_type, out_prefix, options):
               prefix for the next script) and the type of the output files
               (``bfile``).
 
-    This function calls the :py:mod:`Step9.remove_IBS` module. The required file
-    type for this module is ``bfile``, hence the need to use the
+    This function calls the :py:mod:`Step9.find_related_samples` module. The
+    required file type for this module is ``bfile``, hence the need to use the
     :py:func:`check_input_files` to check if the file input file type is the
     good one, or to create it if needed.
 
     .. note::
-        The :py:mod:`Step9.remove_IBS` module doesn't return usable output
-        files. Hence, this function returns the input file prefix and its type.
+        The :py:mod:`Step9.find_related_samples` module doesn't return usable
+        output files. Hence, this function returns the input file prefix and its
+        type.
 
     """
     # Creating the output directory
@@ -567,9 +568,9 @@ def run_remove_IBS(in_prefix, in_type, out_prefix, options):
 
     # We run the script
     try:
-        remove_IBS.main(options)
-    except remove_IBS.ProgramError as e:
-        msg = "remove_IBS: {}".format(e)
+        find_related_samples.main(options)
+    except find_related_samples.ProgramError as e:
+        msg = "find_related_samples: {}".format(e)
         raise ProgramError(msg)
 
     # We know this step doesn't produce an new data set, so we return the old
@@ -1046,7 +1047,7 @@ def read_config_file(filename):
     * ``sex_check`` (:py:func:`run_sex_check`)
     * ``plate_bias`` (:py:func:`run_plate_bias`)
     * ``remove_heterozygous_haploid`` (:py:func:`run_remove_heterozygous_haploid`)
-    * ``remove_IBS`` (:py:func:`run_remove_IBS`)
+    * ``find_related_samples`` (:py:func:`run_find_related_samples`)
     * ``check_ethnicity`` (:py:func:`run_check_ethnicity`)
     * ``flag_maf_zero`` (:py:func:`run_flag_maf_zero`)
     * ``flag_hw`` (:py:func:`run_flag_hw`)
@@ -1242,7 +1243,7 @@ group.add_argument("--overwrite", action="store_true",
 available_steps = {"duplicated_samples", "duplicated_snps",
                    "noCall_hetero_snps", "sample_missingness",
                    "snp_missingness", "sex_check", "plate_bias",
-                   "remove_heterozygous_haploid", "remove_IBS",
+                   "remove_heterozygous_haploid", "find_related_samples",
                    "check_ethnicity", "flag_maf_zero", "flag_hw", "subset",
                    "compare_gold_standard"}
 available_functions = {"duplicated_samples": run_duplicated_samples,
@@ -1253,7 +1254,7 @@ available_functions = {"duplicated_samples": run_duplicated_samples,
                        "sex_check": run_sex_check,
                        "plate_bias": run_plate_bias,
                        "remove_heterozygous_haploid": run_remove_heterozygous_haploid,
-                       "remove_IBS": run_remove_IBS,
+                       "find_related_samples": run_find_related_samples,
                        "check_ethnicity": run_check_ethnicity,
                        "flag_maf_zero": run_flag_maf_zero,
                        "flag_hw": run_flag_hw,
