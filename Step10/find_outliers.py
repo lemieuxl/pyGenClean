@@ -67,12 +67,25 @@ def main(argString=None):
     outliers = find_outliers(mds, centers, center_info, args.outliers_of, args)
     print ("   - There are {} outliers for the {} "
            "population".format(len(outliers), args.outliers_of))
+
+    # Printing the outlier file
     try:
         with open(args.out + ".outliers", 'w') as output_file:
             for sample_id in outliers:
                 print >>output_file, "\t".join(sample_id)
     except IOError:
         msg = "{}: can't write file".format(args.out + ".outliers")
+        raise ProgramError(msg)
+
+    # Printing the outlier population file
+    try:
+        with open(args.out + ".population_file_outliers", "w") as output_file:
+            for sample_id, population in populations.iteritems():
+                if sample_id in outliers:
+                    population = "OUTLIER"
+                print >>output_file, "\t".join(list(sample_id) + [population])
+    except IOError:
+        msg = "{}: can't write file".format(args.out + ".population_file_outliers")
         raise ProgramError(msg)
 
 
