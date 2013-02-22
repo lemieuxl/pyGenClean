@@ -331,7 +331,7 @@ def createAndCleanTPED(tped, tfam, snps, prefix, chosenSNPs, completion,
         chosenOne = chosenSNPs[snpID]
         if chosenOne not in set(indexesToKeep):
             # The chosen SNP is not a good SNP, so we go to next SNP
-            print "      - %s choosen but not good enough" % snpInfo[chosenOne,1]
+            print "      - %s chosen but not good enough" % snpInfo[chosenOne,1]
             continue
 
         # Now cycling through the genotypes
@@ -432,7 +432,7 @@ def chooseBestSnps(tped, snps, trueCompletion, trueConcordance, prefix):
               element.
 
     It creates two output files: ``prefix.chosen_snps.info`` and
-    ``prefix.not_choosen_snps.info``. The first one contains the markers that
+    ``prefix.not_chosen_snps.info``. The first one contains the markers that
     were chosen for completion, and the second one, the markers that weren't.
 
     It starts by computing the completion of each markers (dividing the number
@@ -452,9 +452,9 @@ def chooseBestSnps(tped, snps, trueCompletion, trueConcordance, prefix):
 
     excludedFile = None
     try:
-        excludedFile = open(prefix + ".not_choosen_snps.info", "w")
+        excludedFile = open(prefix + ".not_chosen_snps.info", "w")
     except IOError:
-        msg = "%(prefix)s.not_choosen_snps.info: can't write file" % locals()
+        msg = "%(prefix)s.not_chosen_snps.info: can't write file" % locals()
         raise ProgramError(msg)
 
     # Computing the completion

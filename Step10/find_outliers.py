@@ -472,7 +472,7 @@ def checkArgs(args):
         msg = "{}: no such file".format(args.population_file)
         raise ProgramError(msg)
 
-    # Checking the choosen components
+    # Checking the chosen components
     if args.xaxis == args.yaxis:
         msg = "xaxis must be different than yaxis"
         raise ProgramError(msg)
