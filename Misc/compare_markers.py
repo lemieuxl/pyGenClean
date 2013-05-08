@@ -160,8 +160,9 @@ def read_tpeds(in_prefix, tfams, options):
             p_j += geno_counter
         p_a /= float(nb_samples)
         p_e = npy.sum(npy.true_divide(npy.array(p_j.values()), nb_tpeds * nb_samples) ** 2)
-        fleiss_kappa = (p_a - p_e) / (1.0 - p_e)
-        sys.stdout.flush()
+        fleiss_kappa = "nan"
+        if p_e != 1:
+            fleiss_kappa = (p_a - p_e) / (1.0 - p_e)
 
         # Printing the cohen_kappa, fleiss_kappa and agreement files
         print >>marker_cohen_kappa, "\t".join([marker_info[1]] + cohen_kappa)
