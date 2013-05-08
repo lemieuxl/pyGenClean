@@ -161,7 +161,9 @@ def read_tpeds(in_prefix, tfams, options):
         p_a /= float(nb_samples)
         p_e = npy.sum(npy.true_divide(npy.array(p_j.values()), nb_tpeds * nb_samples) ** 2)
         fleiss_kappa = "nan"
-        if p_e != 1:
+        if p_a == 1 and p_e == 1:
+            fleiss_kappa = 1.0
+        elif p_e != 1:
             fleiss_kappa = (p_a - p_e) / (1.0 - p_e)
 
         # Printing the cohen_kappa, fleiss_kappa and agreement files
