@@ -44,7 +44,7 @@ def read_tpeds(in_prefix, tfams, options):
         marker_probs = open("{}.probs".format(options.out), 'w')
         marker_summary = open("{}.marker_summary".format(options.out), "w")
         marker_cohen_kappa = open("{}.cohen_kappa".format(options.out), "w")
-        marker_fleiss_kappa = open("{}.fleiss_kappa".format(options.out), 'w')
+        marker_fleiss_pi = open("{}.fleiss_pi".format(options.out), 'w')
         marker_agreement = open("{}.percent_agreement".format(options.out), "w")
         with open("{}.info".format(options.out), "w") as output_file:
             for i, name in enumerate(in_prefix):
@@ -152,24 +152,25 @@ def read_tpeds(in_prefix, tfams, options):
         # Computing Fleiss' Kappa
         p_a = 0
         p_j = Counter()
+        t_genotypes = genotypes.T
         for i in xrange(nb_samples):
-            geno_counter = Counter(genotypes.T[i])
+            geno_counter = Counter(t_genotypes[i])
             p_i = npy.sum(npy.array(geno_counter.values()) ** 2) - nb_tpeds
             p_i /= nb_tpeds * (nb_tpeds - 1.0)
             p_a += p_i
             p_j += geno_counter
         p_a /= float(nb_samples)
         p_e = npy.sum(npy.true_divide(npy.array(p_j.values()), nb_tpeds * nb_samples) ** 2)
-        fleiss_kappa = "nan"
+        fleiss_pi = "nan"
         if p_a == 1 and p_e == 1:
-            fleiss_kappa = 1.0
+            fleiss_pi = 1.0
         elif p_e != 1:
-            fleiss_kappa = (p_a - p_e) / (1.0 - p_e)
+            fleiss_pi = (p_a - p_e) / (1.0 - p_e)
 
-        # Printing the cohen_kappa, fleiss_kappa and agreement files
+        # Printing the cohen_kappa, fleiss_pi and agreement files
         print >>marker_cohen_kappa, "\t".join([marker_info[1]] + cohen_kappa)
         print >>marker_agreement, "\t".join([marker_info[1]] + agreement)
-        print >>marker_fleiss_kappa, "\t".join([marker_info[1]] + [str(fleiss_kappa)])
+        print >>marker_fleiss_pi, "\t".join([marker_info[1]] + [str(fleiss_pi)])
 
 ##         # This is an example to compute
 ##         nb_samples = 9
@@ -210,7 +211,7 @@ def read_tpeds(in_prefix, tfams, options):
     marker_probs.close()
     marker_summary.close()
     marker_cohen_kappa.close()
-    marker_fleiss_kappa.close()
+    marker_fleiss_pi.close()
     marker_agreement.close()
 
     # Computes the mean per samples
