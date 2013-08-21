@@ -443,6 +443,10 @@ def read_same_samples_file(filename, out_prefix):
             print >>gold_file, "\t".join(gold_sample)
             print >>source_file, "\t".join(source_sample)
 
+    # Closing the files
+    gold_file.close()
+    source_file.close()
+
     return same_samples
 
 
