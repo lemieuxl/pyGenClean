@@ -33,7 +33,8 @@ def main(argString=None):
     2. Checks the number of samples in the ``tfam`` file
        (:py:func:`compute_nb_samples`).
     3. Computes the heterozygosity rate (:py:func:`compute_heterozygosity`).
-    4. Plots the heterozygosity rate (:py:func:`plot_heterozygosity`).
+    4. Saves the heterozygosity data (in ``out.het``).
+    5. Plots the heterozygosity rate (:py:func:`plot_heterozygosity`).
 
     """
     # Getting and checking the options
@@ -44,10 +45,43 @@ def main(argString=None):
     nb_samples = compute_nb_samples(args.tfile)
 
     # Compute the heterozygosity rate
-    heterozygosity = compute_heterozygosity(args.tfile, nb_samples)
+    heterozygosity, samples = compute_heterozygosity(args.tfile, nb_samples)
+
+    # Save heterozygosity data
+    save_heterozygosity(heterozygosity, samples, args.out)
 
     # Plotting the heterozygosity rate distribution
     plot_heterozygosity(heterozygosity, args)
+
+
+
+def save_heterozygosity(heterozygosity, samples, out_prefix):
+    """Saves the heterozygosity data.
+
+    :param heterozygosity: the heterozygosity data.
+    :param samples: the list of samples.
+    :param out_prefix: the prefix of the output files.
+
+    :type heterozygosity: numpy.array
+    :type samples: list of tuples of str
+    :type out_prefix: str
+
+    """
+    # The output file
+    o_file = None
+    try:
+        o_file = open(out_prefix + ".het", 'wb')
+    except IOError:
+        msg = "{}.het: can't write file".format(out_prefix)
+        raise ProgramError(msg)
+
+    # Saving the data
+    for (fid, iid), het in zip(samples, heterozygosity):
+        print >>o_file, "\t".join([fid, iid, str(het)])
+
+    # Closing the file
+    o_file.close()
+
 
 
 def compute_nb_samples(in_prefix):
@@ -65,6 +99,7 @@ def compute_nb_samples(in_prefix):
     with open(file_name, 'rb') as input_file:
         nb = len(input_file.readlines())
     return nb
+
 
 
 def is_heterozygous(genotype):
@@ -97,9 +132,11 @@ def is_heterozygous(genotype):
     return not genotype[0] == genotype[-1]
 
 
+
 def compute_heterozygosity(in_prefix, nb_samples):
     """Computes the heterozygosity ratio of samples (from tped)."""
-    file_name = in_prefix + ".tped"
+    tped_name = in_prefix + ".tped"
+    tfam_name = in_prefix + ".tfam"
 
     # The function we want to use
     check_heterozygosity = npy.vectorize(is_heterozygous)
@@ -107,9 +144,15 @@ def compute_heterozygosity(in_prefix, nb_samples):
     # The autosomes
     autosomes = {str(i) for i in xrange(1, 23)}
 
+    # The tfam
+    samples = None
+    with open(tfam_name, 'rb') as input_file:
+        samples = input_file.readlines()
+        samples = [tuple(i.rstrip("\r\n").split("\t")[:2]) for i in samples]
+
     heterozygosity = npy.zeros(nb_samples, dtype=int)
     nb_markers = npy.zeros(nb_samples, dtype=int)
-    with open(file_name, 'rb') as input_file:
+    with open(tped_name, 'rb') as input_file:
         # There is no header
         for line in input_file:
             row = npy.array(line.rstrip("\r\n").split("\t"))
@@ -128,13 +171,14 @@ def compute_heterozygosity(in_prefix, nb_samples):
             # Adding to number of markers for each samples (excluding no calls)
             nb_markers += genotypes != "0 0"
 
-    return npy.true_divide(heterozygosity, nb_markers)
+    return npy.true_divide(heterozygosity, nb_markers), samples
+
 
 
 def plot_heterozygosity(heterozygosity, options):
     """Plots the heterozygosity rate distribution.
 
-    :param heterozygosity:
+    :param heterozygosity: the heterozygosity data.
     :param options: the options.
 
     :type heterozygosity: numpy.array
@@ -222,6 +266,8 @@ def plot_heterozygosity(heterozygosity, options):
             file_name = "{}_boxplot.{}".format(options.out, options.format)
         plt.savefig(file_name, dpi=300)
 
+
+
 def checkArgs(args):
     """Checks the arguments and options.
 
@@ -255,6 +301,7 @@ def checkArgs(args):
             raise ProgramError(msg)
 
     return True
+
 
 
 def parseArgs(argString=None): # pragma: no cover
@@ -294,6 +341,7 @@ def parseArgs(argString=None): # pragma: no cover
     return args
 
 
+
 class ProgramError(Exception):
     """An :py:class:`Exception` raised in case of a problem.
     
@@ -314,6 +362,8 @@ class ProgramError(Exception):
 
     def __str__(self):
         return self.message
+
+
 
 # The parser object
 desc = """Plot the distribution of the heterozygosity ratio."""
@@ -345,6 +395,7 @@ group.add_argument("--out", type=str, metavar="FILE",
                     default="heterozygosity",
                     help=("The prefix of the output files. [default: "
                           "%(default)s]"))
+
 
 if __name__ == "__main__":
     try:
