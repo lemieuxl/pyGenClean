@@ -114,7 +114,7 @@ def encode_chr(chromosome):
 
     .. testsetup::
 
-        from Step6.gender_plot import encode_chr
+        from SexCheck.gender_plot import encode_chr
 
     .. doctest::
 
@@ -169,7 +169,7 @@ def encode_gender(gender):
 
     .. testsetup::
 
-        from Step6.gender_plot import encode_gender
+        from SexCheck.gender_plot import encode_gender
 
     .. doctest::
 

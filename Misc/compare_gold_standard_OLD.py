@@ -21,7 +21,7 @@ import argparse
 import subprocess
 
 from PlinkUtils import createRowFromPlinkSpacedOutput
-from pyGenClean.Step2.duplicated_snps import flipGenotype
+from pyGenClean.DupSNPs.duplicated_snps import flipGenotype
 
 def main(argString=None):
     # Getting and checking the options

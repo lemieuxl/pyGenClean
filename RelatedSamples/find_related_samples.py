@@ -23,7 +23,7 @@ from collections import defaultdict
 
 import numpy as npy
 from PlinkUtils import createRowFromPlinkSpacedOutput
-from pyGenClean.Step9.merge_related_samples import merge_related_samples
+from pyGenClean.RelatedSamples.merge_related_samples import merge_related_samples
 
 def main(argString=None):
     """The main function of this module.

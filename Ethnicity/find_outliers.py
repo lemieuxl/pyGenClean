@@ -361,7 +361,7 @@ def read_mds_file(file_name, c1, c2, pops):
               population.
 
     The ``mds`` file is the result of Plink (as produced by the
-    :py:mod:`Step10.check_ethnicity` module).
+    :py:mod:`Ethnicity.check_ethnicity` module).
 
     """
     mds = []
@@ -496,7 +496,7 @@ def parseArgs(argString=None): # pragma: no cover
     ===================== ====== ===============================================
     ``--mds``             string The MDS file from Plink.
     ``--population-file`` string A population file from
-                                 :py:mod:`Step10.check_ethnicity` module.
+                                 :py:mod:`Ethnicity.check_ethnicity` module.
     ``--format``          string The output file format (png, ps, or pdf.
     ``--out``             string The prefix of the output files.
     ``--outliers-of``     string Finds the outliers of this population.

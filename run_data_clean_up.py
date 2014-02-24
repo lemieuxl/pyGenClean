@@ -1087,7 +1087,7 @@ def read_config_file(filename):
             msg = ("{}: section {}: no variable called "
                    "'script'".format(filename, section))
             raise ProgramError(msg)
-        if script_name not in available_steps:
+        if script_name not in available_modules:
             msg = ("{}: section {}: script {}: invalid script "
                    "name".format(filename, section, script_name))
             raise ProgramError(msg)
@@ -1239,13 +1239,13 @@ group.add_argument("--overwrite", action="store_true",
                    help=("Overwrites output directories without asking the "
                          "user. [DANGEROUS]"))
 
-# The maximal step number (from Step1 to StepN)
-available_steps = {"duplicated_samples", "duplicated_snps",
-                   "noCall_hetero_snps", "sample_missingness",
-                   "snp_missingness", "sex_check", "plate_bias",
-                   "remove_heterozygous_haploid", "find_related_samples",
-                   "check_ethnicity", "flag_maf_zero", "flag_hw", "subset",
-                   "compare_gold_standard"}
+# The available modules
+available_modules = {"duplicated_samples", "duplicated_snps",
+                     "noCall_hetero_snps", "sample_missingness",
+                     "snp_missingness", "sex_check", "plate_bias",
+                     "remove_heterozygous_haploid", "find_related_samples",
+                     "check_ethnicity", "flag_maf_zero", "flag_hw", "subset",
+                     "compare_gold_standard"}
 available_functions = {"duplicated_samples": run_duplicated_samples,
                        "duplicated_snps": run_duplicated_snps,
                        "noCall_hetero_snps": run_noCall_hetero_snps,

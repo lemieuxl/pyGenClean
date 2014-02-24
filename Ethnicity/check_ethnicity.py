@@ -20,9 +20,9 @@ import subprocess
 
 import PlinkUtils.plot_MDS as PlotMDS
 from PlinkUtils import createRowFromPlinkSpacedOutput
-import pyGenClean.Step9.find_related_samples as TheStep9
-import pyGenClean.Step10.find_outliers as find_outliers
-from pyGenClean.Step2.duplicated_snps import flipGenotype
+import pyGenClean.RelatedSamples.find_related_samples as Relatedness
+import pyGenClean.Ethnicity.find_outliers as find_outliers
+from pyGenClean.DupSNPs.duplicated_snps import flipGenotype
  
 class Dummy(object):
     pass
@@ -55,8 +55,8 @@ def main(argString=None):
         (:py:func:`flipSNPs`).
     10. Combines the reference and the source panels
         (:py:func:`combinePlinkBinaryFiles`).
-    11. Runs part of :py:mod:`Step9.find_related_samples` on the combined data
-        set (:py:func:`runTheStep9`).
+    11. Runs part of :py:mod:`RelatedSamples.find_related_samples` on the
+        combined data set (:py:func:`runRelatedness`).
     12. Creates the ``mds`` file from the combined data set and the result of
         previous step (:py:func:`createMDSFile`).
     13. Creates the population file (:py:func:`createPopulationFile`).
@@ -134,10 +134,10 @@ def main(argString=None):
                              args.out + ".source_panel.ALL.cleaned"],
                             args.out + ".final_dataset_for_genome")
 
-    # Runing the Step 9
+    # Runing the relatedness step
     print "   - Creating the genome file using Plink"
-    newBfile = runTheStep9(args.out + ".final_dataset_for_genome", args.out,
-                           args)
+    newBfile = runRelatedness(args.out + ".final_dataset_for_genome", args.out,
+                              args)
 
     # Creating the MDS file
     print "   - Creating the MDS file using Plink"
@@ -179,7 +179,7 @@ def find_the_outliers(mds_file_name, population_file_name, ref_pop_name,
     :type multiplier: float
     :type out_prefix: string
 
-    Uses the :py:mod:`Step10.find_outliers` modules to find outliers. It
+    Uses the :py:mod:`Ethnicity.find_outliers` modules to find outliers. It
     requires the ``mds`` file created by :py:func:`createMDSFile` and the
     population file created by :py:func:`createPopulationFile`.
 
@@ -325,8 +325,8 @@ def createMDSFile(nb_components, inPrefix, outPrefix, genomeFileName):
                     str(nb_components), "--out", outPrefix]
     runCommand(plinkCommand)
 
-def runTheStep9(inputPrefix, outPrefix, options):
-    """Run the Step9 of the data clean up.
+def runRelatedness(inputPrefix, outPrefix, options):
+    """Run the relatedness step of the data clean up.
 
     :param inputPrefix: the prefix of the input file.
     :param outPrefix: the prefix of the output file.
@@ -338,8 +338,8 @@ def runTheStep9(inputPrefix, outPrefix, options):
 
     :returns: the prefix of the new bfile.
 
-    Runs :py:mod:`Step9.find_related_samples` using the ``inputPrefix`` files
-    and ``options`` options, and saves the results using the ``outPrefix``
+    Runs :py:mod:`RelatedSamples.find_related_samples` using the ``inputPrefix``
+    files and ``options`` options, and saves the results using the ``outPrefix``
     prefix.
 
     """
@@ -360,8 +360,8 @@ def runTheStep9(inputPrefix, outPrefix, options):
 
     newBfile = None
     try:
-        newBfile = TheStep9.main(new_options)
-    except TheStep9.ProgramError as e:
+        newBfile = Relatedness.main(new_options)
+    except Relatedness.ProgramError as e:
         msg = "compute genome: {}".format(e)
         raise ProgramError(msg)
 

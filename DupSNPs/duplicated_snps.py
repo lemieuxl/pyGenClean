@@ -439,7 +439,8 @@ def chooseBestSnps(tped, snps, trueCompletion, trueConcordance, prefix):
     of calls divided by the total number of genotypes). Then, for each of the
     duplicated markers, we choose the best one according to completion and
     concordance (see explanation in
-    :py:func:`Step1.duplicated_samples.chooseBestDuplicates` for more details).
+    :py:func:`DupSamples.duplicated_samples.chooseBestDuplicates` for more
+    details).
 
     """
     # The output files
@@ -1052,7 +1053,7 @@ def flipGenotype(genotype):
 
     .. testsetup::
 
-        from Step2.duplicated_snps import flipGenotype
+        from DupSNPs.duplicated_snps import flipGenotype
 
     .. doctest::
 
