@@ -26,7 +26,7 @@ import pyGenClean.DupSamples.duplicated_samples as duplicated_samples
 import pyGenClean.DupSNPs.duplicated_snps as duplicated_snps
 import pyGenClean.NoCallHetero.clean_noCall_hetero_snps as noCall_hetero_snps
 import pyGenClean.SampleMissingness.sample_missingness as sample_missingness
-import pyGenClean.SNPMissingness.snp_missingness as snp_missingness
+import pyGenClean.MarkerMissingness.snp_missingness as snp_missingness
 import pyGenClean.SexCheck.sex_check as sex_check
 import pyGenClean.PlateBias.plate_bias as plate_bias
 import pyGenClean.HeteroHap.remove_heterozygous_haploid as remove_heterozygous_haploid
@@ -349,9 +349,9 @@ def run_snp_missingness(in_prefix, in_type, out_prefix, options):
               prefix for the next script) and the type of the output files
               (``bfile``).
 
-    This function calls the :py:mod:`SNPMissingness.snp_missingness` module. The
-    required file type for this module is ``bfile``, hence the need to use the
-    :py:func:`check_input_files` to check if the file input file type is the
+    This function calls the :py:mod:`MarkerMissingness.snp_missingness` module.
+    The required file type for this module is ``bfile``, hence the need to use
+    the :py:func:`check_input_files` to check if the file input file type is the
     good one, or to create it if needed.
 
     """
