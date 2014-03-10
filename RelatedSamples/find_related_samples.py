@@ -229,20 +229,20 @@ def extractRelatedIndividuals(fileName, outPrefix, ibs2_ratio_threshold):
     +---------------------------------------+-----------------------+------+
     |           Values                      |        Relation       | Code |
     +=======================================+=======================+======+
-    | :math:`0.17 \\leq z_0 \\leq 0.33` and   | Full-sibs             | 1    |
-    | :math:`0.40 \\leq z_1 \\leq 0.60`       |                       |      |
+    | :math:`0.17 \\leq z_0 \\leq 0.33` and | Full-sibs             | 1    |
+    | :math:`0.40 \\leq z_1 \\leq 0.60`     |                       |      |
     +---------------------------------------+-----------------------+------+
-    | :math:`0.40 \\leq z_0 \\leq 0.60` and   | Half-sibs or          | 2    |
-    | :math:`0.40 \\leq z_1 \\leq 0.60`       | Grand-parent-Child or |      |
+    | :math:`0.40 \\leq z_0 \\leq 0.60` and | Half-sibs or          | 2    |
+    | :math:`0.40 \\leq z_1 \\leq 0.60`     | Grand-parent-Child or |      |
     |                                       | Uncle-Nephew          |      |
     +---------------------------------------+-----------------------+------+
-    | :math:`z_0 \\leq 0.05` and             | Parent-Child          | 3    |
-    | :math:`z_1 \\geq 0.95` and             |                       |      |
-    | :math:`z_2 \\leq 0.05`                 |                       |      |
+    | :math:`z_0 \\leq 0.05` and            | Parent-Child          | 3    |
+    | :math:`z_1 \\geq 0.95` and            |                       |      |
+    | :math:`z_2 \\leq 0.05`                |                       |      |
     +---------------------------------------+-----------------------+------+
-    | :math:`z_0 \\leq 0.05` and             | Twins or Duplicated   | 4    |
-    | :math:`z_1 \\leq 0.05` and             | samples               |      |
-    | :math:`z_2 \\geq 0.95`                 |                       |      |
+    | :math:`z_0 \\leq 0.05` and            | Twins or Duplicated   | 4    |
+    | :math:`z_1 \\leq 0.05` and            | samples               |      |
+    | :math:`z_2 \\geq 0.95`                |                       |      |
     +---------------------------------------+-----------------------+------+
 
     """
