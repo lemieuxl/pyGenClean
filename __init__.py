@@ -13,7 +13,7 @@
 ## pyGenClean.  If not, see <http://www.gnu.org/licenses/>.
 
 # The module version
-__version__ = "1.3"
+__version__ = "1.4"
 
 def get_version():
     """Returns the version of the module.

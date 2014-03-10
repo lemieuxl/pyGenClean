@@ -229,20 +229,20 @@ def extractRelatedIndividuals(fileName, outPrefix, ibs2_ratio_threshold):
     +---------------------------------------+-----------------------+------+
     |           Values                      |        Relation       | Code |
     +=======================================+=======================+======+
-    | :math:`0.17 \\leq z_0 \\leq 0.33` and | Full-sibs             | 1    |
-    | :math:`0.40 \\leq z_1 \\leq 0.60`     |                       |      |
+    | :math:`0.17 \\leq z_0 \\leq 0.33` and   | Full-sibs             | 1    |
+    | :math:`0.40 \\leq z_1 \\leq 0.60`       |                       |      |
     +---------------------------------------+-----------------------+------+
-    | :math:`0.40 \\leq z_0 \\leq 0.60` and | Half-sibs or          | 2    |
-    | :math:`0.40 \\leq z_1 \\leq 0.60`     | Grand-parent-Child or |      |
+    | :math:`0.40 \\leq z_0 \\leq 0.60` and   | Half-sibs or          | 2    |
+    | :math:`0.40 \\leq z_1 \\leq 0.60`       | Grand-parent-Child or |      |
     |                                       | Uncle-Nephew          |      |
     +---------------------------------------+-----------------------+------+
-    | :math:`z_0 \\leq 0.05` and            | Parent-Child          | 3    |
-    | :math:`z_1 \\geq 0.95` and            |                       |      |
-    | :math:`z_2 \\leq 0.05`                |                       |      |
+    | :math:`z_0 \\leq 0.05` and             | Parent-Child          | 3    |
+    | :math:`z_1 \\geq 0.95` and             |                       |      |
+    | :math:`z_2 \\leq 0.05`                 |                       |      |
     +---------------------------------------+-----------------------+------+
-    | :math:`z_0 \\leq 0.05` and            | Twins or Duplicated   | 4    |
-    | :math:`z_1 \\leq 0.05` and            | samples               |      |
-    | :math:`z_2 \\geq 0.95`                |                       |      |
+    | :math:`z_0 \\leq 0.05` and             | Twins or Duplicated   | 4    |
+    | :math:`z_1 \\leq 0.05` and             | samples               |      |
+    | :math:`z_2 \\geq 0.95`                 |                       |      |
     +---------------------------------------+-----------------------+------+
 
     """
@@ -576,13 +576,6 @@ def mergeGenomeLogFiles(outPrefix, nbSet):
         msg = "can't delete the output.sub.* files"
         raise ProgramError(msg)
 
-    # Removing the script
-    try:
-        os.remove(outPrefix + ".runPlinkGenomeSGE.sh")
-    except IOError:
-        msg = "runPlinkGenomeSGE.sh: can't delete"
-        raise ProgramError(msg)
-
     # Closing the output files
     outputFile.close()
     outputLog.close()
@@ -608,63 +601,58 @@ def runGenomeSGE(bfile, freqFile, nbJob, outPrefix):
     """
     # Add the environment variable for DRMAA package
     if "DRMAA_LIBRARY_PATH" not in os.environ:
-        os.environ["DRMAA_LIBRARY_PATH"] = "/shares/data/sge/lib/lx24-amd64/libdrmaa.so.1.0"
+        msg = "could not load drmaa: set DRMAA_LIBRARY_PATH"
+        raise ProgramError(msg)
     
     # Import the python drmaa library
     import drmaa
-
-    # Print the script in a BASH file
-    scriptFile = None
-    try:
-        scriptFile = open(outPrefix + ".runPlinkGenomeSGE.sh", "w")
-    except IOError:
-        msg = "runSGE.sh: can't write file"
-        raise ProgramError(msg)
-    print >>scriptFile, "#!/usr/bin/env bash"
-    print >>scriptFile, "i=$SGE_TASK_ID"
-    print >>scriptFile, "j=$SGE_TASK_ID"
-    print >>scriptFile, "nbFile=%(nbJob)d" % locals()
-    print >>scriptFile, ""
-    print >>scriptFile, "while [ $i -le $nbFile ]"
-    print >>scriptFile, "do"
-    print >>scriptFile, "   plink \\"
-    print >>scriptFile, "       --bfile %(bfile)s \\" % locals()
-    print >>scriptFile, "       --read-freq %(freqFile)s \\" % locals()
-    print >>scriptFile, "       --genome \\"
-    print >>scriptFile, "       --genome-full \\"
-    print >>scriptFile, "       --genome-lists %(outPrefix)s_tmp.list$j %(outPrefix)s_tmp.list$i \\" % locals()
-    print >>scriptFile, "       --out %(outPrefix)s_output.sub.$j.$i" % locals()
-    print >>scriptFile, "       i=$((i+1))"
-    print >>scriptFile, "done"
-    scriptFile.close()
-    os.chmod(outPrefix + ".runPlinkGenomeSGE.sh", 0750)
 
     # Initializing a session
     s = drmaa.Session()
     s.initialize()
 
-    # Creating the job template
-    jt = s.createJobTemplate()
-    jt.remoteCommand = outPrefix + ".runPlinkGenomeSGE.sh"
-    jt.workingDirectory = os.getcwd()
-    jt.jobEnvironment = os.environ
-    jt.jobName = "_plink_genome"
+    # Run for each sub task...
+    jobIDs = []
+    jobTemplates = []
+    for i in xrange(1, nbJob + 1):
+        for j in xrange(i, nbJob + 1):
+            # The command to run
+            plinkCommand = ["plink", "--noweb", "--bfile", bfile, "--read-freq",
+                            freqFile, "--genome", "--genome-full",
+                            "--genome-lists",
+                            "{}_tmp.list{}".format(outPrefix, i),
+                            "{}_tmp.list{}".format(outPrefix, j), "--out",
+                            "{}_output.sub.{}.{}".format(outPrefix, i, j)]
 
-    # Running the jobs and waiting for them
-    jobList = s.runBulkJobs(jt, 1, nbJob, 1)
-    s.synchronize(jobList, drmaa.Session.TIMEOUT_WAIT_FOREVER, False)
-    jobFinished = True
-    for curJob in jobList:
-        retval = s.wait(curJob, drmaa.Session.TIMEOUT_WAIT_FOREVER)
-        jobFinished = jobFinished and (retval.exitStatus == 0)
+            # Creating the job template
+            jt = s.createJobTemplate()
+            jt.remoteCommand = plinkCommand[0]
+            jt.workingDirectory = os.getcwd()
+            jt.jobEnvironment = os.environ
+            jt.args = plinkCommand[1:]
+            jt.jobName = "_plink_genome_{}_{}".format(i, j)
 
-    # Deleating the job template, and exiting the session
-    s.deleteJobTemplate(jt)
+            jobIDs.append(s.runJob(jt))
+            jobTemplates.append(jt)
+
+    # Waiting for the jobs to finish
+    hadProblems = []
+    for jobID in jobIDs:
+        retVal = s.wait(jobID, drmaa.Session.TIMEOUT_WAIT_FOREVER)
+        hadProblems.append(retVal.exitStatus == 0)
+
+    # Deleting the jobs
+    for jt in jobTemplates:
+        s.deleteJobTemplate(jt)
+
+    # Closing the session
     s.exit()
 
-    if not jobFinished:
-        msg = "plink genome sge: can't run properly"
-        raise ProgramError(msg)
+    # Checking for problems
+    for hadProblem in hadProblems:
+        if not hadProblem:
+            msg = "Some SGE jobs had errors..."
+            raise ProgramError(msg)
 
 
 def extractSNPs(snpsToExtract, options):
