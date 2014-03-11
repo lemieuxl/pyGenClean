@@ -351,14 +351,12 @@ def runRelatedness(inputPrefix, outPrefix, options):
     new_options += ["--indep-pairwise"] + options.indep_pairwise
     if options.sge:
         new_options.append("--sge")
-        new_options.extend(["--line-per-file-for-sge",
-                            str(options.line_per_file_for_sge)])
+        new_options += ["--line-per-file-for-sge",
+                        str(options.line_per_file_for_sge)]
         if options.ibs_sge_walltime is not None:
-            new_options.extend(["--ibs-sge-walltime",
-                                options.ibs_sge_walltime])
+            new_options += ["--sge-walltime", options.ibs_sge_walltime]
         if options.ibs_sge_nodes is not None:
-            new_options.extend(["--ibs-sge-nodes",
-                                str(options.ibs_sge_nodes)])
+            new_options += ["--sge-nodes"] + map(str, options.ibs_sge_nodes)
 
     # Checking the input file
     if not allFileExists([inputPrefix + i for i in [".bed", ".bim", ".fam"]]):
