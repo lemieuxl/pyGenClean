@@ -478,7 +478,8 @@ def runGenome(bfile, options):
         nbJob = splitFile(bfile + ".fam", options.line_per_file_for_sge,
                           outPrefix)
 
-        runGenomeSGE(bfile, options.out + ".frequency.frq", nbJob, outPrefix)
+        runGenomeSGE(bfile, options.out + ".frequency.frq", nbJob,
+                     outPrefix, options)
 
         # Merging genome files
         mergeGenomeLogFiles(outPrefix, nbJob)
@@ -583,18 +584,20 @@ def mergeGenomeLogFiles(outPrefix, nbSet):
     return outPrefix + ".genome"
 
 
-def runGenomeSGE(bfile, freqFile, nbJob, outPrefix):
+def runGenomeSGE(bfile, freqFile, nbJob, outPrefix, options):
     """Runs the genome command from plink, on SGE.
 
     :param bfile: the prefix of the input file.
     :param freqFile: the name of the frequency file (from Plink).
     :param nbJob: the number of jobs to launch.
     :param outPrefix: the prefix of all the output files.
+    :param options: the options.
 
     :type bfile: string
     :type freqFile: string
     :type nbJob: int
     :type outPrefix: string
+    :type options: argparse.Namespace
 
     Runs Plink with the ``genome`` options on the cluster (using SGE).
 
@@ -631,6 +634,14 @@ def runGenomeSGE(bfile, freqFile, nbJob, outPrefix):
             jt.jobEnvironment = os.environ
             jt.args = plinkCommand[1:]
             jt.jobName = "_plink_genome_{}_{}".format(i, j)
+
+            # Cluster specifics
+            if options.sge_walltime is not None:
+                jt.hardWallclockTimeLimit = options.sge_walltime
+            if options.sge_nodes is not None:
+                native_spec = "-l nodes={}:ppn={}".format(options.sge_nodes[0],
+                                                          options.sge_nodes[1])
+                jt.nativeSpecification = native_spec
 
             jobIDs.append(s.runJob(jt))
             jobTemplates.append(jt)
@@ -798,6 +809,9 @@ def parseArgs(argString=None): # pragma: no cover
     ``--ibs2-ratio``            float  The initial IBS2* ratio (the minimum
                                        value to show in the plot.
     ``--sge``                   bool   Use SGE for parallelization.
+    ``--sge-walltime``          int    The time limit (for clusters).
+    ``--sge-nodes``             int    Two INTs (number of nodes and number of
+                                       processor per nodes).
     ``--line-per-file-for-sge`` int    The number of line per file for SGE task
                                        array.
     ``--out``                   string The prefix of the output files.
@@ -868,6 +882,18 @@ group.add_argument("--ibs2-ratio", type=float, metavar="FLOAT", default=0.8,
                          "in the plot. [default: %(default).1f]"))
 group.add_argument("--sge", action="store_true",
                     help="Use SGE for parallelization.")
+group.add_argument("--sge-walltime", type=str, metavar="TIME",
+                   help=("The walltime for the job to run on the cluster. Do "
+                         "not use if you are not required to specify a "
+                         "walltime for your jobs on your cluster (e.g. 'qsub "
+                         "-lwalltime=1:0:0' on the cluster)."))
+group.add_argument("--sge-nodes", type=int, metavar="INT", nargs=2,
+                   help=("The number of nodes and the number of processor per "
+                         "nodes to use (e.g. 'qsub -lnodes=X:ppn=Y' on the "
+                         "cluster, where X is the number of nodes and Y is the "
+                         "number of processor to use. Do not use if you are "
+                         "not required to specify the number of nodes for your "
+                         "jobs on the cluster."))
 group.add_argument("--line-per-file-for-sge", type=int, metavar="INT",
                     default=100, help=("The number of line per file for SGE "
                                        "task array. [default: " "%(default)d]"))

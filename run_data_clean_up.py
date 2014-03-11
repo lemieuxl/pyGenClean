@@ -1109,7 +1109,8 @@ def read_config_file(filename):
             if variable_name != "script":
                 options.append("--" + variable_name)
                 if variable_value is not None:
-                    if variable_name == "indep-pairwise":
+                    if variable_name in {"indep-pairwise", "sge-nodes",
+                                         "ibs-sge-nodes"}:
                         # This is a special option
                         options.extend(variable_value.split(" "))
                     else:

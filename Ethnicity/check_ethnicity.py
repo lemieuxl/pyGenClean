@@ -82,10 +82,10 @@ def main(argString=None):
     # Extract the required SNPs using Plink
     print "   - Extracting overlapping SNPs from the reference panels"
     extractSNPs(args.out + ".ref_snp_to_extract", referencePrefixes, popNames,
-                args.out + ".reference_panel", args.sge)
+                args.out + ".reference_panel", args.sge, args)
     print "   - Extracting overlapping SNPs from the source panel"
     extractSNPs(args.out + ".source_snp_to_extract", [args.bfile], ["ALL"],
-                args.out + ".source_panel", False)
+                args.out + ".source_panel", False, args)
 
     # Combining the reference panel
     print "   - Combining the reference panels"
@@ -347,11 +347,18 @@ def runRelatedness(inputPrefix, outPrefix, options):
     new_options = ["--bfile", inputPrefix, "--genome-only",
                    "--min-nb-snp", str(options.min_nb_snp),
                    "--maf", options.maf,
-                   "--line-per-file-for-sge", str(options.line_per_file_for_sge),
                    "--out", "{}.ibs".format(outPrefix)]
     new_options += ["--indep-pairwise"] + options.indep_pairwise
     if options.sge:
         new_options.append("--sge")
+        new_options.extend(["--line-per-file-for-sge",
+                            str(options.line_per_file_for_sge)])
+        if options.ibs_sge_walltime is not None:
+            new_options.extend(["--ibs-sge-walltime",
+                                options.ibs_sge_walltime])
+        if options.ibs_sge_nodes is not None:
+            new_options.extend(["--ibs-sge-nodes",
+                                str(options.ibs_sge_nodes)])
 
     # Checking the input file
     if not allFileExists([inputPrefix + i for i in [".bed", ".bim", ".fam"]]):
@@ -711,7 +718,7 @@ def findOverlappingSNPsWithReference(prefix, referencePrefixes, outPrefix):
 
 
 def extractSNPs(snpToExtractFileName, referencePrefixes, popNames, outPrefix,
-                runSGE):
+                runSGE, options):
     """Extract a list of SNPs using Plink.
 
     :param snpToExtractFileName: the name of the file which contains the markers
@@ -721,12 +728,14 @@ def extractSNPs(snpToExtractFileName, referencePrefixes, popNames, outPrefix,
     :param popNames: a list containing the three reference population names.
     :param outPrefix: the prefix of the output file.
     :param runSGE: Whether using SGE or not.
+    :param options: the options.
 
     :type snpToExtractFileName: string
     :type referencePrefixes: list of string
     :type popNames: list of string
     :type outPrefix: string
     :type runSGE: boolean
+    :type options: argparse.Namespace
 
     Using Plink, extract a set of markers from a list of prefixes.
 
@@ -737,7 +746,8 @@ def extractSNPs(snpToExtractFileName, referencePrefixes, popNames, outPrefix,
     if runSGE:
         # Add the environment variable for DRMAA package
         if "DRMAA_LIBRARY_PATH" not in os.environ:
-            os.environ["DRMAA_LIBRARY_PATH"] = "/shares/data/sge/lib/lx24-amd64/libdrmaa.so.1.0"
+            msg = "could not load drmaa: set DRMAA_LIBRARY_PATH"
+            raise ProgramError(msg)
         
         # Import the python drmaa library
         import drmaa
@@ -761,6 +771,14 @@ def extractSNPs(snpToExtractFileName, referencePrefixes, popNames, outPrefix,
             jt.jobEnvironment = os.environ
             jt.args = plinkCommand[1:]
             jt.jobName = "_plink_extract_snps"
+
+            # Cluster specifics
+            if options.sge_walltime is not None:
+                jt.hardWallclockTimeLimit = options.sge_walltime
+            if options.sge_nodes is not None:
+                native_spec = "-l nodes={}:ppn={}".format(options.sge_nodes[0],
+                                                          options.sge_nodes[1])
+                jt.nativeSpecification = native_spec
 
             # Running the job
             jobID = s.runJob(jt)
@@ -912,6 +930,12 @@ def parseArgs(argString=None): # pragma: no cover
                                        and the r2 threshold.
     ``--maf``                   string Restrict to SNPs with MAF >= threshold.
     ``--sge``                   bool   Use SGE for parallelization.
+    ``--sge-walltime``          int    The time limit (for clusters).
+    ``--sge-nodes``             int    Two INTs (number of nodes and number of
+                                       processor per nodes).
+    ``--ibs-sge-walltime``      int    The time limit (for clusters) (for IBS)
+    ``--ibs-sge-nodes``         int    Two INTs (number of nodes and number of
+                                       processor per nodes) (for IBS).
     ``--line-per-file-for-sge`` int    The number of line per file for SGE task
                                        array.
     ``--nb-components``         int    The number of component to compute.
@@ -1001,10 +1025,34 @@ group.add_argument("--maf", type=str, metavar="FLOAT", default="0.05",
                           "[default: %(default)s]"))
 group.add_argument("--sge", action="store_true",
                     help="Use SGE for parallelization.")
+group.add_argument("--sge-walltime", type=str, metavar="TIME",
+                   help=("The walltime for the job to run on the cluster. Do "
+                         "not use if you are not required to specify a "
+                         "walltime for your jobs on your cluster (e.g. 'qsub "
+                         "-lwalltime=1:0:0' on the cluster)."))
+group.add_argument("--sge-nodes", type=int, metavar="INT", nargs=2,
+                   help=("The number of nodes and the number of processor per "
+                         "nodes to use (e.g. 'qsub -lnodes=X:ppn=Y' on the "
+                         "cluster, where X is the number of nodes and Y is the "
+                         "number of processor to use. Do not use if you are "
+                         "not required to specify the number of nodes for your "
+                         "jobs on the cluster."))
+group.add_argument("--ibs-sge-walltime", type=str, metavar="TIME",
+                   help=("The walltime for the IBS jobs to run on the cluster. "
+                         "Do not use if you are not required to specify a "
+                         "walltime for your jobs on your cluster (e.g. 'qsub "
+                         "-lwalltime=1:0:0' on the cluster)."))
+group.add_argument("--ibs-sge-nodes", type=int, metavar="INT", nargs=2,
+                   help=("The number of nodes and the number of processor per "
+                         "nodes to use for the IBS jobs (e.g. 'qsub "
+                         "-lnodes=X:ppn=Y' on the cluster, where X is the "
+                         "number of nodes and Y is the number of processor to "
+                         "use. Do not use if you are not required to specify "
+                         "the number of nodes for your jobs on the cluster."))
 group.add_argument("--line-per-file-for-sge", type=int, metavar="INT",
-                    default=100, help=("The number of line per file for "
-                                       "SGE task array. [default: "
-                                       "%(default)d]"))
+                   default=100, help=("The number of line per file for SGE "
+                                      "task array for the IBS jobs. [default: "
+                                      "%(default)d]"))
 group.add_argument("--nb-components", type=int, metavar="INT", default=10,
                     help=("The number of component to compute. [default: "
                           "%(default)d]"))
