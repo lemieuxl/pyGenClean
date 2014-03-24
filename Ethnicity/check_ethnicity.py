@@ -930,10 +930,10 @@ def parseArgs(argString=None): # pragma: no cover
     ``--sge``                   bool   Use SGE for parallelization.
     ``--sge-walltime``          int    The time limit (for clusters).
     ``--sge-nodes``             int    Two INTs (number of nodes and number of
-                                       processor per nodes).
+                                int    processor per nodes).
     ``--ibs-sge-walltime``      int    The time limit (for clusters) (for IBS)
     ``--ibs-sge-nodes``         int    Two INTs (number of nodes and number of
-                                       processor per nodes) (for IBS).
+                                int    processor per nodes) (for IBS).
     ``--line-per-file-for-sge`` int    The number of line per file for SGE task
                                        array.
     ``--nb-components``         int    The number of component to compute.

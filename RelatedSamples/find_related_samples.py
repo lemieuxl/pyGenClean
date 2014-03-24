@@ -811,7 +811,7 @@ def parseArgs(argString=None): # pragma: no cover
     ``--sge``                   bool   Use SGE for parallelization.
     ``--sge-walltime``          int    The time limit (for clusters).
     ``--sge-nodes``             int    Two INTs (number of nodes and number of
-                                       processor per nodes).
+                                int    processor per nodes).
     ``--line-per-file-for-sge`` int    The number of line per file for SGE task
                                        array.
     ``--out``                   string The prefix of the output files.
