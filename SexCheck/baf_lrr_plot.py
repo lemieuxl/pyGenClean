@@ -288,6 +288,9 @@ def plot_baf_lrr(file_names, options):
                                                   options.format),
                         dpi=300)
 
+        # Closing the figure
+        plt.close(fig)
+
 def checkArgs(args):
     """Checks the arguments and options.
 
