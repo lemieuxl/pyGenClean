@@ -20,9 +20,10 @@ import subprocess
 
 import PlinkUtils.plot_MDS as PlotMDS
 from PlinkUtils import createRowFromPlinkSpacedOutput
-import pyGenClean.RelatedSamples.find_related_samples as Relatedness
 import pyGenClean.Ethnicity.find_outliers as find_outliers
 from pyGenClean.DupSNPs.duplicated_snps import flipGenotype
+import pyGenClean.Ethnicity.plot_eigenvalues as PlotEigenvalues
+import pyGenClean.RelatedSamples.find_related_samples as Relatedness
  
 class Dummy(object):
     pass
@@ -63,6 +64,10 @@ def main(argString=None):
     14. Plots the ``mds`` values (:py:func:`plotMDS`).
     15. Finds the outliers of a given reference population
         (:py:func:`find_the_outliers`).
+    16. If required, computes the Eigenvalues using smartpca
+        (:py:func:`compute_eigenvalues`).
+    17. If required, creates a scree plot from smartpca resutls
+        (:py:func:`create_scree_plot`).
 
     """
     # Getting and checking the options
@@ -132,7 +137,7 @@ def main(argString=None):
     print "   - Combining reference and source panels"
     combinePlinkBinaryFiles([args.out + ".reference_panel.ALL.rename.cleaned.flipped",
                              args.out + ".source_panel.ALL.cleaned"],
-                            args.out + ".final_dataset_for_genome")
+                             args.out + ".final_dataset_for_genome")
 
     # Runing the relatedness step
     print "   - Creating the genome file using Plink"
@@ -157,8 +162,72 @@ def main(argString=None):
             args.out + ".population_file", args)
 
     # Finding the outliers
+    print "   - Finding the outliers"
     find_the_outliers(args.out + ".mds.mds", args.out + ".population_file",
                       args.outliers_of, args.multiplier, args.out)
+
+    # De we need to create a scree plot?
+    if args.create_scree_plot:
+        # Computing the eigenvalues using smartpca
+        print "   - Computing eigenvalues"
+        compute_eigenvalues(args.out + ".ibs.pruned_data",
+                            args.out + ".smartpca")
+
+        print "   - Creating scree plot"
+        create_scree_plot(args.out + ".smartpca.evec.txt",
+                          args.out + ".smartpca.scree_plot.png",
+                          args.scree_plot_title)
+
+
+def create_scree_plot(in_filename, out_filename, plot_title):
+    """Creates a scree plot using smartpca results.
+    
+    :param in_filename: the name of the input file.
+    :param out_filename: the name of the output file.
+    :param plot_title: the title of the scree plot.
+    
+    :type in_filename: string
+    :type out_filename: string
+    :type plot_title: string
+    
+    """
+    # Constructing the arguments
+    scree_plot_args = ("--evec", in_filename, "--out", out_filename,
+                       "--scree-plot-title", plot_title)
+    try:
+        # Executing the main method
+        PlotEigenvalues.main(argString=scree_plot_args)
+
+    except PlotEigenvalues.ProgramError as e:
+        msg = "PlotEigenvalues: {}".format(e)
+        raise ProgramError(msg)
+
+
+def compute_eigenvalues(in_prefix, out_prefix):
+    """Computes the Eigenvalues using smartpca from Eigensoft.
+    
+    :param in_prefix: the prefix of the input files.
+    :param out_prefix: the prefix of the output files.
+    
+    :type in_prefix: string
+    :type out_prefix: string
+    
+    Creates a "parameter file" used by smartpca and runs it.
+    
+    """
+    # First, we create the parameter file
+    with open(out_prefix + ".parameters", "w") as o_file:
+        print >>o_file, "genotypename:    " + in_prefix + ".bed"
+        print >>o_file, "snpname:         " + in_prefix + ".bim"
+        print >>o_file, "indivname:       " + in_prefix + ".fam"
+        print >>o_file, "evecoutname:     " + out_prefix + ".evec.txt"
+        print >>o_file, "evaloutname:     " + out_prefix + ".eval.txt"
+        print >>o_file, "numoutlieriter:  0"
+        print >>o_file, "altnormstyle:    NO"
+
+    # Executing smartpca
+    command = ["smartpca", "-p", out_prefix + ".parameters"]
+    runCommand(command)
 
 
 def find_the_outliers(mds_file_name, population_file_name, ref_pop_name,
@@ -822,7 +891,7 @@ def runCommand(command):
     function uses the :py:mod:`subprocess` module.
 
     .. warning::
-        The variable ``command`` should be a list fo strings (no other type).
+        The variable ``command`` should be a list of strings (no other type).
 
     """
     output = None
@@ -1054,12 +1123,21 @@ group.add_argument("--line-per-file-for-sge", type=int, metavar="INT",
 group.add_argument("--nb-components", type=int, metavar="INT", default=10,
                     help=("The number of component to compute. [default: "
                           "%(default)d]"))
+
 # The outlier options
 group = parser.add_argument_group("Outlier Options")
 find_outliers.add_custom_options(group)
+
 # The MDS plotting options
 group = parser.add_argument_group("MDS Plot Options")
 PlotMDS.addCustomOptions(group)
+
+# The Scree Plot options
+group = parser.add_argument_group("Scree Plot Options")
+group.add_argument("--create-scree-plot", action="store_true",
+                   help="Computes Eigenvalues and creates a scree plot.")
+PlotEigenvalues.add_custom_options(group)
+
 # The OUTPUT files
 group = parser.add_argument_group("Output File")
 group.add_argument("--out", type=str, metavar="FILE", default="ethnicity",
