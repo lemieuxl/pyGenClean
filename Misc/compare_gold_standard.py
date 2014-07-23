@@ -953,7 +953,10 @@ group.add_argument("--same-samples", type=str, metavar="FILE", required=True,
                          "identity and tab separated. For each row, first "
                          "sample is Gold Standard, second is source panel."))
 group.add_argument("--source-manifest", type=str, metavar="FILE",
-                   help="The illumina marker manifest.")
+                   help=("The illumina marker manifest. This file should have "
+                         "tabs as field separator. There should be no lines "
+                         "before the main header line. There should be no "
+                         "lines after the last data line."))
 group.add_argument("--source-alleles", type=str, metavar="FILE",
                    help=("A file containing the source alleles (TOP). Two "
                          "columns (separated by tabulation, one with the "
