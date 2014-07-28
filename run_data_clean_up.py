@@ -1217,6 +1217,9 @@ class ProgramError(Exception):
 # The parser object
 desc = """Runs the data clean up (version {}).""".format(prog_version)
 parser = argparse.ArgumentParser(description=desc)
+parser.add_argument("-v", "--version", action="version",
+                    version="%(prog)s {}".format(prog_version))
+
 group = parser.add_argument_group("Input File")
 group.add_argument("--bfile", type=str, metavar="FILE",
                    help=("The input file prefix (will find the plink "
