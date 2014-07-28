@@ -86,15 +86,19 @@ def main(argString=None):
         print "   - Finding related individuals from genome file"
         related_data = extractRelatedIndividuals(genomeFileName, args.out,
                                                  args.ibs2_ratio)
+        # Are there related samples?
+        if related_data is None:
+            print "   - There are no related samples in the dataset"
 
-        # Plot the related data
-        print "   - Plotting related individuals"
-        plot_related_data(related_data["IBS2_RATIO"], related_data["Z1"],
-                          related_data["CODE"], r"$Z_1$",
-                          args.out + ".related_individuals_z1.png", args)
-        plot_related_data(related_data["IBS2_RATIO"], related_data["Z2"],
-                          related_data["CODE"], r"$Z_2$",
-                          args.out + ".related_individuals_z2.png", args)
+        else:
+            # Plot the related data
+            print "   - Plotting related individuals"
+            plot_related_data(related_data["IBS2_RATIO"], related_data["Z1"],
+                              related_data["CODE"], r"$Z_1$",
+                              args.out + ".related_individuals_z1.png", args)
+            plot_related_data(related_data["IBS2_RATIO"], related_data["Z2"],
+                              related_data["CODE"], r"$Z_2$",
+                              args.out + ".related_individuals_z2.png", args)
 
 
 def plot_related_data(x, y, code, ylabel, fileName, options):
@@ -348,7 +352,11 @@ def extractRelatedIndividuals(fileName, outPrefix, ibs2_ratio_threshold):
     # Merging the related individuals
     merge_related_samples(outPrefix + ".related_individuals", outPrefix, False)
 
-    # Creating the numpy array
+    # If there are no related samples, we return nothing
+    if len(data) == 0:
+        return None
+
+    # Creating the numpy array if there are related samples
     data = npy.array(data, dtype=[("IBS2_RATIO", float), ("Z1", float),
                                   ("Z2", float),
                                   ("CODE", "S{}".format(max([len(i[3]) for i in data])))])
