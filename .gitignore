@@ -1,2 +1,5 @@
 *.pyc
 *.swp
+scripts
+dist
+pyGenClean.egg-info
