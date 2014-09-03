@@ -74,28 +74,29 @@ def main():
     order, conf = read_config_file(args.conf)
 
     # The directory name
-    dirname = "data_clean_up."
-    dirname += datetime.datetime.today().strftime("%Y-%m-%d_%H.%M.%S")
-    if os.path.isdir(dirname):
-        answer = "N"
-        if not args.overwrite:
-            # The directory already exists...
-            print >>sys.stderr, ("WARNING: {}: directory already "
-                                 "exists".format(dirname))
-            print >>sys.stderr, "Overwrite [Y/N]? ",
-            answer = raw_input()
-        if args.overwrite or answer.upper() == "Y":
-            # Delete everything with the directory
-            shutil.rmtree(dirname)
-        elif answer.upper() == "N":
-            print >>sys.stderr, "STOPING NOW"
-            sys.exit(0)
-        else:
-            msg = "{}: not a valid answer (Y or N)".format(answer)
-            raise ProgramError(msg)
-
-    # Creating the output directory
-    os.mkdir(dirname)
+##     dirname = "data_clean_up."
+##     dirname += datetime.datetime.today().strftime("%Y-%m-%d_%H.%M.%S")
+##     if os.path.isdir(dirname):
+##         answer = "N"
+##         if not args.overwrite:
+##             # The directory already exists...
+##             print >>sys.stderr, ("WARNING: {}: directory already "
+##                                  "exists".format(dirname))
+##             print >>sys.stderr, "Overwrite [Y/N]? ",
+##             answer = raw_input()
+##         if args.overwrite or answer.upper() == "Y":
+##             # Delete everything with the directory
+##             shutil.rmtree(dirname)
+##         elif answer.upper() == "N":
+##             print >>sys.stderr, "STOPING NOW"
+##             sys.exit(0)
+##         else:
+##             msg = "{}: not a valid answer (Y or N)".format(answer)
+##             raise ProgramError(msg)
+## 
+##     # Creating the output directory
+##     os.mkdir(dirname)
+    dirname = "data_clean_up.2014-09-03_13.28.42"
 
     # Executing the data clean up
     current_input_file = None
@@ -454,8 +455,11 @@ def run_sample_missingness(in_prefix, in_type, out_prefix, base_dir, options):
     try:
         with open(latex_file, "w") as o_file:
             print >>o_file, latex_template.subsection(sample_missingness.pretty_name)
-            text = ("Using a {} threshold of {}, {:,d} sample{} were excluded "
+            text = ("Using a {} threshold of {} ({} keeping only samples with "
+                    r"a missing rate $\leq {}$), {:,d} sample{} were excluded "
                     "from the dataset.".format(latex_template.texttt("mind"),
+                                               mind_value,
+                                               latex_template.textit("i.e."),
                                                mind_value, nb_samples,
                                                "s" if nb_samples > 0 else ""))
             print >>o_file, "\n".join(textwrap.wrap(text, 80))
@@ -477,7 +481,7 @@ def run_sample_missingness(in_prefix, in_type, out_prefix, base_dir, options):
     return os.path.join(out_prefix, "clean_mind"), "bfile", latex_file, desc
 
 
-def run_snp_missingness(in_prefix, in_type, out_prefix, options):
+def run_snp_missingness(in_prefix, in_type, out_prefix, base_dir, options):
     """Run step5 (clean geno).
 
     :param in_prefix: the prefix of the input files.
@@ -509,8 +513,9 @@ def run_snp_missingness(in_prefix, in_type, out_prefix, options):
 
     # We need to inject the name of the input file and the name of the output
     # prefix
+    script_prefix = os.path.join(out_prefix, "clean_geno")
     options += ["--{}".format(required_type), in_prefix,
-                "--out", os.path.join(out_prefix, "clean_geno")]
+                "--out", script_prefix]
 
     # We run the script
     try:
@@ -519,8 +524,66 @@ def run_snp_missingness(in_prefix, in_type, out_prefix, options):
         msg = "snp_missingness: {}".format(e)
         raise ProgramError(msg)
 
+    # We want to modify the description, so that it contains the option used
+    desc = snp_missingness.desc
+    geno_value = snp_missingness.parser.get_default("geno")
+    if "--geno" in options:
+        # Since we already run the script, we know that the mind option is a
+        # valid float
+        geno_value = options[options.index("--geno") + 1]
+    if desc[-1] == ".":
+        desc = desc[:-1] + r" (${}={}$).".format(latex_template.texttt("mind"),
+                                                  geno_value)
+
+    # We want to save in a file the samples that were removed
+    # There is one file to look at, which contains only one row, the name of
+    # the samples:
+    #     - prefix.removed_snps
+    nb_markers = 0
+    o_filename = os.path.join(base_dir, "excluded_markers.txt")
+    try:
+        # Checking if the file exists
+        i_filename = script_prefix + ".removed_snps"
+        if os.path.isfile(i_filename):
+            # True, so sample were removed
+            with open(i_filename, "r") as i_file, open(o_filename, "a") as o_file:
+                for line in i_file:
+                    nb_markers += 1
+                    print >>o_file, line.rstrip("\r\n") + "\tgeno {}".format(geno_value)
+
+    except IOError:
+        msg = "{}: can't write to file".format(o_filename)
+        raise ProgramError(msg)
+
+    # We write a LaTeX summary
+    latex_file = os.path.join(script_prefix + ".summary.tex")
+    try:
+        with open(latex_file, "w") as o_file:
+            print >>o_file, latex_template.subsection(snp_missingness.pretty_name)
+            text = ("Using a {} threshold of {} ({} keeping only markers with "
+                    r"a missing rate $\leq {}$), {:,d} marker{} were excluded "
+                    "from the dataset.".format(latex_template.texttt("geno"),
+                                               geno_value,
+                                               latex_template.textit("i.e."),
+                                               geno_value, nb_markers,
+                                               "s" if nb_markers > 0 else ""))
+            print >>o_file, "\n".join(textwrap.wrap(text, 80))
+
+    except IOError:
+        msg = "{}: cannot write LaTeX summary".format(latex_file)
+        raise ProgramError(msg)
+
+    # We include the LaTeX summary to the main report
+    report_name = os.path.join(base_dir, "automatic_report.tex")
+    try:
+        with open(report_name, "a") as o_file:
+            print >>o_file, r"\input{" + os.path.abspath(latex_file) + "}\n\n"
+    except IOError:
+        msg = "{}: cannot append to report".format(report_name)
+        raise ProgramError(msg)
+
     # We know this step does produce a new data set (bfile), so we return it
-    return os.path.join(out_prefix, "clean_geno"), "bfile"
+    return os.path.join(out_prefix, "clean_geno"), "bfile", latex_file, desc
 
 
 def run_sex_check(in_prefix, in_type, out_prefix, options):

@@ -179,6 +179,18 @@ def texttt(text):
     return r"\texttt{" + text + "}"
 
 
+def textit(text):
+    """Returns italic font.
+
+    :param text: the text.
+    :type text: string.
+
+    :returns: an italic font.
+
+    """
+    return r"\textit{" + text + "}"
+
+
 def bib_entry(**kwargs):
     """Creates a bibliography entry.
 
