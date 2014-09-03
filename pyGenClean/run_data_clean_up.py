@@ -74,29 +74,28 @@ def main():
     order, conf = read_config_file(args.conf)
 
     # The directory name
-##     dirname = "data_clean_up."
-##     dirname += datetime.datetime.today().strftime("%Y-%m-%d_%H.%M.%S")
-##     if os.path.isdir(dirname):
-##         answer = "N"
-##         if not args.overwrite:
-##             # The directory already exists...
-##             print >>sys.stderr, ("WARNING: {}: directory already "
-##                                  "exists".format(dirname))
-##             print >>sys.stderr, "Overwrite [Y/N]? ",
-##             answer = raw_input()
-##         if args.overwrite or answer.upper() == "Y":
-##             # Delete everything with the directory
-##             shutil.rmtree(dirname)
-##         elif answer.upper() == "N":
-##             print >>sys.stderr, "STOPING NOW"
-##             sys.exit(0)
-##         else:
-##             msg = "{}: not a valid answer (Y or N)".format(answer)
-##             raise ProgramError(msg)
-## 
-##     # Creating the output directory
-##     os.mkdir(dirname)
-    dirname = "data_clean_up.2014-09-03_13.28.42"
+    dirname = "data_clean_up."
+    dirname += datetime.datetime.today().strftime("%Y-%m-%d_%H.%M.%S")
+    if os.path.isdir(dirname):
+        answer = "N"
+        if not args.overwrite:
+            # The directory already exists...
+            print >>sys.stderr, ("WARNING: {}: directory already "
+                                 "exists".format(dirname))
+            print >>sys.stderr, "Overwrite [Y/N]? ",
+            answer = raw_input()
+        if args.overwrite or answer.upper() == "Y":
+            # Delete everything with the directory
+            shutil.rmtree(dirname)
+        elif answer.upper() == "N":
+            print >>sys.stderr, "STOPING NOW"
+            sys.exit(0)
+        else:
+            msg = "{}: not a valid answer (Y or N)".format(answer)
+            raise ProgramError(msg)
+
+    # Creating the output directory
+    os.mkdir(dirname)
 
     # Executing the data clean up
     current_input_file = None
