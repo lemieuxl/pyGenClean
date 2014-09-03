@@ -18,6 +18,7 @@ import sys
 import shutil
 import datetime
 import argparse
+import textwrap
 import subprocess
 import ConfigParser
 
@@ -36,6 +37,8 @@ import pyGenClean.FlagMAF.flag_maf_zero as flag_maf_zero
 import pyGenClean.FlagHW.flag_hw as flag_hw
 import pyGenClean.Misc.compare_gold_standard as compare_gold_standard
 import PlinkUtils.subset_data as subset_data
+import pyGenClean.LaTeX.AutoReport as AutoReport
+import pyGenClean.LaTeX as latex_template
 
 # Getting the version
 prog_version = ".".join(pyGenClean.get_version())
@@ -107,6 +110,7 @@ def main():
         current_input_file = args.file
         current_input_type = "file"
 
+    latex_summaries = []
     for number in order:
         script_name, options = conf[number]
         output_prefix = os.path.join(dirname,
@@ -116,10 +120,23 @@ def main():
         print ("   - Using {} as prefix for input "
                "files".format(current_input_file))
         print "   - Results will be in [ {} ]".format(output_prefix)
-        current_input_file, current_input_type = function_to_use(current_input_file,
-                                                                 current_input_type,
-                                                                 output_prefix,
-                                                                 options)
+        current_input_file, current_input_type, summary = function_to_use(
+                                current_input_file,
+                                current_input_type,
+                                output_prefix,
+                                dirname,
+                                options)
+        latex_summaries.append(summary)
+
+    # We create the automatic report
+    title = "Dummy Project"
+    logo_path = os.path.join(os.environ["HOME"], "Pictures", "statgen_logo.png")
+    report_name = os.path.join(dirname, "automatic_report.tex")
+    steps = [conf[i][0] for i in order]
+    descriptions = [available_modules[conf[i][0]].desc for i in order]
+    AutoReport.create_report(report_name, title=title, logo_path=logo_path,
+                             steps=steps, descriptions=descriptions,
+                             summaries=latex_summaries)
 
 
 def run_duplicated_samples(in_prefix, in_type, out_prefix, options):
@@ -236,7 +253,7 @@ def run_duplicated_snps(in_prefix, in_type, out_prefix, options):
     return os.path.join(out_prefix, "dup_snps.final"), "tfile"
 
 
-def run_noCall_hetero_snps(in_prefix, in_type, out_prefix, options):
+def run_noCall_hetero_snps(in_prefix, in_type, out_prefix, base_dir, options):
     """Runs step 3 (clean no call and hetero).
 
     :param in_prefix: the prefix of the input files.
@@ -268,8 +285,9 @@ def run_noCall_hetero_snps(in_prefix, in_type, out_prefix, options):
 
     # We need to inject the name of the input file and the name of the output
     # prefix
+    script_prefix = os.path.join(out_prefix, "clean_noCall_hetero")
     options += ["--{}".format(required_type), in_prefix,
-                "--out", os.path.join(out_prefix, "clean_noCall_hetero")]
+                "--out", script_prefix]
 
     # We run the script
     try:
@@ -278,8 +296,67 @@ def run_noCall_hetero_snps(in_prefix, in_type, out_prefix, options):
         msg = "noCall_hetero_snps: {}".format(e)
         raise ProgramError(msg)
 
+    # We want to save in a file the markers and samples that were removed
+    # There are two files to look at, which contains only one row, the name of
+    # the markers:
+    #     - prefix.allFailed
+    #     - prefix.allHetero
+    nb_all_failed = 0
+    nb_all_hetero = 0
+    o_filename = os.path.join(base_dir, "excluded_markers.txt")
+    try:
+        with open(o_filename, "a") as o_file:
+            # The first file
+            i_filename = script_prefix + ".allFailed"
+            if os.path.isfile(i_filename):
+                with open(i_filename, "r") as i_file:
+                    for line in i_file:
+                        nb_all_failed += 1
+                        print >>o_file, line.rstrip("\r\n") + "\tall_failed"
+
+            # The second file
+            i_filename = os.path.join(script_prefix + ".allHetero")
+            if os.path.isfile(i_filename):
+                with open(i_filename, "r") as i_file:
+                    for line in i_file:
+                        nb_all_hetero += 1
+                        print >>o_file, line.rstrip("\r\n") + "\tall_hetero"
+
+    except IOError:
+        msg = "{}: can't write to file".format(o_filename)
+        raise ProgramError(msg)
+
+    # We write a LaTeX summary
+    latex_file = os.path.join(script_prefix + ".summary.tex")
+    try:
+        with open(latex_summary, "w") as o_file:
+            print >>o_file, latex_template.subsection(noCall_hetero_snps.pretty_name)
+            text = ("After scrutiny, {:,d} marker{} were excluded from the "
+                    "dataset because the call rate was 0. Also, {:,d} marker{} "
+                    "were excluded from the dataset because all samples were "
+                    "heterozygous (excluding the mitochondrial "
+                    "chromosome)".format(nb_all_failed,
+                                         "s" if nb_all_failed > 0 else "",
+                                         nb_all_hetero,
+                                         "s" if nb_all_hetero > 0 else ""))
+            print >>o_file, "\n".join(textwrap.wrap(text, 80))
+
+    except IOError:
+        msg = "{}: cannot write LaTeX summary".format(latex_file)
+        raise ProgramError(msg)
+
+    # We include the LaTeX summary to the main report
+    report_name = os.path.join(base_dir, "automatic_report.tex")
+    try:
+        with open(report_name, "a") as o_file:
+            print >>o_file, r"\input{" + os.path.abspath(latex_file) + "}\n\n"
+    except IOError:
+        msg = "{}: cannot append to report".format(report_name)
+        raise ProgramError(msg)
+
     # We know this step does produce a new data set (tfile), so we return it
-    return os.path.join(out_prefix, "clean_noCall_hetero"), "tfile"
+    # along with the report name
+    return os.path.join(out_prefix, "clean_noCall_hetero"), "tfile", latex_file
 
 
 def run_sample_missingness(in_prefix, in_type, out_prefix, options):
@@ -1244,12 +1321,20 @@ group.add_argument("--overwrite", action="store_true",
                          "user. [DANGEROUS]"))
 
 # The available modules
-available_modules = {"duplicated_samples", "duplicated_snps",
-                     "noCall_hetero_snps", "sample_missingness",
-                     "snp_missingness", "sex_check", "plate_bias",
-                     "remove_heterozygous_haploid", "find_related_samples",
-                     "check_ethnicity", "flag_maf_zero", "flag_hw", "subset",
-                     "compare_gold_standard"}
+available_modules = {"duplicated_samples": duplicated_samples,
+                     "duplicated_snps": duplicated_snps,
+                     "noCall_hetero_snps": noCall_hetero_snps,
+                     "sample_missingness": sample_missingness,
+                     "snp_missingness": snp_missingness,
+                     "sex_check": sex_check,
+                     "plate_bias": plate_bias,
+                     "remove_heterozygous_haploid": remove_heterozygous_haploid,
+                     "find_related_samples": find_related_samples,
+                     "check_ethnicity": check_ethnicity,
+                     "flag_maf_zero": flag_maf_zero,
+                     "flag_hw": flag_hw,
+                     "subset": subset_data,
+                     "compare_gold_standard": compare_gold_standard}
 available_functions = {"duplicated_samples": run_duplicated_samples,
                        "duplicated_snps": run_duplicated_snps,
                        "noCall_hetero_snps": run_noCall_hetero_snps,

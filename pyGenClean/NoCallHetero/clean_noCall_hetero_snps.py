@@ -40,7 +40,7 @@ def main(argString=None):
 
     print "   - Options used:"
     for key, value in vars(args).iteritems():
-        print "      --{} {}".format(key, value)
+        print "      --{} {}".format(key.replace("_", "-"), value)
 
     # Process the TPED and TFAM file
     print "   - Processing the TPED and TFAM file"
@@ -218,6 +218,7 @@ class ProgramError(Exception):
 
 
 # The parser object
+pretty_name = "No calls and heterozygous only markers"
 desc = """Removes "no calls" only and heterozygous only markers."""
 parser = argparse.ArgumentParser(description=desc)
 

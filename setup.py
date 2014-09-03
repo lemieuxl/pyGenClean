@@ -79,7 +79,7 @@ if not sys.platform.startswith("win"):
         os.chmod(script_name, 0755)
 
 setup(name="pyGenClean",
-      version="1.6",
+      version="2.0b",
       description="Automated data clean up pipeline",
       author="Louis-Philippe Lemieux Perreault",
       author_email="louis-philippe.lemieux.perreault@umontreal.ca",
