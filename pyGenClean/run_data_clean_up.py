@@ -111,29 +111,40 @@ def main():
         current_input_type = "file"
 
     latex_summaries = []
+    steps = []
+    descriptions = []
     for number in order:
+        # Getting the script name and its options
         script_name, options = conf[number]
+
+        # Getting the output prefix
         output_prefix = os.path.join(dirname,
                                      "{}_{}".format(number, script_name))
+
+        # Getting the function to use
         function_to_use = available_functions[script_name]
+
+        # Executing the function
         print "\nRunning {} {}".format(number, script_name)
         print ("   - Using {} as prefix for input "
                "files".format(current_input_file))
         print "   - Results will be in [ {} ]".format(output_prefix)
-        current_input_file, current_input_type, summary = function_to_use(
+        current_input_file, current_input_type, summary, desc = function_to_use(
                                 current_input_file,
                                 current_input_type,
                                 output_prefix,
                                 dirname,
                                 options)
+
+        # Saving what's necessary for the LaTeX report
         latex_summaries.append(summary)
+        steps.append(script_name)
+        descriptions.append(desc)
 
     # We create the automatic report
     title = "Dummy Project"
     logo_path = os.path.join(os.environ["HOME"], "Pictures", "statgen_logo.png")
     report_name = os.path.join(dirname, "automatic_report.tex")
-    steps = [conf[i][0] for i in order]
-    descriptions = [available_modules[conf[i][0]].desc for i in order]
     AutoReport.create_report(report_name, title=title, logo_path=logo_path,
                              steps=steps, descriptions=descriptions,
                              summaries=latex_summaries)
@@ -329,10 +340,10 @@ def run_noCall_hetero_snps(in_prefix, in_type, out_prefix, base_dir, options):
     # We write a LaTeX summary
     latex_file = os.path.join(script_prefix + ".summary.tex")
     try:
-        with open(latex_summary, "w") as o_file:
+        with open(latex_file, "w") as o_file:
             print >>o_file, latex_template.subsection(noCall_hetero_snps.pretty_name)
             text = ("After scrutiny, {:,d} marker{} were excluded from the "
-                    "dataset because the call rate was 0. Also, {:,d} marker{} "
+                    "dataset because of a call rate of 0. Also, {:,d} marker{} "
                     "were excluded from the dataset because all samples were "
                     "heterozygous (excluding the mitochondrial "
                     "chromosome)".format(nb_all_failed,
@@ -356,10 +367,11 @@ def run_noCall_hetero_snps(in_prefix, in_type, out_prefix, base_dir, options):
 
     # We know this step does produce a new data set (tfile), so we return it
     # along with the report name
-    return os.path.join(out_prefix, "clean_noCall_hetero"), "tfile", latex_file
+    return (os.path.join(out_prefix, "clean_noCall_hetero"), "tfile",
+            latex_file, noCall_hetero_snps.desc)
 
 
-def run_sample_missingness(in_prefix, in_type, out_prefix, options):
+def run_sample_missingness(in_prefix, in_type, out_prefix, base_dir, options):
     """Runs step4 (clean mind).
 
     :param in_prefix: the prefix of the input files.
@@ -393,8 +405,9 @@ def run_sample_missingness(in_prefix, in_type, out_prefix, options):
 
     # We need to inject the name of the input file and the name of the output
     # prefix
+    script_prefix = os.path.join(out_prefix, "clean_mind")
     options += ["--ifile", in_prefix,
-                "--out", os.path.join(out_prefix, "clean_mind")]
+                "--out", script_prefix]
     if required_type == "bfile":
         options.append("--is-bfile")
 
@@ -405,8 +418,63 @@ def run_sample_missingness(in_prefix, in_type, out_prefix, options):
         msg = "sample_missingness: {}".format(e)
         raise ProgramError(msg)
 
+    # We want to modify the description, so that it contains the option used
+    desc = sample_missingness.desc
+    mind_value = sample_missingness.parser.get_default("mind")
+    if "--mind" in options:
+        # Since we already run the script, we know that the mind option is a
+        # valid float
+        mind_value = options[options.index("--mind") + 1]
+    if desc[-1] == ".":
+        desc = desc[:-1] + r" (${}={}$).".format(latex_template.texttt("mind"),
+                                                  mind_value)
+
+    # We want to save in a file the samples that were removed
+    # There is one file to look at, which contains only one row, the name of
+    # the samples:
+    #     - prefix.irem (file will exists only if samples were removed)
+    nb_samples = 0
+    o_filename = os.path.join(base_dir, "excluded_samples.txt")
+    try:
+        # Checking if the file exists
+        i_filename = script_prefix + ".irem"
+        if os.path.isfile(i_filename):
+            # True, so sample were removed
+            with open(i_filename, "r") as i_file, open(o_filename, "a") as o_file:
+                for line in i_file:
+                    nb_samples += 1
+                    print >>o_file, line.rstrip("\r\n") + "\tmind {}".format(mind_value)
+
+    except IOError:
+        msg = "{}: can't write to file".format(o_filename)
+        raise ProgramError(msg)
+
+    # We write a LaTeX summary
+    latex_file = os.path.join(script_prefix + ".summary.tex")
+    try:
+        with open(latex_file, "w") as o_file:
+            print >>o_file, latex_template.subsection(sample_missingness.pretty_name)
+            text = ("Using a {} threshold of {}, {:,d} sample{} were excluded "
+                    "from the dataset.".format(latex_template.texttt("mind"),
+                                               mind_value, nb_samples,
+                                               "s" if nb_samples > 0 else ""))
+            print >>o_file, "\n".join(textwrap.wrap(text, 80))
+
+    except IOError:
+        msg = "{}: cannot write LaTeX summary".format(latex_file)
+        raise ProgramError(msg)
+
+    # We include the LaTeX summary to the main report
+    report_name = os.path.join(base_dir, "automatic_report.tex")
+    try:
+        with open(report_name, "a") as o_file:
+            print >>o_file, r"\input{" + os.path.abspath(latex_file) + "}\n\n"
+    except IOError:
+        msg = "{}: cannot append to report".format(report_name)
+        raise ProgramError(msg)
+
     # We know this step does produce a new data set (bfile), so we return it
-    return os.path.join(out_prefix, "clean_mind"), "bfile"
+    return os.path.join(out_prefix, "clean_mind"), "bfile", latex_file, desc
 
 
 def run_snp_missingness(in_prefix, in_type, out_prefix, options):

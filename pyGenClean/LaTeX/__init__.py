@@ -164,7 +164,6 @@ def item(text):
     :returns: a LaTeX item.
     
     """
-    print text
     return r"\item " + text
 
 

@@ -37,7 +37,7 @@ def main(argString=None):
 
     print "   - Options used:"
     for key, value in vars(args).iteritems():
-        print "      --{} {}".format(key, value)
+        print "      --{} {}".format(key.replace("_", "-"), value)
 
     # Running Plink
     print "   - Running Plink"
@@ -157,7 +157,8 @@ class ProgramError(Exception):
 
 
 # The parser object
-desc = """Computes sample missingness using Plink"""
+pretty_name = "Sample missingness"
+desc = """Computes sample missingness using Plink."""
 parser = argparse.ArgumentParser(description=desc)
 
 # The INPUT files
