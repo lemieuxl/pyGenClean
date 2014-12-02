@@ -45,11 +45,11 @@ def main(argString=None):
 
     # Run plink
     print "   - Running Plink"
-    runPlink(args)
+##     runPlink(args)
 
     # Comparing the bim
     print "   - Comparing BIM files"
-    compareBIM(args)
+##     compareBIM(args)
 
 
 def compareBIM(args):

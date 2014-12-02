@@ -73,29 +73,30 @@ def main():
     # Reading the configuration file
     order, conf = read_config_file(args.conf)
 
-    # The directory name
-    dirname = "data_clean_up."
-    dirname += datetime.datetime.today().strftime("%Y-%m-%d_%H.%M.%S")
-    if os.path.isdir(dirname):
-        answer = "N"
-        if not args.overwrite:
-            # The directory already exists...
-            print >>sys.stderr, ("WARNING: {}: directory already "
-                                 "exists".format(dirname))
-            print >>sys.stderr, "Overwrite [Y/N]? ",
-            answer = raw_input()
-        if args.overwrite or answer.upper() == "Y":
-            # Delete everything with the directory
-            shutil.rmtree(dirname)
-        elif answer.upper() == "N":
-            print >>sys.stderr, "STOPING NOW"
-            sys.exit(0)
-        else:
-            msg = "{}: not a valid answer (Y or N)".format(answer)
-            raise ProgramError(msg)
-
-    # Creating the output directory
-    os.mkdir(dirname)
+##     # The directory name
+##     dirname = "data_clean_up."
+##     dirname += datetime.datetime.today().strftime("%Y-%m-%d_%H.%M.%S")
+##     if os.path.isdir(dirname):
+##         answer = "N"
+##         if not args.overwrite:
+##             # The directory already exists...
+##             print >>sys.stderr, ("WARNING: {}: directory already "
+##                                  "exists".format(dirname))
+##             print >>sys.stderr, "Overwrite [Y/N]? ",
+##             answer = raw_input()
+##         if args.overwrite or answer.upper() == "Y":
+##             # Delete everything with the directory
+##             shutil.rmtree(dirname)
+##         elif answer.upper() == "N":
+##             print >>sys.stderr, "STOPING NOW"
+##             sys.exit(0)
+##         else:
+##             msg = "{}: not a valid answer (Y or N)".format(answer)
+##             raise ProgramError(msg)
+## 
+##     # Creating the output directory
+##     os.mkdir(dirname)
+    dirname = "data_clean_up.2014-09-03_15.18.17"
 
     # Executing the data clean up
     current_input_file = None
@@ -287,8 +288,8 @@ def run_noCall_hetero_snps(in_prefix, in_type, out_prefix, base_dir, options):
     good one, or to create it if needed.
 
     """
-    # Creating the output directory
-    os.mkdir(out_prefix)
+##     # Creating the output directory
+##     os.mkdir(out_prefix)
 
     # We know we need a tfile
     required_type = "tfile"
@@ -394,8 +395,8 @@ def run_sample_missingness(in_prefix, in_type, out_prefix, base_dir, options):
     if the file input file type is the good one, or to create it if needed.
 
     """
-    # Creating the output directory
-    os.mkdir(out_prefix)
+##     # Creating the output directory
+##     os.mkdir(out_prefix)
 
     # We are looking at what we have
     required_type = "tfile"
@@ -503,8 +504,8 @@ def run_snp_missingness(in_prefix, in_type, out_prefix, base_dir, options):
     good one, or to create it if needed.
 
     """
-    # Creating the output directory
-    os.mkdir(out_prefix)
+##     # Creating the output directory
+##     os.mkdir(out_prefix)
 
     # We know we need a bfile
     required_type = "bfile"
@@ -585,7 +586,7 @@ def run_snp_missingness(in_prefix, in_type, out_prefix, base_dir, options):
     return os.path.join(out_prefix, "clean_geno"), "bfile", latex_file, desc
 
 
-def run_sex_check(in_prefix, in_type, out_prefix, options):
+def run_sex_check(in_prefix, in_type, out_prefix, base_dir, options):
     """Runs step6 (sexcheck).
 
     :param in_prefix: the prefix of the input files.
@@ -612,8 +613,8 @@ def run_sex_check(in_prefix, in_type, out_prefix, options):
         files. Hence, this function returns the input file prefix and its type.
 
     """
-    # Creating the output directory
-    os.mkdir(out_prefix)
+##     # Creating the output directory
+##     os.mkdir(out_prefix)
 
     # We know we need a bfile
     required_type = "bfile"
@@ -621,8 +622,9 @@ def run_sex_check(in_prefix, in_type, out_prefix, options):
 
     # We need to inject the name of the input file and the name of the output
     # prefix
+    script_prefix = os.path.join(out_prefix, "sexcheck")
     options += ["--{}".format(required_type), in_prefix,
-                "--out", os.path.join(out_prefix, "sexcheck")]
+                "--out", script_prefix]
 
     # We run the script
     try:
@@ -631,9 +633,40 @@ def run_sex_check(in_prefix, in_type, out_prefix, options):
         msg = "sex_check {}".format(e)
         raise ProgramError(msg)
 
+    # We write a LaTeX summary
+    latex_file = os.path.join(script_prefix + ".summary.tex")
+    try:
+        with open(latex_file, "w") as o_file:
+            print >>o_file, latex_template.subsection(sex_check.pretty_name)
+            text = ("Lorem ipsum dolor sit amet, consectetur adipiscing elit. "
+                    "Aenean imperdiet libero id laoreet vulputate. Sed pretium "
+                    "malesuada sapien nec blandit. Maecenas iaculis metus "
+                    "ultricies volutpat varius. Etiam vulputate nisi augue, a "
+                    "dapibus turpis convallis sit amet. Fusce tempor dolor sed "
+                    "nulla varius malesuada. Phasellus euismod lectus sed "
+                    "velit auctor, quis viverra nulla consequat. Donec "
+                    "tincidunt viverra nisi ut efficitur. Sed ultrices nisl "
+                    "diam, quis efficitur neque maximus et. Vestibulum commodo "
+                    "mi sit amet euismod congue.")
+            print >>o_file, "\n".join(textwrap.wrap(text, 80))
+
+    except IOError:
+        msg = "{}: cannot write LaTeX summary".format(latex_file)
+        raise ProgramError(msg)
+
+    # We include the LaTeX summary to the main report
+    report_name = os.path.join(base_dir, "automatic_report.tex")
+    try:
+        with open(report_name, "a") as o_file:
+            print latex_file
+            print >>o_file, r"\input{" + os.path.abspath(latex_file) + "}\n\n"
+    except IOError:
+        msg = "{}: cannot append to report".format(report_name)
+        raise ProgramError(msg)
+
     # We know this step does not produce a new data set, so we return the
     # original one
-    return in_prefix, required_type
+    return in_prefix, required_type, latex_file, sex_check.desc
 
 
 def run_plate_bias(in_prefix, in_type, out_prefix, options):

@@ -44,7 +44,7 @@ def main(argString=None):
 
     # Process the TPED and TFAM file
     print "   - Processing the TPED and TFAM file"
-    processTPEDandTFAM(args.tfile + ".tped", args.tfile + ".tfam", args.out)
+##     processTPEDandTFAM(args.tfile + ".tped", args.tfile + ".tfam", args.out)
 
 
 def processTPEDandTFAM(tped, tfam, prefix):
