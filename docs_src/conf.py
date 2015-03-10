@@ -30,11 +30,6 @@ if os.environ.get("READTHEDOCS", None) == "True":
     MOCK_MODULES = ["numpy", "matplotlib"]
     sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
 
-##     import mock
-##     MOCK_MODULES = ['numpy', "matplotlib", "matplotlib.pyplot"]
-##     for mod_name in MOCK_MODULES:
-##         sys.modules[mod_name] = mock.Mock()
-
 # -- General configuration -----------------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
@@ -130,7 +125,7 @@ html_theme = 'sphinxdoc'
 
 # The name of an image file (relative to this directory) to place at the top
 # of the sidebar.
-#html_logo = "_static/logo.png"
+html_logo = "_static/logo.png"
 
 # The name of an image file (within the static path) to use as favicon of the
 # docs.  This file should be a Windows icon file (.ico) being 16x16 or 32x32
