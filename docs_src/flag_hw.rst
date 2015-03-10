@@ -78,10 +78,10 @@ The Algorithm
 -------------
 
 For more information about the actual algorithms and source codes (the
-:py:mod:`FlagHW.flag_hw` module), refer to the following sections.
+:py:mod:`pyGenClean.FlagHW.flag_hw` module), refer to the following sections.
 
-FlagHW.flag_hw
-..............
+flag_hw
+.......
 
-.. automodule:: FlagHW.flag_hw
+.. automodule:: pyGenClean.FlagHW.flag_hw
     :members:

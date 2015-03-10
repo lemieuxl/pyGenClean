@@ -72,10 +72,11 @@ The Algorithm
 -------------
 
 For more information about the actual algorithms and source codes (the
-:py:mod:`PlateBias.plate_bias` module), refer to the following sections.
+:py:mod:`pyGenClean.PlateBias.plate_bias` module), refer to the following
+sections.
 
-PlateBias.plate_bias
-....................
+plate_bias
+..........
 
-.. automodule:: PlateBias.plate_bias
+.. automodule:: pyGenClean.PlateBias.plate_bias
     :members:

@@ -91,14 +91,14 @@ PlinkUtils
 .. automodule:: PlinkUtils
     :members:
 
-PlinkUtils.compare_bim
-......................
+compare_bim
+...........
 
 .. automodule:: PlinkUtils.compare_bim
     :members:
 
-PlinkUtils.subset_data
-......................
+subset_data
+...........
 
 .. automodule:: PlinkUtils.subset_data
     :members:

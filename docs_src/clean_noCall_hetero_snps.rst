@@ -94,7 +94,7 @@ heterozygosity rates.
 
 .. figure:: _static/images/heterozygosity/heterozygosity.png
     :align: center
-    :width: 100%
+    :width: 50%
     :alt: Heterozygosity rate histogram
 
     Heterozygosity rate histogram
@@ -103,7 +103,7 @@ heterozygosity rates.
 
 .. figure:: _static/images/heterozygosity/boxplot.png
     :align: center
-    :width: 100%
+    :width: 50%
     :alt: Heterozygosity rate box plot
 
     Heterozygosity rate box plot
@@ -112,18 +112,18 @@ The Algorithm
 -------------
 
 For more information about the actual algorithms and source codes (the
-:py:mod:`NoCallHetero.clean_noCall_hetero_snps` and
-:py:mod:`NoCallHetero.heterozygosity_plot` modules), refer to the following
-sections.
+:py:mod:`pyGenClean.NoCallHetero.clean_noCall_hetero_snps` and
+:py:mod:`pyGenClean.NoCallHetero.heterozygosity_plot` modules), refer to the
+following sections.
 
-NoCallHetero.clean_noCall_hetero_snps
-.....................................
+clean_noCall_hetero_snps
+........................
 
-.. automodule:: NoCallHetero.clean_noCall_hetero_snps
+.. automodule:: pyGenClean.NoCallHetero.clean_noCall_hetero_snps
     :members:
 
-NoCallHetero.heterozygosity_plot
-................................
+heterozygosity_plot
+...................
 
-.. automodule:: NoCallHetero.heterozygosity_plot
+.. automodule:: pyGenClean.NoCallHetero.heterozygosity_plot
     :members:

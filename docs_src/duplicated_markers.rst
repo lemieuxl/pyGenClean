@@ -162,11 +162,12 @@ The Algorithm
 -------------
 
 For more information about the actual algorithms and source codes (the
-:py:mod:`DupSNPs.duplicated_snps` module), refer to the following sections.
+:py:mod:`pyGenClean.DupSNPs.duplicated_snps` module), refer to the following
+sections.
 
 
-DupSNPs.duplicated_snps
-.......................
+duplicated_snps
+...............
 
-.. automodule:: DupSNPs.duplicated_snps
+.. automodule:: pyGenClean.DupSNPs.duplicated_snps
     :members:

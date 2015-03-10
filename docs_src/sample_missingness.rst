@@ -59,11 +59,11 @@ The Algorithm
 -------------
 
 For more information about the actual algorithms and source codes (the
-:py:mod:`SampleMissingness.sample_missingness` module), refer to the following
-sections.
+:py:mod:`pyGenClean.SampleMissingness.sample_missingness` module), refer to the
+following sections.
 
-SampleMissingness.sample_missingness
-....................................
+sample_missingness
+..................
 
-.. automodule:: SampleMissingness.sample_missingness
+.. automodule:: pyGenClean.SampleMissingness.sample_missingness
     :members:

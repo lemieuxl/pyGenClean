@@ -11,5 +11,5 @@ Describe the output files here.
 The Code
 --------
 
-.. automodule:: Misc.compare_gold_standard
+.. automodule:: pyGenClean.Misc.compare_gold_standard
     :members:
