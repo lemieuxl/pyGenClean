@@ -20,10 +20,20 @@ sys.path.insert(0, os.path.abspath(".."))
 
 # Read the docs configuration.
 if os.environ.get("READTHEDOCS", None) == "True":
-    import mock
-    MOCK_MODULES = ['numpy', "matplotlib", "matplotlib.pyplot"]
-    for mod_name in MOCK_MODULES:
-        sys.modules[mod_name] = mock.Mock()
+    from unittest.mock import MagicMock
+
+    class Mock(MagicMock):
+        @classmethod
+        def __getattr__(cls, name):
+                return Mock()
+
+    MOCK_MODULES = ["numpy", "matplotlib"]
+    sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
+
+##     import mock
+##     MOCK_MODULES = ['numpy', "matplotlib", "matplotlib.pyplot"]
+##     for mod_name in MOCK_MODULES:
+##         sys.modules[mod_name] = mock.Mock()
 
 # -- General configuration -----------------------------------------------------
 
