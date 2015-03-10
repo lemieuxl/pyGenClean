@@ -1,3 +1,6 @@
+[![Documentation Status](https://readthedocs.org/projects/pygenclean/badge/?version=latest)](https://readthedocs.org/projects/pygenclean/?badge=latest)
+
+
 # pyGenClean - Automated Data Clean Up #
 
 _pyGenClean_ is an informatics tool to facilitate and standardize the genetic
