@@ -41,7 +41,7 @@ import pyGenClean.LaTeX.AutoReport as AutoReport
 import pyGenClean.LaTeX as latex_template
 
 # Getting the version
-prog_version = ".".join(pyGenClean.get_version())
+prog_version = pyGenClean.__version__
 
 def main():
     """The main function.

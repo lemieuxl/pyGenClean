@@ -6,95 +6,111 @@
 # python setup.py sdist --format zip
 # python setup.py bdist --format msi
 
+
 import os
 import sys
 import glob
 import shutil
 from setuptools import setup
 
-# Check the Python version
-major, minor, micro, s, tmp = sys.version_info
-if major==2 and minor<7 or major<2:
-    raise SystemExit("""pyGenClean requires Python 2.7 or later.""")
-if major==3:
-    raise SystemExit("""pyGenClean doesn't work on Python 3...""")
 
-# Creating the "scripts" directory
-if os.path.isdir("scripts"):
-    shutil.rmtree("scripts")
-os.mkdir("scripts")
+MAJOR = 1
+MINOR = 7
+MICRO = 0
+VERSION = "{}.{}".format(MAJOR, MINOR, MICRO)
 
-# Automatically copying the scripts
-shutil.copyfile(os.path.join("pyGenClean", "run_data_clean_up.py"),
-                os.path.join("scripts", "run_pyGenClean"))
-shutil.copyfile(os.path.join("pyGenClean", "DupSamples", "duplicated_samples.py"),
-                os.path.join("scripts", "pyGenClean_duplicated_samples"))
-shutil.copyfile(os.path.join("pyGenClean", "DupSNPs", "duplicated_snps.py"),
-                os.path.join("scripts", "pyGenClean_duplicated_snps"))
-shutil.copyfile(os.path.join("pyGenClean", "NoCallHetero", "clean_noCall_hetero_snps.py"),
-                os.path.join("scripts", "pyGenClean_clean_noCall_hetero_snps"))
-shutil.copyfile(os.path.join("pyGenClean", "NoCallHetero", "heterozygosity_plot.py"),
-                os.path.join("scripts", "pyGenClean_heterozygosity_plot"))
-shutil.copyfile(os.path.join("pyGenClean", "SampleMissingness", "sample_missingness.py"),
-                os.path.join("scripts", "pyGenClean_sample_missingness"))
-shutil.copyfile(os.path.join("pyGenClean", "MarkerMissingness", "snp_missingness.py"),
-                os.path.join("scripts", "pyGenClean_snp_missingness"))
-shutil.copyfile(os.path.join("pyGenClean", "SexCheck", "sex_check.py"),
-                os.path.join("scripts", "pyGenClean_sex_check"))
-shutil.copyfile(os.path.join("pyGenClean", "SexCheck", "gender_plot.py"),
-                os.path.join("scripts", "pyGenClean_gender_plot"))
-shutil.copyfile(os.path.join("pyGenClean", "SexCheck", "baf_lrr_plot.py"),
-                os.path.join("scripts", "pyGenClean_baf_lrr_plot"))
-shutil.copyfile(os.path.join("pyGenClean", "PlateBias", "plate_bias.py"),
-                os.path.join("scripts", "pyGenClean_plate_bias"))
-shutil.copyfile(os.path.join("pyGenClean", "HeteroHap", "remove_heterozygous_haploid.py"),
-                os.path.join("scripts", "pyGenClean_remove_heterozygous_haploid"))
-shutil.copyfile(os.path.join("pyGenClean", "RelatedSamples", "find_related_samples.py"),
-                os.path.join("scripts", "pyGenClean_find_related_samples"))
-shutil.copyfile(os.path.join("pyGenClean", "RelatedSamples", "merge_related_samples.py"),
-                os.path.join("scripts", "pyGenClean_merge_related_samples"))
-shutil.copyfile(os.path.join("pyGenClean", "Ethnicity", "check_ethnicity.py"),
-                os.path.join("scripts", "pyGenClean_check_ethnicity"))
-shutil.copyfile(os.path.join("pyGenClean", "Ethnicity", "find_outliers.py"),
-                os.path.join("scripts", "pyGenClean_find_outliers"))
-shutil.copyfile(os.path.join("pyGenClean", "FlagMAF", "flag_maf_zero.py"),
-                os.path.join("scripts", "pyGenClean_flag_maf_zero"))
-shutil.copyfile(os.path.join("pyGenClean", "FlagHW", "flag_hw.py"),
-                os.path.join("scripts", "pyGenClean_flag_hw"))
-shutil.copyfile(os.path.join("pyGenClean", "Misc", "compare_gold_standard.py"),
-                os.path.join("scripts", "pyGenClean_compare_gold_standard"))
-shutil.copyfile(os.path.join("PlinkUtils", "compare_bim.py"),
-                os.path.join("scripts", "pyGenClean_compare_bim"))
-shutil.copyfile(os.path.join("PlinkUtils", "plot_MDS_standalone.py"),
-                os.path.join("scripts", "pyGenClean_plot_MDS"))
-shutil.copyfile(os.path.join("PlinkUtils", "subset_data.py"),
-                os.path.join("scripts", "pyGenClean_subset_data"))
-shutil.copyfile(os.path.join("pyGenClean", "Ethnicity", "plot_eigenvalues.py"),
-                os.path.join("scripts", "pyGenClean_plot_eigenvalues"))
 
-# Changing the mod of the files
-if not sys.platform.startswith("win"):
-    os.chmod("scripts", 0755)
-    for script_name in glob.glob(os.path.join("scripts", "*")):
-        os.chmod(script_name, 0755)
+def write_version_file(fn=None):
+    if fn is None:
+        fn = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            os.path.join("pyGenClean", "version.py"),
+        )
 
-setup(name="pyGenClean",
-      version="2.0b",
-      description="Automated data clean up pipeline",
-      author="Louis-Philippe Lemieux Perreault",
-      author_email="louis-philippe.lemieux.perreault@umontreal.ca",
-      url="http://www.statgen.org",
-      license="GPL",
-      scripts=[os.path.join("scripts", "{}".format(i))
-                    for i in os.listdir("scripts")],
-      install_requires=["matplotlib >= 1.2.0", "numpy >= 1.6.2",
-                        "scipy >= 0.11.0", "scikit-learn >= 0.12.1",
-                        "drmaa >= 0.5"],
-      packages=["pyGenClean", "PlinkUtils"] +
-               ["pyGenClean.{}".format(i)
-                            for i in os.listdir("pyGenClean")
-                            if os.path.isdir(os.path.join("pyGenClean", i)) and
-                               not i.endswith("git")],
-      classifiers=['Operating System :: Linux',
-                   'Programming Language :: Python',
-                   'Programming Language :: Python :: 2.7'])
+    content = ("\n# THIS FILE WAS GENERATED AUTOMATICALLY BY PYGENCLEAN\n"
+               'pygenclean_version = "{version}"\n')
+
+    a = open(fn, "w")
+    try:
+        a.write(content.format(version=VERSION))
+    finally:
+        a.close()
+
+
+def setup_package():
+    # Saving the version into a file
+    write_version_file()
+
+    # Check the Python version
+    major, minor, micro, s, tmp = sys.version_info
+    if major == 2 and minor < 7 or major < 2:
+        raise SystemExit("""pyGenClean requires Python 2.7 or later.""")
+    if major == 3:
+        raise SystemExit("""pyGenClean doesn't work on Python 3...""")
+
+    setup(
+        name="pyGenClean",
+        version=VERSION,
+        description="Automated data clean up pipeline for genetic data",
+        long_description=("This package provides tools to automatically "
+                          "perform genetic data clean up (QC steps) prior to "
+                          "a genome-wide association study."),
+        author="Louis-Philippe Lemieux Perreault",
+        author_email="louis-philippe.lemieux.perreault@umontreal.ca",
+        url="https://github.com/lemieuxl/pyGenClean",
+        license="GPL",
+        entry_points={
+            "console_scripts": [
+                "run_pyGenClean=pyGenClean.run_data_clean_up:main",
+                "pyGenClean_duplicated_samples=pyGenClean.DupSamples.duplicated_samples:main",
+                "pyGenClean_duplicated_snps=pyGenClean.DupSNPs.duplicated_snps:main",
+                "pyGenClean_clean_noCall_hetero_snps=pyGenClean.NoCallHetero.clean_noCall_hetero_snps:main",
+                "pyGenClean_heterozygosity_plot=pyGenClean.NoCallHetero.heterozygosity_plot:main",
+                "pyGenClean_sample_missingness=pyGenClean.SampleMissingness.sample_missingness:main",
+                "pyGenClean_snp_missingness=pyGenClean.MarkerMissingness.snp_missingness:main",
+                "pyGenClean_sex_check=pyGenClean.SexCheck.sex_check:main",
+                "pyGenClean_gender_plot=pyGenClean.SexCheck.gender_plot:main",
+                "pyGenClean_baf_lrr_plot=pyGenClean.SexCheck.baf_lrr_plot:main",
+                "pyGenClean_plate_bias=pyGenClean.PlateBias.plate_bias:main",
+                "pyGenClean_remove_heterozygous_haploid=pyGenClean.HeteroHap.remove_heterozygous_haploid:main",
+                "pyGenClean_find_related_samples=pyGenClean.RelatedSamples.find_related_samples:main",
+                "pyGenClean_merge_related_samples=pyGenClean.RelatedSamples.merge_related_samples:main",
+                "pyGenClean_check_ethnicity=pyGenClean.Ethnicity.check_ethnicity:main",
+                "pyGenClean_find_outliers=pyGenClean.Ethnicity.find_outliers:main",
+                "pyGenClean_flag_maf_zero=pyGenClean.FlagMAF.flag_maf_zero:main",
+                "pyGenClean_flag_hw=pyGenClean.FlagHW.flag_hw:main",
+                "pyGenClean_compare_gold_standard=pyGenClean.Misc.compare_gold_standard:main",
+                "pyGenClean_compare_bim=PlinkUtils.compare_bim:main",
+                "pyGenClean_plot_MDS=PlinkUtils.plot_MDS_standalone:main",
+                "pyGenClean_subset_data=PlinkUtils.subset_data:main",
+                "pyGenClean_plot_eigenvalues=pyGenClean.Ethnicity.plot_eigenvalues:main",
+            ],
+        },
+        install_requires=["matplotlib >= 1.2.0", "numpy >= 1.6.2",
+                          "scipy >= 0.11.0", "scikit-learn >= 0.12.1",
+                          "drmaa >= 0.5"],
+        packages=["pyGenClean", "pyGenClean.Ethnicity", "pyGenClean.PlateBias",
+                  "pyGenClean.DupSamples", "pyGenClean.SexCheck",
+                  "pyGenClean.MarkerMissingness", "pyGenClean.FlagMAF",
+                  "pyGenClean.FlagHW", "pyGenClean.RelatedSamples",
+                  "pyGenClean.DupSNPs", "pyGenClean.Misc", "pyGenClean.LaTeX",
+                  "pyGenClean.HeteroHap", "pyGenClean.SampleMissingness",
+                  "pyGenClean.NoCallHetero", "PlinkUtils"],
+        classifiers=[
+            "Development Status :: 5 - Production/Stable",
+            "Intended Audience :: Science/Research",
+            "License :: OSI Approved :: GNU General Public License (GPL)",
+            "Operating System :: Unix",
+            "Operating System :: POSIX :: Linux",
+            "Operating System :: MacOS :: MacOS X",
+            "Operating System :: Microsoft :: Windows",
+            "Programming Language :: Python",
+            "Programming Language :: Python :: 2.7",
+            "Topic :: Scientific/Engineering :: Bio-Informatics"
+        ],
+        keywords="bioinformatics quality control genetic",
+    )
+    return
+
+if __name__ == "__main__":
+    setup_package()

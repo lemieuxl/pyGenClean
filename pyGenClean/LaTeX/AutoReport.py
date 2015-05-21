@@ -31,7 +31,7 @@ def create_report(filename, **kwargs):
     # Getting the required information
     title = kwargs["title"]
     logo_path = kwargs["logo_path"]
-    prog_version = ".".join(pyGenClean.get_version())
+    prog_version = ".".join(pyGenClean.__version__)
     steps = kwargs["steps"]
     summaries = kwargs["summaries"]
     descriptions = kwargs["descriptions"]

@@ -2,5 +2,6 @@
 *.swp
 scripts
 dist
+pyGenClean/version.py
 pyGenClean.egg-info
 _build
