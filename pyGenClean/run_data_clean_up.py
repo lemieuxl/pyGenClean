@@ -1,17 +1,19 @@
 #!/usr/bin/env python2.7
-## This file is part of pyGenClean.
-## 
-## pyGenClean is free software: you can redistribute it and/or modify it under
-## the terms of the GNU General Public License as published by the Free Software
-## Foundation, either version 3 of the License, or (at your option) any later
-## version.
-## 
-## pyGenClean is distributed in the hope that it will be useful, but WITHOUT ANY
-## WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
-## A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
-## 
-## You should have received a copy of the GNU General Public License along with
-## pyGenClean.  If not, see <http://www.gnu.org/licenses/>.
+
+# This file is part of pyGenClean.
+#
+# pyGenClean is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later
+# version.
+#
+# pyGenClean is distributed in the hope that it will be useful, but WITHOUT ANY
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+# A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with
+# pyGenClean.  If not, see <http://www.gnu.org/licenses/>.
+
 
 import os
 import sys
@@ -23,25 +25,29 @@ import subprocess
 import ConfigParser
 
 import pyGenClean
-import pyGenClean.DupSamples.duplicated_samples as duplicated_samples
-import pyGenClean.DupSNPs.duplicated_snps as duplicated_snps
-import pyGenClean.NoCallHetero.clean_noCall_hetero_snps as noCall_hetero_snps
-import pyGenClean.SampleMissingness.sample_missingness as sample_missingness
-import pyGenClean.MarkerMissingness.snp_missingness as snp_missingness
+import pyGenClean.LaTeX as latex_template
+import pyGenClean.FlagHW.flag_hw as flag_hw
+import pyGenClean.LaTeX.AutoReport as AutoReport
 import pyGenClean.SexCheck.sex_check as sex_check
 import pyGenClean.PlateBias.plate_bias as plate_bias
-import pyGenClean.HeteroHap.remove_heterozygous_haploid as remove_heterozygous_haploid
-import pyGenClean.RelatedSamples.find_related_samples as find_related_samples
-import pyGenClean.Ethnicity.check_ethnicity as check_ethnicity
 import pyGenClean.FlagMAF.flag_maf_zero as flag_maf_zero
-import pyGenClean.FlagHW.flag_hw as flag_hw
+import pyGenClean.DupSNPs.duplicated_snps as duplicated_snps
+import pyGenClean.Ethnicity.check_ethnicity as check_ethnicity
 import pyGenClean.Misc.compare_gold_standard as compare_gold_standard
+import pyGenClean.DupSamples.duplicated_samples as duplicated_samples
+import pyGenClean.MarkerMissingness.snp_missingness as snp_missingness
+import pyGenClean.SampleMissingness.sample_missingness as sample_missingness
+import pyGenClean.NoCallHetero.clean_noCall_hetero_snps as noCall_hetero_snps
+import pyGenClean.RelatedSamples.find_related_samples as find_related_samples
+import pyGenClean.HeteroHap.remove_heterozygous_haploid \
+                                                as remove_heterozygous_haploid
+
 import PlinkUtils.subset_data as subset_data
-import pyGenClean.LaTeX.AutoReport as AutoReport
-import pyGenClean.LaTeX as latex_template
+
 
 # Getting the version
 prog_version = pyGenClean.__version__
+
 
 def main():
     """The main function.
@@ -50,8 +56,8 @@ def main():
 
     1. Prints the version number.
     2. Reads the configuration file (:py:func:`read_config_file`).
-    3. Creates a new directory with ``data_clean_up`` as prefix and the date and
-       time as suffix. In the improbable event that the directory already
+    3. Creates a new directory with ``data_clean_up`` as prefix and the date
+       and time as suffix. In the improbable event that the directory already
        exists, asks the user the permission to overwrite it.
     4. Check the input file type (``bfile``, ``tfile`` or ``file``).
     5. Creates an intermediate directory with the section as prefix and the
@@ -73,42 +79,42 @@ def main():
     # Reading the configuration file
     order, conf = read_config_file(args.conf)
 
-##     # The directory name
-##     dirname = "data_clean_up."
-##     dirname += datetime.datetime.today().strftime("%Y-%m-%d_%H.%M.%S")
-##     if os.path.isdir(dirname):
-##         answer = "N"
-##         if not args.overwrite:
-##             # The directory already exists...
-##             print >>sys.stderr, ("WARNING: {}: directory already "
-##                                  "exists".format(dirname))
-##             print >>sys.stderr, "Overwrite [Y/N]? ",
-##             answer = raw_input()
-##         if args.overwrite or answer.upper() == "Y":
-##             # Delete everything with the directory
-##             shutil.rmtree(dirname)
-##         elif answer.upper() == "N":
-##             print >>sys.stderr, "STOPING NOW"
-##             sys.exit(0)
-##         else:
-##             msg = "{}: not a valid answer (Y or N)".format(answer)
-##             raise ProgramError(msg)
-## 
-##     # Creating the output directory
-##     os.mkdir(dirname)
+#     # The directory name
+#     dirname = "data_clean_up."
+#     dirname += datetime.datetime.today().strftime("%Y-%m-%d_%H.%M.%S")
+#     if os.path.isdir(dirname):
+#         answer = "N"
+#         if not args.overwrite:
+#             # The directory already exists...
+#             print >>sys.stderr, ("WARNING: {}: directory already "
+#                                  "exists".format(dirname))
+#             print >>sys.stderr, "Overwrite [Y/N]? ",
+#             answer = raw_input()
+#         if args.overwrite or answer.upper() == "Y":
+#             # Delete everything with the directory
+#             shutil.rmtree(dirname)
+#         elif answer.upper() == "N":
+#             print >>sys.stderr, "STOPING NOW"
+#             sys.exit(0)
+#         else:
+#             msg = "{}: not a valid answer (Y or N)".format(answer)
+#             raise ProgramError(msg)
+#
+#     # Creating the output directory
+#     os.mkdir(dirname)
     dirname = "data_clean_up.2014-09-03_15.18.17"
 
     # Executing the data clean up
-    current_input_file = None
+    current_input = None
     current_input_type = None
     if args.tfile is not None:
-        current_input_file = args.tfile
+        current_input = args.tfile
         current_input_type = "tfile"
     elif args.bfile is not None:
-        current_input_file = args.bfile
+        current_input = args.bfile
         current_input_type = "bfile"
     else:
-        current_input_file = args.file
+        current_input = args.file
         current_input_type = "file"
 
     latex_summaries = []
@@ -128,14 +134,15 @@ def main():
         # Executing the function
         print "\nRunning {} {}".format(number, script_name)
         print ("   - Using {} as prefix for input "
-               "files".format(current_input_file))
+               "files".format(current_input))
         print "   - Results will be in [ {} ]".format(output_prefix)
-        current_input_file, current_input_type, summary, desc = function_to_use(
-                                current_input_file,
-                                current_input_type,
-                                output_prefix,
-                                dirname,
-                                options)
+        current_input, current_input_type, summary, desc = function_to_use(
+            current_input,
+            current_input_type,
+            output_prefix,
+            dirname,
+            options,
+        )
 
         # Saving what's necessary for the LaTeX report
         latex_summaries.append(summary)
@@ -144,7 +151,8 @@ def main():
 
     # We create the automatic report
     title = "Dummy Project"
-    logo_path = os.path.join(os.environ["HOME"], "Pictures", "statgen_logo.png")
+    logo_path = os.path.join(os.environ["HOME"], "Pictures",
+                             "statgen_logo.png")
     report_name = os.path.join(dirname, "automatic_report.tex")
     AutoReport.create_report(report_name, title=title, logo_path=logo_path,
                              steps=steps, descriptions=descriptions,
@@ -282,14 +290,14 @@ def run_noCall_hetero_snps(in_prefix, in_type, out_prefix, base_dir, options):
               prefix for the next script) and the type of the output files
               (``tfile``).
 
-    This function calls the :py:mod:`NoCallHetero.clean_noCall_hetero_snps` module. The
-    required file type for this module is ``tfile``, hence the need to use the
-    :py:func:`check_input_files` to check if the file input file type is the
-    good one, or to create it if needed.
+    This function calls the :py:mod:`NoCallHetero.clean_noCall_hetero_snps`
+    module. The required file type for this module is ``tfile``, hence the need
+    to use the :py:func:`check_input_files` to check if the file input file
+    type is the good one, or to create it if needed.
 
     """
-##     # Creating the output directory
-##     os.mkdir(out_prefix)
+#     # Creating the output directory
+#     os.mkdir(out_prefix)
 
     # We know we need a tfile
     required_type = "tfile"
@@ -342,15 +350,19 @@ def run_noCall_hetero_snps(in_prefix, in_type, out_prefix, base_dir, options):
     latex_file = os.path.join(script_prefix + ".summary.tex")
     try:
         with open(latex_file, "w") as o_file:
-            print >>o_file, latex_template.subsection(noCall_hetero_snps.pretty_name)
-            text = ("After scrutiny, {:,d} marker{} were excluded from the "
-                    "dataset because of a call rate of 0. Also, {:,d} marker{} "
-                    "were excluded from the dataset because all samples were "
-                    "heterozygous (excluding the mitochondrial "
-                    "chromosome)".format(nb_all_failed,
-                                         "s" if nb_all_failed > 0 else "",
-                                         nb_all_hetero,
-                                         "s" if nb_all_hetero > 0 else ""))
+            print >>o_file, latex_template.subsection(
+                noCall_hetero_snps.pretty_name,
+            )
+            text = (
+                "After scrutiny, {:,d} marker{} were excluded from the "
+                "dataset because of a call rate of 0. Also, {:,d} marker{} "
+                "were excluded from the dataset because all samples were "
+                "heterozygous (excluding the mitochondrial "
+                "chromosome)".format(nb_all_failed,
+                                     "s" if nb_all_failed > 0 else "",
+                                     nb_all_hetero,
+                                     "s" if nb_all_hetero > 0 else "")
+            )
             print >>o_file, "\n".join(textwrap.wrap(text, 80))
 
     except IOError:
@@ -395,8 +407,8 @@ def run_sample_missingness(in_prefix, in_type, out_prefix, base_dir, options):
     if the file input file type is the good one, or to create it if needed.
 
     """
-##     # Creating the output directory
-##     os.mkdir(out_prefix)
+#     # Creating the output directory
+#     os.mkdir(out_prefix)
 
     # We are looking at what we have
     required_type = "tfile"
@@ -428,7 +440,7 @@ def run_sample_missingness(in_prefix, in_type, out_prefix, base_dir, options):
         mind_value = options[options.index("--mind") + 1]
     if desc[-1] == ".":
         desc = desc[:-1] + r" (${}={}$).".format(latex_template.texttt("mind"),
-                                                  mind_value)
+                                                 mind_value)
 
     # We want to save in a file the samples that were removed
     # There is one file to look at, which contains only one row, the name of
@@ -441,10 +453,13 @@ def run_sample_missingness(in_prefix, in_type, out_prefix, base_dir, options):
         i_filename = script_prefix + ".irem"
         if os.path.isfile(i_filename):
             # True, so sample were removed
-            with open(i_filename, "r") as i_file, open(o_filename, "a") as o_file:
+            with open(i_filename, "r") as i_file, \
+                    open(o_filename, "a") as o_file:
                 for line in i_file:
                     nb_samples += 1
-                    print >>o_file, line.rstrip("\r\n") + "\tmind {}".format(mind_value)
+                    print >>o_file, line.rstrip("\r\n") + "\tmind {}".format(
+                        mind_value,
+                    )
 
     except IOError:
         msg = "{}: can't write to file".format(o_filename)
@@ -454,7 +469,9 @@ def run_sample_missingness(in_prefix, in_type, out_prefix, base_dir, options):
     latex_file = os.path.join(script_prefix + ".summary.tex")
     try:
         with open(latex_file, "w") as o_file:
-            print >>o_file, latex_template.subsection(sample_missingness.pretty_name)
+            print >>o_file, latex_template.subsection(
+                sample_missingness.pretty_name,
+            )
             text = ("Using a {} threshold of {} ({} keeping only samples with "
                     r"a missing rate $\leq {}$), {:,d} sample{} were excluded "
                     "from the dataset.".format(latex_template.texttt("mind"),
@@ -500,12 +517,12 @@ def run_snp_missingness(in_prefix, in_type, out_prefix, base_dir, options):
 
     This function calls the :py:mod:`MarkerMissingness.snp_missingness` module.
     The required file type for this module is ``bfile``, hence the need to use
-    the :py:func:`check_input_files` to check if the file input file type is the
-    good one, or to create it if needed.
+    the :py:func:`check_input_files` to check if the file input file type is
+    the good one, or to create it if needed.
 
     """
-##     # Creating the output directory
-##     os.mkdir(out_prefix)
+#     # Creating the output directory
+#     os.mkdir(out_prefix)
 
     # We know we need a bfile
     required_type = "bfile"
@@ -533,7 +550,7 @@ def run_snp_missingness(in_prefix, in_type, out_prefix, base_dir, options):
         geno_value = options[options.index("--geno") + 1]
     if desc[-1] == ".":
         desc = desc[:-1] + r" (${}={}$).".format(latex_template.texttt("mind"),
-                                                  geno_value)
+                                                 geno_value)
 
     # We want to save in a file the samples that were removed
     # There is one file to look at, which contains only one row, the name of
@@ -546,10 +563,13 @@ def run_snp_missingness(in_prefix, in_type, out_prefix, base_dir, options):
         i_filename = script_prefix + ".removed_snps"
         if os.path.isfile(i_filename):
             # True, so sample were removed
-            with open(i_filename, "r") as i_file, open(o_filename, "a") as o_file:
+            with open(i_filename, "r") as i_file, \
+                    open(o_filename, "a") as o_file:
                 for line in i_file:
                     nb_markers += 1
-                    print >>o_file, line.rstrip("\r\n") + "\tgeno {}".format(geno_value)
+                    print >>o_file, line.rstrip("\r\n") + "\tgeno {}".format(
+                        geno_value,
+                    )
 
     except IOError:
         msg = "{}: can't write to file".format(o_filename)
@@ -559,7 +579,9 @@ def run_snp_missingness(in_prefix, in_type, out_prefix, base_dir, options):
     latex_file = os.path.join(script_prefix + ".summary.tex")
     try:
         with open(latex_file, "w") as o_file:
-            print >>o_file, latex_template.subsection(snp_missingness.pretty_name)
+            print >>o_file, latex_template.subsection(
+                snp_missingness.pretty_name,
+            )
             text = ("Using a {} threshold of {} ({} keeping only markers with "
                     r"a missing rate $\leq {}$), {:,d} marker{} were excluded "
                     "from the dataset.".format(latex_template.texttt("geno"),
@@ -613,8 +635,8 @@ def run_sex_check(in_prefix, in_type, out_prefix, base_dir, options):
         files. Hence, this function returns the input file prefix and its type.
 
     """
-##     # Creating the output directory
-##     os.mkdir(out_prefix)
+#     # Creating the output directory
+#     os.mkdir(out_prefix)
 
     # We know we need a bfile
     required_type = "bfile"
@@ -638,16 +660,18 @@ def run_sex_check(in_prefix, in_type, out_prefix, base_dir, options):
     try:
         with open(latex_file, "w") as o_file:
             print >>o_file, latex_template.subsection(sex_check.pretty_name)
-            text = ("Lorem ipsum dolor sit amet, consectetur adipiscing elit. "
-                    "Aenean imperdiet libero id laoreet vulputate. Sed pretium "
-                    "malesuada sapien nec blandit. Maecenas iaculis metus "
-                    "ultricies volutpat varius. Etiam vulputate nisi augue, a "
-                    "dapibus turpis convallis sit amet. Fusce tempor dolor sed "
-                    "nulla varius malesuada. Phasellus euismod lectus sed "
-                    "velit auctor, quis viverra nulla consequat. Donec "
-                    "tincidunt viverra nisi ut efficitur. Sed ultrices nisl "
-                    "diam, quis efficitur neque maximus et. Vestibulum commodo "
-                    "mi sit amet euismod congue.")
+            text = (
+                "Lorem ipsum dolor sit amet, consectetur adipiscing elit. "
+                "Aenean imperdiet libero id laoreet vulputate. Sed pretium "
+                "malesuada sapien nec blandit. Maecenas iaculis metus "
+                "ultricies volutpat varius. Etiam vulputate nisi augue, a "
+                "dapibus turpis convallis sit amet. Fusce tempor dolor sed "
+                "nulla varius malesuada. Phasellus euismod lectus sed "
+                "velit auctor, quis viverra nulla consequat. Donec "
+                "tincidunt viverra nisi ut efficitur. Sed ultrices nisl "
+                "diam, quis efficitur neque maximus et. Vestibulum commodo "
+                "mi sit amet euismod congue."
+            )
             print >>o_file, "\n".join(textwrap.wrap(text, 80))
 
     except IOError:
@@ -739,8 +763,8 @@ def run_remove_heterozygous_haploid(in_prefix, in_type, out_prefix, options):
 
     This function calls the :py:mod:`HeteroHap.remove_heterozygous_haploid`
     module. The required file type for this module is ``bfile``, hence the need
-    to use the :py:func:`check_input_files` to check if the file input file type
-    is the good one, or to create it if needed.
+    to use the :py:func:`check_input_files` to check if the file input file
+    type is the good one, or to create it if needed.
 
     """
     # Creating the output directory
@@ -785,8 +809,8 @@ def run_find_related_samples(in_prefix, in_type, out_prefix, options):
 
     This function calls the :py:mod:`RelatedSamples.find_related_samples`
     module. The required file type for this module is ``bfile``, hence the need
-    to use the :py:func:`check_input_files` to check if the file input file type
-    is the good one, or to create it if needed.
+    to use the :py:func:`check_input_files` to check if the file input file
+    type is the good one, or to create it if needed.
 
     .. note::
         The :py:mod:`RelatedSamples.find_related_samples` module doesn't return
@@ -842,8 +866,8 @@ def run_check_ethnicity(in_prefix, in_type, out_prefix, options):
 
     .. note::
         The :py:mod:`Ethnicity.check_ethnicity` module doesn't return usable
-        output files. Hence, this function returns the input file prefix and its
-        type.
+        output files. Hence, this function returns the input file prefix and
+        its type.
 
     """
     # Creating the output directory
@@ -887,8 +911,8 @@ def run_flag_maf_zero(in_prefix, in_type, out_prefix, options):
               prefix for the next script) and the type of the output files
               (``bfile``).
 
-    This function calls the :py:mod:`FlagMAF.flag_maf_zero` module. The required
-    file type for this module is ``bfile``, hence the need to use the
+    This function calls the :py:mod:`FlagMAF.flag_maf_zero` module. The
+    required file type for this module is ``bfile``, hence the need to use the
     :py:func:`check_input_files` to check if the file input file type is the
     good one, or to create it if needed.
 
@@ -996,8 +1020,8 @@ def run_compare_gold_standard(in_prefix, in_type, out_prefix, options):
 
     .. note::
         The :py:mod:`Misc.compare_gold_standard` module doesn't return usable
-        output files. Hence, this function returns the input file prefix and its
-        type.
+        output files. Hence, this function returns the input file prefix and
+        its type.
 
     """
     # Creating the output directory
@@ -1124,8 +1148,8 @@ def check_input_files(prefix, the_type, required_type):
     :returns: ``True`` if everything is OK.
 
     Checks if the files are of the required type, according to their current
-    type. The available types are ``bfile`` (binary), ``tfile`` (transposed) and
-    ``file`` (normal).
+    type. The available types are ``bfile`` (binary), ``tfile`` (transposed)
+    and ``file`` (normal).
 
     """
     # The files required for each type
@@ -1252,7 +1276,7 @@ def read_config_file(filename):
         script = snp_missingness
 
         [4] # Removes samples according to missingness (98%)
-        script = sample_missingness 
+        script = sample_missingness
         mind = 0.02
 
         [5] # Performs a sex check
@@ -1270,8 +1294,8 @@ def read_config_file(filename):
         rempove = .../filename
 
     Sections are in square brackets and must be ``integer``. The section number
-    represent the step at which the script will be run (*i.e.* from the smallest
-    number to the biggest). The sections must be continous.
+    represent the step at which the script will be run (*i.e.* from the
+    smallest number to the biggest). The sections must be continuous.
 
     Each section contains the script names (``script`` variable) and options of
     the script (all other variables) (*e.g.* section 4 runs the
@@ -1287,7 +1311,8 @@ def read_config_file(filename):
     * ``snp_missingness`` (:py:func:`run_snp_missingness`)
     * ``sex_check`` (:py:func:`run_sex_check`)
     * ``plate_bias`` (:py:func:`run_plate_bias`)
-    * ``remove_heterozygous_haploid`` (:py:func:`run_remove_heterozygous_haploid`)
+    * ``remove_heterozygous_haploid``
+      (:py:func:`run_remove_heterozygous_haploid`)
     * ``find_related_samples`` (:py:func:`run_find_related_samples`)
     * ``check_ethnicity`` (:py:func:`run_check_ethnicity`)
     * ``flag_maf_zero`` (:py:func:`run_flag_maf_zero`)
@@ -1411,8 +1436,8 @@ def parse_args():
     """Parses the command line options and arguments.
 
     :returns: A :py:class:`argparse.Namespace` object created by the
-              :py:mod:`argparse` module. It contains the values of the different
-              options.
+              :py:mod:`argparse` module. It contains the values of the
+              different options.
 
     ===============   =======  ================================================
         Options        Type                      Description
@@ -1436,7 +1461,7 @@ def parse_args():
 
 class ProgramError(Exception):
     """An :py:class:`Exception` raised in case of a problem.
-    
+
     :param msg: the message to print to the user before exiting.
     :type msg: string
 
@@ -1484,36 +1509,40 @@ group.add_argument("--overwrite", action="store_true",
                          "user. [DANGEROUS]"))
 
 # The available modules
-available_modules = {"duplicated_samples": duplicated_samples,
-                     "duplicated_snps": duplicated_snps,
-                     "noCall_hetero_snps": noCall_hetero_snps,
-                     "sample_missingness": sample_missingness,
-                     "snp_missingness": snp_missingness,
-                     "sex_check": sex_check,
-                     "plate_bias": plate_bias,
-                     "remove_heterozygous_haploid": remove_heterozygous_haploid,
-                     "find_related_samples": find_related_samples,
-                     "check_ethnicity": check_ethnicity,
-                     "flag_maf_zero": flag_maf_zero,
-                     "flag_hw": flag_hw,
-                     "subset": subset_data,
-                     "compare_gold_standard": compare_gold_standard}
-available_functions = {"duplicated_samples": run_duplicated_samples,
-                       "duplicated_snps": run_duplicated_snps,
-                       "noCall_hetero_snps": run_noCall_hetero_snps,
-                       "sample_missingness": run_sample_missingness,
-                       "snp_missingness": run_snp_missingness,
-                       "sex_check": run_sex_check,
-                       "plate_bias": run_plate_bias,
-                       "remove_heterozygous_haploid": run_remove_heterozygous_haploid,
-                       "find_related_samples": run_find_related_samples,
-                       "check_ethnicity": run_check_ethnicity,
-                       "flag_maf_zero": run_flag_maf_zero,
-                       "flag_hw": run_flag_hw,
-                       "subset": run_subset_data,
-                       "compare_gold_standard": run_compare_gold_standard}
+available_modules = {
+    "duplicated_samples": duplicated_samples,
+    "duplicated_snps": duplicated_snps,
+    "noCall_hetero_snps": noCall_hetero_snps,
+    "sample_missingness": sample_missingness,
+    "snp_missingness": snp_missingness,
+    "sex_check": sex_check,
+    "plate_bias": plate_bias,
+    "remove_heterozygous_haploid": remove_heterozygous_haploid,
+    "find_related_samples": find_related_samples,
+    "check_ethnicity": check_ethnicity,
+    "flag_maf_zero": flag_maf_zero,
+    "flag_hw": flag_hw,
+    "subset": subset_data,
+    "compare_gold_standard": compare_gold_standard,
+}
+available_functions = {
+    "duplicated_samples": run_duplicated_samples,
+    "duplicated_snps": run_duplicated_snps,
+    "noCall_hetero_snps": run_noCall_hetero_snps,
+    "sample_missingness": run_sample_missingness,
+    "snp_missingness": run_snp_missingness,
+    "sex_check": run_sex_check,
+    "plate_bias": run_plate_bias,
+    "remove_heterozygous_haploid": run_remove_heterozygous_haploid,
+    "find_related_samples": run_find_related_samples,
+    "check_ethnicity": run_check_ethnicity,
+    "flag_maf_zero": run_flag_maf_zero,
+    "flag_hw": run_flag_hw,
+    "subset": run_subset_data,
+    "compare_gold_standard": run_compare_gold_standard,
+}
 
-# Calling the main, if necessery
+# Calling the main, if necessary
 if __name__ == "__main__":
     try:
         main()

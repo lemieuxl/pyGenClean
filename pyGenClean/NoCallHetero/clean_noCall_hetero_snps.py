@@ -1,17 +1,19 @@
 #!/usr/bin/env python2.7
-## This file is part of pyGenClean.
-## 
-## pyGenClean is free software: you can redistribute it and/or modify it under
-## the terms of the GNU General Public License as published by the Free Software
-## Foundation, either version 3 of the License, or (at your option) any later
-## version.
-## 
-## pyGenClean is distributed in the hope that it will be useful, but WITHOUT ANY
-## WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
-## A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
-## 
-## You should have received a copy of the GNU General Public License along with
-## pyGenClean.  If not, see <http://www.gnu.org/licenses/>.
+
+# This file is part of pyGenClean.
+#
+# pyGenClean is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later
+# version.
+#
+# pyGenClean is distributed in the hope that it will be useful, but WITHOUT ANY
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+# A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with
+# pyGenClean.  If not, see <http://www.gnu.org/licenses/>.
+
 
 import os
 import sys
@@ -19,6 +21,7 @@ import shutil
 import argparse
 
 import numpy as npy
+
 
 def main(argString=None):
     """The main function of the module.
@@ -44,7 +47,7 @@ def main(argString=None):
 
     # Process the TPED and TFAM file
     print "   - Processing the TPED and TFAM file"
-##     processTPEDandTFAM(args.tfile + ".tped", args.tfile + ".tfam", args.out)
+#     processTPEDandTFAM(args.tfile + ".tped", args.tfile + ".tfam", args.out)
 
 
 def processTPEDandTFAM(tped, tfam, prefix):
@@ -67,8 +70,8 @@ def processTPEDandTFAM(tped, tfam, prefix):
     respectively.
 
     .. note::
-        All heterozygous markers located on the mitochondrial chromosome are not
-        remove.
+        All heterozygous markers located on the mitochondrial chromosome are
+        not remove.
 
     """
     # Copying the tfam file
@@ -113,7 +116,7 @@ def processTPEDandTFAM(tped, tfam, prefix):
             # If the SNP is good (neither in allFailed or allHetero), we keep
             # the SNP
             if (snpInfo[1] not in allFailed) and (snpInfo[1] not in allHetero):
-               print >>outputFile, "\t".join(row)
+                print >>outputFile, "\t".join(row)
 
     outputFile.close()
 
@@ -163,7 +166,7 @@ def checkArgs(args):
     return True
 
 
-def parseArgs(argString=None): # pragma: no cover
+def parseArgs(argString=None):  # pragma: no cover
     """Parses the command line options and arguments.
 
     :param argString: the options.
@@ -171,8 +174,8 @@ def parseArgs(argString=None): # pragma: no cover
     :type argString: list of strings
 
     :returns: A :py:class:`argparse.Namespace` object created by the
-              :py:mod:`argparse` module. It contains the values of the different
-              options.
+              :py:mod:`argparse` module. It contains the values of the
+              different options.
 
     =========== ====== ====================================
       Options    Type              Description
@@ -197,7 +200,7 @@ def parseArgs(argString=None): # pragma: no cover
 
 class ProgramError(Exception):
     """An :py:class:`Exception` raised in case of a problem.
-    
+
     :param msg: the message to print to the user before exiting.
 
     :type msg: string

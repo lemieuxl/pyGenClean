@@ -1,22 +1,25 @@
 #!/usr/bin/env python2.7
-## This file is part of pyGenClean.
-## 
-## pyGenClean is free software: you can redistribute it and/or modify it under
-## the terms of the GNU General Public License as published by the Free Software
-## Foundation, either version 3 of the License, or (at your option) any later
-## version.
-## 
-## pyGenClean is distributed in the hope that it will be useful, but WITHOUT ANY
-## WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
-## A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
-## 
-## You should have received a copy of the GNU General Public License along with
-## pyGenClean.  If not, see <http://www.gnu.org/licenses/>.
+
+# This file is part of pyGenClean.
+#
+# pyGenClean is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later
+# version.
+#
+# pyGenClean is distributed in the hope that it will be useful, but WITHOUT ANY
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+# A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with
+# pyGenClean.  If not, see <http://www.gnu.org/licenses/>.
+
 
 import os
 import sys
 import argparse
 import subprocess
+
 
 def main(argString=None):
     """The main function of the module.
@@ -41,7 +44,7 @@ def main(argString=None):
 
     # Running Plink
     print "   - Running Plink"
-##     runPlink(args)
+#     runPlink(args)
 
 
 def runPlink(options):
@@ -53,10 +56,17 @@ def runPlink(options):
 
     """
     # The plink command
-    plinkCommand = ["plink", "--noweb",
-                    "--bfile" if options.is_bfile else "--tfile", options.ifile,
-                    "--mind", str(options.mind), "--make-bed", "--out",
-                    options.out]
+    plinkCommand = [
+        "plink",
+        "--noweb",
+        "--bfile" if options.is_bfile else "--tfile",
+        options.ifile,
+        "--mind",
+        str(options.mind),
+        "--make-bed",
+        "--out",
+        options.out,
+    ]
 
     output = None
     try:
@@ -98,7 +108,7 @@ def checkArgs(args):
     return True
 
 
-def parseArgs(argString=None): # pragma: no cover
+def parseArgs(argString=None):  # pragma: no cover
     """Parses the command line options and arguments.
 
     :param argString: the options.
@@ -106,19 +116,19 @@ def parseArgs(argString=None): # pragma: no cover
     :type argString: list of strings
 
     :returns: A :py:class:`argparse.Namespace` object created by the
-              :py:mod:`argparse` module. It contains the values of the different
-              options.
+              :py:mod:`argparse` module. It contains the values of the
+              different options.
 
-    ============== ====== ======================================================
+    ============== ====== =====================================================
         Options     Type                     Description
-    ============== ====== ======================================================
-    ``--ifile``    string The input file prefix (either a Plink binary file or a
-                          tfile).
+    ============== ====== =====================================================
+    ``--ifile``    string The input file prefix (either a Plink binary file or
+                          a tfile).
     ``--is-bfile`` bool   The input file (``--ifile``) is a bfile instead of a
                           tfile.
     ``--mind``     float  The missingness threshold.
     ``--out``      string The prefix of the output files.
-    ============== ====== ======================================================
+    ============== ====== =====================================================
 
     .. note::
         No option check is done here (except for the one automatically done by
@@ -136,7 +146,7 @@ def parseArgs(argString=None): # pragma: no cover
 
 class ProgramError(Exception):
     """An :py:class:`Exception` raised in case of a problem.
-    
+
     :param msg: the message to print to the user before exiting.
 
     :type msg: string
@@ -179,8 +189,8 @@ group.add_argument("--mind", type=float, metavar="FLOAT", default=0.1,
 # The OUTPUT files
 group = parser.add_argument_group("Output File")
 group.add_argument("--out", type=str, metavar="FILE", default="clean_mind",
-                   help=("The prefix of the output files (wich will be a Plink "
-                         "binary file). [default: %(default)s]"))
+                   help=("The prefix of the output files (wich will be a "
+                         "Plink binary file). [default: %(default)s]"))
 
 if __name__ == "__main__":
     try:

@@ -1,17 +1,19 @@
 #!/usr/bin/env python2.7
-## This file is part of pyGenClean.
-## 
-## pyGenClean is free software: you can redistribute it and/or modify it under
-## the terms of the GNU General Public License as published by the Free Software
-## Foundation, either version 3 of the License, or (at your option) any later
-## version.
-## 
-## pyGenClean is distributed in the hope that it will be useful, but WITHOUT ANY
-## WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
-## A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
-## 
-## You should have received a copy of the GNU General Public License along with
-## pyGenClean.  If not, see <http://www.gnu.org/licenses/>.
+
+# This file is part of pyGenClean.
+#
+# pyGenClean is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later
+# version.
+#
+# pyGenClean is distributed in the hope that it will be useful, but WITHOUT ANY
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+# A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with
+# pyGenClean.  If not, see <http://www.gnu.org/licenses/>.
+
 
 import os
 import sys
@@ -19,6 +21,7 @@ import gzip
 import argparse
 
 import numpy as npy
+
 
 def main(argString=None):
     """The main function of the module.
@@ -85,14 +88,18 @@ def read_sex_problems(file_name):
 
     problems = None
     with open(file_name, 'r') as input_file:
-        header_index = dict([(col_name, i) for i, col_name
-                                in enumerate(input_file.readline().rstrip("\r\n").split("\t"))])
+        header_index = dict([
+            (col_name, i) for i, col_name in
+            enumerate(input_file.readline().rstrip("\r\n").split("\t"))
+        ])
         if "IID" not in header_index:
             msg = "{}: no column named IID".format(file_name)
             raise ProgramError(msg)
 
-        problems = frozenset([i.rstrip("\r\n").split("\t")[header_index["IID"]] for i
-                                in input_file.readlines()])
+        problems = frozenset([
+            i.rstrip("\r\n").split("\t")[header_index["IID"]]
+            for i in input_file.readlines()
+        ])
     return problems
 
 
@@ -206,10 +213,12 @@ def read_bim(file_name):
     """
     marker_names_chr = None
     with open(file_name, 'r') as input_file:
-        marker_names_chr = dict([(i[1], encode_chr(i[0])) for i
-                                    in [j.rstrip("\r\n").split("\t") for j
-                                    in input_file.readlines()]
-                                    if encode_chr(i[0]) in {23, 24}])
+        marker_names_chr = dict([
+            (i[1], encode_chr(i[0]))
+            for i in [
+                j.rstrip("\r\n").split("\t") for j in input_file.readlines()
+            ] if encode_chr(i[0]) in {23, 24}
+        ])
     return marker_names_chr
 
 
@@ -228,9 +237,11 @@ def read_fam(file_name):
     """
     sample_names_gender = None
     with open(file_name, 'r') as input_file:
-        sample_names_gender = dict([(i[1], encode_gender(i[4])) for i
-                                        in [j.rstrip("\r\n").split(" ") for j
-                                        in input_file.readlines()]])
+        sample_names_gender = dict([
+            (i[1], encode_gender(i[4])) for i in [
+                j.rstrip("\r\n").split(" ") for j in input_file.readlines()
+            ]
+        ])
     return sample_names_gender
 
 
@@ -286,7 +297,7 @@ def plot_gender(data, options):
     # Plotting the OK males
     males = npy.logical_and(data["gender"] == "Male", data["status"] == "OK")
     tmp, = ax.plot(data["chr23"][males], data["chr24"][males], "o", ms=5,
-                 mec="#0099CC", mfc="#0099CC")
+                   mec="#0099CC", mfc="#0099CC")
     plot_object.append(tmp)
     labels.append("OK Males (n={})".format(sum(males)))
     if options.summarized_intensities is None:
@@ -389,6 +400,7 @@ def print_data_to_file(data, file_name):
         msg = "{}: can't write file".format(file_name)
         raise ProgramError(msg)
 
+
 def read_summarized_intensities(prefix):
     """Reads the summarized intensities from 6 files.
 
@@ -412,8 +424,8 @@ def read_summarized_intensities(prefix):
                                           problem.
     * ``prefix.problematic_males.txt``: information about males with sex
                                         problem.
-    * ``prefix.problematic_unknowns.txt``: information about unknown gender with
-                                           sex problem.
+    * ``prefix.problematic_unknowns.txt``: information about unknown gender
+                                           with sex problem.
 
     Each file contains the following columns: ``sampleID``, ``chr23``,
     ``chr24``, ``gender`` and ``status``.
@@ -445,13 +457,16 @@ def read_summarized_intensities(prefix):
 
                 if line_nb == 0:
                     # This is the header
-                    header_index = dict([(col_name, i) for i, col_name
-                                            in enumerate(row)])
+                    header_index = dict([
+                        (col_name, i) for i, col_name in enumerate(row)
+                    ])
                     for col_name in {"sampleID", "chr23", "chr24", "gender",
                                      "status"}:
                         if col_name not in header_index:
-                            msg = "{}: no column named {}".format(prefix+suffix,
-                                                                  col_name)
+                            msg = "{}: no column named {}".format(
+                                prefix+suffix,
+                                col_name,
+                            )
                             raise ProgramError(msg)
 
                 else:
@@ -472,13 +487,13 @@ def read_summarized_intensities(prefix):
                     data.append((sampleID, chr23, chr24, gender, status))
 
     # Creating the data structure
-    data = npy.array(data, dtype=[("sampleID", "a{}".format(max([len(i[0]) for i
-                                                        in data]))),
-                                  ("chr23", float), ("chr24", float),
-                                  ("gender", "a{}".format(max([len(i[3]) for i
-                                                        in data]))),
-                                  ("status", "a{}".format(max([len(i[4]) for i
-                                                        in data])))])
+    data = npy.array(
+        data,
+        dtype=[("sampleID", "a{}".format(max([len(i[0]) for i in data]))),
+               ("chr23", float), ("chr24", float),
+               ("gender", "a{}".format(max([len(i[3]) for i in data]))),
+               ("status", "a{}".format(max([len(i[4]) for i in data])))],
+    )
     return data
 
 
@@ -536,8 +551,9 @@ def read_intensities(file_name, needed_markers_chr, needed_samples_gender,
 
         if line_nb == 0:
             # This is the header
-            header_index = dict([(col_name, i) for i, col_name
-                                    in enumerate(row)])
+            header_index = dict([
+                (col_name, i) for i, col_name in enumerate(row)
+            ])
             # Check the column names
             for col_name in {"SNP Name", "Sample ID", "X", "Y", "Chr"}:
                 if col_name not in header_index:
@@ -566,7 +582,7 @@ def read_intensities(file_name, needed_markers_chr, needed_samples_gender,
             # We get the intensities
             allele_a = row[header_index["X"]]
             allele_b = row[header_index["Y"]]
-            
+
             # Check for NaN
             if allele_a == "NaN" or allele_b == "NaN":
                 continue
@@ -605,13 +621,14 @@ def read_intensities(file_name, needed_markers_chr, needed_samples_gender,
             msg = "0 marker on chr23 or chr24"
             raise ProgramError(msg)
 
-    data = npy.array(data, dtype=[("sampleID", "a{}".format(max([len(i[0]) for i
-                                                        in data]))),
-                                  ("chr23", float), ("chr24", float),
-                                  ("gender", "a{}".format(max([len(i[3]) for i
-                                                        in data]))),
-                                  ("status", "a{}".format(max([len(i[4]) for i
-                                                        in data])))])
+    data = npy.array(
+        data,
+        dtype=[("sampleID", "a{}".format(max([len(i[0]) for i in data]))),
+               ("chr23", float),
+               ("chr24", float),
+               ("gender", "a{}".format(max([len(i[3]) for i in data]))),
+               ("status", "a{}".format(max([len(i[4]) for i in data])))],
+    )
     return data
 
 
@@ -669,7 +686,7 @@ def checkArgs(args):
     return True
 
 
-def parseArgs(argString=None): # pragma: no cover
+def parseArgs(argString=None):  # pragma: no cover
     """Parses the command line options and arguments.
 
     :param argString: the options.
@@ -677,28 +694,28 @@ def parseArgs(argString=None): # pragma: no cover
     :type argString: list of strings
 
     :returns: A :py:class:`argparse.Namespace` object created by the
-              :py:mod:`argparse` module. It contains the values of the different
-              options.
+              :py:mod:`argparse` module. It contains the values of the
+              different options.
 
-    ============================ ====== ========================================
+    ============================ ====== =======================================
                Options            Type                    Description
-    ============================ ====== ========================================
+    ============================ ====== =======================================
     ``--bfile``                  string The plink binary file containing
                                         information about markers and
                                         individuals.
     ``--intensities``            string A file containing alleles intensities
-                                        for each of the markers located on the X
-                                        and Y chromosome.
+                                        for each of the markers located on the
+                                        X and Y chromosome.
     ``--summarized-intensities`` string The prefix of six files containing
                                         summarized chr23 and chr24 intensities.
-    ``--sex-problems``           string The file containing individuals with sex
-                                        problems.
-    ``--format``                 string The output file format (png, ps, pdf, or
-                                        X11).
+    ``--sex-problems``           string The file containing individuals with
+                                        sex problems.
+    ``--format``                 string The output file format (png, ps, pdf,
+                                        or X11).
     ``--xlabel``                 string The label of the X axis.
     ``--ylabel``                 string The label of the Y axis.
     ``--out``                    string The prefix of the output files.
-    ============================ ====== ========================================
+    ============================ ====== =======================================
 
     .. note::
         No option check is done here (except for the one automatically done by
@@ -716,7 +733,7 @@ def parseArgs(argString=None): # pragma: no cover
 
 class ProgramError(Exception):
     """An :py:class:`Exception` raised in case of a problem.
-    
+
     :param msg: the message to print to the user before exiting.
 
     :type msg: string
@@ -742,44 +759,44 @@ parser = argparse.ArgumentParser(description=desc)
 # The INPUT files
 group = parser.add_argument_group("Input File")
 group.add_argument("--bfile", type=str, metavar="FILE", required=True,
-                    help=("The plink binary file containing information "
-                            "about markers and individuals. Must be specified "
-                            "if '--summarized-intensities' is not."))
+                   help=("The plink binary file containing information "
+                         "about markers and individuals. Must be specified "
+                         "if '--summarized-intensities' is not."))
 group.add_argument("--intensities", type=str, metavar="FILE",
-                    help=("A file containing alleles intensities for each "
-                            "of the markers located on the X and Y "
-                            "chromosome. Must be specified if "
-                            "'--summarized-intensities' is not."))
+                   help=("A file containing alleles intensities for each "
+                         "of the markers located on the X and Y "
+                         "chromosome. Must be specified if "
+                         "'--summarized-intensities' is not."))
 group.add_argument("--summarized-intensities", type=str, metavar="FILE",
-                    help=("The prefix of six files (prefix.ok_females.txt, "
-                            "prefix.ok_males.txt, prefix.ok_unknowns.txt, "
-                            "problematic_females.txt, problematic_males.txt "
-                            "and problematic_unknowns.txt) containing "
-                            "summarized chr23 and chr24 intensities. Must be "
-                            "specified if '--bfile' and '--intensities' are "
-                            "not."))
+                   help=("The prefix of six files (prefix.ok_females.txt, "
+                         "prefix.ok_males.txt, prefix.ok_unknowns.txt, "
+                         "problematic_females.txt, problematic_males.txt "
+                         "and problematic_unknowns.txt) containing "
+                         "summarized chr23 and chr24 intensities. Must be "
+                         "specified if '--bfile' and '--intensities' are "
+                         "not."))
 group.add_argument("--sex-problems", type=str, metavar="FILE", required=True,
-                    help=("The file containing individuals with sex "
-                            "problems. This file is not read if the option "
-                            "'summarized-intensities' is used."))
+                   help=("The file containing individuals with sex "
+                         "problems. This file is not read if the option "
+                         "'summarized-intensities' is used."))
 # The options
 group = parser.add_argument_group("Options")
 group.add_argument("--format", type=str, metavar="FORMAT", default="png",
-                    choices=["png", "ps", "pdf", "X11"],
-                    help=("The output file format (png, ps, pdf, or X11 "
-                            "formats are available). [default: %(default)s]"))
+                   choices=["png", "ps", "pdf", "X11"],
+                   help=("The output file format (png, ps, pdf, or X11 "
+                         "formats are available). [default: %(default)s]"))
 group.add_argument("--xlabel", type=str, metavar="STRING",
-                    default="X intensity",
-                    help="The label of the X axis. [default: %(default)s]")
+                   default="X intensity",
+                   help="The label of the X axis. [default: %(default)s]")
 group.add_argument("--ylabel", type=str, metavar="STRING",
-                    default="Y intensity",
-                    help="The label of the Y axis. [default: %(default)s]")
+                   default="Y intensity",
+                   help="The label of the Y axis. [default: %(default)s]")
 # The OUTPUT files
 group = parser.add_argument_group("Output File")
 group.add_argument("--out", type=str, metavar="FILE",
-                    default="sexcheck",
-                    help="The prefix of the output files (which will be " \
-                        "a Plink binary file. [default: %(default)s]")
+                   default="sexcheck",
+                   help=("The prefix of the output files (which will be "
+                         "a Plink binary file. [default: %(default)s]"))
 
 if __name__ == "__main__":
     try:

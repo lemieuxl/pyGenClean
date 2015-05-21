@@ -1,17 +1,19 @@
 #!/usr/bin/env python2.7
-## This file is part of pyGenClean.
-## 
-## pyGenClean is free software: you can redistribute it and/or modify it under
-## the terms of the GNU General Public License as published by the Free Software
-## Foundation, either version 3 of the License, or (at your option) any later
-## version.
-## 
-## pyGenClean is distributed in the hope that it will be useful, but WITHOUT ANY
-## WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
-## A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
-## 
-## You should have received a copy of the GNU General Public License along with
-## pyGenClean.  If not, see <http://www.gnu.org/licenses/>.
+
+# This file is part of pyGenClean.
+#
+# pyGenClean is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later
+# version.
+#
+# pyGenClean is distributed in the hope that it will be useful, but WITHOUT ANY
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+# A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with
+# pyGenClean.  If not, see <http://www.gnu.org/licenses/>.
+
 
 import os
 import sys
@@ -19,6 +21,7 @@ import gzip
 import argparse
 
 import numpy as npy
+
 
 def main(argString=None):
     """The main function of this module.
@@ -112,8 +115,9 @@ def read_problematic_samples(file_name):
     if file_name.endswith(".gz"):
         open_func = gzip.open
     with open_func(file_name, 'rb') as input_file:
-        problematic_samples = set([tuple(i.rstrip("\r\n").split("\t")) for i in
-                                    input_file.readlines()])
+        problematic_samples = set([
+            tuple(i.rstrip("\r\n").split("\t")) for i in input_file.readlines()
+        ])
 
     return problematic_samples
 
@@ -145,7 +149,6 @@ def encode_chromosome(chromosome):
         'Y'
         >>> encode_chromosome("This is not a chromosome")
         'This is not a chromosome'
-        
 
     """
     if chromosome == "23":
@@ -185,9 +188,13 @@ def plot_baf_lrr(file_names, options):
         if file_name.endswith(".gz"):
             open_func = gzip.open
         with open_func(file_name, 'rb') as input_file:
-            header_index = dict([(col_name, i) for i, col_name in
-                                    enumerate(input_file.readline().rstrip("\r\n").split("\t"))])
-            for col_name in {"Chr", "Position", "B Allele Freq", "Log R Ratio"}:
+            header_index = dict([
+                (col_name, i)
+                for i, col_name in
+                enumerate(input_file.readline().rstrip("\r\n").split("\t"))
+            ])
+            for col_name in {"Chr", "Position", "B Allele Freq",
+                             "Log R Ratio"}:
                 if col_name not in header_index:
                     msg = "{}: no column named {}".format(file_name, col_name)
                     raise ProgramError(msg)
@@ -195,7 +202,7 @@ def plot_baf_lrr(file_names, options):
             # Reading the dat
             for line in input_file:
                 row = line.rstrip("\r\n").split("\t")
-                
+
                 # We only need X and Y chromosomes
                 chromosome = encode_chromosome(row[header_index["Chr"]])
                 if chromosome not in {"X", "Y"}:
@@ -291,6 +298,7 @@ def plot_baf_lrr(file_names, options):
         # Closing the figure
         plt.close(fig)
 
+
 def checkArgs(args):
     """Checks the arguments and options.
 
@@ -318,7 +326,7 @@ def checkArgs(args):
     return True
 
 
-def parseArgs(argString=None): # pragma: no cover
+def parseArgs(argString=None):  # pragma: no cover
     """Parses the command line options and arguments.
 
     :param argString: the options.
@@ -326,13 +334,14 @@ def parseArgs(argString=None): # pragma: no cover
     :type argString: list of strings
 
     :returns: A :py:class:`argparse.Namespace` object created by the
-              :py:mod:`argparse` module. It contains the values of the different
-              options.
+              :py:mod:`argparse` module. It contains the values of the
+              different options.
 
-    ========================= ====== ============================================
+    ========================= ====== ==========================================
               Options          Type                     Description
-    ========================= ====== ============================================
-    ``--problematic-samples`` string The list of sample with sex problems to plot
+    ========================= ====== ==========================================
+    ``--problematic-samples`` string The list of sample with sex problems to
+                                     plot
     ``--use-full-ids``        bool   Use full sample IDs (famID and indID).
     ``--full-ids-delimiter``  string The delimiter between famID and indID.
     ``--raw-dir``             string Directory containing information about
@@ -340,7 +349,7 @@ def parseArgs(argString=None): # pragma: no cover
     ``--format``              string The output file format (png, ps, pdf, or
                                      X11).
     ``--out``                 string The prefix of the output files.
-    ========================= ====== ============================================
+    ========================= ====== ==========================================
 
     .. note::
         No option check is done here (except for the one automatically done by
@@ -358,7 +367,7 @@ def parseArgs(argString=None): # pragma: no cover
 
 class ProgramError(Exception):
     """An :py:class:`Exception` raised in case of a problem.
-    
+
     :param msg: the message to print to the user before exiting.
 
     :type msg: string
@@ -385,12 +394,12 @@ parser = argparse.ArgumentParser(description=desc)
 # The INPUT files
 group = parser.add_argument_group("Input File")
 group.add_argument("--problematic-samples", type=str, metavar="FILE",
-                    required=True,
-                    help=("A file containing the list of samples with sex "
-                          "problems (family and individual ID required, "
-                          "separated by a single tabulation). Uses "
-                          "only the individual ID by default, unless "
-                          "--use-full-ids is used."))
+                   required=True,
+                   help=("A file containing the list of samples with sex "
+                         "problems (family and individual ID required, "
+                         "separated by a single tabulation). Uses "
+                         "only the individual ID by default, unless "
+                         "--use-full-ids is used."))
 group.add_argument("--use-full-ids", action="store_true",
                    help=("Use this options to use full sample IDs (famID and "
                          "indID). Otherwise, only the indID will be use."))
@@ -399,20 +408,20 @@ group.add_argument("--full-ids-delimiter", type=str, metavar="CHAR",
                                       "for the raw file names. [default: "
                                       "%(default)s]"))
 group.add_argument("--raw-dir", type=str, metavar="DIR", required=True,
-                   help=("Directory containing information about every samples "
-                         "(BAF and LRR)."))
+                   help=("Directory containing information about every "
+                         "samples (BAF and LRR)."))
 # The options
 group = parser.add_argument_group("Options")
 group.add_argument("--format", type=str, metavar="FORMAT", default="png",
-                    choices=["png", "ps", "pdf", "X11"],
-                    help=("The output file format (png, ps, pdf, or X11 "
-                            "formats are available). [default: %(default)s]"))
+                   choices=["png", "ps", "pdf", "X11"],
+                   help=("The output file format (png, ps, pdf, or X11 "
+                         "formats are available). [default: %(default)s]"))
 # The OUTPUT files
 group = parser.add_argument_group("Output File")
 group.add_argument("--out", type=str, metavar="FILE",
-                    default="sexcheck",
-                    help=("The prefix of the output files. [default: "
-                            "%(default)s]"))
+                   default="sexcheck",
+                   help=("The prefix of the output files. [default: "
+                         "%(default)s]"))
 
 if __name__ == "__main__":
     try:
