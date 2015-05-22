@@ -168,7 +168,7 @@ def main():
     logo_path = os.path.join(os.environ["HOME"], "Pictures",
                              "statgen_logo.png")
     report_name = os.path.join(dirname, "automatic_report.tex")
-    AutoReport.create_report(report_name, project_name=project_name,
+    AutoReport.create_report(dirname, report_name, project_name=project_name,
                              logo_path=logo_path, steps=steps,
                              descriptions=descriptions,
                              summaries=latex_summaries,
@@ -385,15 +385,6 @@ def run_noCall_hetero_snps(in_prefix, in_type, out_prefix, base_dir, options):
         msg = "{}: cannot write LaTeX summary".format(latex_file)
         raise ProgramError(msg)
 
-    # We include the LaTeX summary to the main report
-    report_name = os.path.join(base_dir, "automatic_report.tex")
-    try:
-        with open(report_name, "a") as o_file:
-            print >>o_file, r"\input{" + os.path.abspath(latex_file) + "}\n\n"
-    except IOError:
-        msg = "{}: cannot append to report".format(report_name)
-        raise ProgramError(msg)
-
     # We know this step does produce a new data set (tfile), so we return it
     # along with the report name
     return (os.path.join(out_prefix, "clean_noCall_hetero"), "tfile",
@@ -501,15 +492,6 @@ def run_sample_missingness(in_prefix, in_type, out_prefix, base_dir, options):
         msg = "{}: cannot write LaTeX summary".format(latex_file)
         raise ProgramError(msg)
 
-    # We include the LaTeX summary to the main report
-    report_name = os.path.join(base_dir, "automatic_report.tex")
-    try:
-        with open(report_name, "a") as o_file:
-            print >>o_file, r"\input{" + os.path.abspath(latex_file) + "}\n\n"
-    except IOError:
-        msg = "{}: cannot append to report".format(report_name)
-        raise ProgramError(msg)
-
     # We know this step does produce a new data set (bfile), so we return it
     return os.path.join(out_prefix, "clean_mind"), "bfile", latex_file, desc
 
@@ -611,15 +593,6 @@ def run_snp_missingness(in_prefix, in_type, out_prefix, base_dir, options):
         msg = "{}: cannot write LaTeX summary".format(latex_file)
         raise ProgramError(msg)
 
-    # We include the LaTeX summary to the main report
-    report_name = os.path.join(base_dir, "automatic_report.tex")
-    try:
-        with open(report_name, "a") as o_file:
-            print >>o_file, r"\input{" + os.path.abspath(latex_file) + "}\n\n"
-    except IOError:
-        msg = "{}: cannot append to report".format(report_name)
-        raise ProgramError(msg)
-
     # We know this step does produce a new data set (bfile), so we return it
     return os.path.join(out_prefix, "clean_geno"), "bfile", latex_file, desc
 
@@ -692,16 +665,6 @@ def run_sex_check(in_prefix, in_type, out_prefix, base_dir, options):
 
     except IOError:
         msg = "{}: cannot write LaTeX summary".format(latex_file)
-        raise ProgramError(msg)
-
-    # We include the LaTeX summary to the main report
-    report_name = os.path.join(base_dir, "automatic_report.tex")
-    try:
-        with open(report_name, "a") as o_file:
-            print latex_file
-            print >>o_file, r"\input{" + os.path.abspath(latex_file) + "}\n\n"
-    except IOError:
-        msg = "{}: cannot append to report".format(report_name)
         raise ProgramError(msg)
 
     # We know this step does not produce a new data set, so we return the

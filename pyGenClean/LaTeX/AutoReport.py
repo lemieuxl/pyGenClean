@@ -21,12 +21,14 @@ import pyGenClean.LaTeX as latex
 from pyGenClean import __version__ as pygenclean_version
 
 
-def create_report(filename, **kwargs):
+def create_report(outdirname, report_filename, **kwargs):
     """Creates a LaTeX report.
 
-    :param filename: the name of the file.
+    :param report_filename: the name of the file.
+    :param outdirname: the name of the output directory.
 
-    :type filename: string
+    :type report_filename: string
+    :type outdirname: string
 
     """
     # Checking the required variables
@@ -46,27 +48,22 @@ def create_report(filename, **kwargs):
     descriptions = kwargs["descriptions"]
     background_section = latex.wrap_lines(kwargs["background"])
 
-    # Adding the content of the method section
-    method_section = latex.wrap_lines(
-        r"Plink was used for the data cleanup procedure. The automated script "
-        r"\texttt{pyGenClean} version " + prog_version + r"~\cite{pyGenClean} "
-        r"was used to launch the analysis.\\"
-    ) + "\n\n"
-    method_section += "Briefly, the clean up procedure was as follow:\n"
-    method_section += r"\begin{enumerate}" + "\n"
-    for step, desc in zip(steps, descriptions):
-        step = step.replace("_", r"\_")
-        to_print = latex.item(desc)
-        to_print += " ({})".format(latex.texttt(step))
-        method_section += latex.wrap_lines(to_print) + "\n"
-    method_section += r"\end{enumerate}" + "\n"
+    # Writing the method steps to a separate file (for access later)
+    step_filename = os.path.join(outdirname, "steps_summary.tex")
+    with open(step_filename, "w") as o_file:
+        for step, desc in zip(steps, descriptions):
+            step = step.replace("_", r"\_")
+            to_print = latex.item(desc)
+            to_print += " ({})".format(latex.texttt(step))
+            print >>o_file, latex.wrap_lines(to_print) + "\n"
 
     # Adding the content of the results section
-    result_section = ""
+    result_summaries = []
     for name in summaries:
         full_path = os.path.abspath(name)
         if os.path.isfile(full_path):
-            result_section += r"\input{" + full_path + "}\n\n"
+            rel_path = os.path.relpath(full_path, outdirname)
+            result_summaries.append(rel_path)
 
     # Adding the bibliography content
     biblio_entry = latex.bib_entry(
@@ -86,7 +83,7 @@ def create_report(filename, **kwargs):
     main_template = latex.jinja2_env.get_template("main_document.tex")
 
     try:
-        with open(filename, "w") as i_file:
+        with open(report_filename, "w") as i_file:
             # Rendering the template
             # The report information
             #   - project_name: the name of the project
@@ -100,12 +97,13 @@ def create_report(filename, **kwargs):
                 project_name=project_name,
                 logo_path=logo_path,
                 background_content=background_section,
-                methods_content=method_section,
-                results_content=result_section,
+                result_summaries=result_summaries,
                 conclusions_content="",
                 bibliography_content=biblio_entry,
+                pygenclean_version=pygenclean_version,
+                step_filename=os.path.basename(step_filename),
             )
 
     except IOError:
-        msg = "{}: could not create report".format(filename)
+        msg = "{}: could not create report".format(report_filename)
         raise ProgramError(msg)

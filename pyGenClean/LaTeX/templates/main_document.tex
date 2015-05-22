@@ -113,11 +113,26 @@
 \section{Background}
 \VAR{ background_content }
 
+
 \section{Methods}
-\VAR{ methods_content }
+Plink was used for the data cleanup procedure. The automated script
+\texttt{pyGenClean} version \VAR{ pygenclean_version }~\cite{pyGenClean} was
+used to launch the analysis.\\
+
+Briefly, the clean up procedure was as follow:
+\begin{enumerate}
+
+\input{\VAR{ step_filename }}
+
+\end{enumerate}
+
 
 \section{Results}
-\VAR{ results_content }
+\BLOCK{ for result_summary in result_summaries }
+\input{\VAR{ result_summary }}
+
+\BLOCK{ endfor }
+
 
 \section{Conclusions}
 \VAR{ conclusions_content }
