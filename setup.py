@@ -88,7 +88,7 @@ def setup_package():
         },
         install_requires=["matplotlib >= 1.2.0", "numpy >= 1.6.2",
                           "scipy >= 0.11.0", "scikit-learn >= 0.12.1",
-                          "drmaa >= 0.5"],
+                          "drmaa >= 0.5", "jinja2 >= 2.7.3"],
         packages=["pyGenClean", "pyGenClean.Ethnicity", "pyGenClean.PlateBias",
                   "pyGenClean.DupSamples", "pyGenClean.SexCheck",
                   "pyGenClean.MarkerMissingness", "pyGenClean.FlagMAF",
@@ -96,6 +96,7 @@ def setup_package():
                   "pyGenClean.DupSNPs", "pyGenClean.Misc", "pyGenClean.LaTeX",
                   "pyGenClean.HeteroHap", "pyGenClean.SampleMissingness",
                   "pyGenClean.NoCallHetero", "PlinkUtils"],
+        package_data={"pyGenClean.LaTeX": ["templates/*.tex"]},
         classifiers=[
             "Development Status :: 5 - Production/Stable",
             "Intended Audience :: Science/Research",

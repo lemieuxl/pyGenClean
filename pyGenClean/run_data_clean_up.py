@@ -149,14 +149,31 @@ def main():
         steps.append(script_name)
         descriptions.append(desc)
 
+    # A dummy background section content
+    dummy_background = (
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. "
+        "Suspendisse lectus ligula, volutpat eget convallis a, porttitor "
+        "vitae est. Pellentesque ornare ipsum vitae odio sodales, eu "
+        "elementum urna pretium. Donec luctus non leo sed euismod. Phasellus "
+        "in diam et leo fringilla adipiscing ullamcorper nec sapien. Sed "
+        "condimentum metus at lacus vehicula vulputate. Nam fermentum "
+        "faucibus ipsum ut gravida. In sed felis tellus. Aliquam imperdiet, "
+        "augue et eleifend cursus, elit risus accumsan justo, eu aliquam "
+        "quam massa id risus. Donec sagittis orci lorem, a vulputate lacus "
+        "sodales ut. Proin massa massa, aliquet vitae felis et, porttitor "
+        "ornare enim."
+    )
+
     # We create the automatic report
-    title = "Dummy Project"
+    project_name = "Dummy Project"
     logo_path = os.path.join(os.environ["HOME"], "Pictures",
                              "statgen_logo.png")
     report_name = os.path.join(dirname, "automatic_report.tex")
-    AutoReport.create_report(report_name, title=title, logo_path=logo_path,
-                             steps=steps, descriptions=descriptions,
-                             summaries=latex_summaries)
+    AutoReport.create_report(report_name, project_name=project_name,
+                             logo_path=logo_path, steps=steps,
+                             descriptions=descriptions,
+                             summaries=latex_summaries,
+                             background=dummy_background)
 
 
 def run_duplicated_samples(in_prefix, in_type, out_prefix, options):
