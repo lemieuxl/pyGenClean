@@ -16,7 +16,6 @@
 
 
 import os
-import textwrap
 
 import pyGenClean.LaTeX as latex
 from pyGenClean import __version__ as pygenclean_version
@@ -45,22 +44,21 @@ def create_report(filename, **kwargs):
     steps = kwargs["steps"]
     summaries = kwargs["summaries"]
     descriptions = kwargs["descriptions"]
-    background_section = "\n".join(textwrap.wrap(kwargs["background"], 80))
+    background_section = latex.wrap_lines(kwargs["background"])
 
     # Adding the content of the method section
-    method_section = "\n".join(textwrap.wrap(
+    method_section = latex.wrap_lines(
         r"Plink was used for the data cleanup procedure. The automated script "
         r"\texttt{pyGenClean} version " + prog_version + r"~\cite{pyGenClean} "
-        r"was used to launch the analysis.\\",
-        80
-    )) + "\n\n"
+        r"was used to launch the analysis.\\"
+    ) + "\n\n"
     method_section += "Briefly, the clean up procedure was as follow:\n"
     method_section += r"\begin{enumerate}" + "\n"
     for step, desc in zip(steps, descriptions):
         step = step.replace("_", r"\_")
         to_print = latex.item(desc)
         to_print += " ({})".format(latex.texttt(step))
-        method_section += "\n".join(textwrap.wrap(to_print)) + "\n"
+        method_section += latex.wrap_lines(to_print) + "\n"
     method_section += r"\end{enumerate}" + "\n"
 
     # Adding the content of the results section
@@ -68,7 +66,7 @@ def create_report(filename, **kwargs):
     for name in summaries:
         full_path = os.path.abspath(name)
         if os.path.isfile(full_path):
-            result_section += r"\input{" + full_path + "}\n"
+            result_section += r"\input{" + full_path + "}\n\n"
 
     # Adding the bibliography content
     biblio_entry = latex.bib_entry(

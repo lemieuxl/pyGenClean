@@ -15,6 +15,7 @@
 # pyGenClean.  If not, see <http://www.gnu.org/licenses/>.
 
 
+import textwrap
 from string import Template
 
 import jinja2
@@ -127,3 +128,18 @@ def bib_entry(**kwargs):
     \textbf{${volume}}(${number}): ${pages}""")
 
     return bib_entry.substitute(kwargs)
+
+
+def wrap_lines(content, length=80):
+    """Wraps long lines to a maximum length of 80.
+
+    :param content: the content to wrap.
+    :param legnth: the maximum length to wrap the content.
+
+    :type content: string
+    :type length: int
+
+    :returns: a string containing the wrapped content.
+
+    """
+    return "\n".join(textwrap.wrap(content, length))

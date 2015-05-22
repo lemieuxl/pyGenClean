@@ -20,7 +20,6 @@ import sys
 import shutil
 import datetime
 import argparse
-import textwrap
 import subprocess
 import ConfigParser
 
@@ -380,7 +379,7 @@ def run_noCall_hetero_snps(in_prefix, in_type, out_prefix, base_dir, options):
                                      nb_all_hetero,
                                      "s" if nb_all_hetero > 0 else "")
             )
-            print >>o_file, "\n".join(textwrap.wrap(text, 80))
+            print >>o_file, latex_template.wrap_lines(text, 80)
 
     except IOError:
         msg = "{}: cannot write LaTeX summary".format(latex_file)
@@ -496,7 +495,7 @@ def run_sample_missingness(in_prefix, in_type, out_prefix, base_dir, options):
                                                latex_template.textit("i.e."),
                                                mind_value, nb_samples,
                                                "s" if nb_samples > 0 else ""))
-            print >>o_file, "\n".join(textwrap.wrap(text, 80))
+            print >>o_file, latex_template.wrap_lines(text)
 
     except IOError:
         msg = "{}: cannot write LaTeX summary".format(latex_file)
@@ -606,7 +605,7 @@ def run_snp_missingness(in_prefix, in_type, out_prefix, base_dir, options):
                                                latex_template.textit("i.e."),
                                                geno_value, nb_markers,
                                                "s" if nb_markers > 0 else ""))
-            print >>o_file, "\n".join(textwrap.wrap(text, 80))
+            print >>o_file, latex_template.wrap_lines(text)
 
     except IOError:
         msg = "{}: cannot write LaTeX summary".format(latex_file)
@@ -689,7 +688,7 @@ def run_sex_check(in_prefix, in_type, out_prefix, base_dir, options):
                 "diam, quis efficitur neque maximus et. Vestibulum commodo "
                 "mi sit amet euismod congue."
             )
-            print >>o_file, "\n".join(textwrap.wrap(text, 80))
+            print >>o_file, latex_template.wrap_lines(text)
 
     except IOError:
         msg = "{}: cannot write LaTeX summary".format(latex_file)
