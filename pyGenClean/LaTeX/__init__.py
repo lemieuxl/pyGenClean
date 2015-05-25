@@ -142,4 +142,4 @@ def wrap_lines(content, length=80):
     :returns: a string containing the wrapped content.
 
     """
-    return "\n".join(textwrap.wrap(content, length))
+    return "\n".join(textwrap.wrap(content, length, break_long_words=False))
