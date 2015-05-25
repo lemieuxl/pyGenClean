@@ -95,7 +95,8 @@ def create_report(outdirname, report_filename, **kwargs):
             #   - bibliography_content: the content of the 'bibliography'
             print >>i_file, main_template.render(
                 project_name=project_name,
-                logo_path=logo_path,
+                logo_dir=os.path.abspath(os.path.dirname(logo_path)) + "/",
+                logo_path=os.path.basename(logo_path),
                 background_content=background_section,
                 result_summaries=result_summaries,
                 conclusions_content="",
