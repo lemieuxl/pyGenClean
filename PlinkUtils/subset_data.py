@@ -1,22 +1,25 @@
 #!/usr/bin/env python2.7
-## This file is part of pyGenClean.
-## 
-## pyGenClean is free software: you can redistribute it and/or modify it under
-## the terms of the GNU General Public License as published by the Free Software
-## Foundation, either version 3 of the License, or (at your option) any later
-## version.
-## 
-## pyGenClean is distributed in the hope that it will be useful, but WITHOUT ANY
-## WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
-## A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
-## 
-## You should have received a copy of the GNU General Public License along with
-## pyGenClean.  If not, see <http://www.gnu.org/licenses/>.
+
+# This file is part of pyGenClean.
+#
+# pyGenClean is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later
+# version.
+#
+# pyGenClean is distributed in the hope that it will be useful, but WITHOUT ANY
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+# A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with
+# pyGenClean.  If not, see <http://www.gnu.org/licenses/>.
+
 
 import os
 import sys
 import argparse
 import subprocess
+
 
 def main(argString=None):
     """The main function of the modile.
@@ -32,8 +35,8 @@ def main(argString=None):
 
     .. note::
         The type of the output files are determined by the type of the input
-        files (*e.g.* if the input files are binary files, so will be the output
-        ones).
+        files (*e.g.* if the input files are binary files, so will be the
+        output ones).
 
     """
     # Getting and checking the options
@@ -44,9 +47,9 @@ def main(argString=None):
     for key, value in vars(args).iteritems():
         print "      --{} {}".format(key, value)
 
-    # Subset the data
-    print "   - Subsetting the data using Plink"
-    subset_data(args)
+#     # Subset the data
+#     print "   - Subsetting the data using Plink"
+#     subset_data(args)
 
 
 def subset_data(options):
@@ -124,9 +127,10 @@ def checkArgs(args):
     :class:`sys.stderr` and the program exists with code 1.
 
     .. note::
-        Only one operation for markers and one operation for samples can be done
-        at a time. Hence, one of ``--exclude`` or ``--extract`` can be done for
-        markers, and one of ``--remove`` or ``--keep`` can be done for samples.
+        Only one operation for markers and one operation for samples can be
+        done at a time. Hence, one of ``--exclude`` or ``--extract`` can be
+        done for markers, and one of ``--remove`` or ``--keep`` can be done for
+        samples.
 
     """
     # Check the input files
@@ -158,7 +162,8 @@ def checkArgs(args):
         raise ProgramError(msg)
 
     # Check that we have at least one of exclude, extract remove or keep
-    if args.exclude is None and args.extract is None and args.remove is None and args.keep is None:
+    if args.exclude is None and args.extract is None and \
+            args.remove is None and args.keep is None:
         msg = "needs at least one of --exclude, --extract, --remove or --keep"
         raise ProgramError(msg)
 
@@ -191,7 +196,7 @@ def checkArgs(args):
     return True
 
 
-def parseArgs(argString=None): # pragma: no cover
+def parseArgs(argString=None):  # pragma: no cover
     """Parses the command line options and arguments.
 
     :param argString: the parameters.
@@ -199,24 +204,24 @@ def parseArgs(argString=None): # pragma: no cover
     :type argString: list of string
 
     :returns: A :py:class:`argparse.Namespace` object created by the
-              :py:mod:`argparse` module. It contains the values of the different
-              options.
+              :py:mod:`argparse` module. It contains the values of the
+              different options.
 
-    ============== ====== ======================================================
+    ============== ====== =====================================================
         Options     Type                      Description
-    ============== ====== ======================================================
+    ============== ====== =====================================================
     ``--ifile``    string The input file prefix.
     ``--is-bfile`` bool   The input file is a bfile
     ``--is-tfile`` bool   The input file is a tfile
     ``--is-file``  bool   The input file is a file
     ``--exclude``  string A file containing SNPs to exclude from the data set.
     ``--extract``  string A file containing SNPs to extract from the data set.
-    ``--remove``   string A file containing samples (FID and IID) to remove from
-                          the data set.
+    ``--remove``   string A file containing samples (FID and IID) to remove
+                          from the data set.
     ``--keep``     string A file containing samples (FID and IID) to keep from
                           the data set.
     ``--out``      string The prefix of the output files.
-    ============== ====== ======================================================
+    ============== ====== =====================================================
 
     .. note::
         No option check is done here (except for the one automatically done by
@@ -234,7 +239,7 @@ def parseArgs(argString=None): # pragma: no cover
 
 class ProgramError(Exception):
     """An :py:class:`Exception` raised in case of a problem.
-    
+
     :param msg: the message to print to the user before exiting.
 
     :type msg: string
@@ -255,6 +260,7 @@ class ProgramError(Exception):
 
 
 # The parser object
+pretty_name = "Data subset"
 desc = """Subset genotype data using Plink."""
 parser = argparse.ArgumentParser(description=desc)
 
