@@ -687,14 +687,44 @@ def run_sex_check(in_prefix, in_type, out_prefix, base_dir, options):
             )
             print >>o_file, latex_template.wrap_lines(text)
 
+            # The float template
+            float_template = latex_template.jinja2_env.get_template(
+                    "float_template.tex",
+            )
+
+            if nb_problems > 0:
+                # The label and text for the table
+                table_label = (script_prefix + "_problems").replace("/", "_")
+                text = (
+                    r"Table~\ref{" + table_label + "} summarizes the gender "
+                    "problems encountered during the analysis."
+                )
+                print >>o_file, latex_template.wrap_lines(text)
+
+                # Getting the tabular template
+                tabular_template = latex_template.jinja2_env.get_template(
+                    "tabular_template.tex",
+                )
+
+                # Rendering
+                print >>o_file, float_template.render(
+                    float_type="table",
+                    float_placement="H",
+                    float_caption="Summarization of the gender problems "
+                                  "encountered during Plink's analysis.",
+                    float_label=table_label,
+                    float_content=tabular_template.render(
+                        col_alignments="llrrlr",
+                        header_data=zip(table[0], [1 for i in table[0]]),
+                        tabular_data=table[1:],
+                    ),
+                )
+
             # If there is a figure, we add it here
             if os.path.isfile(script_prefix + ".png"):
                 # Getting the templates
                 graphic_template = latex_template.jinja2_env.get_template(
                     "graphics_template.tex",
-                )
-                float_template = latex_template.jinja2_env.get_template(
-                    "float_template.tex",
                 )
 
                 # Adding the figure
@@ -763,8 +793,8 @@ def run_sex_check(in_prefix, in_type, out_prefix, base_dir, options):
                         (r"to \ref{" + fig_2 + "} " if fig_2 else "") +
                         "show" + (" " if len(figures) > 1 else "s ") + "the "
                         "log R ratio and the B allele frequency versus the "
-                        "position on chromosome X and Y for problematic "
-                        "samples."
+                        "position on chromosome X and Y for the problematic "
+                        "sample{}.".format("s" if len(figures) > 1 else "")
                     )
                     print >>o_file, latex_template.wrap_lines(text)
 
