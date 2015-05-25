@@ -838,17 +838,19 @@ def run_sex_check(in_prefix, in_type, out_prefix, base_dir, options):
     return in_prefix, required_type, latex_file, sex_check.desc
 
 
-def run_plate_bias(in_prefix, in_type, out_prefix, options):
+def run_plate_bias(in_prefix, in_type, out_prefix, base_dir, options):
     """Runs step7 (plate bias).
 
     :param in_prefix: the prefix of the input files.
     :param in_type: the type of the input files.
     :param out_prefix: the output prefix.
+    :param base_dir: the output directory.
     :param options: the options needed.
 
     :type in_prefix: string
     :type in_type: string
     :type out_prefix: string
+    :type base_dir: string
     :type options: list of strings
 
     :returns: a tuple containing the prefix of the output files (the input
@@ -865,8 +867,8 @@ def run_plate_bias(in_prefix, in_type, out_prefix, options):
         files. Hence, this function returns the input file prefix and its type.
 
     """
-    # Creating the output directory
-    os.mkdir(out_prefix)
+#     # Creating the output directory
+#     os.mkdir(out_prefix)
 
     # We know we need bfile
     required_type = "bfile"
@@ -874,8 +876,9 @@ def run_plate_bias(in_prefix, in_type, out_prefix, options):
 
     # We need to inject the name of the input file and the name of the output
     # prefix
+    script_prefix = os.path.join(out_prefix, "plate_bias")
     options += ["--{}".format(required_type), in_prefix,
-                "--out", os.path.join(out_prefix, "plate_bias")]
+                "--out", script_prefix]
 
     # We run the script
     try:
@@ -884,9 +887,35 @@ def run_plate_bias(in_prefix, in_type, out_prefix, options):
         msg = "plate_bias: {}".format(e)
         raise ProgramError(msg)
 
+    # We write a LaTeX summary
+    latex_file = os.path.join(script_prefix + ".summary.tex")
+    try:
+        with open(latex_file, "w") as o_file:
+            print >>o_file, latex_template.subsection(plate_bias.pretty_name)
+            text = (
+                "Lorem ipsum dolor sit amet, consectetur adipiscing elit. "
+                "Praesent mollis quam dui. Integer ultricies, justo laoreet "
+                "pretium malesuada, orci nulla suscipit lectus, at maximus "
+                "neque urna vel eros. Aenean luctus nisi nisl, nec efficitur "
+                "lectus feugiat vitae. Nunc eu pretium ligula. Phasellus eget "
+                "eros dui. Nunc elementum, erat at tempor vehicula, sem erat "
+                "fringilla arcu, nec molestie tortor quam in massa. Phasellus "
+                "non lacinia massa, ut malesuada lectus. Ut sed magna "
+                "pharetra, tincidunt enim vitae, vehicula lorem. In non justo "
+                "in eros pulvinar semper. Praesent luctus tempus lectus. "
+                "Donec non volutpat ex, quis maximus enim. Donec est lectus, "
+                "semper et egestas a, pellentesque vel ex. Praesent sit amet "
+                "consectetur magna, sed bibendum nunc."
+            )
+            print >>o_file, latex_template.wrap_lines(text)
+
+    except IOError:
+        msg = "{}: cannot write LaTeX summary".format(latex_file)
+        raise ProgramError(msg)
+
     # We know this step doesn't produce an new data set, so we return the old
     # prefix and the old in_type
-    return in_prefix, required_type
+    return in_prefix, required_type, latex_file, plate_bias.desc
 
 
 def run_remove_heterozygous_haploid(in_prefix, in_type, out_prefix, options):
@@ -1193,17 +1222,19 @@ def run_compare_gold_standard(in_prefix, in_type, out_prefix, options):
     return in_prefix, required_type
 
 
-def run_subset_data(in_prefix, in_type, out_prefix, options):
+def run_subset_data(in_prefix, in_type, out_prefix, base_dir, options):
     """Subsets the data.
 
     :param in_prefix: the prefix of the input files.
     :param in_type: the type of the input files.
     :param out_prefix: the output prefix.
+    :param base_dir: the output directory.
     :param options: the options needed.
 
     :type in_prefix: string
     :type in_type: string
     :type out_prefix: string
+    :type base_dir: string
     :type options: list of strings
 
     :returns: a tuple containing the prefix of the output files (the input
@@ -1219,8 +1250,11 @@ def run_subset_data(in_prefix, in_type, out_prefix, options):
         The output file type is the same as the input file type.
 
     """
-    # Creating the output directory
-    os.mkdir(out_prefix)
+#     # Creating the output directory
+#     os.mkdir(out_prefix)
+
+    # The prefix of the script
+    script_prefix = os.path.join(out_prefix, "subset")
 
     # Looking at what we have
     required_type = None
@@ -1252,8 +1286,136 @@ def run_subset_data(in_prefix, in_type, out_prefix, options):
         msg = "subset_data: {}".format(e)
         raise ProgramError(msg)
 
+    is_extract = "--extract" in options
+    is_exclude = "--exclude" in options
+    is_keep = "--keep" in options
+    is_remove = "--remove" in options
+
+    # Markers were extracted
+    nb_extract = None
+    if is_extract:
+        with open(options[options.index("--extract") + 1], "r") as i_file:
+            nb_extract = sum(1 for line in i_file)
+
+    # Markers were excluded
+    nb_exclude = None
+    if is_exclude:
+        with open(options[options.index("--exclude") + 1], "r") as i_file:
+            nb_exclude = sum(1 for line in i_file)
+
+    # Samples were kept
+    nb_keep = None
+    if is_keep:
+        with open(options[options.index("--keep") + 1], "r") as i_file:
+            nb_keep = sum(1 for line in i_file)
+
+    # Samples were removed
+    nb_remove = None
+    if is_remove:
+        with open(options[options.index("--remove") + 1], "r") as i_file:
+            nb_remove = sum(1 for line in i_file)
+
+    # Reading the log file to gather what is left
+    log_file = None
+    with open(script_prefix + ".log", "r") as i_file:
+        log_file = i_file.read()
+
+    # Checking the number of markers at the beginning
+    nb_marker_start = re.search(
+        r"(\d+) markers to be included from \[ {}".format(in_prefix),
+        log_file,
+    )
+    if nb_marker_start:
+        nb_marker_start = int(nb_marker_start.group(1))
+
+    # Checking the number of markers at the end
+    nb_marker_end = re.search(
+        r"Before frequency and genotyping pruning, there are (\d+) SNPs",
+        log_file,
+    )
+    if nb_marker_end:
+        nb_marker_end = int(nb_marker_end.group(1))
+
+    # Checking the number of samples at the beginning
+    nb_sample_start = re.search(
+        r"(\d+) individuals read from \[ {}".format(in_prefix),
+        log_file,
+    )
+    if nb_sample_start:
+        nb_sample_start = int(nb_sample_start.group(1))
+
+    # Checking the number of samples at the end
+    nb_sample_end = re.search(
+        r"(\d+) founders and (\d+) non-founders found",
+        log_file,
+    )
+    if nb_sample_end:
+        nb_sample_end = int(nb_sample_end.group(1)) + \
+                        int(nb_sample_end.group(2))
+
+    # We write a LaTeX summary
+    latex_file = os.path.join(script_prefix + ".summary.tex")
+    try:
+        with open(latex_file, "w") as o_file:
+            print >>o_file, latex_template.subsection(subset_data.pretty_name)
+            text = ""
+            if is_extract:
+                text += (
+                    "The file for marker extraction contained {:,d} marker{}. "
+                    "Out of a total of {:,d} marker{}, {:,d} "
+                    "remained. ".format(
+                        nb_extract,
+                        "s" if nb_extract > 1 else "",
+                        nb_marker_start,
+                        "s" if nb_marker_start > 1 else "",
+                        nb_marker_end,
+                    )
+                )
+            if is_exclude:
+                text += (
+                    "The file for marker exclusion contained {:,d} marker{}. "
+                    "Out of a total of {:,d} marker{}, {:,d} "
+                    "remained. ".format(
+                        nb_exclude,
+                        "s" if nb_exclude > 1 else "",
+                        nb_marker_start,
+                        "s" if nb_marker_start > 1 else "",
+                        nb_marker_end,
+                    )
+                )
+            if is_keep:
+                text += (
+                    "The file containing samples to keep contained {:,d} "
+                    "sample{}. Out of a total of {:,d} sample{}, {:,d} "
+                    "remained. ".format(
+                        nb_keep,
+                        "s" if nb_keep > 1 else "",
+                        nb_sample_start,
+                        "s" if nb_sample_start > 1 else "",
+                        nb_sample_end,
+                    )
+                )
+            if is_remove:
+                text += (
+                    "The file containing samples to remove contained {:,d} "
+                    "sample{}. Out of a total of {:,d} sample{}, {:,d} "
+                    "remained. ".format(
+                        nb_remove,
+                        "s" if nb_remove > 1 else "",
+                        nb_sample_start,
+                        "s" if nb_sample_start > 1 else "",
+                        nb_sample_end,
+                    )
+                )
+            print >>o_file, latex_template.wrap_lines(text)
+
+    except IOError:
+        msg = "{}: cannot write LaTeX summary".format(latex_file)
+        raise ProgramError(msg)
+
     # We know this step does produce a new data set (bfile), so we return it
-    return os.path.join(out_prefix, "subset"), required_type
+    return (os.path.join(out_prefix, "subset"), required_type, latex_file,
+            subset_data.desc)
 
 
 def run_command(command):
