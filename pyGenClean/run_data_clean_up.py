@@ -16,12 +16,14 @@
 
 
 import os
+import re
 import sys
 import shutil
 import datetime
 import argparse
 import subprocess
 import ConfigParser
+from glob import glob
 
 import pyGenClean
 import pyGenClean.LaTeX as latex_template
@@ -644,24 +646,150 @@ def run_sex_check(in_prefix, in_type, out_prefix, base_dir, options):
         msg = "sex_check {}".format(e)
         raise ProgramError(msg)
 
+    # Reading the problem file to gather statistics. Note that dataset without
+    # problem will only have the header line (and no data)
+    nb_problems = 0
+    table = []
+    with open(script_prefix + ".list_problem_sex", "r") as i_file:
+        # Reading the header
+        header = i_file.readline().rstrip("\r\n").split("\t")
+        table.append(header)
+
+        # Reading the rest of the data
+        for line in i_file:
+            nb_problems += 1
+            table.append(line.rstrip("\r\n").split("\t"))
+
+    # Getting the value for the maleF option
+    male_f = sex_check.parser.get_default("maleF")
+    if "--maleF" in options:
+        male_f = options[options.index("--maleF") + 1]
+
+    # Getting the value for the femaleF option
+    female_f = sex_check.parser.get_default("femaleF")
+    if "--femaleF" in options:
+        female_f = options[options.index("--femaleF") + 1]
+
     # We write a LaTeX summary
     latex_file = os.path.join(script_prefix + ".summary.tex")
     try:
         with open(latex_file, "w") as o_file:
             print >>o_file, latex_template.subsection(sex_check.pretty_name)
             text = (
-                "Lorem ipsum dolor sit amet, consectetur adipiscing elit. "
-                "Aenean imperdiet libero id laoreet vulputate. Sed pretium "
-                "malesuada sapien nec blandit. Maecenas iaculis metus "
-                "ultricies volutpat varius. Etiam vulputate nisi augue, a "
-                "dapibus turpis convallis sit amet. Fusce tempor dolor sed "
-                "nulla varius malesuada. Phasellus euismod lectus sed "
-                "velit auctor, quis viverra nulla consequat. Donec "
-                "tincidunt viverra nisi ut efficitur. Sed ultrices nisl "
-                "diam, quis efficitur neque maximus et. Vestibulum commodo "
-                "mi sit amet euismod congue."
+                "Using $F$ thresholds of {male_f} and {female_f} for males "
+                "and females respectively, {nb_problems:,d} sample{plural} "
+                "had gender problem according to Plink.".format(
+                    male_f=male_f,
+                    female_f=female_f,
+                    nb_problems=nb_problems,
+                    plural="s" if nb_problems > 1 else "",
+                )
             )
             print >>o_file, latex_template.wrap_lines(text)
+
+            # If there is a figure, we add it here
+            if os.path.isfile(script_prefix + ".png"):
+                # Getting the templates
+                graphic_template = latex_template.jinja2_env.get_template(
+                    "graphics_template.tex",
+                )
+                float_template = latex_template.jinja2_env.get_template(
+                    "float_template.tex",
+                )
+
+                # Adding the figure
+                text = (
+                    r"Figure~\ref{" + script_prefix.replace("/", "_") + "} "
+                    r"shows the $\bar{y}$ intensities versus the $\bar{x}$ "
+                    "intensities for each samples. Problematic samples are "
+                    "shown using triangles."
+                )
+                print >>o_file, latex_template.wrap_lines(text)
+
+                # Getting the paths
+                graphics_path, path = os.path.split(script_prefix + ".png")
+                graphics_path = os.path.abspath(graphics_path)
+
+                print >>o_file, float_template.render(
+                    float_type="figure",
+                    float_placement="H",
+                    float_caption="Gender check using Plink. Mean $x$ and $y$ "
+                                  "intensities are shown for each sample. "
+                                  "Males are shown in blue, and females in "
+                                  "red. Triangles show problematic samples "
+                                  "(green for males, mauve for females). "
+                                  "Unknown gender are shown in gray.",
+                    float_label=script_prefix.replace("/", "_"),
+                    float_content=graphic_template.render(
+                        width=r"0.8\textwidth",
+                        graphics_path=graphics_path + "/",
+                        path=path,
+                    ),
+                )
+
+            # If there is a 'sexcheck.LRR_BAF' directory, then there are LRR
+            # and BAF plots.
+            if os.path.isdir(script_prefix + ".LRR_BAF"):
+                figures = glob(
+                    os.path.join(script_prefix + ".LRR_BAF", "*.png"),
+                )
+                if len(figures):
+                    # Getting the sample IDs
+                    sample_ids = [
+                        re.search(
+                            "^baf_lrr_(\S+)_lrr_baf.png$",
+                            os.path.basename(figure),
+                        ) for figure in figures
+                    ]
+                    sample_ids = [
+                        "unknown sample" if not sample else sample.group(1)
+                        for sample in sample_ids
+                    ]
+
+                    # Getting the labels
+                    labels = [
+                        (script_prefix + "_baf_lrr_" +
+                         os.path.splitext(sample)[0]).replace("/", "_")
+                        for sample in sample_ids
+                    ]
+
+                    fig_1 = labels[0]
+                    fig_2 = ""
+                    if len(figures) > 1:
+                        fig_2 = labels[-1]
+                    text = (
+                        "Figure" + ("s" if len(figures) > 1 else "") +
+                        r"~\ref{" + fig_1 + "} " +
+                        (r"to \ref{" + fig_2 + "} " if fig_2 else "") +
+                        "show" + (" " if len(figures) > 1 else "s ") + "the "
+                        "log R ratio and the B allele frequency versus the "
+                        "position on chromosome X and Y for problematic "
+                        "samples."
+                    )
+                    print >>o_file, latex_template.wrap_lines(text)
+
+                    zipped = zip(figures, sample_ids, labels)
+                    for figure, sample_id, label in zipped:
+                        sample_id = sample_id.replace("_", r"\_")
+
+                        # Getting the paths
+                        graphics_path, path = os.path.split(figure)
+                        graphics_path = os.path.abspath(graphics_path)
+
+                        print >>o_file, float_template.render(
+                            float_type="figure",
+                            float_placement="H",
+                            float_caption="Plots showing the log R ratio and "
+                                          "the B allele frequency for "
+                                          "chromosome X and Y (on the left "
+                                          "and right, respectively) for "
+                                          "sample {}.".format(sample_id),
+                            float_label=label,
+                            float_content=graphic_template.render(
+                                width=r"\textwidth",
+                                graphics_path=graphics_path + "/",
+                                path=path),
+                        )
 
     except IOError:
         msg = "{}: cannot write LaTeX summary".format(latex_file)
