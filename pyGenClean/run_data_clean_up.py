@@ -711,23 +711,20 @@ def run_sex_check(in_prefix, in_type, out_prefix, base_dir, options):
                 )
                 print >>o_file, latex_template.wrap_lines(text)
 
-                # Getting the tabular template
-                tabular_template = latex_template.jinja2_env.get_template(
-                    "tabular_template.tex",
+                # Getting the template
+                longtable_template = latex_template.jinja2_env.get_template(
+                    "longtable_template.tex",
                 )
 
                 # Rendering
-                print >>o_file, float_template.render(
-                    float_type="table",
-                    float_placement="H",
-                    float_caption="Summarization of the gender problems "
+                print >>o_file, longtable_template.render(
+                    table_caption="Summarization of the gender problems "
                                   "encountered during Plink's analysis.",
-                    float_label=table_label,
-                    float_content=tabular_template.render(
-                        col_alignments="llrrlr",
-                        header_data=zip(table[0], [1 for i in table[0]]),
-                        tabular_data=table[1:],
-                    ),
+                    table_label=table_label,
+                    nb_col=len(table[1]),
+                    col_alignments="llrrlr",
+                    header_data=zip(table[0], [1 for i in table[0]]),
+                    tabular_data=table[1:],
                 )
 
             # If there is a figure, we add it here
