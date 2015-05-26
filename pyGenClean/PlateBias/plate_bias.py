@@ -1,17 +1,19 @@
 #!/usr/bin/env python2.7
-## This file is part of pyGenClean.
-## 
-## pyGenClean is free software: you can redistribute it and/or modify it under
-## the terms of the GNU General Public License as published by the Free Software
-## Foundation, either version 3 of the License, or (at your option) any later
-## version.
-## 
-## pyGenClean is distributed in the hope that it will be useful, but WITHOUT ANY
-## WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
-## A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
-## 
-## You should have received a copy of the GNU General Public License along with
-## pyGenClean.  If not, see <http://www.gnu.org/licenses/>.
+
+# This file is part of pyGenClean.
+#
+# pyGenClean is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later
+# version.
+#
+# pyGenClean is distributed in the hope that it will be useful, but WITHOUT ANY
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+# A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with
+# pyGenClean.  If not, see <http://www.gnu.org/licenses/>.
+
 
 import os
 import sys
@@ -20,6 +22,7 @@ import argparse
 import subprocess
 
 from PlinkUtils import createRowFromPlinkSpacedOutput
+
 
 def main(argString=None):
     """The main function of this module.
@@ -45,18 +48,18 @@ def main(argString=None):
     print "   - Options used:"
     for key, value in vars(args).iteritems():
         print "      --{} {}".format(key, value)
-    
-    # Run plink
-    print "   - Running Plink to check the plate bias"
-    executePlateBiasAnalysis(args)
 
-    # Extract significant SNPs
-    print "   - Extracting significant SNPs"
-    extractSignificantSNPs(args.out)
-
-    # Remove significant SNPs using plink
-    print "   - Computing frequency of significant SNPs"
-    computeFrequencyOfSignificantSNPs(args)
+#     # Run plink
+#     print "   - Running Plink to check the plate bias"
+#     executePlateBiasAnalysis(args)
+#
+#     # Extract significant SNPs
+#     print "   - Extracting significant SNPs"
+#     extractSignificantSNPs(args.out)
+#
+#     # Remove significant SNPs using plink
+#     print "   - Computing frequency of significant SNPs"
+#     computeFrequencyOfSignificantSNPs(args)
 
 
 def extractSignificantSNPs(prefix):
@@ -80,11 +83,12 @@ def extractSignificantSNPs(prefix):
                 headerIndex = None
                 for line in inputFile:
                     row = createRowFromPlinkSpacedOutput(line)
-                    
+
                     if headerIndex is None:
                         # This is the header line
-                        headerIndex = dict([(row[i], i) \
-                                                for i in xrange(len(row))])
+                        headerIndex = dict([
+                            (row[i], i) for i in xrange(len(row))
+                        ])
                     else:
                         snpName = row[headerIndex["SNP"]]
                         snpNames.add(snpName)
@@ -123,7 +127,7 @@ def computeFrequencyOfSignificantSNPs(options):
                     options.out + ".significant_SNPs.txt", "--freq", "--out",
                     options.out + ".significant_SNPs"]
     runCommand(plinkCommand)
-    
+
 
 def executePlateBiasAnalysis(options):
     """Execute the plate bias analysis with Plink.
@@ -191,7 +195,7 @@ def checkArgs(args):
     return True
 
 
-def parseArgs(argString=None): # pragma: no cover
+def parseArgs(argString=None):  # pragma: no cover
     """Parses the command line options and arguments.
 
     :param argString: the options.
@@ -199,8 +203,8 @@ def parseArgs(argString=None): # pragma: no cover
     :type argString: list of strings
 
     :returns: A :py:class:`argparse.Namespace` object created by the
-              :py:mod:`argparse` module. It contains the values of the different
-              options.
+              :py:mod:`argparse` module. It contains the values of the
+              different options.
 
     ================ ====== ==================================================
         Options       Type                    Description
@@ -229,7 +233,7 @@ def parseArgs(argString=None): # pragma: no cover
 
 class ProgramError(Exception):
     """An :py:class:`Exception` raised in case of a problem.
-    
+
     :param msg: the message to print to the user before exiting.
 
     :type msg: string
@@ -250,6 +254,7 @@ class ProgramError(Exception):
 
 
 # The parser object
+pretty_name = "Plate bias"
 desc = """Check for plate bias."""
 parser = argparse.ArgumentParser(description=desc)
 
@@ -260,20 +265,20 @@ group.add_argument("--bfile", type=str, metavar="FILE", required=True,
                          "files by appending the prefix to the .bim, .bed "
                          "and .fam files, respectively."))
 group.add_argument("--loop-assoc", type=str, metavar="FILE", required=True,
-                    help=("The file containing the plate organization of "
-                          "each samples. Must contains three column (with no "
-                          "header): famID, indID and plateName."))
+                   help=("The file containing the plate organization of "
+                         "each samples. Must contains three column (with no "
+                         "header): famID, indID and plateName."))
 # The options
 group = parser.add_argument_group("Options")
 group.add_argument("--pfilter", type=float, metavar="FLOAT", default=1e-7,
-                    help=("The significance threshold used for the plate "
-                          "effect. [default: %(default).1e]"))
+                   help=("The significance threshold used for the plate "
+                         "effect. [default: %(default).1e]"))
 # The OUTPUT files
 group = parser.add_argument_group("Output File")
 group.add_argument("--out", type=str, metavar="FILE",
-                    default="plate_bias",
-                    help=("The prefix of the output files. [default: "
-                          "%(default)s]"))
+                   default="plate_bias",
+                   help=("The prefix of the output files. [default: "
+                         "%(default)s]"))
 
 if __name__ == "__main__":
     try:

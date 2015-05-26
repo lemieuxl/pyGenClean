@@ -24,6 +24,7 @@ import argparse
 import subprocess
 import ConfigParser
 from glob import glob
+from collections import namedtuple
 
 import pyGenClean
 import pyGenClean.LaTeX as latex_template
@@ -44,6 +45,7 @@ import pyGenClean.HeteroHap.remove_heterozygous_haploid \
                                                 as remove_heterozygous_haploid
 
 import PlinkUtils.subset_data as subset_data
+from PlinkUtils import createRowFromPlinkSpacedOutput
 
 
 # Getting the version
@@ -887,27 +889,118 @@ def run_plate_bias(in_prefix, in_type, out_prefix, base_dir, options):
         msg = "plate_bias: {}".format(e)
         raise ProgramError(msg)
 
+    # Reading the p values
+    p_values = {}
+    MarkerInfo = namedtuple("MarkerInfo", ["chrom", "pos", "p", "odds"])
+    for filename in glob(script_prefix + "*.fisher"):
+        with open(filename, "r") as i_file:
+            header = {
+                name: i for i, name in
+                enumerate(createRowFromPlinkSpacedOutput(i_file.readline()))
+            }
+            for required_col in ["CHR", "SNP", "BP", "P", "OR"]:
+                if required_col not in header:
+                    msg = "{}: missing column {}".format(filename,
+                                                         required_col)
+                    raise ProgramError(msg)
+
+            for line in i_file:
+                row = createRowFromPlinkSpacedOutput(line)
+                p_values[row[header["SNP"]]] = MarkerInfo(
+                    chrom=row[header["CHR"]],
+                    pos=row[header["BP"]],
+                    p=row[header["P"]],
+                    odds=row[header["OR"]],
+                )
+
+    # Reading the output file containing the markers and frequency
+    table = [["chrom", "pos", "name", "maf", "p", "odds"]]
+    with open(script_prefix + ".significant_SNPs.frq", "r") as i_file:
+        header = {
+            name: i for i, name in
+            enumerate(createRowFromPlinkSpacedOutput(i_file.readline()))
+        }
+        for required_col in ["CHR", "SNP", "MAF"]:
+            if required_col not in header:
+                msg = "{}: missing column {}".format(
+                    script_prefix + ".significant_SNPs.frq",
+                    required_col,
+                )
+                raise ProgramError(msg)
+
+        for line in i_file:
+            row = createRowFromPlinkSpacedOutput(line)
+            marker_id = row[header["SNP"]]
+
+            # Some assertions
+            assert marker_id in p_values, "Missing data"
+            assert row[header["CHR"]] == p_values[marker_id].chrom, "Invalid"
+
+            table.append([
+                row[header["CHR"]],
+                p_values[marker_id].pos,
+                marker_id,
+                row[header["MAF"]],
+                latex_template.format_numbers(p_values[marker_id].p),
+                p_values[marker_id].odds,
+            ])
+
+    # Some assertions
+    assert len(p_values) == len(table) - 1, "Missing data"
+
+    # Getting the p value threshold
+    p_threshold = str(plate_bias.parser.get_default("pfilter"))
+    if "--pfilter" in options:
+        p_threshold = str(options[options.index("--pfilter") + 1])
+
     # We write a LaTeX summary
     latex_file = os.path.join(script_prefix + ".summary.tex")
     try:
         with open(latex_file, "w") as o_file:
             print >>o_file, latex_template.subsection(plate_bias.pretty_name)
             text = (
-                "Lorem ipsum dolor sit amet, consectetur adipiscing elit. "
-                "Praesent mollis quam dui. Integer ultricies, justo laoreet "
-                "pretium malesuada, orci nulla suscipit lectus, at maximus "
-                "neque urna vel eros. Aenean luctus nisi nisl, nec efficitur "
-                "lectus feugiat vitae. Nunc eu pretium ligula. Phasellus eget "
-                "eros dui. Nunc elementum, erat at tempor vehicula, sem erat "
-                "fringilla arcu, nec molestie tortor quam in massa. Phasellus "
-                "non lacinia massa, ut malesuada lectus. Ut sed magna "
-                "pharetra, tincidunt enim vitae, vehicula lorem. In non justo "
-                "in eros pulvinar semper. Praesent luctus tempus lectus. "
-                "Donec non volutpat ex, quis maximus enim. Donec est lectus, "
-                "semper et egestas a, pellentesque vel ex. Praesent sit amet "
-                "consectetur magna, sed bibendum nunc."
+                "After performing the plate bias analysis using Plink, a "
+                "total of {:,d} marker{} had a significant result ({} a value "
+                "less than {}).".format(
+                    len(p_values),
+                    "s" if len(p_values) > 1 else "",
+                    r"\textit{i.e.}",
+                    latex_template.format_numbers(p_threshold),
+                )
             )
             print >>o_file, latex_template.wrap_lines(text)
+
+            if len(p_values) > 0:
+                table_label = script_prefix.replace("/", "_") + "_plate_bias"
+                text = (
+                    r"Table~\ref{" + table_label + "} summarizes the plate "
+                    "bias results."
+                )
+                print >>o_file, latex_template.wrap_lines(text)
+
+                # Getting the template
+                longtable_template = latex_template.jinja2_env.get_template(
+                    "longtable_template.tex",
+                )
+
+                # The table caption
+                table_caption = (
+                    "Summary of the plate bias analysis performed by Plink. "
+                    "Only significant marker{} {} shown (threshold of "
+                    "{}).".format(
+                        "s" if len(p_values) > 1 else "",
+                        "are" if len(p_values) > 1 else "is",
+                        latex_template.format_numbers(p_threshold),
+                    )
+                )
+                print >>o_file, longtable_template.render(
+                    table_caption=table_caption,
+                    table_label=table_label,
+                    nb_col=len(table[1]),
+                    col_alignments="rrlrrr",
+                    header_data=zip(table[0], [1 for i in table[0]]),
+                    tabular_data=table[1:],
+                )
 
     except IOError:
         msg = "{}: cannot write LaTeX summary".format(latex_file)
