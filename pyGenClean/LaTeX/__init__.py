@@ -15,6 +15,7 @@
 # pyGenClean.  If not, see <http://www.gnu.org/licenses/>.
 
 
+import re
 import textwrap
 from string import Template
 
@@ -143,3 +144,26 @@ def wrap_lines(content, length=80):
 
     """
     return "\n".join(textwrap.wrap(content, length, break_long_words=False))
+
+
+def format_numbers(number):
+    """Formats number in the scientific notation for LaTeX.
+
+    :param number: the number to format.
+    :type number: string
+
+    :returns: a string containing the scientific notation of the number.
+
+    """
+    # Matching
+    r = re.match(r"^([-+]?\d*\.\d+|\d+)e([-+]?\d+)$", number)
+
+    # Nothing matched
+    if not r:
+        return number
+
+    # Getting the coefficient and the exponent
+    coefficient = r.group(1)
+    exponent = int(r.group(2))
+
+    return "$" + coefficient + r"\times 10^{" + str(exponent) + "}$"
