@@ -981,10 +981,38 @@ def run_plate_bias(in_prefix, in_type, out_prefix, base_dir, options):
         msg = "plate_bias: {}".format(e)
         raise ProgramError(msg)
 
+    # Reading the MAF before hand
+    maf = {}
+    with open(script_prefix + ".significant_SNPs.frq", "r") as i_file:
+        header = {
+            name: i for i, name in
+            enumerate(createRowFromPlinkSpacedOutput(i_file.readline()))
+        }
+        for required_col in ("CHR", "SNP", "MAF"):
+            if required_col not in header:
+                msg = "{}: missing column {}".format(
+                    script_prefix + ".significant_SNPs.frq",
+                    required_col,
+                )
+                raise ProgramError(msg)
+
+        for line in i_file:
+            row = createRowFromPlinkSpacedOutput(line)
+            marker_id = row[header["SNP"]]
+            maf[(row[header["CHR"]], row[header["SNP"]])] = row[header["MAF"]]
+
     # Reading the p values
-    p_values = {}
-    MarkerInfo = namedtuple("MarkerInfo", ["chrom", "pos", "p", "odds"])
+    table = [["chrom", "pos", "name", "maf", "p", "odds", "plate"]]
     for filename in glob(script_prefix + "*.fisher"):
+        plate_name = re.search(
+            r"/plate_bias\.(\S+)\.assoc\.fisher$",
+            filename,
+        )
+        if plate_name:
+            plate_name = latex_template.sanitize_tex(plate_name.group(1))
+        else:
+            plate_name = "unknown"
+
         with open(filename, "r") as i_file:
             header = {
                 name: i for i, name in
@@ -998,47 +1026,16 @@ def run_plate_bias(in_prefix, in_type, out_prefix, base_dir, options):
 
             for line in i_file:
                 row = createRowFromPlinkSpacedOutput(line)
-                p_values[row[header["SNP"]]] = MarkerInfo(
-                    chrom=row[header["CHR"]],
-                    pos=row[header["BP"]],
-                    p=row[header["P"]],
-                    odds=row[header["OR"]],
-                )
 
-    # Reading the output file containing the markers and frequency
-    table = [["chrom", "pos", "name", "maf", "p", "odds"]]
-    with open(script_prefix + ".significant_SNPs.frq", "r") as i_file:
-        header = {
-            name: i for i, name in
-            enumerate(createRowFromPlinkSpacedOutput(i_file.readline()))
-        }
-        for required_col in ["CHR", "SNP", "MAF"]:
-            if required_col not in header:
-                msg = "{}: missing column {}".format(
-                    script_prefix + ".significant_SNPs.frq",
-                    required_col,
-                )
-                raise ProgramError(msg)
-
-        for line in i_file:
-            row = createRowFromPlinkSpacedOutput(line)
-            marker_id = row[header["SNP"]]
-
-            # Some assertions
-            assert marker_id in p_values, "Missing data"
-            assert row[header["CHR"]] == p_values[marker_id].chrom, "Invalid"
-
-            table.append([
-                row[header["CHR"]],
-                p_values[marker_id].pos,
-                marker_id,
-                row[header["MAF"]],
-                latex_template.format_numbers(p_values[marker_id].p),
-                p_values[marker_id].odds,
-            ])
-
-    # Some assertions
-    assert len(p_values) == len(table) - 1, "Missing data"
+                table.append([
+                    row[header["CHR"]],
+                    row[header["BP"]],
+                    latex_template.sanitize_tex(row[header["SNP"]]),
+                    maf.get((row[header["CHR"]], row[header["SNP"]]), "N/A"),
+                    latex_template.format_numbers(row[header["P"]]),
+                    row[header["OR"]],
+                    plate_name,
+                ])
 
     # Getting the p value threshold
     p_threshold = str(plate_bias.parser.get_default("pfilter"))
@@ -1054,15 +1051,15 @@ def run_plate_bias(in_prefix, in_type, out_prefix, base_dir, options):
                 "After performing the plate bias analysis using Plink, a "
                 "total of {:,d} marker{} had a significant result ({} a value "
                 "less than {}).".format(
-                    len(p_values),
-                    "s" if len(p_values) > 1 else "",
+                    len(table) - 1,
+                    "s" if len(table) - 1 > 1 else "",
                     r"\textit{i.e.}",
                     latex_template.format_numbers(p_threshold),
                 )
             )
             print >>o_file, latex_template.wrap_lines(text)
 
-            if len(p_values) > 0:
+            if len(table) - 1 > 0:
                 table_label = script_prefix.replace("/", "_") + "_plate_bias"
                 text = (
                     r"Table~\ref{" + table_label + "} summarizes the plate "
@@ -1080,8 +1077,8 @@ def run_plate_bias(in_prefix, in_type, out_prefix, base_dir, options):
                     "Summary of the plate bias analysis performed by Plink. "
                     "Only significant marker{} {} shown (threshold of "
                     "{}).".format(
-                        "s" if len(p_values) > 1 else "",
-                        "are" if len(p_values) > 1 else "is",
+                        "s" if len(table) - 1 > 1 else "",
+                        "are" if len(table) - 1 > 1 else "is",
                         latex_template.format_numbers(p_threshold),
                     )
                 )
@@ -1089,7 +1086,7 @@ def run_plate_bias(in_prefix, in_type, out_prefix, base_dir, options):
                     table_caption=table_caption,
                     table_label=table_label,
                     nb_col=len(table[1]),
-                    col_alignments="rrlrrr",
+                    col_alignments="rrlrrrl",
                     header_data=zip(table[0], [1 for i in table[0]]),
                     tabular_data=table[1:],
                 )
