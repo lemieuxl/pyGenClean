@@ -15,6 +15,7 @@
 # pyGenClean.  If not, see <http://www.gnu.org/licenses/>.
 
 
+import os
 import re
 import textwrap
 from string import Template
@@ -167,3 +168,19 @@ def format_numbers(number):
     exponent = int(r.group(2))
 
     return "$" + coefficient + r"\times 10^{" + str(exponent) + "}$"
+
+
+def sanitize_fig_name(name):
+    """Sanitizes the name of a file (for including graphics in LaTeX).
+
+    :param name: the name of the file to sanitize.
+    :type name: string
+
+    :returns: the sanitized name.
+
+    For example, if the name of the graphic file is ``test.1.png``, the
+    sanitized version of it for LaTeX is ``{test.1}.png``.
+
+    """
+    name, extension = os.path.splitext(name)
+    return "{" + name + "}" + extension
