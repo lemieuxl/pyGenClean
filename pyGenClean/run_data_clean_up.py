@@ -656,6 +656,68 @@ def run_sex_check(in_prefix, in_type, out_prefix, base_dir, options):
         msg = "sex_check {}".format(e)
         raise ProgramError(msg)
 
+    # Reading the hetero file on X
+    hetero = {}
+    with open(script_prefix + ".chr23_recodeA.raw.hetero", "r") as i_file:
+        header = {
+            name: i for i, name in
+            enumerate(createRowFromPlinkSpacedOutput(i_file.readline()))
+        }
+        for required_col in ("PED", "ID", "HETERO"):
+            if required_col not in header:
+                msg = "{}: no column named {}".format(
+                    script_prefix + ".chr23_recodeA.raw.hetero",
+                    required_col,
+                )
+                raise ProgramError(msg)
+
+        # Reading the data
+        for line in i_file:
+            row = line.rstrip("\r\n").split("\t")
+            famid = row[header["PED"]]
+            indid = row[header["ID"]]
+
+            # Formatting the hetero value
+            het = None
+            try:
+                het = "{:.4f}".format(float(row[header["HETERO"]]))
+            except:
+                het = "N/A"
+
+            hetero[(famid, indid)] = het
+
+    # Reading the number of no call on Y
+    nb_no_call = {}
+    with open(script_prefix + ".chr24_recodeA.raw.noCall", "r") as i_file:
+        header = {
+            name: i for i, name in
+            enumerate(createRowFromPlinkSpacedOutput(i_file.readline()))
+        }
+        for required_col in ("PED", "ID", "nbGeno", "nbNoCall"):
+            if required_col not in header:
+                msg = "{}: no column named {}".format(
+                    script_prefix + ".chr24_recodeA.raw.noCall",
+                    required_col,
+                )
+                raise ProgramError(msg)
+
+        # Reading the data
+        for line in i_file:
+            row = line.rstrip("\r\n").split("\t")
+            famid = row[header["PED"]]
+            indid = row[header["ID"]]
+
+            # Getting the statistics
+            nb_geno = row[header["nbGeno"]]
+            nb_nocall = row[header["nbNoCall"]]
+
+            percent = None
+            try:
+                percent = "{:.4f}".format(float(nb_nocall) / float(nb_geno))
+            except:
+                percent = "N/A"
+            nb_no_call[(famid, indid)] = percent
+
     # Reading the problem file to gather statistics. Note that dataset without
     # problem will only have the header line (and no data)
     nb_problems = 0
@@ -664,11 +726,37 @@ def run_sex_check(in_prefix, in_type, out_prefix, base_dir, options):
         # Reading the header
         header = i_file.readline().rstrip("\r\n").split("\t")
         table.append(header)
+        header = {name: i for i, name in enumerate(header)}
+        for required_col in ("FID", "IID"):
+            if required_col not in header:
+                msg = "{}: no column named {}".format(
+                    script_prefix + ".list_problem_sex",
+                    required_col,
+                )
+                raise ProgramError(msg)
+
+        # Adding the missing column name
+        table[-1].append("HET")
+        table[-1].append(r"\%NOCALL")
 
         # Reading the rest of the data
         for line in i_file:
             nb_problems += 1
-            table.append(line.rstrip("\r\n").split("\t"))
+
+            # Sanitizing
+            row = line.rstrip("\r\n").split("\t")
+            for col in ("FID", "IID"):
+                row[header[col]] = latex_template.sanitize_tex(
+                    row[header[col]]
+                )
+
+            table.append(row)
+            table[-1].append(
+                hetero.get((row[header["FID"]], row[header["IID"]]), "N/A"),
+            )
+            table[-1].append(
+                nb_no_call.get((row[header["FID"]], row[header["IID"]]), "N/A")
+            )
 
     # Getting the value for the maleF option
     male_f = sex_check.parser.get_default("maleF")
@@ -719,10 +807,14 @@ def run_sex_check(in_prefix, in_type, out_prefix, base_dir, options):
                 # Rendering
                 print >>o_file, longtable_template.render(
                     table_caption="Summarization of the gender problems "
-                                  "encountered during Plink's analysis.",
+                                  "encountered during Plink's analysis. "
+                                  "HET is the heterozygosity rate on the X "
+                                  r"chromosome. \%NOCALL is the percentage of "
+                                  "no calls on the Y chromosome.",
                     table_label=table_label,
                     nb_col=len(table[1]),
-                    col_alignments="llrrlr",
+                    col_alignments="llrrlrrrr",
+                    text_size="scriptsize",
                     header_data=zip(table[0], [1 for i in table[0]]),
                     tabular_data=table[1:],
                 )
