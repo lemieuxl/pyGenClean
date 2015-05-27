@@ -1132,6 +1132,11 @@ def run_find_related_samples(in_prefix, in_type, out_prefix, base_dir,
 
     # Reading file containing samples that should be discarded
     #   - ibs.discarded_related_individuals
+    discarded_samples = None
+    with open(script_prefix + ".discarded_related_individuals", "r") as i_file:
+        discarded_samples = {
+            tuple(i.rstrip("\r\n").split("\t")) for i in i_file
+        }
 
     # We write a LaTeX summary
     latex_file = os.path.join(script_prefix + ".summary.tex")
@@ -1141,11 +1146,16 @@ def run_find_related_samples(in_prefix, in_type, out_prefix, base_dir,
                 find_related_samples.pretty_name,
             )
             text = (
-                "According to Plink relatedness analysis, {} unique sample{} "
-                "{} related to at least one other sample.".format(
+                "According to Plink relatedness analysis, {:,d} unique "
+                "sample{} {} related to at least one other sample. A total of "
+                "{:,d} sample{} {} randomly selected for downstream exclusion "
+                "from the dataset.".format(
                     len(related_samples),
                     "s" if len(related_samples) > 1 else "",
                     "were" if len(related_samples) > 1 else "was",
+                    len(discarded_samples),
+                    "s" if len(discarded_samples) > 1 else "",
+                    "were" if len(discarded_samples) > 1 else "was",
                 )
             )
             print >>o_file, latex_template.wrap_lines(text)
