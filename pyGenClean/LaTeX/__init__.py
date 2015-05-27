@@ -194,14 +194,20 @@ def sanitize_fig_name(name):
 
 def sanitize_tex(original_text):
     """Sanitize TeX text.
-    Args:
-        original_text (str): the text to sanitize for LaTeX
+
+    :param original_text: the text to sanitize for LaTeX.
+
+    :type original_text: string
+
+    :returns: the sanitize text.
+
     Text is sanitized by following these steps:
     1. Replaces ``\\\\`` by ``\\textbackslash``
     2. Escapes certain characters (such as ``$``, ``%``, ``_``, ``}``, ``{``,
        ``&`` and ``#``) by adding a backslash (*e.g.* from ``&`` to ``\\&``).
     3. Replaces special characters such as ``~`` by the LaTeX equivalent
        (*e.g.* from ``~`` to ``$\\sim$``).
+
     """
     # The backslashes
     sanitized_tex = original_text.replace("\\", r"\textbackslash ")
