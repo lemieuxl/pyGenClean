@@ -1,23 +1,26 @@
 #!/usr/bin/env python2.7
-## This file is part of pyGenClean.
-## 
-## pyGenClean is free software: you can redistribute it and/or modify it under
-## the terms of the GNU General Public License as published by the Free Software
-## Foundation, either version 3 of the License, or (at your option) any later
-## version.
-## 
-## pyGenClean is distributed in the hope that it will be useful, but WITHOUT ANY
-## WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
-## A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
-## 
-## You should have received a copy of the GNU General Public License along with
-## pyGenClean.  If not, see <http://www.gnu.org/licenses/>.
+
+# This file is part of pyGenClean.
+#
+# pyGenClean is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later
+# version.
+#
+# pyGenClean is distributed in the hope that it will be useful, but WITHOUT ANY
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+# A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with
+# pyGenClean.  If not, see <http://www.gnu.org/licenses/>.
+
 
 import os
 import sys
 import gzip
 import random
 import argparse
+
 
 def main(argString=None):
     """The main function of the module.
@@ -56,8 +59,10 @@ def merge_related_samples(file_name, out_prefix, no_status):
     if file_name.endswith(".gz"):
         open_function = gzip.open
     with open_function(file_name, 'rb') as input_file:
-        header_index = dict([(col_name, i) for i, col_name in
-                                enumerate(input_file.readline().rstrip("\r\n").split("\t"))])
+        header_index = dict([
+            (col_name, i) for i, col_name in
+            enumerate(input_file.readline().rstrip("\r\n").split("\t"))
+        ])
         for col_name in {"FID1", "IID1", "FID2", "IID2"}:
             if col_name not in header_index:
                 msg = "{}: no column named {}".format(file_name, col_name)
@@ -77,7 +82,7 @@ def merge_related_samples(file_name, out_prefix, no_status):
                 if len(tmp_set & samples_sets[i]) > 0:
                     # We have a match
                     samples_sets[i] |= tmp_set
-                    match=True
+                    match = True
             if not match:
                 # We did not find a match, so we add
                 samples_sets.append(tmp_set)
@@ -144,10 +149,13 @@ def merge_related_samples(file_name, out_prefix, no_status):
 
     # Printing the files
     try:
-        with open(out_prefix + ".chosen_related_individuals", "w") as chosen_file:
+        filename = out_prefix + ".chosen_related_individuals"
+        with open(filename, "w") as chosen_file:
             for sample_id in chosen_samples:
                 print >>chosen_file, "\t".join(sample_id)
-        with open(out_prefix + ".discarded_related_individuals", "w") as discarded_file:
+
+        filename = out_prefix + ".discarded_related_individuals"
+        with open(filename, "w") as discarded_file:
             for sample_id in remaining_samples:
                 print >>discarded_file, "\t".join(sample_id)
     except IOError:
@@ -179,7 +187,7 @@ def checkArgs(args):
     return True
 
 
-def parseArgs(argString=None): # pragma: no cover
+def parseArgs(argString=None):  # pragma: no cover
     """Parses the command line options and arguments.
 
     :param argString: the options.
@@ -187,8 +195,8 @@ def parseArgs(argString=None): # pragma: no cover
     :type argString: list of strings
 
     :returns: A :py:class:`argparse.Namespace` object created by the
-              :py:mod:`argparse` module. It contains the values of the different
-              options.
+              :py:mod:`argparse` module. It contains the values of the
+              different options.
 
     ================= ====== ================================================
          Options       Type                  Description
@@ -215,7 +223,7 @@ def parseArgs(argString=None): # pragma: no cover
 
 class ProgramError(Exception):
     """An :py:class:`Exception` raised in case of a problem.
-    
+
     :param msg: the message to print to the user before exiting.
 
     :type msg: string

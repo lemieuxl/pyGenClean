@@ -1,17 +1,19 @@
 #!/usr/bin/env python2.7
-## This file is part of pyGenClean.
-## 
-## pyGenClean is free software: you can redistribute it and/or modify it under
-## the terms of the GNU General Public License as published by the Free Software
-## Foundation, either version 3 of the License, or (at your option) any later
-## version.
-## 
-## pyGenClean is distributed in the hope that it will be useful, but WITHOUT ANY
-## WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
-## A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
-## 
-## You should have received a copy of the GNU General Public License along with
-## pyGenClean.  If not, see <http://www.gnu.org/licenses/>.
+
+# This file is part of pyGenClean.
+#
+# pyGenClean is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later
+# version.
+#
+# pyGenClean is distributed in the hope that it will be useful, but WITHOUT ANY
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+# A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with
+# pyGenClean.  If not, see <http://www.gnu.org/licenses/>.
+
 
 import os
 import sys
@@ -23,7 +25,9 @@ from collections import defaultdict
 
 import numpy as npy
 from PlinkUtils import createRowFromPlinkSpacedOutput
-from pyGenClean.RelatedSamples.merge_related_samples import merge_related_samples
+from pyGenClean.RelatedSamples.merge_related_samples \
+                                                import merge_related_samples
+
 
 def main(argString=None):
     """The main function of this module.
@@ -58,47 +62,47 @@ def main(argString=None):
     for key, value in vars(args).iteritems():
         print "      --{} {}".format(key, value)
 
-    # Run plink
-    print "   - Running Plink to extract SNPs according to LD"
-    snpsToExtract = selectSNPsAccordingToLD(args)
-
-    # Check there is enough SNP in the output file
-    print "   - Checking if there are enough extracted SNP"
-    if not checkNumberOfSNP(snpsToExtract, args.min_nb_snp):
-        # There are not enough markers
-        print "      - There are not enough SNPs"
-        print "        Stopping now"
-
-    else:
-        # Extract the SNPs
-        print "   - Extracting the SNPs using Plink"
-        newBfile = extractSNPs(snpsToExtract, args)
-
-        # Run the genome command from plink
-        print "   - Creating the genome file using Plink"
-        genomeFileName = runGenome(newBfile, args)
-
-        if args.genome_only:
-            # We just want the genome file
-            return newBfile
-
-        # Extract related individuals
-        print "   - Finding related individuals from genome file"
-        related_data = extractRelatedIndividuals(genomeFileName, args.out,
-                                                 args.ibs2_ratio)
-        # Are there related samples?
-        if related_data is None:
-            print "   - There are no related samples in the dataset"
-
-        else:
-            # Plot the related data
-            print "   - Plotting related individuals"
-            plot_related_data(related_data["IBS2_RATIO"], related_data["Z1"],
-                              related_data["CODE"], r"$Z_1$",
-                              args.out + ".related_individuals_z1.png", args)
-            plot_related_data(related_data["IBS2_RATIO"], related_data["Z2"],
-                              related_data["CODE"], r"$Z_2$",
-                              args.out + ".related_individuals_z2.png", args)
+#    # Run plink
+#    print "   - Running Plink to extract SNPs according to LD"
+#    snpsToExtract = selectSNPsAccordingToLD(args)
+#
+#    # Check there is enough SNP in the output file
+#    print "   - Checking if there are enough extracted SNP"
+#    if not checkNumberOfSNP(snpsToExtract, args.min_nb_snp):
+#        # There are not enough markers
+#        print "      - There are not enough SNPs"
+#        print "        Stopping now"
+#
+#    else:
+#        # Extract the SNPs
+#        print "   - Extracting the SNPs using Plink"
+#        newBfile = extractSNPs(snpsToExtract, args)
+#
+#        # Run the genome command from plink
+#        print "   - Creating the genome file using Plink"
+#        genomeFileName = runGenome(newBfile, args)
+#
+#        if args.genome_only:
+#            # We just want the genome file
+#            return newBfile
+#
+#        # Extract related individuals
+#        print "   - Finding related individuals from genome file"
+#        related_data = extractRelatedIndividuals(genomeFileName, args.out,
+#                                                 args.ibs2_ratio)
+#        # Are there related samples?
+#        if related_data is None:
+#            print "   - There are no related samples in the dataset"
+#
+#        else:
+#            # Plot the related data
+#            print "   - Plotting related individuals"
+#            plot_related_data(related_data["IBS2_RATIO"], related_data["Z1"],
+#                              related_data["CODE"], r"$Z_1$",
+#                              args.out + ".related_individuals_z1.png", args)
+#            plot_related_data(related_data["IBS2_RATIO"], related_data["Z2"],
+#                              related_data["CODE"], r"$Z_2$",
+#                              args.out + ".related_individuals_z2.png", args)
 
 
 def plot_related_data(x, y, code, ylabel, fileName, options):
@@ -118,8 +122,8 @@ def plot_related_data(x, y, code, ylabel, fileName, options):
     :type fileName: string
     :type options: argparse.Namespace
 
-    There are four different relation codes (represented by 4 different color in
-    the plots:
+    There are four different relation codes (represented by 4 different color
+    in the plots:
 
     ==== =============================================== ===========
     Code                    Relation                        Color
@@ -170,9 +174,9 @@ def plot_related_data(x, y, code, ylabel, fileName, options):
                      ("Twins or duplicated samples "
                       "(n={})".format(npy.sum(code == "4"))),
                      "Unknown (n={})".format(npy.sum(code == "5"))],
-                    "best", numpoints=1, fancybox=True, prop=prop)
+                    loc="best", numpoints=1, fancybox=True, prop=prop)
     leg.get_frame().set_alpha(0.5)
-    
+
     # Setting the limits
     ax.set_xlim((options.ibs2_ratio - 0.01, 1.01))
     ax.set_ylim((-0.01, 1.01))
@@ -199,9 +203,9 @@ def extractRelatedIndividuals(fileName, outPrefix, ibs2_ratio_threshold):
     :type outPrefix: string
     :type ibs2_ratio_threshold: float
 
-    :returns: a :py:class:`numpy.recarray` data set containing (for each related
-              sample pair) the ``ibs2 ratio``, ``Z1``, ``Z2`` and the type of
-              relatedness.
+    :returns: a :py:class:`numpy.recarray` data set containing (for each
+              related sample pair) the ``ibs2 ratio``, ``Z1``, ``Z2`` and the
+              type of relatedness.
 
     Reads a ``genome`` file (provided by :py:func:`runGenome`) and extract
     related sample pairs according to ``IBS2 ratio``.
@@ -279,8 +283,8 @@ def extractRelatedIndividuals(fileName, outPrefix, ibs2_ratio_threshold):
             headerIndex = dict([(colName, j) for j, colName in enumerate(row)])
 
             # Checking columns
-            for columnName in ["FID1", "IID1", "FID2", "IID2", "Z0", "Z1", "Z2",
-                               "HOMHOM", "HETHET"]:
+            for columnName in ["FID1", "IID1", "FID2", "IID2", "Z0", "Z1",
+                               "Z2", "HOMHOM", "HETHET"]:
                 if columnName not in headerIndex:
                     msg = "{}: no culumn named {}".format(fileName, columnName)
                     raise ProgramError(msg)
@@ -319,7 +323,7 @@ def extractRelatedIndividuals(fileName, outPrefix, ibs2_ratio_threshold):
                     msg = "{}: invalid value for Z0, Z1 or Z2".format(fileName)
                     raise ProgramError(msg)
 
-                if (z0 >= 0.17 and z0 <= 0.33) and (z1 >=0.40 and z1 <= 0.60):
+                if (z0 >= 0.17 and z0 <= 0.33) and (z1 >= 0.40 and z1 <= 0.60):
                     # Full sibs
                     status = "full-sibs"
                     code = "1"
@@ -357,9 +361,12 @@ def extractRelatedIndividuals(fileName, outPrefix, ibs2_ratio_threshold):
         return None
 
     # Creating the numpy array if there are related samples
-    data = npy.array(data, dtype=[("IBS2_RATIO", float), ("Z1", float),
-                                  ("Z2", float),
-                                  ("CODE", "S{}".format(max([len(i[3]) for i in data])))])
+    data = npy.array(data, dtype=[
+        ("IBS2_RATIO", float),
+        ("Z1", float),
+        ("Z2", float),
+        ("CODE", "S{}".format(max([len(i[3]) for i in data]))),
+    ])
 
     return data
 
@@ -422,11 +429,14 @@ def splitFile(inputFileName, linePerFile, outPrefix):
 
                 if tmpFile is None:
                     try:
-                        tmpFile = open(outPrefix + "_tmp.list%d" % nbTmpFile, "w")
+                        tmpFile = open(
+                            outPrefix + "_tmp.list%d" % nbTmpFile,
+                            "w",
+                        )
                     except IOError:
                         msg = "tmp.list%d: can't write file" % nbTmpFile
                         raise ProgramError(msg)
-                
+
                 print >>tmpFile, " ".join(row[:2])
 
                 if nbLine == linePerFile:
@@ -434,7 +444,10 @@ def splitFile(inputFileName, linePerFile, outPrefix):
                     nbTmpFile += 1
                     tmpFile.close()
                     try:
-                        tmpFile = open(outPrefix + "_tmp.list%d" % nbTmpFile, "w")
+                        tmpFile = open(
+                            outPrefix + "_tmp.list%d" % nbTmpFile,
+                            "w",
+                        )
                     except IOError:
                         msg = "tmp.list%d: can't write file" % nbTmpFile
                         raise ProgramError(msg)
@@ -467,11 +480,11 @@ def runGenome(bfile, options):
     :returns: the name of the ``genome`` file.
 
     Runs Plink with the ``genome`` option. If the user asks for SGE
-    (``options.sge`` is True), a frequency file is first created by plink. Then,
-    the input files are split in ``options.line_per_file_for_sge`` and Plink is
-    called (using the ``genome`` option) on the cluster using SGE
-    (:py:func:`runGenomeSGE`). After the analysis, Plink's output files and logs
-    are merged using :py:func:`mergeGenomeLogFiles`.
+    (``options.sge`` is True), a frequency file is first created by plink.
+    Then, the input files are split in ``options.line_per_file_for_sge`` and
+    Plink is called (using the ``genome`` option) on the cluster using SGE
+    (:py:func:`runGenomeSGE`). After the analysis, Plink's output files and
+    logs are merged using :py:func:`mergeGenomeLogFiles`.
 
     """
     outPrefix = options.out + ".genome"
@@ -614,7 +627,7 @@ def runGenomeSGE(bfile, freqFile, nbJob, outPrefix, options):
     if "DRMAA_LIBRARY_PATH" not in os.environ:
         msg = "could not load drmaa: set DRMAA_LIBRARY_PATH"
         raise ProgramError(msg)
-    
+
     # Import the python drmaa library
     import drmaa
 
@@ -628,9 +641,9 @@ def runGenomeSGE(bfile, freqFile, nbJob, outPrefix, options):
     for i in xrange(1, nbJob + 1):
         for j in xrange(i, nbJob + 1):
             # The command to run
-            plinkCommand = ["plink", "--noweb", "--bfile", bfile, "--read-freq",
-                            freqFile, "--genome", "--genome-full",
-                            "--genome-lists",
+            plinkCommand = ["plink", "--noweb", "--bfile", bfile,
+                            "--read-freq", freqFile, "--genome",
+                            "--genome-full", "--genome-lists",
                             "{}_tmp.list{}".format(outPrefix, i),
                             "{}_tmp.list{}".format(outPrefix, j), "--out",
                             "{}_output.sub.{}.{}".format(outPrefix, i, j)]
@@ -705,9 +718,13 @@ def selectSNPsAccordingToLD(options):
     """
     # The plink command
     outPrefix = options.out + ".pruning_" + options.indep_pairwise[2]
-    plinkCommand = ["plink", "--noweb", "--bfile", options.bfile, "--maf",
-                    options.maf, "--indep-pairwise"] + \
-                    options.indep_pairwise + ["--out", outPrefix]
+    plinkCommand = [
+        "plink",
+        "--noweb",
+        "--bfile", options.bfile,
+        "--maf", options.maf,
+        "--indep-pairwise",
+    ] + options.indep_pairwise + ["--out", outPrefix]
 
     runCommand(plinkCommand)
 
@@ -792,7 +809,7 @@ def checkArgs(args):
     return True
 
 
-def parseArgs(argString=None): # pragma: no cover
+def parseArgs(argString=None):  # pragma: no cover
     """Parses the command line options and arguments.
 
     :param argString: the options.
@@ -841,7 +858,7 @@ def parseArgs(argString=None): # pragma: no cover
 
 class ProgramError(Exception):
     """An :py:class:`Exception` raised in case of a problem.
-    
+
     :param msg: the message to print to the user before exiting.
 
     :type msg: string
@@ -862,6 +879,7 @@ class ProgramError(Exception):
 
 
 # The parser object
+pretty_name = "Related samples"
 desc = """Finds related samples according to IBS values."""
 parser = argparse.ArgumentParser(description=desc)
 
@@ -889,7 +907,7 @@ group.add_argument("--ibs2-ratio", type=float, metavar="FLOAT", default=0.8,
                    help=("The initial IBS2* ratio (the minimum value to show "
                          "in the plot. [default: %(default).1f]"))
 group.add_argument("--sge", action="store_true",
-                    help="Use SGE for parallelization.")
+                   help="Use SGE for parallelization.")
 group.add_argument("--sge-walltime", type=str, metavar="TIME",
                    help=("The walltime for the job to run on the cluster. Do "
                          "not use if you are not required to specify a "
@@ -898,13 +916,13 @@ group.add_argument("--sge-walltime", type=str, metavar="TIME",
 group.add_argument("--sge-nodes", type=int, metavar="INT", nargs=2,
                    help=("The number of nodes and the number of processor per "
                          "nodes to use (e.g. 'qsub -lnodes=X:ppn=Y' on the "
-                         "cluster, where X is the number of nodes and Y is the "
-                         "number of processor to use. Do not use if you are "
-                         "not required to specify the number of nodes for your "
-                         "jobs on the cluster."))
+                         "cluster, where X is the number of nodes and Y is "
+                         "the number of processor to use. Do not use if you "
+                         "are not required to specify the number of nodes for "
+                         "your jobs on the cluster."))
 group.add_argument("--line-per-file-for-sge", type=int, metavar="INT",
-                    default=100, help=("The number of line per file for SGE "
-                                       "task array. [default: " "%(default)d]"))
+                   default=100, help=("The number of line per file for SGE "
+                                      "task array. [default: " "%(default)d]"))
 # The OUTPUT files
 group = parser.add_argument_group("Output File")
 group.add_argument("--out", type=str, metavar="FILE", default="ibs",
