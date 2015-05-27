@@ -699,7 +699,7 @@ def run_sex_check(in_prefix, in_type, out_prefix, base_dir, options):
 
             # The float template
             float_template = latex_template.jinja2_env.get_template(
-                    "float_template.tex",
+                "float_template.tex",
             )
 
             if nb_problems > 0:
@@ -760,7 +760,7 @@ def run_sex_check(in_prefix, in_type, out_prefix, base_dir, options):
                     float_content=graphic_template.render(
                         width=r"0.8\textwidth",
                         graphics_path=graphics_path + "/",
-                        path=path,
+                        path=latex_template.sanitize_fig_name(path),
                     ),
                 )
 
@@ -813,19 +813,22 @@ def run_sex_check(in_prefix, in_type, out_prefix, base_dir, options):
                         graphics_path, path = os.path.split(figure)
                         graphics_path = os.path.abspath(graphics_path)
 
+                        caption = (
+                            "Plots showing the log R ratio and the B allele "
+                            "frequency for chromosome X and Y (on the left "
+                            "and right, respectively) for sample "
+                            "{}.".format(sample_id)
+                        )
                         print >>o_file, float_template.render(
                             float_type="figure",
                             float_placement="H",
-                            float_caption="Plots showing the log R ratio and "
-                                          "the B allele frequency for "
-                                          "chromosome X and Y (on the left "
-                                          "and right, respectively) for "
-                                          "sample {}.".format(sample_id),
+                            float_caption=caption,
                             float_label=label,
                             float_content=graphic_template.render(
                                 width=r"\textwidth",
                                 graphics_path=graphics_path + "/",
-                                path=path),
+                                path=latex_template.sanitize_fig_name(path),
+                            ),
                         )
 
     except IOError:
@@ -1054,17 +1057,20 @@ def run_remove_heterozygous_haploid(in_prefix, in_type, out_prefix, options):
     return os.path.join(out_prefix, "without_hh_genotypes"), "bfile"
 
 
-def run_find_related_samples(in_prefix, in_type, out_prefix, options):
+def run_find_related_samples(in_prefix, in_type, out_prefix, base_dir,
+                             options):
     """Runs step9 (find related samples).
 
     :param in_prefix: the prefix of the input files.
     :param in_type: the type of the input files.
     :param out_prefix: the output prefix.
+    :param base_dir: the output directory.
     :param options: the options needed.
 
     :type in_prefix: string
     :type in_type: string
     :type out_prefix: string
+    :type base_dir: string
     :type options: list of strings
 
     :returns: a tuple containing the prefix of the output files (the input
@@ -1082,8 +1088,8 @@ def run_find_related_samples(in_prefix, in_type, out_prefix, options):
         and its type.
 
     """
-    # Creating the output directory
-    os.mkdir(out_prefix)
+#    # Creating the output directory
+#    os.mkdir(out_prefix)
 
     # We know we need bfile
     required_type = "bfile"
@@ -1091,8 +1097,9 @@ def run_find_related_samples(in_prefix, in_type, out_prefix, options):
 
     # We need to inject the name of the input file and the name of the output
     # prefix
+    script_prefix = os.path.join(out_prefix, "ibs")
     options += ["--{}".format(required_type), in_prefix,
-                "--out", os.path.join(out_prefix, "ibs")]
+                "--out", script_prefix]
 
     # We run the script
     try:
@@ -1101,9 +1108,111 @@ def run_find_related_samples(in_prefix, in_type, out_prefix, options):
         msg = "find_related_samples: {}".format(e)
         raise ProgramError(msg)
 
+    # Reading the file containing all samples that are related
+    #   - ibs.related_individuals
+    related_samples = set()
+    with open(script_prefix + ".related_individuals", "r") as i_file:
+        header = {
+            name: i for i, name in
+            enumerate(createRowFromPlinkSpacedOutput(i_file.readline()))
+        }
+        for required_col in ["FID1", "IID1", "FID2", "IID2"]:
+            if required_col not in header:
+                msg = "{}: missing column {}".format(
+                    script_prefix + ".related_individuals",
+                    required_col,
+                )
+                raise ProgramError(msg)
+
+        # Reading the rest of the data
+        for line in i_file:
+            row = createRowFromPlinkSpacedOutput(line)
+            related_samples.add((row[header["FID1"]], row[header["IID1"]]))
+            related_samples.add((row[header["FID2"]], row[header["IID2"]]))
+
+    # Reading file containing samples that should be discarded
+    #   - ibs.discarded_related_individuals
+
+    # We write a LaTeX summary
+    latex_file = os.path.join(script_prefix + ".summary.tex")
+    try:
+        with open(latex_file, "w") as o_file:
+            print >>o_file, latex_template.subsection(
+                find_related_samples.pretty_name,
+            )
+            text = (
+                "According to Plink relatedness analysis, {} unique sample{} "
+                "{} related to at least one other sample.".format(
+                    len(related_samples),
+                    "s" if len(related_samples) > 1 else "",
+                    "were" if len(related_samples) > 1 else "was",
+                )
+            )
+            print >>o_file, latex_template.wrap_lines(text)
+
+            # Adding the first figure (if present)
+            fig_1 = script_prefix + ".related_individuals_z1.png"
+            fig_1_label = script_prefix.replace("/", "_") + "_z1"
+            if os.path.isfile(fig_1):
+                text = (
+                    r"Figure~\ref{" + fig_1_label + "} shows $Z_1$ versus "
+                    r"$IBS2_{ratio}^\ast$ for all related samples found by "
+                    r"Plink."
+                )
+                print >>o_file, latex_template.wrap_lines(text)
+
+            # Adding the second figure (if present)
+            fig_2 = script_prefix + ".related_individuals_z2.png"
+            fig_2_label = script_prefix.replace("/", "_") + "_z2"
+            if os.path.isfile(fig_1):
+                text = (
+                    r"Figure~\ref{" + fig_2_label + "} shows $Z_2$ versus "
+                    r"$IBS2_{ratio}^\ast$ for all related samples found by "
+                    r"Plink."
+                )
+                print >>o_file, latex_template.wrap_lines(text)
+
+            # Getting the required template
+            float_template = latex_template.jinja2_env.get_template(
+                "float_template.tex",
+            )
+            graphic_template = latex_template.jinja2_env.get_template(
+                "graphics_template.tex",
+            )
+
+            figures = (fig_1, fig_2)
+            labels = (fig_1_label, fig_2_label)
+            graph_types = ("$Z_1$", "$Z_2$")
+            for fig, label, graph_type in zip(figures, labels, graph_types):
+                if os.path.isfile(fig):
+                    # Getting the paths
+                    graphics_path, path = os.path.split(fig)
+                    graphics_path = os.path.abspath(graphics_path)
+
+                    # Printing
+                    caption = (
+                        graph_type + r" versus $IBS2_{ratio}^\ast$ for all "
+                        "related samples found by Plink in the IBS analysis."
+                    )
+                    print >>o_file, float_template.render(
+                        float_type="figure",
+                        float_placement="H",
+                        float_caption=caption,
+                        float_label=label,
+                        float_content=graphic_template.render(
+                            width=r"0.8\textwidth",
+                            graphics_path=graphics_path + "/",
+                            path=latex_template.sanitize_fig_name(path),
+                        ),
+                    )
+
+    except IOError:
+        msg = "{}: cannot write LaTeX summary".format(latex_file)
+        raise ProgramError(msg)
+
     # We know this step doesn't produce an new data set, so we return the old
     # prefix and the old in_type
-    return in_prefix, required_type
+    return in_prefix, required_type, latex_file, find_related_samples.desc
 
 
 def run_check_ethnicity(in_prefix, in_type, out_prefix, options):
