@@ -1314,17 +1314,19 @@ def run_find_related_samples(in_prefix, in_type, out_prefix, base_dir,
     return in_prefix, required_type, latex_file, find_related_samples.desc
 
 
-def run_check_ethnicity(in_prefix, in_type, out_prefix, options):
+def run_check_ethnicity(in_prefix, in_type, out_prefix, base_dir, options):
     """Runs step10 (check ethnicity).
 
     :param in_prefix: the prefix of the input files.
     :param in_type: the type of the input files.
     :param out_prefix: the output prefix.
+    :param base_dir: the output directory.
     :param options: the options needed.
 
     :type in_prefix: string
     :type in_type: string
     :type out_prefix: string
+    :type base_dir: string
     :type options: list of strings
 
     :returns: a tuple containing the prefix of the output files (the input
@@ -1342,8 +1344,8 @@ def run_check_ethnicity(in_prefix, in_type, out_prefix, options):
         its type.
 
     """
-    # Creating the output directory
-    os.mkdir(out_prefix)
+#    # Creating the output directory
+#    os.mkdir(out_prefix)
 
     # We know we need bfile
     required_type = "bfile"
@@ -1351,8 +1353,9 @@ def run_check_ethnicity(in_prefix, in_type, out_prefix, options):
 
     # We need to inject the name of the input file and the name of the output
     # prefix
+    script_prefix = os.path.join(out_prefix, "ethnicity")
     options += ["--{}".format(required_type), in_prefix,
-                "--out", os.path.join(out_prefix, "ethnicity")]
+                "--out", script_prefix]
 
     # We run the script
     try:
@@ -1361,9 +1364,98 @@ def run_check_ethnicity(in_prefix, in_type, out_prefix, options):
         msg = "check_ethnicity: {}".format(e)
         raise ProgramError(msg)
 
+    # Getting the multiplier value
+    multiplier = check_ethnicity.parser.get_default("multiplier")
+    if "--multiplier" in options:
+        multiplier = options[options.index("--multiplier") + 1]
+
+    # Getting the population of which the outliers were computed from
+    outliers_of = check_ethnicity.parser.get_default("outliers_of")
+    if "--outliers-of" in options:
+        outliers_of = options[options.index("--outliers-of") + 1]
+
+    # Computing the number of outliers
+    outliers = None
+    with open(script_prefix + ".outliers", "r") as i_file:
+        outliers = {tuple(line.rstrip("\r\n").split("\t")) for line in i_file}
+
+    # We write a LaTeX summary
+    latex_file = os.path.join(script_prefix + ".summary.tex")
+    try:
+        with open(latex_file, "w") as o_file:
+            print >>o_file, latex_template.subsection(
+                check_ethnicity.pretty_name,
+            )
+            text = (
+                "Using a multiplier of {}, there was a total of {:,d} "
+                "outlier{} of the {} population.".format(
+                    multiplier,
+                    len(outliers),
+                    "s" if len(outliers) > 1 else "",
+                    outliers_of,
+                )
+            )
+            print >>o_file, latex_template.wrap_lines(text)
+
+            # Adding the figure if it exists
+            fig = script_prefix + ".outliers.png"
+            if os.path.isfile(fig):
+                # Getting the paths
+                graphics_path, path = os.path.split(fig)
+                graphics_path = os.path.abspath(graphics_path)
+
+                # Getting the required template
+                float_template = latex_template.jinja2_env.get_template(
+                    "float_template.tex",
+                )
+                graphic_template = latex_template.jinja2_env.get_template(
+                    "graphics_template.tex",
+                )
+
+                # The label
+                label = script_prefix.replace("/", "_") + "_outliers"
+
+                text = (
+                    r"Figure~\ref{" + label + "} shows the first two "
+                    "principal components of the MDS analysis, where outliers "
+                    "of the " + outliers_of + " population are shown in grey."
+                )
+                print >>o_file, latex_template.wrap_lines(text)
+
+                # Printing
+                caption = (
+                    "MDS plots showing the first two principal components of "
+                    "the source dataset with the reference panels. The "
+                    "outliers of the {} population are shown in grey, while "
+                    "samples of the source dataset that resemble the {} "
+                    "population is shown in orange. A multiplier of {} was "
+                    "used to find the {:,d} outlier{}.".format(
+                        outliers_of,
+                        outliers_of,
+                        multiplier,
+                        len(outliers),
+                        "s" if len(outliers) > 1 else "",
+                    )
+                )
+                print >>o_file, float_template.render(
+                    float_type="figure",
+                    float_placement="H",
+                    float_caption=caption,
+                    float_label=label,
+                    float_content=graphic_template.render(
+                        width=r"0.8\textwidth",
+                        graphics_path=graphics_path + "/",
+                        path=latex_template.sanitize_fig_name(path),
+                    ),
+                )
+
+    except IOError:
+        msg = "{}: cannot write LaTeX summary".format(latex_file)
+        raise ProgramError(msg)
+
     # We know this step doesn't produce an new data set, so we return the old
     # prefix and the old in_type
-    return in_prefix, required_type
+    return in_prefix, required_type, latex_file, check_ethnicity.desc
 
 
 def run_flag_maf_zero(in_prefix, in_type, out_prefix, options):
