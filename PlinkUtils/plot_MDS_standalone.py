@@ -1,17 +1,19 @@
 #!/usr/bin/env python2.7
-## This file is part of pyGenClean.
-## 
-## pyGenClean is free software: you can redistribute it and/or modify it under
-## the terms of the GNU General Public License as published by the Free Software
-## Foundation, either version 3 of the License, or (at your option) any later
-## version.
-## 
-## pyGenClean is distributed in the hope that it will be useful, but WITHOUT ANY
-## WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
-## A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
-## 
-## You should have received a copy of the GNU General Public License along with
-## pyGenClean.  If not, see <http://www.gnu.org/licenses/>.
+
+# This file is part of pyGenClean.
+#
+# pyGenClean is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later
+# version.
+#
+# pyGenClean is distributed in the hope that it will be useful, but WITHOUT ANY
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+# A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with
+# pyGenClean.  If not, see <http://www.gnu.org/licenses/>.
+
 
 import os
 import sys
@@ -20,6 +22,7 @@ import argparse
 import numpy as npy
 
 from PlinkUtils import createRowFromPlinkSpacedOutput
+
 
 def main():
     """The main function of the module.
@@ -158,9 +161,10 @@ def plotMDS(data, theOrders, theLabels, theColors, theAlphas, theSizes,
         labels.append(index)
 
     # The legend
-    prop = mpl.font_manager.FontProperties(size=options.legend_size) 
-    leg = ax.legend(plotObject, labels, options.legend_position, numpoints=1,
-                    fancybox=True, prop=prop, ncol=options.legend_ncol)
+    prop = mpl.font_manager.FontProperties(size=options.legend_size)
+    leg = ax.legend(plotObject, labels, loc=options.legend_position,
+                    numpoints=1, fancybox=True, prop=prop,
+                    ncol=options.legend_ncol)
     leg.get_frame().set_alpha(0.5)
 
     # The title and XY labels
@@ -209,12 +213,12 @@ def extractData(fileName, populations, population_order, xaxis, yaxis):
     :type xaxis: string
     :type yaxis: string
 
-    :returns: the MDS data with information about the population of each sample.
-              The first element of the returned tuple is a tuple. The last
-              element of the returned tuple is the list of the populations (the
-              order is the same as in the first element). The first element of
-              the first tuple is the C1 data, and the last element is the C2
-              data.
+    :returns: the MDS data with information about the population of each
+              sample. The first element of the returned tuple is a tuple. The
+              last element of the returned tuple is the list of the populations
+              (the order is the same as in the first element). The first
+              element of the first tuple is the C1 data, and the last element
+              is the C2 data.
 
     .. note::
         If a sample in the MDS file is not in the population file, it is skip.
@@ -338,12 +342,12 @@ def checkArgs(args):
     return True
 
 
-def parseArgs(): # pragma: no cover
+def parseArgs():  # pragma: no cover
     """Parses the command line options and arguments.
 
     :returns: A :py:class:`argparse.Namespace` object created by the
-              :py:mod:`argparse` module. It contains the values of the different
-              options.
+              :py:mod:`argparse` module. It contains the values of the
+              different options.
 
     ======================== ====== =========================================
              Options          Type                Description
@@ -388,7 +392,7 @@ def parseArgs(): # pragma: no cover
 
 class ProgramError(Exception):
     """An :py:class:`Exception` raised in case of a problem.
-    
+
     :param msg: the message to print to the user before exiting.
     :type msg: string
 
@@ -446,8 +450,8 @@ group.add_argument("--population-alpha", type=str, metavar="STRING",
 group = parser.add_argument_group("Graphical Properties")
 group.add_argument("--format", type=str, metavar="FORMAT", default="png",
                    choices=["png", "ps", "pdf", "X11"],
-                   help=("The output file format (png, ps, pdf, or X11 formats "
-                         "are available). [default: %(default)s]"))
+                   help=("The output file format (png, ps, pdf, or X11 "
+                         "formats are available). [default: %(default)s]"))
 group.add_argument("--title", type=str, metavar="STRING",
                    default="C2 in function of C1 - MDS",
                    help="The title of the MDS plot. [default: %(default)s]")
@@ -488,8 +492,9 @@ group.add_argument("--adjust-right", type=float, metavar="FLOAT", default=0.90,
                    help="Adjust the right margin. [Default: %(default).2f]")
 group.add_argument("--adjust-top", type=float, metavar="FLOAT", default=0.90,
                    help="Adjust the top margin. [Default: %(default).2f]")
-group.add_argument("--adjust-bottom", type=float, metavar="FLOAT", default=0.10,
-                   help="Adjust the bottom margin. [Default: %(default).2f]")
+group.add_argument("--adjust-bottom", type=float, metavar="FLOAT",
+                   default=0.10, help="Adjust the bottom margin. "
+                                      "[Default: %(default).2f]")
 
 # The OUTPUT files
 group = parser.add_argument_group("Output File")

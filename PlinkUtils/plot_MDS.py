@@ -1,17 +1,19 @@
 #!/usr/bin/env python2.7
-## This file is part of pyGenClean.
-## 
-## pyGenClean is free software: you can redistribute it and/or modify it under
-## the terms of the GNU General Public License as published by the Free Software
-## Foundation, either version 3 of the License, or (at your option) any later
-## version.
-## 
-## pyGenClean is distributed in the hope that it will be useful, but WITHOUT ANY
-## WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
-## A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
-## 
-## You should have received a copy of the GNU General Public License along with
-## pyGenClean.  If not, see <http://www.gnu.org/licenses/>.
+
+# This file is part of pyGenClean.
+#
+# pyGenClean is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later
+# version.
+#
+# pyGenClean is distributed in the hope that it will be useful, but WITHOUT ANY
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+# A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with
+# pyGenClean.  If not, see <http://www.gnu.org/licenses/>.
+
 
 import os
 import sys
@@ -21,8 +23,10 @@ import numpy as npy
 
 from PlinkUtils import createRowFromPlinkSpacedOutput
 
+
 desc = """Creates a MDS plot"""
 parser = argparse.ArgumentParser(description=desc)
+
 
 def main():
     """The main function of the module.
@@ -134,8 +138,8 @@ def plotMDS(data, theOrders, theLabels, theColors, theSizes, theMarkers,
         labels.append(theLabels[index])
 
     # The legend
-    prop = mpl.font_manager.FontProperties(size=10) 
-    leg = ax.legend(plotObject, labels, "upper left", numpoints=1,
+    prop = mpl.font_manager.FontProperties(size=10)
+    leg = ax.legend(plotObject, labels, loc="upper left", numpoints=1,
                     fancybox=True, prop=prop)
 
     # The title and XY labels
@@ -164,12 +168,12 @@ def extractData(fileName, populations):
     :type fileName: string
     :type fileName: dict
 
-    :returns: the MDS data with information about the population of each sample.
-              The first element of the returned tuple is a tuple. The last
-              element of the returned tuple is the list of the populations (the
-              order is the same as in the first element). The first element of
-              the first tuple is the C1 data, and the last element is the C2
-              data.
+    :returns: the MDS data with information about the population of each
+              sample. The first element of the returned tuple is a tuple. The
+              last element of the returned tuple is the list of the populations
+              (the order is the same as in the first element). The first
+              element of the first tuple is the C1 data, and the last element
+              is the C2 data.
 
     .. note::
         If a sample in the MDS file is not in the population file, it is skip.
@@ -247,12 +251,12 @@ def checkArgs(args):
     return True
 
 
-def parseArgs(): # pragma: no cover
+def parseArgs():  # pragma: no cover
     """Parses the command line options and arguments.
 
     :returns: A :py:class:`argparse.Namespace` object created by the
-              :py:mod:`argparse` module. It contains the values of the different
-              options.
+              :py:mod:`argparse` module. It contains the values of the
+              different options.
 
     ===================== ====== =========================================
             Options        Type                Description
@@ -277,20 +281,19 @@ def parseArgs(): # pragma: no cover
                        help="The MBS file.")
     parser.add_argument("--population-file", type=str, metavar="FORMAT",
                         required=True,
-                        help="A file containing population information. " \
-                             "There must be three columns: famID, indID " \
+                        help="A file containing population information. "
+                             "There must be three columns: famID, indID "
                              "and population information.")
 
     # The graphical options
     group = parser.add_argument_group("Graphical Options")
     addCustomOptions(group)
-    
 
     # The OUTPUT files
     group = parser.add_argument_group("Output File")
     group.add_argument("--out", type=str, metavar="FILE",
                        default="mds",
-                       help="The prefix of the output files. [default: " \
+                       help="The prefix of the output files. [default: "
                             "%(default)s]")
 
     args = parser.parse_args()
@@ -308,11 +311,11 @@ def addCustomOptions(parser):
     """
     parser.add_argument("--format", type=str, metavar="FORMAT", default="png",
                         choices=["png", "ps", "pdf", "X11"],
-                        help="The output file format (png, ps, pdf, or X11 " \
+                        help="The output file format (png, ps, pdf, or X11 "
                              "formats are available). [default: %(default)s]")
     parser.add_argument("--title", type=str, metavar="STRING",
                         default="C2 in function of C1 - MDS",
-                        help="The title of the MDS plot. [default: "\
+                        help="The title of the MDS plot. [default: "
                              "%(default)s]")
     parser.add_argument("--xlabel", type=str, metavar="STRING", default="C1",
                         help="The label of the X axis. [default: %(default)s]")
@@ -322,7 +325,7 @@ def addCustomOptions(parser):
 
 class ProgramError(Exception):
     """An :py:class:`Exception` raised in case of a problem.
-    
+
     :param msg: the message to print to the user before exiting.
 
     :type msg: string

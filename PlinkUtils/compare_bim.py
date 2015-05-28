@@ -1,44 +1,48 @@
 #!/usr/bin/env python2.7
-## This file is part of pyGenClean.
-## 
-## pyGenClean is free software: you can redistribute it and/or modify it under
-## the terms of the GNU General Public License as published by the Free Software
-## Foundation, either version 3 of the License, or (at your option) any later
-## version.
-## 
-## pyGenClean is distributed in the hope that it will be useful, but WITHOUT ANY
-## WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
-## A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
-## 
-## You should have received a copy of the GNU General Public License along with
-## pyGenClean.  If not, see <http://www.gnu.org/licenses/>.
+
+# This file is part of pyGenClean.
+#
+# pyGenClean is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later
+# version.
+#
+# pyGenClean is distributed in the hope that it will be useful, but WITHOUT ANY
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+# A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with
+# pyGenClean.  If not, see <http://www.gnu.org/licenses/>.
+
 
 import os
 import sys
 import argparse
 
+
 desc = """Compare BIM file"""
 parser = argparse.ArgumentParser(description=desc)
+
 
 def main():
     """ The main function of the module.
 
     The purpose of this module is to find markers that were removed by Plink.
-    When Plinks exclude some markers from binary files, there are no easy way to
-    find the list of removed markers, except by comparing the two BIM files
+    When Plinks exclude some markers from binary files, there are no easy way
+    to find the list of removed markers, except by comparing the two BIM files
     (before and after modification).
 
     Here are the steps of this module:
 
     1. Reads the BIM file before the modification (:py:func:`readBIM`).
     2. Reads the BIM file after the modification (:py:func:`readBIM`).
-    3. Compares the list of markers before and after modification, and write the
-       removed markers into a file (:py:func:`compareSNPs`).
+    3. Compares the list of markers before and after modification, and write
+       the removed markers into a file (:py:func:`compareSNPs`).
 
     .. note::
-        This module only finds marker that were removed (since adding markers to
-        a BIM file usually includes a companion file to tell Plink which marker
-        to add.
+        This module only finds marker that were removed (since adding markers
+        to a BIM file usually includes a companion file to tell Plink which
+        marker to add.
 
     """
     # Getting and checking the options
@@ -153,12 +157,12 @@ def checkArgs(args):
     return True
 
 
-def parseArgs(): # pragma: no cover
+def parseArgs():  # pragma: no cover
     """Parses the command line options and arguments.
 
     :returns: A :py:class:`argparse.Namespace` object created by the
-              :py:mod:`argparse` module. It contains the values of the different
-              options.
+              :py:mod:`argparse` module. It contains the values of the
+              different options.
 
     ============ ====== =============================================
        Options    Type                 Description
@@ -184,7 +188,7 @@ def parseArgs(): # pragma: no cover
     group = parser.add_argument_group("Output File")
     group.add_argument("--out", type=str, metavar="FILE",
                        default="snp_removed",
-                       help="The prefix of the output files. [default: " \
+                       help="The prefix of the output files. [default: "
                             "%(default)s]")
 
     args = parser.parse_args()
@@ -194,7 +198,7 @@ def parseArgs(): # pragma: no cover
 
 class ProgramError(Exception):
     """An :py:class:`Exception` raised in case of a problem.
-    
+
     :param msg: the message to print to the user before exiting.
 
     :type msg: string

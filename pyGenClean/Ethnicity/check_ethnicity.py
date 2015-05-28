@@ -1,17 +1,19 @@
 #!/usr/bin/env python2.7
-## This file is part of pyGenClean.
-## 
-## pyGenClean is free software: you can redistribute it and/or modify it under
-## the terms of the GNU General Public License as published by the Free Software
-## Foundation, either version 3 of the License, or (at your option) any later
-## version.
-## 
-## pyGenClean is distributed in the hope that it will be useful, but WITHOUT ANY
-## WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
-## A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
-## 
-## You should have received a copy of the GNU General Public License along with
-## pyGenClean.  If not, see <http://www.gnu.org/licenses/>.
+
+# This file is part of pyGenClean.
+#
+# pyGenClean is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later
+# version.
+#
+# pyGenClean is distributed in the hope that it will be useful, but WITHOUT ANY
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+# A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with
+# pyGenClean.  If not, see <http://www.gnu.org/licenses/>.
+
 
 import os
 import sys
@@ -20,13 +22,16 @@ import subprocess
 
 import PlinkUtils.plot_MDS as PlotMDS
 from PlinkUtils import createRowFromPlinkSpacedOutput
+
 import pyGenClean.Ethnicity.find_outliers as find_outliers
 from pyGenClean.DupSNPs.duplicated_snps import flipGenotype
 import pyGenClean.Ethnicity.plot_eigenvalues as PlotEigenvalues
 import pyGenClean.RelatedSamples.find_related_samples as Relatedness
- 
+
+
 class Dummy(object):
     pass
+
 
 def main(argString=None):
     """The main function.
@@ -38,8 +43,8 @@ def main(argString=None):
     These are the steps of this module:
 
     1.  Prints the options.
-    2.  Finds the overlapping markers between the three reference panels and the
-        source panel (:py:func:`findOverlappingSNPsWithReference`).
+    2.  Finds the overlapping markers between the three reference panels and
+        the source panel (:py:func:`findOverlappingSNPsWithReference`).
     3.  Extract the required markers from all the data sets
         (:py:func:`extractSNPs`).
     4.  Combines the three reference panels together
@@ -78,118 +83,121 @@ def main(argString=None):
     for key, value in vars(args).iteritems():
         print "      --{} {}".format(key, value)
 
-    # Find overlap with the reference file
-    print "   - Finding overlapping SNPs between reference and source panels"
+#    # Find overlap with the reference file
+#    print "   - Finding overlapping SNPs between reference and source panels"
     referencePrefixes = [args.ceu_bfile, args.yri_bfile, args.jpt_chb_bfile]
     popNames = ["CEU", "YRI", "JPT-CHB"]
-    findOverlappingSNPsWithReference(args.bfile, referencePrefixes, args.out)
-
-    # Extract the required SNPs using Plink
-    print "   - Extracting overlapping SNPs from the reference panels"
-    extractSNPs(args.out + ".ref_snp_to_extract", referencePrefixes, popNames,
-                args.out + ".reference_panel", args.sge, args)
-    print "   - Extracting overlapping SNPs from the source panel"
-    extractSNPs(args.out + ".source_snp_to_extract", [args.bfile], ["ALL"],
-                args.out + ".source_panel", False, args)
-
-    # Combining the reference panel
-    print "   - Combining the reference panels"
-    combinePlinkBinaryFiles([args.out + ".reference_panel." + i \
-                                for i in popNames],
-                            args.out + ".reference_panel.ALL")
-
-    # Renaming the reference file, so that the SNP names are the same
-    print "   - Renaming reference panel's SNPs to match source panel"
-    renameSNPs(args.out + ".reference_panel.ALL", args.out + ".update_names",
-               args.out + ".reference_panel.ALL.rename")
-
-    # Computing the frequency
-    print "   - Computing reference panel frequencies"
-    computeFrequency(args.out + ".reference_panel.ALL.rename",
-                     args.out + ".reference_panel.ALL.rename.frequency")
-    print "   - Computing source panel frequencies"
-    computeFrequency(args.out + ".source_panel.ALL",
-                     args.out + ".source_panel.ALL.frequency")
-
-    # Finding the SNPs to flip and flip them in the reference panel
-    print "   - Finding SNPs to flip or to exclude from reference panel"
-    findFlippedSNPs(args.out + ".reference_panel.ALL.rename.frequency.frq",
-                    args.out + ".source_panel.ALL.frequency.frq",
-                    args.out)
-
-    # Excluding SNPs
-    print "   - Excluding SNPs from reference panel"
-    excludeSNPs(args.out + ".reference_panel.ALL.rename",
-                args.out + ".reference_panel.ALL.rename.cleaned",
-                args.out + ".snp_to_remove")
-    print "   - Excluding SNPs from source panel"
-    excludeSNPs(args.out + ".source_panel.ALL",
-                args.out + ".source_panel.ALL.cleaned",
-                args.out + ".snp_to_remove")
-
-    # Flipping the SNP that need to be flip in the reference
-    print "   - Flipping SNPs in reference panel"
-    flipSNPs(args.out + ".reference_panel.ALL.rename.cleaned",
-             args.out + ".reference_panel.ALL.rename.cleaned.flipped",
-             args.out + ".snp_to_flip_in_reference")
-
-    # Combining the reference panel
-    print "   - Combining reference and source panels"
-    combinePlinkBinaryFiles([args.out + ".reference_panel.ALL.rename.cleaned.flipped",
-                             args.out + ".source_panel.ALL.cleaned"],
-                             args.out + ".final_dataset_for_genome")
-
-    # Runing the relatedness step
-    print "   - Creating the genome file using Plink"
-    newBfile = runRelatedness(args.out + ".final_dataset_for_genome", args.out,
-                              args)
-
-    # Creating the MDS file
-    print "   - Creating the MDS file using Plink"
-    createMDSFile(args.nb_components, newBfile,
-                  args.out + ".mds", args.out + ".ibs.genome.genome")
-
-    # Creating the population files
-    print "   - Creating a population file"
-    famFiles = [args.out + ".reference_panel." + i + ".fam" for i in popNames]
-    famFiles.append(args.out + ".source_panel.ALL.fam")
-    labels = popNames + ["SOURCE"]
-    createPopulationFile(famFiles, labels, args.out + ".population_file")
-
-    # Plot the MDS value
-    print "   - Creating the MDS plot"
-    plotMDS(args.out + ".mds.mds", args.out + ".mds",
-            args.out + ".population_file", args)
-
-    # Finding the outliers
-    print "   - Finding the outliers"
-    find_the_outliers(args.out + ".mds.mds", args.out + ".population_file",
-                      args.outliers_of, args.multiplier, args.out)
-
-    # De we need to create a scree plot?
-    if args.create_scree_plot:
-        # Computing the eigenvalues using smartpca
-        print "   - Computing eigenvalues"
-        compute_eigenvalues(args.out + ".ibs.pruned_data",
-                            args.out + ".smartpca")
-
-        print "   - Creating scree plot"
-        create_scree_plot(args.out + ".smartpca.evec.txt",
-                          args.out + ".smartpca.scree_plot.png",
-                          args.scree_plot_title)
+#    findOverlappingSNPsWithReference(args.bfile, referencePrefixes, args.out)
+#
+#    # Extract the required SNPs using Plink
+#    print "   - Extracting overlapping SNPs from the reference panels"
+#    extractSNPs(args.out + ".ref_snp_to_extract", referencePrefixes, popNames,
+#                args.out + ".reference_panel", args.sge, args)
+#    print "   - Extracting overlapping SNPs from the source panel"
+#    extractSNPs(args.out + ".source_snp_to_extract", [args.bfile], ["ALL"],
+#                args.out + ".source_panel", False, args)
+#
+#    # Combining the reference panel
+#    print "   - Combining the reference panels"
+#    combinePlinkBinaryFiles(
+#        [args.out + ".reference_panel." + i for i in popNames],
+#        args.out + ".reference_panel.ALL",
+#    )
+#
+#    # Renaming the reference file, so that the SNP names are the same
+#    print "   - Renaming reference panel's SNPs to match source panel"
+#    renameSNPs(args.out + ".reference_panel.ALL", args.out + ".update_names",
+#               args.out + ".reference_panel.ALL.rename")
+#
+#    # Computing the frequency
+#    print "   - Computing reference panel frequencies"
+#    computeFrequency(args.out + ".reference_panel.ALL.rename",
+#                     args.out + ".reference_panel.ALL.rename.frequency")
+#    print "   - Computing source panel frequencies"
+#    computeFrequency(args.out + ".source_panel.ALL",
+#                     args.out + ".source_panel.ALL.frequency")
+#
+#    # Finding the SNPs to flip and flip them in the reference panel
+#    print "   - Finding SNPs to flip or to exclude from reference panel"
+#    findFlippedSNPs(args.out + ".reference_panel.ALL.rename.frequency.frq",
+#                    args.out + ".source_panel.ALL.frequency.frq",
+#                    args.out)
+#
+#    # Excluding SNPs
+#    print "   - Excluding SNPs from reference panel"
+#    excludeSNPs(args.out + ".reference_panel.ALL.rename",
+#                args.out + ".reference_panel.ALL.rename.cleaned",
+#                args.out + ".snp_to_remove")
+#    print "   - Excluding SNPs from source panel"
+#    excludeSNPs(args.out + ".source_panel.ALL",
+#                args.out + ".source_panel.ALL.cleaned",
+#                args.out + ".snp_to_remove")
+#
+#    # Flipping the SNP that need to be flip in the reference
+#    print "   - Flipping SNPs in reference panel"
+#    flipSNPs(args.out + ".reference_panel.ALL.rename.cleaned",
+#             args.out + ".reference_panel.ALL.rename.cleaned.flipped",
+#             args.out + ".snp_to_flip_in_reference")
+#
+#    # Combining the reference panel
+#    print "   - Combining reference and source panels"
+#    combinePlinkBinaryFiles(
+#        [args.out + ".reference_panel.ALL.rename.cleaned.flipped",
+#         args.out + ".source_panel.ALL.cleaned"],
+#        args.out + ".final_dataset_for_genome",
+#    )
+#
+#    # Runing the relatedness step
+#    print "   - Creating the genome file using Plink"
+#    newBfile = runRelatedness(args.out + ".final_dataset_for_genome", args.out,
+#                              args)
+#
+#    # Creating the MDS file
+#    print "   - Creating the MDS file using Plink"
+#    createMDSFile(args.nb_components, newBfile,
+#                  args.out + ".mds", args.out + ".ibs.genome.genome")
+#
+#    # Creating the population files
+#    print "   - Creating a population file"
+#    famFiles = [args.out + ".reference_panel." + i + ".fam" for i in popNames]
+#    famFiles.append(args.out + ".source_panel.ALL.fam")
+#    labels = popNames + ["SOURCE"]
+#    createPopulationFile(famFiles, labels, args.out + ".population_file")
+#
+#    # Plot the MDS value
+#    print "   - Creating the MDS plot"
+#    plotMDS(args.out + ".mds.mds", args.out + ".mds",
+#            args.out + ".population_file", args)
+#
+#    # Finding the outliers
+#    print "   - Finding the outliers"
+#    find_the_outliers(args.out + ".mds.mds", args.out + ".population_file",
+#                      args.outliers_of, args.multiplier, args.out)
+#
+#    # De we need to create a scree plot?
+#    if args.create_scree_plot:
+#        # Computing the eigenvalues using smartpca
+#        print "   - Computing eigenvalues"
+#        compute_eigenvalues(args.out + ".ibs.pruned_data",
+#                            args.out + ".smartpca")
+#
+#        print "   - Creating scree plot"
+#        create_scree_plot(args.out + ".smartpca.evec.txt",
+#                          args.out + ".smartpca.scree_plot.png",
+#                          args.scree_plot_title)
 
 
 def create_scree_plot(in_filename, out_filename, plot_title):
     """Creates a scree plot using smartpca results.
-    
+
     :param in_filename: the name of the input file.
     :param out_filename: the name of the output file.
     :param plot_title: the title of the scree plot.
-    
+
     :type in_filename: string
     :type out_filename: string
     :type plot_title: string
-    
+
     """
     # Constructing the arguments
     scree_plot_args = ("--evec", in_filename, "--out", out_filename,
@@ -205,15 +213,15 @@ def create_scree_plot(in_filename, out_filename, plot_title):
 
 def compute_eigenvalues(in_prefix, out_prefix):
     """Computes the Eigenvalues using smartpca from Eigensoft.
-    
+
     :param in_prefix: the prefix of the input files.
     :param out_prefix: the prefix of the output files.
-    
+
     :type in_prefix: string
     :type out_prefix: string
-    
+
     Creates a "parameter file" used by smartpca and runs it.
-    
+
     """
     # First, we create the parameter file
     with open(out_prefix + ".parameters", "w") as o_file:
@@ -280,7 +288,8 @@ def createPopulationFile(inputFiles, labels, outputFileName):
     it (representing the name of the population).
 
     The output file consists of one row per sample, with the following three
-    columns: the family ID, the individual ID and the population of each sample.
+    columns: the family ID, the individual ID and the population of each
+    sample.
 
     """
     outputFile = None
@@ -392,7 +401,9 @@ def createMDSFile(nb_components, inPrefix, outPrefix, genomeFileName):
     plinkCommand = ["plink", "--noweb", "--bfile", inPrefix, "--read-genome",
                     genomeFileName, "--cluster", "--mds-plot",
                     str(nb_components), "--out", outPrefix]
+    print(plinkCommand)
     runCommand(plinkCommand)
+
 
 def runRelatedness(inputPrefix, outPrefix, options):
     """Run the relatedness step of the data clean up.
@@ -407,9 +418,9 @@ def runRelatedness(inputPrefix, outPrefix, options):
 
     :returns: the prefix of the new bfile.
 
-    Runs :py:mod:`RelatedSamples.find_related_samples` using the ``inputPrefix``
-    files and ``options`` options, and saves the results using the ``outPrefix``
-    prefix.
+    Runs :py:mod:`RelatedSamples.find_related_samples` using the
+    ``inputPrefix`` files and ``options`` options, and saves the results using
+    the ``outPrefix`` prefix.
 
     """
     # The options
@@ -469,8 +480,8 @@ def flipSNPs(inPrefix, outPrefix, flipFileName):
     :type outPrefix: string
     :type flipFileName: string
 
-    Using Plink, flip a set of markers in ``inPrefix``, and saves the results in
-    ``outPrefix``. The list of markers to be flipped is in ``flipFileName``.
+    Using Plink, flip a set of markers in ``inPrefix``, and saves the results
+    in ``outPrefix``. The list of markers to be flipped is in ``flipFileName``.
 
     """
     plinkCommand = ["plink", "--noweb", "--bfile", inPrefix, "--flip",
@@ -537,8 +548,8 @@ def findFlippedSNPs(frqFile1, frqFile2, outPrefix):
     comparable with the second one. Also finds marker that need to be removed.
 
     A marker needs to be flipped in one of the two data set if the two markers
-    are not comparable (same minor allele), but become comparable if we flip one
-    of them.
+    are not comparable (same minor allele), but become comparable if we flip
+    one of them.
 
     A marker will be removed if it is all homozygous in at least one data set.
     It will also be removed if it's impossible to determine the phase of the
@@ -556,8 +567,9 @@ def findFlippedSNPs(frqFile1, frqFile2, outPrefix):
 
                     if i == 0:
                         # This is the header
-                        headerIndex = dict([(row[j], j) \
-                                                for j in xrange(len(row))])
+                        headerIndex = dict([
+                            (row[j], j) for j in xrange(len(row))
+                        ])
 
                         # Checking the columns
                         for columnName in ["SNP", "A1", "A2"]:
@@ -603,7 +615,8 @@ def findFlippedSNPs(frqFile1, frqFile2, outPrefix):
 
         if (len(alleles1) == 2) and (len(alleles2) == 2):
             # Both are heterozygous
-            if ({"A", "T"} == alleles1) or ({"C", "G"} == alleles1) or ({"A", "T"} == alleles2) or ({"C", "G"} == alleles2):
+            if ({"A", "T"} == alleles1) or ({"C", "G"} == alleles1) or \
+                    ({"A", "T"} == alleles2) or ({"C", "G"} == alleles2):
                 # We can't flip those..., so we remove them
                 print >>toRemoveOutputFile, snpName
             else:
@@ -647,7 +660,8 @@ def computeFrequency(prefix, outPrefix):
 def combinePlinkBinaryFiles(prefixes, outPrefix):
     """Combine Plink binary files.
 
-    :param prefixes: a list of the prefix of the files that need to be combined.
+    :param prefixes: a list of the prefix of the files that need to be
+                     combined.
     :param outPrefix: the prefix of the output file (the combined file).
 
     :type prefixes: list of strings
@@ -667,7 +681,9 @@ def combinePlinkBinaryFiles(prefixes, outPrefix):
         raise ProgramError(msg)
 
     for prefix in prefixes[1:]:
-        print >>outputFile, " ".join([prefix + i for i in [".bed", ".bim", ".fam"]])
+        print >>outputFile, " ".join([
+            prefix + i for i in [".bed", ".bim", ".fam"]
+        ])
 
     # Closing the output files
     outputFile.close()
@@ -698,10 +714,10 @@ def findOverlappingSNPsWithReference(prefix, referencePrefixes, outPrefix):
 
     It creates three output files:
 
-    * ``outPrefix.ref_snp_to_extract``: the name of the markers that needs to be
-      extracted from the three reference panels.
-    * ``outPrefix.source_snp_to_extract``: the name of the markers that needs to
-      be extracted from the source panel.
+    * ``outPrefix.ref_snp_to_extract``: the name of the markers that needs to
+      be extracted from the three reference panels.
+    * ``outPrefix.source_snp_to_extract``: the name of the markers that needs
+      to be extracted from the source panel.
     * ``outPrefix.update_names``: a file (readable by Plink) that will help in
       changing the names of the selected markers in the reference panels, so
       that they become comparable with the source panel.
@@ -717,7 +733,7 @@ def findOverlappingSNPsWithReference(prefix, referencePrefixes, outPrefix):
                 chromosome = row[0]
                 position = row[3]
                 snpName = row[1]
-                
+
                 if (chromosome, position) not in sourceSnpToExtract:
                     sourceSnpToExtract[(chromosome, position)] = snpName
                 else:
@@ -788,8 +804,8 @@ def extractSNPs(snpToExtractFileName, referencePrefixes, popNames, outPrefix,
                 runSGE, options):
     """Extract a list of SNPs using Plink.
 
-    :param snpToExtractFileName: the name of the file which contains the markers
-                                 to extract from the original data set.
+    :param snpToExtractFileName: the name of the file which contains the
+                                 markers to extract from the original data set.
     :param referencePrefixes: a list containing the three reference population
                               prefixes (the original data sets).
     :param popNames: a list containing the three reference population names.
@@ -815,14 +831,13 @@ def extractSNPs(snpToExtractFileName, referencePrefixes, popNames, outPrefix,
         if "DRMAA_LIBRARY_PATH" not in os.environ:
             msg = "could not load drmaa: set DRMAA_LIBRARY_PATH"
             raise ProgramError(msg)
-        
+
         # Import the python drmaa library
         import drmaa
 
         # Initializing a session
         s = drmaa.Session()
         s.initialize()
-
 
     for k, refPrefix in enumerate(referencePrefixes):
         plinkCommand = ["plink", "--noweb", "--bfile", refPrefix, "--extract",
@@ -853,7 +868,6 @@ def extractSNPs(snpToExtractFileName, referencePrefixes, popNames, outPrefix,
             # Storing the job template and the job ID
             jobTemplates.append(jt)
             jobIDs.append(jobID)
-
 
         else:
             # We run normal
@@ -896,8 +910,11 @@ def runCommand(command):
     """
     output = None
     try:
-        output = subprocess.check_output(command,
-                                         stderr=subprocess.STDOUT, shell=False)
+        output = subprocess.check_output(
+            command,
+            stderr=subprocess.STDOUT,
+            shell=False,
+        )
     except subprocess.CalledProcessError:
         msg = "couldn't run command\n" + " ".join(command)
         raise ProgramError(msg)
@@ -969,7 +986,7 @@ def checkArgs(args):
     return True
 
 
-def parseArgs(argString=None): # pragma: no cover
+def parseArgs(argString=None):  # pragma: no cover
     """Parses the command line options and arguments.
 
     :param argString: the options.
@@ -1035,7 +1052,7 @@ def parseArgs(argString=None): # pragma: no cover
 
 class ProgramError(Exception):
     """An :py:class:`Exception` raised in case of a problem.
-    
+
     :param msg: the message to print to the user before exiting.
 
     :type msg: string
@@ -1056,6 +1073,7 @@ class ProgramError(Exception):
 
 
 # The parser object
+pretty_name = "Ethnicity"
 desc = """Check samples' ethnicity using reference populations and IBS."""
 parser = argparse.ArgumentParser(description=desc)
 
@@ -1084,14 +1102,14 @@ group.add_argument("--min-nb-snp", type=int, metavar="INT", default=8000,
                    help=("The minimum number of markers needed to compute IBS "
                          "values. [Default: %(default)d]"))
 group.add_argument("--indep-pairwise", type=str, metavar="STR",
-                    nargs=3, default=["50", "5", "0.1"],
-                    help=("Three numbers: window size, window shift and "
-                          "the r2 threshold. [default: %(default)s]"))
+                   nargs=3, default=["50", "5", "0.1"],
+                   help=("Three numbers: window size, window shift and "
+                         "the r2 threshold. [default: %(default)s]"))
 group.add_argument("--maf", type=str, metavar="FLOAT", default="0.05",
-                    help=("Restrict to SNPs with MAF >= threshold. "
-                          "[default: %(default)s]"))
+                   help=("Restrict to SNPs with MAF >= threshold. "
+                         "[default: %(default)s]"))
 group.add_argument("--sge", action="store_true",
-                    help="Use SGE for parallelization.")
+                   help="Use SGE for parallelization.")
 group.add_argument("--sge-walltime", type=str, metavar="TIME",
                    help=("The walltime for the job to run on the cluster. Do "
                          "not use if you are not required to specify a "
@@ -1100,15 +1118,15 @@ group.add_argument("--sge-walltime", type=str, metavar="TIME",
 group.add_argument("--sge-nodes", type=int, metavar="INT", nargs=2,
                    help=("The number of nodes and the number of processor per "
                          "nodes to use (e.g. 'qsub -lnodes=X:ppn=Y' on the "
-                         "cluster, where X is the number of nodes and Y is the "
-                         "number of processor to use. Do not use if you are "
-                         "not required to specify the number of nodes for your "
-                         "jobs on the cluster."))
+                         "cluster, where X is the number of nodes and Y is "
+                         " the number of processor to use. Do not use if you "
+                         "are not required to specify the number of nodes for "
+                         "your jobs on the cluster."))
 group.add_argument("--ibs-sge-walltime", type=str, metavar="TIME",
-                   help=("The walltime for the IBS jobs to run on the cluster. "
-                         "Do not use if you are not required to specify a "
-                         "walltime for your jobs on your cluster (e.g. 'qsub "
-                         "-lwalltime=1:0:0' on the cluster)."))
+                   help=("The walltime for the IBS jobs to run on the "
+                         "cluster. Do not use if you are not required to "
+                         "specify a walltime for your jobs on your cluster "
+                         "(e.g. 'qsub -lwalltime=1:0:0' on the cluster)."))
 group.add_argument("--ibs-sge-nodes", type=int, metavar="INT", nargs=2,
                    help=("The number of nodes and the number of processor per "
                          "nodes to use for the IBS jobs (e.g. 'qsub "
@@ -1121,8 +1139,8 @@ group.add_argument("--line-per-file-for-sge", type=int, metavar="INT",
                                       "task array for the IBS jobs. [default: "
                                       "%(default)d]"))
 group.add_argument("--nb-components", type=int, metavar="INT", default=10,
-                    help=("The number of component to compute. [default: "
-                          "%(default)d]"))
+                   help=("The number of component to compute. [default: "
+                         "%(default)d]"))
 
 # The outlier options
 group = parser.add_argument_group("Outlier Options")
