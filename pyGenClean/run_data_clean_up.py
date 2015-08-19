@@ -1494,17 +1494,19 @@ def run_check_ethnicity(in_prefix, in_type, out_prefix, base_dir, options):
     return in_prefix, required_type, latex_file, check_ethnicity.desc
 
 
-def run_flag_maf_zero(in_prefix, in_type, out_prefix, options):
+def run_flag_maf_zero(in_prefix, in_type, out_prefix, base_dir, options):
     """Runs step11 (flag MAF zero).
 
     :param in_prefix: the prefix of the input files.
     :param in_type: the type of the input files.
     :param out_prefix: the output prefix.
+    :param base_dir: the output directory.
     :param options: the options needed.
 
     :type in_prefix: string
     :type in_type: string
     :type out_prefix: string
+    :type base_dir: string
     :type options: list of strings
 
     :returns: a tuple containing the prefix of the output files (the input
@@ -1521,8 +1523,8 @@ def run_flag_maf_zero(in_prefix, in_type, out_prefix, options):
         files. Hence, this function returns the input file prefix and its type.
 
     """
-    # Creating the output directory
-    os.mkdir(out_prefix)
+#    # Creating the output directory
+#    os.mkdir(out_prefix)
 
     # We know we need bfile
     required_type = "bfile"
@@ -1530,8 +1532,9 @@ def run_flag_maf_zero(in_prefix, in_type, out_prefix, options):
 
     # We need to inject the name of the input file and the name of the output
     # prefix
+    script_prefix = os.path.join(out_prefix, "flag_maf_0")
     options += ["--{}".format(required_type), in_prefix,
-                "--out", os.path.join(out_prefix, "flag_maf_0")]
+                "--out", script_prefix]
 
     # We run the script
     try:
@@ -1540,9 +1543,40 @@ def run_flag_maf_zero(in_prefix, in_type, out_prefix, options):
         msg = "flag_maf_zero: {}".format(e)
         raise ProgramError(msg)
 
+    # Reading the file to compute the number of flagged markers
+    nb_flagged = None
+    flagged_fn = script_prefix + ".list"
+    with open(flagged_fn, "r") as i_file:
+        nb_flagged = len(i_file.read().splitlines())
+
+    # We write a LaTeX summary
+    latex_file = os.path.join(script_prefix + ".summary.tex")
+    try:
+        with open(latex_file, "w") as o_file:
+            print >>o_file, latex_template.subsection(
+                flag_maf_zero.pretty_name
+            )
+            safe_fn = os.path.basename(flagged_fn).replace("_", r"\_")
+            text = (
+                "After computing minor allele frequencies (MAF) of all "
+                "markers using Plink, a total of {:,d} marker{} had a MAF "
+                "of zero and were flagged ({}).".format(
+                    nb_flagged,
+                    "s" if nb_flagged - 1 > 1 else "",
+                    r"see file \texttt{" + safe_fn +
+                    "} for more information"
+                )
+            )
+            print >>o_file, latex_template.wrap_lines(text)
+
+
+    except IOError:
+        msg = "{}: cannot write LaTeX summary".format(latex_file)
+        raise ProgramError(msg)
+
     # We know this step doesn't produce an new data set, so we return the old
     # prefix and the old in_type
-    return in_prefix, required_type
+    return in_prefix, required_type, latex_file, flag_maf_zero.desc
 
 
 def run_flag_hw(in_prefix, in_type, out_prefix, options):
