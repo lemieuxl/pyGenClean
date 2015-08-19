@@ -1,22 +1,25 @@
 #!/usr/bin/env python2.7
-## This file is part of pyGenClean.
-## 
-## pyGenClean is free software: you can redistribute it and/or modify it under
-## the terms of the GNU General Public License as published by the Free Software
-## Foundation, either version 3 of the License, or (at your option) any later
-## version.
-## 
-## pyGenClean is distributed in the hope that it will be useful, but WITHOUT ANY
-## WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
-## A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
-## 
-## You should have received a copy of the GNU General Public License along with
-## pyGenClean.  If not, see <http://www.gnu.org/licenses/>.
+
+# This file is part of pyGenClean.
+#
+# pyGenClean is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later
+# version.
+#
+# pyGenClean is distributed in the hope that it will be useful, but WITHOUT ANY
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+# A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with
+# pyGenClean.  If not, see <http://www.gnu.org/licenses/>.
+
 
 import os
 import sys
 import argparse
 import subprocess
+
 
 def main(argString=None):
     """The main function of this module.
@@ -34,9 +37,9 @@ def main(argString=None):
     for key, value in vars(args).iteritems():
         print "      --{} {}".format(key, value)
 
-    # Run plink
-    print "   - Running Plink to set heterozygous haploid as missing"
-    runPlink(args)
+#    # Run plink
+#    print "   - Running Plink to set heterozygous haploid as missing"
+#    runPlink(args)
 
 
 def runPlink(options):
@@ -49,7 +52,7 @@ def runPlink(options):
     """
     # The plink command
     plinkCommand = ["plink", "--noweb", "--bfile", options.bfile,
-                    "--set-hh-missing", "--make-bed" , "--out", options.out]
+                    "--set-hh-missing", "--make-bed", "--out", options.out]
 
     output = None
     try:
@@ -83,7 +86,7 @@ def checkArgs(args):
     return True
 
 
-def parseArgs(argString=None): # pragma: no cover
+def parseArgs(argString=None):  # pragma: no cover
     """Parses the command line options and arguments.
 
     :param argString: the options.
@@ -91,8 +94,8 @@ def parseArgs(argString=None): # pragma: no cover
     :type argString: list of strings
 
     :returns: A :py:class:`argparse.Namespace` object created by the
-              :py:mod:`argparse` module. It contains the values of the different
-              options.
+              :py:mod:`argparse` module. It contains the values of the
+              different options.
 
     =============== ====== ==========================================
         Options      Type                  Description
@@ -117,7 +120,7 @@ def parseArgs(argString=None): # pragma: no cover
 
 class ProgramError(Exception):
     """An :py:class:`Exception` raised in case of a problem.
-    
+
     :param msg: the message to print to the user before exiting.
 
     :type msg: string
@@ -138,6 +141,7 @@ class ProgramError(Exception):
 
 
 # The parser object
+pretty_name = "Heterozygous Haploid"
 desc = """Removes heterozygous haploid genotypes."""
 parser = argparse.ArgumentParser(description=desc)
 
