@@ -902,7 +902,7 @@ def run_sex_check(in_prefix, in_type, out_prefix, base_dir, options):
 
                     zipped = zip(figures, sample_ids, labels)
                     for figure, sample_id, label in zipped:
-                        sample_id = sample_id.replace("_", r"\_")
+                        sample_id = latex_template.sanitize_tex(sample_id)
 
                         # Getting the paths
                         graphics_path, path = os.path.split(figure)
@@ -1562,7 +1562,7 @@ def run_flag_maf_zero(in_prefix, in_type, out_prefix, base_dir, options):
             print >>o_file, latex_template.subsection(
                 flag_maf_zero.pretty_name
             )
-            safe_fn = os.path.basename(flagged_fn).replace("_", r"\_")
+            safe_fn = latex_template.sanitize_tex(os.path.basename(flagged_fn))
             text = (
                 "After computing minor allele frequencies (MAF) of all "
                 "markers using Plink, a total of {:,d} marker{} had a MAF "
