@@ -1,17 +1,19 @@
 #!/usr/bin/env python2.7
-## This file is part of pyGenClean.
-## 
-## pyGenClean is free software: you can redistribute it and/or modify it under
-## the terms of the GNU General Public License as published by the Free Software
-## Foundation, either version 3 of the License, or (at your option) any later
-## version.
-## 
-## pyGenClean is distributed in the hope that it will be useful, but WITHOUT ANY
-## WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
-## A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
-## 
-## You should have received a copy of the GNU General Public License along with
-## pyGenClean.  If not, see <http://www.gnu.org/licenses/>.
+
+# This file is part of pyGenClean.
+#
+# pyGenClean is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later
+# version.
+#
+# pyGenClean is distributed in the hope that it will be useful, but WITHOUT ANY
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+# A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with
+# pyGenClean.  If not, see <http://www.gnu.org/licenses/>.
+
 
 import os
 import sys
@@ -19,6 +21,7 @@ import argparse
 import subprocess
 
 from PlinkUtils import createRowFromPlinkSpacedOutput
+
 
 def main(argString=None):
     """The main function.
@@ -43,13 +46,13 @@ def main(argString=None):
     for key, value in vars(args).iteritems():
         print "      --{} {}".format(key, value)
 
-    # Compute frequency using plink
-    print "   - Computing the frequencies using Plink"
-    computeFrequency(args)
+#    # Compute frequency using plink
+#    print "   - Computing the frequencies using Plink"
+#    computeFrequency(args)
 
-    # Read the freqency file
-    print "   - Flagging SNPs with MAF = 0"
-    findSnpWithMaf0(args.out + ".frq", args.out)
+#    # Read the freqency file
+#    print "   - Flagging SNPs with MAF = 0"
+#    findSnpWithMaf0(args.out + ".frq", args.out)
 
 
 def findSnpWithMaf0(freqFileName, prefix):
@@ -75,8 +78,9 @@ def findSnpWithMaf0(freqFileName, prefix):
                 row = createRowFromPlinkSpacedOutput(line)
                 if i == 0:
                     # We have the header
-                    headerIndex = dict([(row[i], i) \
-                                            for i in xrange(len(row))])
+                    headerIndex = dict([
+                        (row[i], i) for i in xrange(len(row))
+                    ])
                     for columnName in ["SNP", "MAF"]:
                         if columnName not in headerIndex:
                             msg = "%(freqFileName)s: no column named " \
@@ -125,7 +129,6 @@ def findSnpWithMaf0(freqFileName, prefix):
             raise ProgramError(msg)
 
 
-
 def computeFrequency(options):
     """Compute the frequency of the SNPs.
 
@@ -171,7 +174,7 @@ def checkArgs(args):
     return True
 
 
-def parseArgs(argString=None): # pragma: no cover
+def parseArgs(argString=None):  # pragma: no cover
     """Parses the command line options and arguments.
 
     :param argString: the options.
@@ -179,8 +182,8 @@ def parseArgs(argString=None): # pragma: no cover
     :type argString: list of strings
 
     :returns: A :py:class:`argparse.Namespace` object created by the
-              :py:mod:`argparse` module. It contains the values of the different
-              options.
+              :py:mod:`argparse` module. It contains the values of the
+              different options.
 
     =========== ====== ==========================================
       Options    Type                 Description
@@ -205,7 +208,7 @@ def parseArgs(argString=None): # pragma: no cover
 
 class ProgramError(Exception):
     """An :py:class:`Exception` raised in case of a problem.
-    
+
     :param msg: the message to print to the user before exiting.
 
     :type msg: string
@@ -225,6 +228,7 @@ class ProgramError(Exception):
 
 
 # The parser object
+pretty_name = "MAF flagging"
 desc = """Flag SNPs with MAF of 0."""
 parser = argparse.ArgumentParser(description=desc)
 
