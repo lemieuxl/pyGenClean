@@ -1100,17 +1100,20 @@ def run_plate_bias(in_prefix, in_type, out_prefix, base_dir, options):
     return in_prefix, required_type, latex_file, plate_bias.desc
 
 
-def run_remove_heterozygous_haploid(in_prefix, in_type, out_prefix, options):
+def run_remove_heterozygous_haploid(in_prefix, in_type, out_prefix, base_dir,
+                                    options):
     """Runs step8 (remove heterozygous haploid).
 
     :param in_prefix: the prefix of the input files.
     :param in_type: the type of the input files.
     :param out_prefix: the output prefix.
+    :param base_dir: the output directory.
     :param options: the options needed.
 
     :type in_prefix: string
     :type in_type: string
     :type out_prefix: string
+    :type base_dir: string
     :type options: list of strings
 
     :returns: a tuple containing the prefix of the output files (the input
@@ -1123,8 +1126,8 @@ def run_remove_heterozygous_haploid(in_prefix, in_type, out_prefix, options):
     type is the good one, or to create it if needed.
 
     """
-    # Creating the output directory
-    os.mkdir(out_prefix)
+#    # Creating the output directory
+#    os.mkdir(out_prefix)
 
     # We know we need bfile
     required_type = "bfile"
@@ -1132,8 +1135,9 @@ def run_remove_heterozygous_haploid(in_prefix, in_type, out_prefix, options):
 
     # We need to inject the name of the input file and the name of the output
     # prefix
+    script_prefix = os.path.join(out_prefix, "without_hh_genotypes")
     options += ["--{}".format(required_type), in_prefix,
-                "--out", os.path.join(out_prefix, "without_hh_genotypes")]
+                "--out", script_prefix]
 
     # We run the script
     try:
@@ -1142,8 +1146,40 @@ def run_remove_heterozygous_haploid(in_prefix, in_type, out_prefix, options):
         msg = "remove_heterozygous_haploid: {}".format(e)
         raise ProgramError(msg)
 
+    # We get the number of genotypes that were set to missing
+    nb_hh_missing = None
+    with open(script_prefix + ".log", "r") as i_file:
+        nb_hh_missing = re.search(
+            r"(\d+) heterozygous haploid genotypes; set to missing",
+            i_file.read(),
+        )
+    if nb_hh_missing:
+        nb_hh_missing = int(nb_hh_missing.group(1))
+
+    # We write a LaTeX summary
+    latex_file = os.path.join(script_prefix + ".summary.tex")
+    try:
+        with open(latex_file, "w") as o_file:
+            print >>o_file, latex_template.subsection(
+                remove_heterozygous_haploid.pretty_name
+            )
+            text = (
+                "After Plink's heterozygous haploid analysis, a total of "
+                "{:,d} genotype{} were set to missing.".format(
+                    nb_hh_missing,
+                    "s" if nb_hh_missing - 1 > 1 else "",
+                )
+            )
+            print >>o_file, latex_template.wrap_lines(text)
+
+
+    except IOError:
+        msg = "{}: cannot write LaTeX summary".format(latex_file)
+        raise ProgramError(msg)
+
     # We know this step produces an new data set (bfile), so we return it
-    return os.path.join(out_prefix, "without_hh_genotypes"), "bfile"
+    return (os.path.join(out_prefix, "without_hh_genotypes"), "bfile",
+            latex_file, remove_heterozygous_haploid.desc)
 
 
 def run_find_related_samples(in_prefix, in_type, out_prefix, base_dir,
