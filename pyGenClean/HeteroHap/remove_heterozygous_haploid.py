@@ -141,7 +141,7 @@ class ProgramError(Exception):
 
 
 # The parser object
-pretty_name = "Heterozygous Haploid"
+pretty_name = "Heterozygous haploid"
 desc = """Removes heterozygous haploid genotypes."""
 parser = argparse.ArgumentParser(description=desc)
 
