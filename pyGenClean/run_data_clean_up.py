@@ -1088,7 +1088,10 @@ def run_plate_bias(in_prefix, in_type, out_prefix, base_dir, options):
                     nb_col=len(table[1]),
                     col_alignments="rrlrrrl",
                     header_data=zip(table[0], [1 for i in table[0]]),
-                    tabular_data=table[1:],
+                    tabular_data=sorted(
+                        table[1:],
+                        key=lambda item: (int(item[0]), int(item[1])),
+                    ),
                 )
 
     except IOError:
