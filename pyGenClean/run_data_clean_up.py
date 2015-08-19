@@ -816,7 +816,10 @@ def run_sex_check(in_prefix, in_type, out_prefix, base_dir, options):
                     col_alignments="llrrlrrrr",
                     text_size="scriptsize",
                     header_data=zip(table[0], [1 for i in table[0]]),
-                    tabular_data=table[1:],
+                    tabular_data=sorted(
+                        table[1:],
+                        key=lambda item: (item[0], item[1]),
+                    ),
                 )
 
             # If there is a figure, we add it here
