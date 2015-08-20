@@ -1090,6 +1090,7 @@ def run_plate_bias(in_prefix, in_type, out_prefix, base_dir, options):
                     table_label=table_label,
                     nb_col=len(table[1]),
                     col_alignments="rrlrrrl",
+                    text_size="scriptsize",
                     header_data=zip(table[0], [1 for i in table[0]]),
                     tabular_data=sorted(
                         table[1:],
