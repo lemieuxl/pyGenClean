@@ -1178,7 +1178,6 @@ def run_remove_heterozygous_haploid(in_prefix, in_type, out_prefix, base_dir,
             )
             print >>o_file, latex_template.wrap_lines(text)
 
-
     except IOError:
         msg = "{}: cannot write LaTeX summary".format(latex_file)
         raise ProgramError(msg)
@@ -1569,12 +1568,11 @@ def run_flag_maf_zero(in_prefix, in_type, out_prefix, base_dir, options):
                 "of zero and were flagged ({}).".format(
                     nb_flagged,
                     "s" if nb_flagged - 1 > 1 else "",
-                    r"see file \texttt{" + safe_fn +
-                    "} for more information"
+                    "see file " + latex_template.texttt(safe_fn) +
+                    " for more information"
                 )
             )
             print >>o_file, latex_template.wrap_lines(text)
-
 
     except IOError:
         msg = "{}: cannot write LaTeX summary".format(latex_file)
@@ -1585,17 +1583,19 @@ def run_flag_maf_zero(in_prefix, in_type, out_prefix, base_dir, options):
     return in_prefix, required_type, latex_file, flag_maf_zero.desc
 
 
-def run_flag_hw(in_prefix, in_type, out_prefix, options):
+def run_flag_hw(in_prefix, in_type, out_prefix, base_dir, options):
     """Runs step12 (flag HW).
 
     :param in_prefix: the prefix of the input files.
     :param in_type: the type of the input files.
     :param out_prefix: the output prefix.
+    :param base_dir: the output directory.
     :param options: the options needed.
 
     :type in_prefix: string
     :type in_type: string
     :type out_prefix: string
+    :type base_dir: string
     :type options: list of strings
 
     :returns: a tuple containing the prefix of the output files (the input
@@ -1612,8 +1612,8 @@ def run_flag_hw(in_prefix, in_type, out_prefix, options):
         Hence, this function returns the input file prefix and its type.
 
     """
-    # Creating the output directory
-    os.mkdir(out_prefix)
+#    # Creating the output directory
+#    os.mkdir(out_prefix)
 
     # We know we need bfile
     required_type = "bfile"
@@ -1621,8 +1621,9 @@ def run_flag_hw(in_prefix, in_type, out_prefix, options):
 
     # We need to inject the name of the input file and the name of the output
     # prefix
+    script_prefix = os.path.join(out_prefix, "flag_hw")
     options += ["--{}".format(required_type), in_prefix,
-                "--out", os.path.join(out_prefix, "flag_hw")]
+                "--out", script_prefix]
 
     # We run the script
     try:
@@ -1631,9 +1632,69 @@ def run_flag_hw(in_prefix, in_type, out_prefix, options):
         msg = "flag_hw: {}".format(e)
         raise ProgramError(msg)
 
+    # Finding the two files containing the list of flagged markers
+    filenames = glob(script_prefix + ".snp_flag_threshold_[0-9]*")
+    thresholds = {}
+    for filename in filenames:
+        # Finding the threshold of the file
+        threshold = re.sub(
+            r"^flag_hw.snp_flag_threshold_",
+            "",
+            os.path.basename(filename),
+        )
+
+        # Counting the number of markers in the file
+        nb_markers = None
+        with open(filename, "r") as i_file:
+            nb_markers = len(i_file.read().splitlines())
+
+        # Saving the values
+        thresholds[threshold] = (nb_markers, filename)
+
+    # We create the LaTeX summary
+    latex_file = os.path.join(script_prefix + ".summary.tex")
+    try:
+        with open(latex_file, "w") as o_file:
+            print >>o_file, latex_template.subsection(
+                flag_hw.pretty_name
+            )
+
+            # Data to write
+            sorted_keys = sorted(thresholds.keys(), key=float)
+
+            text = (
+                "Markers which failed Hardy-Weinberg equilibrium test (using "
+                "Plink) were flagged. A total of {:,d} marker{} failed with a "
+                "threshold of {}. A total of {:,d} marker{} failed with a "
+                "threshold of {}. For a total list, check the files {} and "
+                "{}, respectively.".format(
+                    thresholds[sorted_keys[0]][0],
+                    "s" if thresholds[sorted_keys[0]][0] - 1 > 1 else "",
+                    latex_template.format_numbers(sorted_keys[0]),
+                    thresholds[sorted_keys[1]][0],
+                    "s" if thresholds[sorted_keys[1]][0] - 1 > 1 else "",
+                    latex_template.format_numbers(sorted_keys[1]),
+                    latex_template.texttt(
+                        latex_template.sanitize_tex(os.path.basename(
+                            thresholds[sorted_keys[0]][1],
+                        )),
+                    ),
+                    latex_template.texttt(
+                        latex_template.sanitize_tex(os.path.basename(
+                            thresholds[sorted_keys[1]][1],
+                        )),
+                    ),
+                )
+            )
+            print >>o_file, latex_template.wrap_lines(text)
+
+    except IOError:
+        msg = "{}: cannot write LaTeX summary".format(latex_file)
+        raise ProgramError(msg)
+
     # We know this step doesn't produce an new data set, so we return the old
     # prefix and the old in_type
-    return in_prefix, required_type
+    return in_prefix, required_type, latex_file, flag_hw.desc
 
 
 def run_compare_gold_standard(in_prefix, in_type, out_prefix, options):
