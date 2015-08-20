@@ -1890,48 +1890,52 @@ def run_subset_data(in_prefix, in_type, out_prefix, base_dir, options):
                 text += (
                     "The file for marker extraction contained {:,d} marker{}. "
                     "Out of a total of {:,d} marker{}, {:,d} "
-                    "remained. ".format(
+                    "remained ({:,d} excluded).".format(
                         nb_extract,
                         "s" if nb_extract > 1 else "",
                         nb_marker_start,
                         "s" if nb_marker_start > 1 else "",
                         nb_marker_end,
+                        nb_marker_start - nb_marker_end,
                     )
                 )
             if is_exclude:
                 text += (
                     "The file for marker exclusion contained {:,d} marker{}. "
                     "Out of a total of {:,d} marker{}, {:,d} "
-                    "remained. ".format(
+                    "remained ({:,d} excluded). ".format(
                         nb_exclude,
                         "s" if nb_exclude > 1 else "",
                         nb_marker_start,
                         "s" if nb_marker_start > 1 else "",
                         nb_marker_end,
+                        nb_marker_start - nb_marker_end,
                     )
                 )
             if is_keep:
                 text += (
                     "The file containing samples to keep contained {:,d} "
                     "sample{}. Out of a total of {:,d} sample{}, {:,d} "
-                    "remained. ".format(
+                    "remained ({:,d} removed). ".format(
                         nb_keep,
                         "s" if nb_keep > 1 else "",
                         nb_sample_start,
                         "s" if nb_sample_start > 1 else "",
                         nb_sample_end,
+                        nb_sample_start - nb_sample_end,
                     )
                 )
             if is_remove:
                 text += (
                     "The file containing samples to remove contained {:,d} "
                     "sample{}. Out of a total of {:,d} sample{}, {:,d} "
-                    "remained. ".format(
+                    "remained ({:,d} removed). ".format(
                         nb_remove,
                         "s" if nb_remove > 1 else "",
                         nb_sample_start,
                         "s" if nb_sample_start > 1 else "",
                         nb_sample_end,
+                        nb_sample_start - nb_sample_end,
                     )
                 )
             print >>o_file, latex_template.wrap_lines(text)
