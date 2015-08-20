@@ -1,17 +1,19 @@
 #!/usr/bin/env python2.7
-## This file is part of pyGenClean.
-## 
-## pyGenClean is free software: you can redistribute it and/or modify it under
-## the terms of the GNU General Public License as published by the Free Software
-## Foundation, either version 3 of the License, or (at your option) any later
-## version.
-## 
-## pyGenClean is distributed in the hope that it will be useful, but WITHOUT ANY
-## WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
-## A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
-## 
-## You should have received a copy of the GNU General Public License along with
-## pyGenClean.  If not, see <http://www.gnu.org/licenses/>.
+
+# This file is part of pyGenClean.
+#
+# pyGenClean is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later
+# version.
+#
+# pyGenClean is distributed in the hope that it will be useful, but WITHOUT ANY
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+# A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with
+# pyGenClean.  If not, see <http://www.gnu.org/licenses/>.
+
 
 import os
 import sys
@@ -21,8 +23,10 @@ import subprocess
 from PlinkUtils import createRowFromPlinkSpacedOutput
 import PlinkUtils.compare_bim as CompareBIM
 
+
 class Dummy(object):
     pass
+
 
 def main(argString=None):
     """The main function.
@@ -54,46 +58,53 @@ def main(argString=None):
     for key, value in vars(args).iteritems():
         print "      --{} {}".format(key, value)
 
-    # Compute the number of markers
-    print "   - Counting the number of markers"
-    nbMarkers = computeNumberOfMarkers(args.bfile + ".bim")
-
-    if nbMarkers <= 0:
-        print "      - There are no markers"
-        print "        Stopping now"
-    else:
-        print "      - There are {} markers".format(nbMarkers)
-
-        customThreshold = str(0.05 / nbMarkers)
-
-        # Run the plink command
-        print "   - Computing the HW equilibrium for {}".format(customThreshold)
-        computeHWE(args.bfile, customThreshold,
-                args.out + ".threshold_" + customThreshold)
-        print "   - Computing the HW equilibrium for {}".format(args.hwe)
-        computeHWE(args.bfile, args.hwe, args.out + ".threshold_" + args.hwe)
-        
-        # Compare the BIM files
-        print ("   - Creating the flagged SNP list for "
-               "{}".format(customThreshold))
-        custom_snps = compareBIMfiles(args.bfile + ".bim",
-                                      args.out + ".threshold_" + customThreshold + ".bim",
-                                      args.out + ".snp_flag_threshold_" + customThreshold)
-        print "   - Creating the flagged SNP list for {}".format(args.hwe)
-        hwe_snps = compareBIMfiles(args.bfile + ".bim",
-                                   args.out + ".threshold_" + args.hwe + ".bim",
-                                   args.out + ".snp_flag_threshold_" + args.hwe)
-
-        print ("   - Creating the in between SNP list ([{}, "
-               "{}[)".format(args.hwe, customThreshold))
-        file_name = args.out + ".snp_flag_threshold_between_{}-{}".format(args.hwe,
-                                                                          customThreshold)
-        try:
-            with open(file_name, 'w') as output_file:
-                print >>output_file, "\n".join(hwe_snps - custom_snps)
-        except IOError:
-            msg = "{}: can't write file".format(file_name)
-            raise ProgramError(msg)
+#    # Compute the number of markers
+#    print "   - Counting the number of markers"
+#    nbMarkers = computeNumberOfMarkers(args.bfile + ".bim")
+#
+#    if nbMarkers <= 0:
+#        print "      - There are no markers"
+#        print "        Stopping now"
+#    else:
+#        print "      - There are {} markers".format(nbMarkers)
+#
+#        customThreshold = str(0.05 / nbMarkers)
+#
+#        # Run the plink command
+#        print ("   - Computing the HW equilibrium for "
+#               "{}".format(customThreshold))
+#        computeHWE(args.bfile, customThreshold,
+#                   args.out + ".threshold_" + customThreshold)
+#        print "   - Computing the HW equilibrium for {}".format(args.hwe)
+#        computeHWE(args.bfile, args.hwe, args.out + ".threshold_" + args.hwe)
+#
+#        # Compare the BIM files
+#        print ("   - Creating the flagged SNP list for "
+#               "{}".format(customThreshold))
+#        custom_snps = compareBIMfiles(
+#            args.bfile + ".bim",
+#            args.out + ".threshold_" + customThreshold + ".bim",
+#            args.out + ".snp_flag_threshold_" + customThreshold,
+#        )
+#        print "   - Creating the flagged SNP list for {}".format(args.hwe)
+#        hwe_snps = compareBIMfiles(
+#            args.bfile + ".bim",
+#            args.out + ".threshold_" + args.hwe + ".bim",
+#            args.out + ".snp_flag_threshold_" + args.hwe,
+#        )
+#
+#        print ("   - Creating the in between SNP list ([{}, "
+#               "{}[)".format(args.hwe, customThreshold))
+#        file_name = args.out + ".snp_flag_threshold_between_{}-{}".format(
+#            args.hwe,
+#            customThreshold,
+#        )
+#        try:
+#            with open(file_name, 'w') as output_file:
+#                print >>output_file, "\n".join(hwe_snps - custom_snps)
+#        except IOError:
+#            msg = "{}: can't write file".format(file_name)
+#            raise ProgramError(msg)
 
 
 def compareBIMfiles(beforeFileName, afterFileName, outputFileName):
@@ -230,7 +241,7 @@ def checkArgs(args):
     return True
 
 
-def parseArgs(argString=None): # pragma: no cover
+def parseArgs(argString=None):  # pragma: no cover
     """Parses the command line options and arguments.
 
     :param argString: the options.
@@ -265,7 +276,7 @@ def parseArgs(argString=None): # pragma: no cover
 
 class ProgramError(Exception):
     """An :py:class:`Exception` raised in case of a problem.
-    
+
     :param msg: the message to print to the user before exiting.
 
     :type msg: string
@@ -285,6 +296,7 @@ class ProgramError(Exception):
 
 
 # The parser object
+pretty_name = "Hardy-Weinberg flagging"
 desc = """Flag SNPs with Hardy-Weinberg disequilibrium."""
 parser = argparse.ArgumentParser(description=desc)
 
@@ -297,13 +309,13 @@ group.add_argument("--bfile", type=str, metavar="FILE", required=True,
 # The options
 group = parser.add_argument_group("Options")
 group.add_argument("--hwe", type=str, metavar="FLOAT", default="1e-4",
-                    help=("The Hardy-Weinberg equilibrium threshold. "
-                          "[default: %(default)s]"))
+                   help=("The Hardy-Weinberg equilibrium threshold. "
+                         "[default: %(default)s]"))
 # The OUTPUT files
 group = parser.add_argument_group("Output File")
 group.add_argument("--out", type=str, metavar="FILE", default="flag_hw",
-                    help=("The prefix of the output files. [default: "
-                          "%(default)s]"))
+                   help=("The prefix of the output files. [default: "
+                         "%(default)s]"))
 
 if __name__ == "__main__":
     try:
