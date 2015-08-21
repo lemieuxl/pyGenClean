@@ -16,6 +16,7 @@
 
 
 import os
+from datetime import datetime
 
 import pyGenClean.LaTeX as latex
 from pyGenClean import __version__ as pygenclean_version
@@ -82,6 +83,9 @@ def create_report(outdirname, report_filename, **kwargs):
     # Getting the template
     main_template = latex.jinja2_env.get_template("main_document.tex")
 
+    # Getting the data
+    today = datetime.today()
+
     try:
         with open(report_filename, "w") as i_file:
             # Rendering the template
@@ -95,6 +99,9 @@ def create_report(outdirname, report_filename, **kwargs):
             #   - bibliography_content: the content of the 'bibliography'
             print >>i_file, main_template.render(
                 project_name=project_name,
+                month=today.strftime("%B"),
+                day=today.day,
+                year=today.year,
                 logo_dir=os.path.abspath(os.path.dirname(logo_path)) + "/",
                 logo_path=os.path.basename(logo_path),
                 background_content=background_section,

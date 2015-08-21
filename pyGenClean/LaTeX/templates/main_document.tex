@@ -9,6 +9,9 @@
 \usepackage{fancyhdr}
 \pagestyle{fancy}
 
+% Ordinal numbers
+\usepackage{engord}
+
 \setlength{\parindent}{0cm}
 
 \usepackage{color}
@@ -100,7 +103,7 @@
 \title{Genetic Data Clean Up}
 \subtitle{\ProjectName}
 \author{\begingroup\graphicspath{{\VAR{ logo_dir }}}\includegraphics[width=0.3\textwidth]{\VAR{ logo_path }}\endgroup}
-\date{\today}
+\date{\VAR{ month } \engordnumber{\VAR{ day }}, \VAR{ year }}
 \maketitle
 
 % The table of contents
@@ -108,7 +111,7 @@
 \tableofcontents{}
 \listoffigures{}
 \microtypesetup{protrusion=true} % enables protrusion
-\cleardoublepage
+\clearpage
 \newpage
 
 \section{Background}
