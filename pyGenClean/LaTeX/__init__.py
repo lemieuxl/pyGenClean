@@ -105,6 +105,18 @@ def textit(text):
     return r"\textit{" + text + "}"
 
 
+def textbf(text):
+    """Returns bold font.
+
+    :param text: the text.
+    :type text: string.
+
+    :returns: an bold font.
+
+    """
+    return r"\textbf{" + text + "}"
+
+
 def bib_entry(**kwargs):
     """Creates a bibliography entry.
 
