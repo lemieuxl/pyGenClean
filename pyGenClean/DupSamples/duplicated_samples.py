@@ -1,17 +1,19 @@
 #!/usr/bin/env python2.7
-## This file is part of pyGenClean.
-## 
-## pyGenClean is free software: you can redistribute it and/or modify it under
-## the terms of the GNU General Public License as published by the Free Software
-## Foundation, either version 3 of the License, or (at your option) any later
-## version.
-## 
-## pyGenClean is distributed in the hope that it will be useful, but WITHOUT ANY
-## WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
-## A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
-## 
-## You should have received a copy of the GNU General Public License along with
-## pyGenClean.  If not, see <http://www.gnu.org/licenses/>.
+
+# This file is part of pyGenClean.
+#
+# pyGenClean is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later
+# version.
+#
+# pyGenClean is distributed in the hope that it will be useful, but WITHOUT ANY
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+# A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with
+# pyGenClean.  If not, see <http://www.gnu.org/licenses/>.
+
 
 import os
 import sys
@@ -22,6 +24,7 @@ import StringIO
 from collections import defaultdict
 
 import numpy as npy
+
 
 def main(argString=None):
     """Check for duplicated samples in a tfam/tped file.
@@ -39,9 +42,9 @@ def main(argString=None):
     4.  Writes the unique samples into a file named
         ``prefix.unique_samples.tfam`` (:py:func:`printUniqueTFAM`).
     5.  Reads the ``tped`` file and write into ``prefix.unique_samples.tped``
-        the pedigree file for the unique samples (:py:func:`processTPED`). Saves
-        in memory the pedigree for the duplicated samples. Updates the indexes
-        of the duplicated samples.
+        the pedigree file for the unique samples (:py:func:`processTPED`).
+        Saves in memory the pedigree for the duplicated samples. Updates the
+        indexes of the duplicated samples.
     6.  If there are no duplicated samples, simply copies the files
         ``prefix.unique_samples`` (``tped`` and ``tfam``) to
         ``prefix.final.tfam`` and ``prefix..final.tped``, respectively.
@@ -52,7 +55,8 @@ def main(argString=None):
     9.  We print the concordance matrix for each duplicated samples
         (:py:func:`printConcordance`).
     10. We print the ``tped`` and the ``tfam`` file for the duplicated samples
-        (``prefix.duplicated_samples``) (:py:func:`printDuplicatedTPEDandTFAM`).
+        (``prefix.duplicated_samples``)
+        (:py:func:`printDuplicatedTPEDandTFAM`).
     11. Choose the best of each duplicates (to keep and to complete) according
         to completion and concordance (:py:func:`chooseBestDuplicates`).
     12. Creates a unique ``tped`` and ``tfam`` from the duplicated samples by
@@ -71,86 +75,96 @@ def main(argString=None):
     for key, value in vars(args).iteritems():
         print "      --{} {}".format(key, value)
 
-    # Reading the tfam file
-    print "   - Reading TFAM"
-    tfam = readTFAM(args.tfile + ".tfam")
-
-    # Find duplicated samples
-    print "   - Finding duplicated samples"
-    uniqueSamples, duplicatedSamples = findDuplicates(tfam)
-
-    # Prints the unique tfam
-    print "   - Creating TFAM for unique samples"
-    printUniqueTFAM(tfam, uniqueSamples, args.out)
-
-    # Process the TPED file
-    print "   - Reading TPED (and creating TPED for unique samples)"
-    tped, tpedSamples = processTPED(uniqueSamples, duplicatedSamples,
-                                    args.tfile + ".tped", args.out)
-
-    if len(duplicatedSamples) == 0:
-        print "   - There are no duplicates in {}.tfam".format(args.tfile)
-        # There are no duplicated samples
-        try:
-            shutil.copy(args.out + ".unique_samples.tfam",
-                        args.out + ".final.tfam")
-        except IOError:
-            msg = "%s.unique_samples.tfam: can't copy to " \
-                  "%s.final.tfam" % (args.out, args.out)
-            raise ProgramError(msg)
-        try:
-            shutil.copy(args.out + ".unique_samples.tped",
-                        args.out + ".final.tped")
-        except IOError:
-            msg = "%s.unique_samples.tped: can't copy to " \
-                  "%s.final.tped" % (args.out, args.out)
-            raise ProgramError(msg)
-
-    else:
-        # We continue
-        # Compute statistics
-        print ("   - Computing the completion and concordance of duplicated\n"
-               "     samples")
-        completion, concordance = computeStatistics(tped, tfam, tpedSamples,
-                                                    duplicatedSamples, args.out)
-
-        # Print the statistics
-        print "   - Printing the statistics"
-        completion_percentage = printStatistics(completion, concordance,
-                                                tpedSamples, duplicatedSamples,
-                                                args.out)
-
-        # Print the concordance file
-        print "   - Printing the concordance file"
-        concordance_percentage = printConcordance(concordance, args.out)
-
-        # Print the duplicated TFAM and TPED
-        print "   - Creating TPED and TFAM for duplicated samples"
-        printDuplicatedTPEDandTFAM(tped, tfam, tpedSamples, duplicatedSamples,
-                                   args.out)
-
-        # Choose the best duplicates
-        print "   - Choosing the best duplicates"
-        chosenSamples, comp, conc = chooseBestDuplicates(tped, tpedSamples,
-                                                         duplicatedSamples,
-                                                         completion_percentage,
-                                                         concordance_percentage,
-                                                         args.out)
-
-        # Clean the genotype of the chosen samples
-        print ("   - Cleaning and creating unique TPED and TFAM from\n"
-               "     duplicated samples")
-        newTPED, newTFAM = createAndCleanTPED(tped, tfam, tpedSamples,
-                                              duplicatedSamples,
-                                              chosenSamples, args.out, comp,
-                                              args.sample_completion_threshold,
-                                              conc,
-                                              args.sample_concordance_threshold)
-
-        # Add the chosen TPED and TFAM
-        print "   - Creating final TPED and TFAM file"
-        addToTPEDandTFAM(newTPED, newTFAM, args.out,
-                         args.out + ".unique_samples")
+#    # Reading the tfam file
+#    print "   - Reading TFAM"
+#    tfam = readTFAM(args.tfile + ".tfam")
+#
+#    # Find duplicated samples
+#    print "   - Finding duplicated samples"
+#    uniqueSamples, duplicatedSamples = findDuplicates(tfam)
+#
+#    # Prints the unique tfam
+#    print "   - Creating TFAM for unique samples"
+#    printUniqueTFAM(tfam, uniqueSamples, args.out)
+#
+#    # Process the TPED file
+#    print "   - Reading TPED (and creating TPED for unique samples)"
+#    tped, tpedSamples = processTPED(uniqueSamples, duplicatedSamples,
+#                                    args.tfile + ".tped", args.out)
+#
+#    if len(duplicatedSamples) == 0:
+#        print "   - There are no duplicates in {}.tfam".format(args.tfile)
+#        # There are no duplicated samples
+#        try:
+#            shutil.copy(args.out + ".unique_samples.tfam",
+#                        args.out + ".final.tfam")
+#        except IOError:
+#            msg = "%s.unique_samples.tfam: can't copy to " \
+#                  "%s.final.tfam" % (args.out, args.out)
+#            raise ProgramError(msg)
+#        try:
+#            shutil.copy(args.out + ".unique_samples.tped",
+#                        args.out + ".final.tped")
+#        except IOError:
+#            msg = "%s.unique_samples.tped: can't copy to " \
+#                  "%s.final.tped" % (args.out, args.out)
+#            raise ProgramError(msg)
+#
+#    else:
+#        # We continue
+#        # Compute statistics
+#        print ("   - Computing the completion and concordance of duplicated\n"
+#               "     samples")
+#        completion, concordance = computeStatistics(tped, tfam, tpedSamples,
+#                                                    duplicatedSamples,
+#                                                    args.out)
+#
+#        # Print the statistics
+#        print "   - Printing the statistics"
+#        completion_percentage = printStatistics(completion, concordance,
+#                                                tpedSamples, duplicatedSamples,
+#                                                args.out)
+#
+#        # Print the concordance file
+#        print "   - Printing the concordance file"
+#        concordance_percentage = printConcordance(concordance, args.out)
+#
+#        # Print the duplicated TFAM and TPED
+#        print "   - Creating TPED and TFAM for duplicated samples"
+#        printDuplicatedTPEDandTFAM(tped, tfam, tpedSamples, duplicatedSamples,
+#                                   args.out)
+#
+#        # Choose the best duplicates
+#        print "   - Choosing the best duplicates"
+#        chosenSamples, comp, conc = chooseBestDuplicates(
+#            tped,
+#            tpedSamples,
+#            duplicatedSamples,
+#            completion_percentage,
+#            concordance_percentage,
+#            args.out,
+#        )
+#
+#        # Clean the genotype of the chosen samples
+#        print ("   - Cleaning and creating unique TPED and TFAM from\n"
+#               "     duplicated samples")
+#        newTPED, newTFAM = createAndCleanTPED(
+#            tped,
+#            tfam,
+#            tpedSamples,
+#            duplicatedSamples,
+#            chosenSamples,
+#            args.out,
+#            comp,
+#            args.sample_completion_threshold,
+#            conc,
+#            args.sample_concordance_threshold,
+#        )
+#
+#        # Add the chosen TPED and TFAM
+#        print "   - Creating final TPED and TFAM file"
+#        addToTPEDandTFAM(newTPED, newTFAM, args.out,
+#                         args.out + ".unique_samples")
 
 
 def addToTPEDandTFAM(tped, tfam, prefix, toAddPrefix):
@@ -177,7 +191,8 @@ def addToTPEDandTFAM(tped, tfam, prefix, toAddPrefix):
        ``tped`` to it, writing the final one (``prefix.final.tped``).
 
     .. warning::
-        The ``tped`` and ``tfam`` variables need to contain at least one sample.
+        The ``tped`` and ``tfam`` variables need to contain at least one
+        sample.
 
     """
     # First, writing the chosen tped
@@ -302,8 +317,8 @@ def createAndCleanTPED(tped, tfam, samples, oldSamples, chosenSamples,
     notGoodEnoughSamples = defaultdict(set)
 
     # Split the tped in 'snpInfo' and 'genotypes'
-    snpInfo = tped[:,:4]
-    genotypes = tped[:,4:]
+    snpInfo = tped[:, :4]
+    genotypes = tped[:, 4:]
 
     # Getting the completion and concordance indexes
     completionSampleID = {}
@@ -319,7 +334,9 @@ def createAndCleanTPED(tped, tfam, samples, oldSamples, chosenSamples,
 
         # Checking the concordance
         concordanceToKeep = npy.where(concordance[sampleID] >= concordanceT)[0]
-        concordanceToRemove = npy.where(concordance[sampleID] < concordanceT)[0]
+        concordanceToRemove = npy.where(
+            concordance[sampleID] < concordanceT
+        )[0]
         for k in concordanceToRemove:
             notGoodEnoughSamples[(str(oldSamples[sampleID][k]+1),
                                   str(indexes[k]+1), sampleID[0],
@@ -356,8 +373,9 @@ def createAndCleanTPED(tped, tfam, samples, oldSamples, chosenSamples,
                 # len = 0 means all were 0 0
                 # len = 1 means all the same
                 # len > 1 means more than one unique genotypes
-                possibleAlleles = [set() \
-                                    for k in xrange(len(uniqueGenotypes))]
+                possibleAlleles = [
+                    set() for k in xrange(len(uniqueGenotypes))
+                ]
                 for k, geno in enumerate(uniqueGenotypes):
                     possibleAlleles[k] |= set(geno.split(" "))
                 allEqual = True
@@ -391,7 +409,7 @@ def createAndCleanTPED(tped, tfam, samples, oldSamples, chosenSamples,
     toKeep = npy.append(npy.array(range(4)), sampleToKeep)
 
     # Subsetting the tped
-    newTPED = tped[:,toKeep]
+    newTPED = tped[:, toKeep]
 
     # Getting the indexes of the tfam
     toKeep = []
@@ -408,7 +426,7 @@ def createAndCleanTPED(tped, tfam, samples, oldSamples, chosenSamples,
 
 
 def chooseBestDuplicates(tped, samples, oldSamples, completion,
-                        concordance_all, prefix):
+                         concordance_all, prefix):
     """Choose the best duplicates according to the completion rate.
 
     :param tped: the ``tped`` containing the duplicated samples.
@@ -436,11 +454,11 @@ def chooseBestDuplicates(tped, samples, oldSamples, completion,
     2. Sort the list of completions.
     3. Choose the best of the concordance and put in a set.
     4. Choose the best of the completion and put it in a set.
-    5. Compute the intersection of the two sets. If there is one sample or more,
-       then randomly choose one sample.
-    6. If the intersection doesn't contain at least one sample, redo steps 3 and
-       4, but increase the number of chosen best by one. Redo step 5 and 6 (if
-       required).
+    5. Compute the intersection of the two sets. If there is one sample or
+       more, then randomly choose one sample.
+    6. If the intersection doesn't contain at least one sample, redo steps 3
+       and 4, but increase the number of chosen best by one. Redo step 5 and 6
+       (if required).
 
     The chosen samples are written in ``prefix.chosen_samples.info``. The rest
     are written in ``prefix.excluded_samples.info``.
@@ -492,14 +510,19 @@ def chooseBestDuplicates(tped, samples, oldSamples, completion,
         chosenIndex = None
         while nbToCheck <= len(indexes):
             # Getting the `nbToCheck` best value (higher to lower)
-            completionValue = currCompletion[sortedCompletionIndexes[nbToCheck*-1]]
-            concordanceValue = currConcordance[sortedConcordanceIndexes[nbToCheck*-1]]
+            completionValue = currCompletion[
+                sortedCompletionIndexes[nbToCheck*-1]
+            ]
+            concordanceValue = currConcordance[
+                sortedConcordanceIndexes[nbToCheck*-1]
+            ]
 
             # Getting the indexes to consider
-            completionToConsider = set(npy.where(currCompletion >= \
-                                                    completionValue)[0])
-            concordanceToConsider = set(npy.where(currConcordance >= \
-                                                    concordanceValue)[0])
+            completionToConsider = set(
+                npy.where(currCompletion >= completionValue)[0]
+            )
+            concordanceToConsider = set(
+                npy.where(currConcordance >= concordanceValue)[0])
 
             # Getting the intersection of the indexes
             toConsider = concordanceToConsider & completionToConsider
@@ -616,12 +639,14 @@ def printConcordance(concordance, prefix):
     concordance_percentage = {}
     for key in concordance.iterkeys():
         print >>outFile, "#%s\t%s" % key
-        
+
         # Doing the division
         none_zero = concordance[key][1] != 0
         true_concordance = npy.zeros(npy.multiply(*concordance[key][1].shape))
-        true_concordance[npy.ravel(none_zero)] = npy.true_divide(concordance[key][0][none_zero],
-                                                                 concordance[key][1][none_zero])
+        true_concordance[npy.ravel(none_zero)] = npy.true_divide(
+            concordance[key][0][none_zero],
+            concordance[key][1][none_zero],
+        )
         true_concordance.shape = concordance[key][1].shape
         true_concordance = npy.asmatrix(true_concordance)
         concordance_percentage[key] = true_concordance
@@ -662,8 +687,10 @@ def printStatistics(completion, concordance, tpedSamples, oldSamples, prefix):
     # Compute the completion percentage on none zero values
     none_zero_indexes = npy.where(completion[1] != 0)
     completionPercentage = npy.zeros(len(completion[0]), dtype=float)
-    completionPercentage[none_zero_indexes] = npy.true_divide(completion[0,none_zero_indexes],
-                                                              completion[1,none_zero_indexes])
+    completionPercentage[none_zero_indexes] = npy.true_divide(
+        completion[0, none_zero_indexes],
+        completion[1, none_zero_indexes],
+    )
 
     # The output file containing the summary statistics (for each of the
     # duplicated samples, print the mean concordance and the completion).
@@ -691,12 +718,18 @@ def printStatistics(completion, concordance, tpedSamples, oldSamples, prefix):
 
             # The concordance (not on total values = 0)
             indexToKeep = list(set(range(len(indexes))) - set([i]))
-            values = npy.ravel(npy.asarray(concordance[sampleID][0][i,indexToKeep]))
-            total_values = npy.ravel(npy.asarray(concordance[sampleID][1][i,indexToKeep]))
+            values = npy.ravel(
+                npy.asarray(concordance[sampleID][0][i, indexToKeep])
+            )
+            total_values = npy.ravel(
+                npy.asarray(concordance[sampleID][1][i, indexToKeep])
+            )
             currConcordance = npy.zeros(len(indexToKeep), dtype=float)
             none_zero_indexes = npy.where(total_values != 0)
-            currConcordance[none_zero_indexes] = npy.true_divide(values[none_zero_indexes],
-                                                                 total_values[none_zero_indexes])
+            currConcordance[none_zero_indexes] = npy.true_divide(
+                values[none_zero_indexes],
+                total_values[none_zero_indexes],
+            )
             currConcordance = npy.mean(currConcordance)
             toPrint.append("%.8f" % currConcordance)
             print >>outputFile, "\t".join(toPrint)
@@ -723,15 +756,16 @@ def computeStatistics(tped, tfam, samples, oldSamples, prefix):
     :type oldSamples: dict
     :type prefix: string
 
-    :returns: a tuple containing the completion (:py:class:`numpy.array`) as first
-              element, and the concordance (:py:class:`dict`) as last element.
+    :returns: a tuple containing the completion (:py:class:`numpy.array`) as
+              first element, and the concordance (:py:class:`dict`) as last
+              element.
 
     Reads the ``tped`` file and compute the completion for each duplicated
     samples and the pairwise concordance between duplicated samples.
 
     .. note::
-        The completion and concordance computation excludes a markers if it's on
-        chromosome 24 and if the sample is a female.
+        The completion and concordance computation excludes a markers if it's
+        on chromosome 24 and if the sample is a female.
 
     .. note::
         A missing genotype is encoded by ``0``.
@@ -744,34 +778,37 @@ def computeStatistics(tped, tfam, samples, oldSamples, prefix):
 
     **Completion**
 
-    Computes the completion of none zero values (where all genotypes of at least
-    one duplicated sample are no call [*i.e.* ``0``]). The completion of sample
-    :math:`i` (*i.e.* :math:`Completion_i`) is the number of genotypes that have
-    a call divided by the total number of genotypes (the set :math:`G_i`):
+    Computes the completion of none zero values (where all genotypes of at
+    least one duplicated sample are no call [*i.e.* ``0``]). The completion of
+    sample :math:`i` (*i.e.* :math:`Comp_i`) is the number of genotypes
+    that have a call divided by the total number of genotypes (the set
+    :math:`G_i`):
 
     .. math::
-        Completion_i = \\frac{||g \\in G_i\\textrm{ where }g \\neq 0||}{||G_i||}
+        Comp_i = \\frac{||g \\in G_i\\textrm{ where }g \\neq 0||}{||G_i||}
 
     .. note::
-        We consider a genotype as being missing if the sample is a male and if a
-        marker on chromosome 23 or 24 is heterozygous.
+        We consider a genotype as being missing if the sample is a male and if
+        a marker on chromosome 23 or 24 is heterozygous.
 
 
     **Concordance**
 
     Computes the pairwise concordance between duplicated samples. For each
-    marker, if both genotypes are not missing, we add one to the total number of
-    compared markers. If both genotypes are the same, we add one to the number
-    of concordant calls. We write the observed genotype difference in the file
-    ``prefix.diff``. The concordance between sample :math:`i` and :math:`j`
-    (*i.e.* :math:`Concordance_{i,j}`) is the number of genotypes that are equal
-    divided by the total number of genotypes (excluding the no calls):
+    marker, if both genotypes are not missing, we add one to the total number
+    of compared markers. If both genotypes are the same, we add one to the
+    number of concordant calls. We write the observed genotype difference in
+    the file ``prefix.diff``. The concordance between sample :math:`i` and
+    :math:`j` (*i.e.* :math:`Concordance_{i,j}`) is the number of genotypes
+    that are equal divided by the total number of genotypes (excluding the no
+    calls):
 
     .. math::
-        Concordance_{i,j} = \\frac{||g \\in G_i \\cup G_j \\textrm{ where } g_i = g_j \\neq 0||}
-                                  {||g \\in G_i \\cup G_j \\textrm{ where } g \\neq 0||}
-
-    
+        Concordance_{i,j} = \\frac{
+            ||g \\in G_i \\cup G_j \\textrm{ where } g_i = g_j \\neq 0||
+        }{
+            ||g \\in G_i \\cup G_j \\textrm{ where } g \\neq 0||
+        }
 
     """
     # The diff file containing the genotype differences between a pair of
@@ -793,10 +830,10 @@ def computeStatistics(tped, tfam, samples, oldSamples, prefix):
     concordance = {}
     for sampleID in samples.keys():
         nbDup = len(samples[sampleID])
-        concordance[sampleID] = [npy.asmatrix(npy.zeros((nbDup, nbDup),
-                                                         dtype=int)),
-                                 npy.asmatrix(npy.zeros((nbDup, nbDup),
-                                                         dtype=int))]
+        concordance[sampleID] = [
+            npy.asmatrix(npy.zeros((nbDup, nbDup), dtype=int)),
+            npy.asmatrix(npy.zeros((nbDup, nbDup), dtype=int)),
+        ]
 
     #####################################################################
     # Add options for concordance only for hetero SNPs... (all samples) #
@@ -823,38 +860,38 @@ def computeStatistics(tped, tfam, samples, oldSamples, prefix):
                     # Updating the concordance
                     for j in xrange(i + 1, len(indexes)):
                         genotype2 = set(genotype[indexes[j]].split(" "))
-#########################################################
-## This is for man on chr 23 and 24, if heterozygous!!! #
-#########################################################
-##                         if (sex == "1") and (chromosome in ["23", "24"]):
-##                             if ("0" not in genotype1) and ("0" not in genotype2):
-##                                 if (len(genotype1) != 2) and (len(genotype2) != 2):
-##                                     concordance[key][1][i,j] += 1
-##                                     concordance[key][1][j,i] += 1
-##                                     if genotype1 == genotype2:
-##                                         concordance[key][0][i,j] += 1
-##                                         concordance[key][0][j,i] += 1
-##                                     else:
-##                                         # Print to diff file
-##                                         toPrint = [snpName, key[0], key[1],
-##                                                    str(index+1),
-##                                                    str(indexes[j]+1)]
-##                                         toPrint.append(" ".join(genotype1))
-##                                         if len(genotype1) == 1:
-##                                             toPrint[-1] += " %s" % toPrint[-1]
-##                                         toPrint.append(" ".join(genotype2))
-##                                         if len(genotype2) == 1:
-##                                             toPrint[-1] += " %s" % toPrint[-1]
-##                                         print >>diffOutput, "\t".join(toPrint)
-## 
-##                         elif ("0" not in genotype1) and ("0" not in genotype2):
+
+# This is for man on chr 23 and 24, if heterozygous!!! #
+# if (sex == "1") and (chromosome in ["23", "24"]):
+#     if ("0" not in genotype1) and ("0" not in genotype2):
+#         if (len(genotype1) != 2) and (len(genotype2) != 2):
+#             concordance[key][1][i,j] += 1
+#             concordance[key][1][j,i] += 1
+#             if genotype1 == genotype2:
+#                 concordance[key][0][i,j] += 1
+#                 concordance[key][0][j,i] += 1
+#             else:
+#                 # Print to diff file
+#                 toPrint = [snpName, key[0], key[1],
+#                            str(index+1),
+#                            str(indexes[j]+1)]
+#                 toPrint.append(" ".join(genotype1))
+#                 if len(genotype1) == 1:
+#                     toPrint[-1] += " %s" % toPrint[-1]
+#                 toPrint.append(" ".join(genotype2))
+#                 if len(genotype2) == 1:
+#                     toPrint[-1] += " %s" % toPrint[-1]
+#                 print >>diffOutput, "\t".join(toPrint)
+#
+# elif ("0" not in genotype1) and ("0" not in genotype2):
+
                         if ("0" not in genotype1) and ("0" not in genotype2):
                             # Both have calls
-                            concordance[key][1][i,j] += 1
-                            concordance[key][1][j,i] += 1
+                            concordance[key][1][i, j] += 1
+                            concordance[key][1][j, i] += 1
                             if genotype1 == genotype2:
-                                concordance[key][0][i,j] += 1
-                                concordance[key][0][j,i] += 1
+                                concordance[key][0][i, j] += 1
+                                concordance[key][0][j, i] += 1
                             else:
                                 # Print to diff file
                                 toPrint = [snpName, key[0], key[1],
@@ -871,8 +908,8 @@ def computeStatistics(tped, tfam, samples, oldSamples, prefix):
 
     for key in concordance.iterkeys():
         for i in range(len(concordance[key][0])):
-            concordance[key][0][i,i] = 1
-            concordance[key][1][i,i] = 1
+            concordance[key][0][i, i] = 1
+            concordance[key][1][i, i] = 1
 
     return completion, concordance
 
@@ -890,9 +927,9 @@ def processTPED(uniqueSamples, duplicatedSamples, fileName, prefix):
     :type fileName: string
     :type prefix: string
 
-    :returns: a tuple containing the ``tped`` (:py:class:`numpy.array`) as first
-              element, and the updated positions of the duplicated samples
-              (:py:class:`dict`)
+    :returns: a tuple containing the ``tped`` (:py:class:`numpy.array`) as
+              first element, and the updated positions of the duplicated
+              samples (:py:class:`dict`)
 
     Reads the entire ``tped`` and prints another one containing only unique
     samples (``prefix.unique_samples.tped``). It then creates a
@@ -1011,7 +1048,9 @@ def readTFAM(fileName):
     # Saving the TFAM file
     tfam = None
     with open(fileName, 'r') as inputFile:
-        tfam = [tuple(i.rstrip("\r\n").split("\t")) for i in inputFile.readlines()]
+        tfam = [
+            tuple(i.rstrip("\r\n").split("\t")) for i in inputFile.readlines()
+        ]
 
     tfam = npy.array(tfam)
 
@@ -1021,8 +1060,8 @@ def readTFAM(fileName):
 def checkArgs(args):
     """Checks the arguments and options.
 
-    :param args: a :py:class:`argparse.Namespace` object containing the options of the
-                 program.
+    :param args: a :py:class:`argparse.Namespace` object containing the options
+                 of the program.
 
     :type args: :py:class:`argparse.Namespace`
 
@@ -1041,13 +1080,15 @@ def checkArgs(args):
             raise ProgramError(msg)
 
     # Checking the concordance threshold
-    if (args.sample_concordance_threshold < 0) or (args.sample_concordance_threshold > 1):
+    if ((args.sample_concordance_threshold < 0) or
+            (args.sample_concordance_threshold > 1)):
         msg = "sample-concordance-threshold: must be between 0 and 1 " \
               "(not %f)" % args.sample_concordance_threshold
         raise ProgramError(msg)
 
     # Checking the completion threshold
-    if (args.sample_completion_threshold < 0) or (args.sample_completion_threshold > 1):
+    if ((args.sample_completion_threshold < 0) or
+            (args.sample_completion_threshold > 1)):
         msg = "sample-completion-threshold: must be between 0 and 1 " \
               "(not %f)" % args.sample_completion_threshold
         raise ProgramError(msg)
@@ -1055,7 +1096,7 @@ def checkArgs(args):
     return True
 
 
-def parseArgs(argString=None): # pragma: no cover
+def parseArgs(argString=None):  # pragma: no cover
     """Parses the command line options and arguments.
 
     :param argString: the options
@@ -1066,14 +1107,15 @@ def parseArgs(argString=None): # pragma: no cover
               the :py:mod:`argparse` module. It contains the values of the
               different options.
 
-    ================================== ====== ==========================================
-                  Options               Type                Description
-    ================================== ====== ==========================================
-    ``--tfile``                        string The input file prefix (of type ``tfile``).
+    ================================== ====== =================================
+                  Options               Type             Description
+    ================================== ====== =================================
+    ``--tfile``                        string The input file prefix (of type
+                                              ``tfile``).
     ``--sample-completion-threshold``  float  The completion threshold.
     ``--sample-concordance-threshold`` float  The concordance threshold.
     ``--out``                          string The prefix of the output files.
-    ================================== ====== ==========================================
+    ================================== ====== =================================
 
     .. note::
         No option check is done here (except for the one automatically done by
@@ -1091,7 +1133,7 @@ def parseArgs(argString=None): # pragma: no cover
 
 class ProgramError(Exception):
     """An :py:class:`Exception` raised in case of a problem.
-    
+
     :param msg: the message to print to the user before exiting.
 
     :type msg: string
@@ -1111,6 +1153,7 @@ class ProgramError(Exception):
 
 
 # The parser object
+pretty_name = "Duplicated samples"
 desc = """Extract and work with duplicated samples."""
 parser = argparse.ArgumentParser(description=desc)
 
@@ -1124,12 +1167,11 @@ group.add_argument("--tfile", type=str, metavar="FILE", required=True,
                          "individual ids.)"))
 # The options
 group = parser.add_argument_group("Options")
-group.add_argument("--sample-completion-threshold", type=float, metavar="FLOAT",
-                   default=0.9, help=("The completion threshold to consider a "
-                                      "replicate when choosing the best "
-                                      "replicates and for creating the "
-                                      "composite samples. [default: "
-                                      "%(default).1f]"))
+group.add_argument("--sample-completion-threshold", type=float,
+                   metavar="FLOAT", default=0.9,
+                   help=("The completion threshold to consider a replicate "
+                         "when choosing the best replicates and for creating "
+                         "the composite samples. [default: %(default).1f]"))
 group.add_argument("--sample-concordance-threshold", type=float,
                    metavar="FLOAT", default=0.97,
                    help=("The concordance threshold to consider a replicate "

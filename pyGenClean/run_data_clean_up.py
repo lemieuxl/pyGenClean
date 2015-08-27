@@ -21,10 +21,11 @@ import sys
 import shutil
 import datetime
 import argparse
+import itertools
 import subprocess
 import ConfigParser
 from glob import glob
-from collections import namedtuple
+from collections import namedtuple, Counter
 
 import pyGenClean
 import pyGenClean.LaTeX as latex_template
@@ -179,17 +180,19 @@ def main():
                              background=dummy_background)
 
 
-def run_duplicated_samples(in_prefix, in_type, out_prefix, options):
+def run_duplicated_samples(in_prefix, in_type, out_prefix, base_dir, options):
     """Runs step1 (duplicated samples).
 
     :param in_prefix: the prefix of the input files.
     :param in_type: the type of the input files.
     :param out_prefix: the output prefix.
+    :param base_dir: the output directory.
     :param options: the options needed.
 
     :type in_prefix: string
     :type in_type: string
     :type out_prefix: string
+    :type base_dir: string
     :type options: list of strings
 
     :returns: a tuple containing the prefix of the output files (the input
@@ -202,8 +205,8 @@ def run_duplicated_samples(in_prefix, in_type, out_prefix, options):
     good one, or to create it if needed.
 
     """
-    # Creating the output directory
-    os.mkdir(out_prefix)
+#    # Creating the output directory
+#    os.mkdir(out_prefix)
 
     # We know we need tfile
     required_type = "tfile"
@@ -211,8 +214,9 @@ def run_duplicated_samples(in_prefix, in_type, out_prefix, options):
 
     # We need to inject the name of the input file and the name of the output
     # prefix
+    script_prefix = os.path.join(out_prefix, "dup_samples")
     options += ["--{}".format(required_type), in_prefix,
-                "--out", os.path.join(out_prefix, "dup_samples")]
+                "--out", script_prefix]
 
     # We run the script
     try:
@@ -221,8 +225,146 @@ def run_duplicated_samples(in_prefix, in_type, out_prefix, options):
         msg = "duplicated_samples: {}".format(e)
         raise ProgramError(msg)
 
+    # Reading the number of duplicated samples
+    duplicated_count = None
+    with open(script_prefix + ".duplicated_samples.tfam", "r") as i_file:
+        duplicated_count = Counter(
+            [tuple(line.rstrip("\r\n").split("\t")[:2]) for line in i_file]
+        )
+
+    # Counting the number of zeroed out genotypes per duplicated sample
+    zeroed_out = None
+    with open(script_prefix + ".zeroed_out", "r") as i_file:
+        zeroed_out = Counter([
+            tuple(line.rstrip("\r\n").split("\t")[:2])
+            for line in i_file.read().splitlines()[1:]
+        ])
+    nb_zeroed_out = sum(zeroed_out.values())
+
+    # Checking the not good enough samples
+    not_good_enough = None
+    with open(script_prefix + ".not_good_enough", "r") as i_file:
+        not_good_enough = {
+            tuple(line.rstrip("\r\n").split("\t")[:4])
+            for line in i_file.read().splitlines()[1:]
+        }
+
+    # Checking which samples were chosen
+    chosen_sample = None
+    with open(script_prefix + ".chosen_samples.info", "r") as i_file:
+        chosen_sample = {
+            tuple(line.rstrip("\r\n").split("\t"))
+            for line in i_file.read().splitlines()[1:]
+        }
+
+    # Finding if some 'not_good_enough' samples were chosen
+    not_good_still = {s[2:] for s in chosen_sample & not_good_enough}
+
+    # We create a LaTeX summary
+    latex_file = os.path.join(script_prefix + ".summary.tex")
+    try:
+        with open(latex_file, "w") as o_file:
+            print >>o_file, latex_template.subsection(
+                duplicated_samples.pretty_name
+            )
+            text = (
+                "A total of {:,d} duplicated sample{} were found. While "
+                "merging duplicates, a total of {:,d} genotype{} {} zeroed "
+                "out. A total of {:,d} sample{} {} found to not be good "
+                "enough for duplicate completion.".format(
+                    len(duplicated_count),
+                    "s" if len(duplicated_count) > 1 else "",
+                    nb_zeroed_out,
+                    "s" if nb_zeroed_out > 1 else "",
+                    "were" if nb_zeroed_out > 1 else "was",
+                    len(not_good_enough),
+                    "s" if len(not_good_enough) > 1 else "",
+                    "were" if len(not_good_enough) > 1 else "was",
+                )
+            )
+            print >>o_file, latex_template.wrap_lines(text)
+
+            if len(duplicated_count) > 0:
+                table_label = script_prefix.replace("/", "_") + "_dup_samples"
+
+                text = (
+                    r"Table~\ref{" + table_label + "} summarizes the number "
+                    "of each duplicated sample with some characteristics."
+                )
+                print >>o_file, latex_template.wrap_lines(text)
+
+                if len(not_good_still) > 0:
+                    text = latex_template.textbf(
+                        "There {} {:,d} sample{} that {} not good enough for "
+                        "completion, but {} still selected as the best "
+                        "duplicate (see Table~{}).".format(
+                            "were" if len(not_good_still) > 1 else "was",
+                            len(not_good_still),
+                            "s" if len(not_good_still) > 1 else "",
+                            "were" if len(not_good_still) > 1 else "was",
+                            "were" if len(not_good_still) > 1 else "was",
+                            r"~\ref{" + table_label + "}"
+                        )
+                    )
+                    print >>o_file, latex_template.wrap_lines(text)
+
+                # Getting the template
+                longtable_template = latex_template.jinja2_env.get_template(
+                    "longtable_template.tex",
+                )
+
+                # The table caption
+                table_caption = (
+                    "Summary of the {:,d} duplicated sample{}. The number of "
+                    "duplicates and the total number of zeroed out genotypes "
+                    "are show.".format(
+                        len(duplicated_count),
+                        "s" if len(duplicated_count) > 1 else "",
+                    )
+                )
+
+                if len(not_good_still) > 0:
+                    table_caption += (
+                        " A total of {:,d} sample{} (highlighted) {} not good "
+                        "enough for completion, but {} chosen as the best "
+                        "duplicate, and {} still in the final "
+                        "dataset).".format(
+                            len(not_good_still),
+                            "s" if len(not_good_still) > 1 else "",
+                            "were" if len(not_good_still) > 1 else "was",
+                            "were" if len(not_good_still) > 1 else "was",
+                            "are" if len(not_good_still) > 1 else "is",
+                        )
+                    )
+
+                duplicated_samples_list = duplicated_count.most_common()
+                print >>o_file, longtable_template.render(
+                    table_caption=table_caption,
+                    table_label=table_label,
+                    nb_col=4,
+                    col_alignments="llrr",
+                    text_size="scriptsize",
+                    header_data=[("FID", 1), ("IID", 1), ("Nb Duplicate", 1),
+                                 ("Nb Zeroed", 1)],
+                    tabular_data=[
+                        [latex_template.sanitize_tex(fid),
+                         latex_template.sanitize_tex(iid),
+                         "{:,d}".format(nb),
+                         "{:,d}".format(zeroed_out[(fid, iid)])]
+                        for (fid, iid), nb in duplicated_samples_list
+                    ],
+                    highlighted=[
+                        (fid, iid) in not_good_still
+                        for fid, iid in [i[0] for i in duplicated_samples_list]
+                    ],
+                )
+
+    except IOError:
+        msg = "{}: cannot write LaTeX summary".format(latex_file)
+
     # We know this step does produce a new data set (tfile), so we return it
-    return os.path.join(out_prefix, "dup_samples.final"), "tfile"
+    return (os.path.join(out_prefix, "dup_samples.final"), "tfile", latex_file,
+            duplicated_samples.desc)
 
 
 def run_duplicated_snps(in_prefix, in_type, out_prefix, options):
