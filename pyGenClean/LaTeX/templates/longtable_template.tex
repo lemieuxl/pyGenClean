@@ -35,6 +35,7 @@
 
 
 \BLOCK{ for row in tabular_data }
+\BLOCK{ if highlighted is defined and highlighted[loop.index0] }\rowcolor{yellow}\BLOCK{ endif }
 \BLOCK{ for cell in row }
 \VAR{ cell }\BLOCK{ if not loop.last } & \BLOCK{ else }\\\VAR{ "\n" }\BLOCK{ endif }
 \BLOCK{ endfor }
