@@ -121,6 +121,24 @@ def main():
         current_input = args.file
         current_input_type = "file"
 
+    # Creating the result summary file
+    try:
+        with open(os.path.join(dirname, "results_summary.tex"), "w") as o_file:
+            pass
+    except IOError:
+        msg = "{}: cannot write summary".format(dirname)
+        raise ProgramError(msg)
+
+    # Creating the excluded files
+    try:
+        with open(os.path.join(dirname, "excluded_markers.txt"), "w") as o_f:
+            pass
+        with open(os.path.join(dirname, "excluded_samples.txt"), "w") as o_f:
+            pass
+    except IOError:
+        msg = "{}: cannot write summary".format(dirname)
+        raise ProgramError(msg)
+
     latex_summaries = []
     steps = []
     descriptions = []
@@ -366,6 +384,7 @@ def run_duplicated_samples(in_prefix, in_type, out_prefix, base_dir, options):
 
     except IOError:
         msg = "{}: cannot write LaTeX summary".format(latex_file)
+        raise ProgramError(msg)
 
     # We know this step does produce a new data set (tfile), so we return it
     return (os.path.join(out_prefix, "dup_samples.final"), "tfile", latex_file,
@@ -542,6 +561,7 @@ def run_duplicated_snps(in_prefix, in_type, out_prefix, base_dir, options):
 
     except IOError:
         msg = "{}: cannot write LaTeX summary".format(latex_file)
+        raise ProgramError(msg)
 
     # We know this step does produce a new data set (tfile), so we return it
     return (os.path.join(out_prefix, "dup_snps.final"), "tfile", latex_file,
@@ -609,7 +629,7 @@ def run_noCall_hetero_snps(in_prefix, in_type, out_prefix, base_dir, options):
                 with open(i_filename, "r") as i_file:
                     for line in i_file:
                         nb_all_failed += 1
-                        print >>o_file, line.rstrip("\r\n") + "\tall_failed"
+                        print >>o_file, line.rstrip("\r\n") + "\tall failed"
 
             # The second file
             i_filename = os.path.join(script_prefix + ".allHetero")
@@ -617,7 +637,7 @@ def run_noCall_hetero_snps(in_prefix, in_type, out_prefix, base_dir, options):
                 with open(i_filename, "r") as i_file:
                     for line in i_file:
                         nb_all_hetero += 1
-                        print >>o_file, line.rstrip("\r\n") + "\tall_hetero"
+                        print >>o_file, line.rstrip("\r\n") + "\tall hetero"
 
     except IOError:
         msg = "{}: can't write to file".format(o_filename)
