@@ -268,25 +268,30 @@ def run_duplicated_samples(in_prefix, in_type, out_prefix, base_dir, options):
                 duplicated_samples.pretty_name
             )
             text = (
-                "A total of {:,d} duplicated sample{} were found. While "
-                "merging duplicates, a total of {:,d} genotype{} {} zeroed "
-                "out. A total of {:,d} sample{} {} found to not be good "
-                "enough for duplicate completion.".format(
+                "A total of {:,d} duplicated sample{} {} found.".format(
                     len(duplicated_count),
                     "s" if len(duplicated_count) > 1 else "",
-                    nb_zeroed_out,
-                    "s" if nb_zeroed_out > 1 else "",
-                    "were" if nb_zeroed_out > 1 else "was",
-                    len(not_good_enough),
-                    "s" if len(not_good_enough) > 1 else "",
-                    "were" if len(not_good_enough) > 1 else "was",
+                    "were" if len(duplicated_count) > 1 else "was",
                 )
             )
             print >>o_file, latex_template.wrap_lines(text)
 
             if len(duplicated_count) > 0:
-                table_label = script_prefix.replace("/", "_") + "_dup_samples"
+                text = (
+                    "While merging duplicates, a total of {:,d} genotype{} {} "
+                    "zeroed out. A total of {:,d} sample{} {} found to not be "
+                    "good enough for duplicate completion.".format(
+                        nb_zeroed_out,
+                        "s" if nb_zeroed_out > 1 else "",
+                        "were" if nb_zeroed_out > 1 else "was",
+                        len(not_good_enough),
+                        "s" if len(not_good_enough) > 1 else "",
+                        "were" if len(not_good_enough) > 1 else "was",
+                    )
+                )
+                print >>o_file, latex_template.wrap_lines(text)
 
+                table_label = script_prefix.replace("/", "_") + "_dup_samples"
                 text = (
                     r"Table~\ref{" + table_label + "} summarizes the number "
                     "of each duplicated sample with some characteristics."
@@ -367,17 +372,19 @@ def run_duplicated_samples(in_prefix, in_type, out_prefix, base_dir, options):
             duplicated_samples.desc)
 
 
-def run_duplicated_snps(in_prefix, in_type, out_prefix, options):
+def run_duplicated_snps(in_prefix, in_type, out_prefix, base_dir, options):
     """Runs step2 (duplicated snps).
 
     :param in_prefix: the prefix of the input files.
     :param in_type: the type of the input files.
     :param out_prefix: the output prefix.
+    :param base_dir: the output directory.
     :param options: the options needed.
 
     :type in_prefix: string
     :type in_type: string
     :type out_prefix: string
+    :type base_dir: string
     :type options: list of strings
 
     :returns: a tuple containing the prefix of the output files (the input
@@ -394,8 +401,8 @@ def run_duplicated_snps(in_prefix, in_type, out_prefix, options):
         :py:mod:`DupSNPs.duplicated_snps` module.
 
     """
-    # Creating the output directory
-    os.mkdir(out_prefix)
+#    # Creating the output directory
+#    os.mkdir(out_prefix)
 
     # We know we need a tfile
     required_type = "tfile"
@@ -421,8 +428,9 @@ def run_duplicated_snps(in_prefix, in_type, out_prefix, options):
 
     # We need to inject the name of the input file and the name of the output
     # prefix
+    script_prefix = os.path.join(out_prefix, "dup_snps")
     options += ["--{}".format(required_type), in_prefix,
-                "--out", os.path.join(out_prefix, "dup_snps")]
+                "--out", script_prefix]
 
     # We run the script
     try:
@@ -431,8 +439,113 @@ def run_duplicated_snps(in_prefix, in_type, out_prefix, options):
         msg = "duplicated_snps: {}".format(e)
         raise ProgramError(msg)
 
+    # Reading the number of duplicated markers
+    duplicated_count = None
+    with open(script_prefix + ".duplicated_snps.tped", "r") as i_file:
+        duplicated_count = Counter(
+            (i[0], i[3]) for i in
+            [tuple(line.rstrip("\r\n").split("\t")[:4]) for line in i_file]
+        )
+
+    # Counting the number of zeroed out genotypes per duplicated markers
+    zeroed_out = None
+    with open(script_prefix + ".zeroed_out", "r") as i_file:
+        zeroed_out = Counter([
+            tuple(line.rstrip("\r\n").split("\t")[:2])
+            for line in i_file.read().splitlines()[1:]
+        ])
+    nb_zeroed_out = sum(zeroed_out.values())
+
+    # Checking the not good enough markers
+    not_good_enough = None
+    with open(script_prefix + ".not_good_enough", "r") as i_file:
+        not_good_enough = {
+            line.rstrip("\r\n").split("\t")[0]
+            for line in i_file.read().splitlines()[1:]
+        }
+
+    # Checking which markers were chosen
+    chosen_markers = None
+    with open(script_prefix + ".chosen_snps.info", "r") as i_file:
+        chosen_markers = set(i_file.read().splitlines())
+
+    # Finding if some 'not_good_enough' samples were chosen
+    not_good_still = chosen_markers & not_good_enough
+
+    # Adding the 'not chosen markers' to the list of excluded markers
+    nb_removed = None
+    o_filename = os.path.join(base_dir, "excluded_markers.txt")
+    with open(script_prefix + ".removed_duplicates", "r") as i_file:
+        not_chosen = set(i_file.read().splitlines())
+        nb_removed = len(not_chosen)
+        with open(o_filename, "a") as o_file:
+            for line in not_chosen:
+                print >>o_file, line + "\t" + "removed duplicate"
+
+    # We create a LaTeX summary
+    latex_file = os.path.join(script_prefix + ".summary.tex")
+    try:
+        with open(latex_file, "w") as o_file:
+            print >>o_file, latex_template.subsection(
+                duplicated_snps.pretty_name
+            )
+
+            text = (
+                "A total of {:,d} duplicated marker{} {} found.".format(
+                    len(duplicated_count),
+                    "s" if len(duplicated_count) > 1 else "",
+                    "were" if len(duplicated_count) > 1 else "was",
+                )
+            )
+            print >>o_file, latex_template.wrap_lines(text)
+
+            if len(duplicated_count) > 0:
+                text = (
+                    "While merging duplicates, a total of {:,d} genotype{} {} "
+                    "zeroed out. A total of {:,d} marker{} {} found to not be "
+                    "good enough for duplicate completion.".format(
+                        nb_zeroed_out,
+                        "s" if nb_zeroed_out > 1 else "",
+                        "were" if nb_zeroed_out > 1 else "was",
+                        len(not_good_enough),
+                        "s" if len(not_good_enough) > 1 else "",
+                        "were" if len(not_good_enough) > 1 else "was",
+                    )
+                )
+                print >>o_file, latex_template.wrap_lines(text)
+
+                text = (
+                    "A total of {:,d} marker{} {} excluded while creating the "
+                    "final dataset.".format(
+                        nb_removed,
+                        "s" if nb_removed > 1 else "",
+                        "were" if nb_removed > 1 else "was",
+                    )
+                )
+                print >>o_file, latex_template.wrap_lines(text)
+
+                if len(not_good_still) > 0:
+                    text = latex_template.textbf(
+                        "There {} {:,d} marker{} that {} not good enough for "
+                        "completion, but {} still selected as the best "
+                        "duplicate and {} still present in the final "
+                        "dataset.".format(
+                            "were" if len(not_good_still) > 1 else "was",
+                            len(not_good_still),
+                            "s" if len(not_good_still) > 1 else "",
+                            "were" if len(not_good_still) > 1 else "was",
+                            "were" if len(not_good_still) > 1 else "was",
+                            "are" if len(not_good_still) > 1 else "is",
+                        )
+                    )
+                    print >>o_file, latex_template.wrap_lines(text)
+
+    except IOError:
+        msg = "{}: cannot write LaTeX summary".format(latex_file)
+
     # We know this step does produce a new data set (tfile), so we return it
-    return os.path.join(out_prefix, "dup_snps.final"), "tfile"
+    return (os.path.join(out_prefix, "dup_snps.final"), "tfile", latex_file,
+            duplicated_snps.desc)
 
 
 def run_noCall_hetero_snps(in_prefix, in_type, out_prefix, base_dir, options):
