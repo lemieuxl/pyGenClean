@@ -1953,17 +1953,20 @@ def run_flag_hw(in_prefix, in_type, out_prefix, base_dir, options):
     return in_prefix, required_type, latex_file, flag_hw.desc
 
 
-def run_compare_gold_standard(in_prefix, in_type, out_prefix, options):
+def run_compare_gold_standard(in_prefix, in_type, out_prefix, base_dir,
+                              options):
     """Compares with a gold standard data set (compare_gold_standard.
 
     :param in_prefix: the prefix of the input files.
     :param in_type: the type of the input files.
     :param out_prefix: the output prefix.
+    :param base_dir: the output directory.
     :param options: the options needed.
 
     :type in_prefix: string
     :type in_type: string
     :type out_prefix: string
+    :type base_dir: string
     :type options: list of strings
 
     :returns: a tuple containing the prefix of the output files (the input
@@ -1990,8 +1993,9 @@ def run_compare_gold_standard(in_prefix, in_type, out_prefix, options):
 
     # We need to inject the name of the input file and the name of the output
     # prefix
+    script_prefix = os.path.join(out_prefix, "compare_with_gold")
     options += ["--{}".format(required_type), in_prefix,
-                "--out", os.path.join(out_prefix, "compare_with_gold")]
+                "--out", script_prefix]
 
     # We run the script
     try:
@@ -2000,9 +2004,21 @@ def run_compare_gold_standard(in_prefix, in_type, out_prefix, options):
         msg = "compare_gold_standard: {}".format(e)
         raise ProgramError(msg)
 
+    # We create the LaTeX summary
+    latex_file = os.path.join(script_prefix + ".summary.tex")
+    try:
+        with open(latex_file, "w") as o_file:
+            print >>o_file, latex_template.subsection(
+                compare_gold_standard.pretty_name
+            )
+
+    except IOError:
+        msg = "{}: cannot write LaTeX summary".format(latex_file)
+        raise ProgramError(msg)
+
     # We know this step doesn't produce an new data set, so we return the old
     # prefix and the old in_type
-    return in_prefix, required_type
+    return in_prefix, required_type, latex_file, compare_gold_standard.desc
 
 
 def run_subset_data(in_prefix, in_type, out_prefix, base_dir, options):

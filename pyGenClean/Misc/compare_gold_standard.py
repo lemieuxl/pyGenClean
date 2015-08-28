@@ -966,6 +966,7 @@ class ProgramError(Exception):
 
 
 # The parser object
+pretty_name = "Gold standard comparison"
 desc = """Compares the dataset with a gold standard."""
 parser = argparse.ArgumentParser(description=desc)
 
