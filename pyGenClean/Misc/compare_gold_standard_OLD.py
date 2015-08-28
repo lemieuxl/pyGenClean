@@ -1,17 +1,19 @@
 #!/usr/bin/env python2.7
-## This file is part of pyGenClean.
-## 
-## pyGenClean is free software: you can redistribute it and/or modify it under
-## the terms of the GNU General Public License as published by the Free Software
-## Foundation, either version 3 of the License, or (at your option) any later
-## version.
-## 
-## pyGenClean is distributed in the hope that it will be useful, but WITHOUT ANY
-## WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
-## A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
-## 
-## You should have received a copy of the GNU General Public License along with
-## pyGenClean.  If not, see <http://www.gnu.org/licenses/>.
+
+# This file is part of pyGenClean.
+#
+# pyGenClean is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later
+# version.
+#
+# pyGenClean is distributed in the hope that it will be useful, but WITHOUT ANY
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+# A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with
+# pyGenClean.  If not, see <http://www.gnu.org/licenses/>.
+
 
 import re
 import os
@@ -22,6 +24,7 @@ import subprocess
 
 from PlinkUtils import createRowFromPlinkSpacedOutput
 from pyGenClean.DupSNPs.duplicated_snps import flipGenotype
+
 
 def main(argString=None):
     # Getting and checking the options
@@ -82,9 +85,9 @@ def main(argString=None):
     # Excluding SNPs
     print "   - Excluding SNPs and samples from the gold standard"
     exclude_SNPs_samples(args.out + ".gold_standard.rename",
-                args.out + ".gold_standard.rename.cleaned",
-                args.out + ".snp_to_remove",
-                args.out + ".gold_samples2keep")
+                         args.out + ".gold_standard.rename.cleaned",
+                         args.out + ".snp_to_remove",
+                         args.out + ".gold_samples2keep")
     print "   - Excluding SNPs and samples from source panel"
     exclude_SNPs_samples(args.out + ".source_panel",
                          args.out + ".source_panel.cleaned",
@@ -124,28 +127,36 @@ def compute_statistics(out_dir, gold_prefix, source_prefix, same_samples,
     for k, (gold_sample, source_sample) in enumerate(same_samples):
         # Preparing the files
         try:
-            with open(out_prefix + "_{}_gold.samples".format(k), 'w') as output_file:
+            filename = out_prefix + "_{}_gold.samples".format(k)
+            with open(filename, 'w') as output_file:
                 print >>output_file, "\t".join(gold_sample)
-            with open(out_prefix + "_{}_source.samples".format(k), "w") as output_file:
+
+            filename = out_prefix + "_{}_source.samples".format(k)
+            with open(filename, "w") as output_file:
                 print >>output_file, "\t".join(source_sample)
+
         except IOError:
             msg = "can't write in dir {}".format(out_dir)
             raise ProgramError(msg)
 
     # Preparing the files
     nb = len(same_samples)
-    keepSamples([gold_prefix]*nb + [source_prefix]*nb,
-                [out_prefix + "_{}_gold.samples".format(i) for i in range(nb)] +
-                [out_prefix + "_{}_source.samples".format(i) for i in range(nb)],
-                [out_prefix + "_{}_gold".format(i) for i in range(nb)] +
-                [out_prefix + "_{}_source".format(i) for i in range(nb)],
-                use_sge)
+    keepSamples(
+        [gold_prefix]*nb + [source_prefix]*nb,
+        [out_prefix + "_{}_gold.samples".format(i) for i in range(nb)] +
+        [out_prefix + "_{}_source.samples".format(i) for i in range(nb)],
+        [out_prefix + "_{}_gold".format(i) for i in range(nb)] +
+        [out_prefix + "_{}_source".format(i) for i in range(nb)],
+        use_sge,
+    )
 
     # Computing the frequencies
     print "      - Computing frequencies of source panel"
-    computeParallelFreq([out_prefix + "_{}_source".format(i) for i in range(nb)],
-                        [out_prefix + "_{}_source.freq".format(i) for i in range(nb)],
-                        use_sge)
+    computeParallelFreq(
+        [out_prefix + "_{}_source".format(i) for i in range(nb)],
+        [out_prefix + "_{}_source.freq".format(i) for i in range(nb)],
+        use_sge,
+    )
 
     # Renaiming the names in the files
     for k in range(nb):
@@ -158,17 +169,22 @@ def compute_statistics(out_dir, gold_prefix, source_prefix, same_samples,
                 with open(filename, 'w') as output_file:
                     for line in data:
                         output_file.write(re.sub(" ".join(same_samples[k][l]),
-                                                "{} {}".format(k, k), line))
+                                                 "{} {}".format(k, k), line))
             except IOError:
                 msg = "{}: can't process file".format(filename)
                 raise ProgramError(msg)
 
     # Merging the files
     print "      - Finding differences and concordance"
-    mergeBFiles([out_prefix + "_{}_gold".format(i) for i in range(nb)],
-                [(j + "bed", j + "bim", j + "fam") for j in [out_prefix + "_{}_source.".format(i) for i in range(nb)]],
-                [out_prefix + "_{}_merged".format(i) for i in range(nb)],
-                use_sge)
+    mergeBFiles(
+        [out_prefix + "_{}_gold".format(i) for i in range(nb)],
+        [
+            (j + "bed", j + "bim", j + "fam") for j in
+            [out_prefix + "_{}_source.".format(i) for i in range(nb)]
+        ],
+        [out_prefix + "_{}_merged".format(i) for i in range(nb)],
+        use_sge,
+    )
 
     # Creating reports
     # The diff file
@@ -210,7 +226,9 @@ def compute_statistics(out_dir, gold_prefix, source_prefix, same_samples,
                     row = createRowFromPlinkSpacedOutput(line)
                     if i == 0:
                         # This is the header
-                        header_index = dict([(col, i) for i, col in enumerate(row)])
+                        header_index = dict([
+                            (col, i) for i, col in enumerate(row)
+                        ])
                         for col_name in ["NCHROBS"]:
                             if col_name not in header_index:
                                 msg = "{}: no column named {}".format(filename,
@@ -233,7 +251,9 @@ def compute_statistics(out_dir, gold_prefix, source_prefix, same_samples,
                     row = createRowFromPlinkSpacedOutput(line)
                     if i == 0:
                         # This is the header
-                        header_index = dict([(col, i) for i, col in enumerate(row)])
+                        header_index = dict([
+                            (col, i) for i, col in enumerate(row)
+                        ])
                         for col_name in ["SNP", "FID", "IID", "NEW", "OLD"]:
                             if col_name not in header_index:
                                 msg = "{}: no column named {}".format(filename,
@@ -242,11 +262,13 @@ def compute_statistics(out_dir, gold_prefix, source_prefix, same_samples,
                     else:
                         # This is data
                         # We keep the SNP, and NEW and OLD genotype
-                        print >>diff_file, "\t".join([row[header_index["SNP"]],
-                                                      "\t".join(source_sample),
-                                                      "\t".join(gold_sample),
-                                                      row[header_index["NEW"]],
-                                                      row[header_index["OLD"]]])
+                        print >>diff_file, "\t".join([
+                            row[header_index["SNP"]],
+                            "\t".join(source_sample),
+                            "\t".join(gold_sample),
+                            row[header_index["NEW"]],
+                            row[header_index["OLD"]]
+                        ])
                         nb_diff += 1
         except IOError:
             msg = "{}: no such file".format(filename)
@@ -287,7 +309,8 @@ def check_fam_for_samples(required_samples, source, gold):
                 gold_samples.add(sample)
 
     # Checking if we got everything
-    print "      - Found {} samples in source panel".format(len(source_samples))
+    print ("      - Found {} samples in source "
+           "panel".format(len(source_samples)))
     print "      - Found {} samples in gold standard".format(len(gold_samples))
 
     if len(required_samples - (source_samples | gold_samples)) != 0:
@@ -373,8 +396,9 @@ def findFlippedSNPs(frqFile1, frqFile2, outPrefix):
 
                     if i == 0:
                         # This is the header
-                        headerIndex = dict([(row[j], j) \
-                                                for j in xrange(len(row))])
+                        headerIndex = dict([
+                            (row[j], j) for j in xrange(len(row))
+                        ])
 
                         # Checking the columns
                         for columnName in ["SNP", "A1", "A2"]:
@@ -420,7 +444,10 @@ def findFlippedSNPs(frqFile1, frqFile2, outPrefix):
 
         if (len(alleles1) == 2) and (len(alleles2) == 2):
             # Both are heterozygous
-            if ({"A", "T"} == alleles1) or ({"C", "G"} == alleles1) or ({"A", "T"} == alleles2) or ({"C", "G"} == alleles2):
+            if (({"A", "T"} == alleles1) or
+                    ({"C", "G"} == alleles1) or
+                    ({"A", "T"} == alleles2) or
+                    ({"C", "G"} == alleles2)):
                 # We can't flip those..., so we remove them
                 print >>toRemoveOutputFile, snpName
             else:
@@ -460,7 +487,9 @@ def combinePlinkBinaryFiles(prefixes, outPrefix):
         raise ProgramError(msg)
 
     for prefix in prefixes[1:]:
-        print >>outputFile, " ".join([prefix + i for i in [".bed", ".bim", ".fam"]])
+        print >>outputFile, " ".join([
+            prefix + i for i in [".bed", ".bim", ".fam"]
+        ])
 
     # Closing the output files
     outputFile.close()
@@ -484,7 +513,7 @@ def findOverlappingSNPsWithGoldStandard(prefix, gold_prefixe, out_prefix):
                 chromosome = row[0]
                 position = row[3]
                 snpName = row[1]
-                
+
                 if (chromosome, position) not in sourceSnpToExtract:
                     sourceSnpToExtract[(chromosome, position)] = snpName
                 else:
@@ -557,8 +586,9 @@ def extractSNPs(prefixes, snpToExtractFileNames, outPrefixes, runSGE):
     if runSGE:
         # Add the environment variable for DRMAA package
         if "DRMAA_LIBRARY_PATH" not in os.environ:
-            os.environ["DRMAA_LIBRARY_PATH"] = "/shares/data/sge/lib/lx24-amd64/libdrmaa.so.1.0"
-        
+            t = "/shares/data/sge/lib/lx24-amd64/libdrmaa.so.1.0"
+            os.environ["DRMAA_LIBRARY_PATH"] = t
+
         # Import the python drmaa library
         import drmaa
 
@@ -621,8 +651,9 @@ def mergeBFiles(prefixes, mergedPrefixes, outPrefixes, runSGE):
     if runSGE:
         # Add the environment variable for DRMAA package
         if "DRMAA_LIBRARY_PATH" not in os.environ:
-            os.environ["DRMAA_LIBRARY_PATH"] = "/shares/data/sge/lib/lx24-amd64/libdrmaa.so.1.0"
-        
+            t = "/shares/data/sge/lib/lx24-amd64/libdrmaa.so.1.0"
+            os.environ["DRMAA_LIBRARY_PATH"] = t
+
         # Import the python drmaa library
         import drmaa
 
@@ -686,8 +717,9 @@ def computeParallelFreq(prefixes, outPrefixes, runSGE):
     if runSGE:
         # Add the environment variable for DRMAA package
         if "DRMAA_LIBRARY_PATH" not in os.environ:
-            os.environ["DRMAA_LIBRARY_PATH"] = "/shares/data/sge/lib/lx24-amd64/libdrmaa.so.1.0"
-        
+            t = "/shares/data/sge/lib/lx24-amd64/libdrmaa.so.1.0"
+            os.environ["DRMAA_LIBRARY_PATH"] = t
+
         # Import the python drmaa library
         import drmaa
 
@@ -749,8 +781,9 @@ def keepSamples(prefixes, samplesToExtractFileNames, outPrefixes, runSGE):
     if runSGE:
         # Add the environment variable for DRMAA package
         if "DRMAA_LIBRARY_PATH" not in os.environ:
-            os.environ["DRMAA_LIBRARY_PATH"] = "/shares/data/sge/lib/lx24-amd64/libdrmaa.so.1.0"
-        
+            t = "/shares/data/sge/lib/lx24-amd64/libdrmaa.so.1.0"
+            os.environ["DRMAA_LIBRARY_PATH"] = t
+
         # Import the python drmaa library
         import drmaa
 
@@ -848,17 +881,17 @@ def checkArgs(args):
     return True
 
 
-def parseArgs(argString=None): # pragma: no cover
+def parseArgs(argString=None):  # pragma: no cover
     """Parses the command line options and arguments.
 
     :returns: A :py:class:`numpy.Namespace` object created by
               the :py:mod:`argparse` module. It contains the values of the
               different options.
 
-    ===============  ======  ===================================================
+    ===============  ======  ==================================================
         Options       Type                     Description
-    ===============  ======  ===================================================
-    ===============  ======  ===================================================
+    ===============  ======  ==================================================
+    ===============  ======  ==================================================
 
     .. note::
         No option check is done here (except for the one automatically done by
@@ -876,7 +909,7 @@ def parseArgs(argString=None): # pragma: no cover
 
 class ProgramError(Exception):
     """An :py:class:`Exception` raised in case of a problem.
-    
+
     :param msg: the message to print to the user before exiting.
     :type msg: string
 
@@ -917,7 +950,7 @@ group.add_argument("--same-samples", type=str, metavar="FILE", required=True,
 # The options
 group = parser.add_argument_group("Options")
 group.add_argument("--sge", action="store_true",
-                    help="Use SGE for parallelization.")
+                   help="Use SGE for parallelization.")
 # The OUTPUT files
 group = parser.add_argument_group("Output File")
 group.add_argument("--out", type=str, metavar="FILE",

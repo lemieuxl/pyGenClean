@@ -1,17 +1,19 @@
 #!/usr/bin/env python2.7
-## This file is part of pyGenClean.
-## 
-## pyGenClean is free software: you can redistribute it and/or modify it under
-## the terms of the GNU General Public License as published by the Free Software
-## Foundation, either version 3 of the License, or (at your option) any later
-## version.
-## 
-## pyGenClean is distributed in the hope that it will be useful, but WITHOUT ANY
-## WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
-## A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
-## 
-## You should have received a copy of the GNU General Public License along with
-## pyGenClean.  If not, see <http://www.gnu.org/licenses/>.
+
+# This file is part of pyGenClean.
+#
+# pyGenClean is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later
+# version.
+#
+# pyGenClean is distributed in the hope that it will be useful, but WITHOUT ANY
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+# A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with
+# pyGenClean.  If not, see <http://www.gnu.org/licenses/>.
+
 
 import re
 import os
@@ -23,6 +25,7 @@ import subprocess
 
 from PlinkUtils import createRowFromPlinkSpacedOutput
 from pyGenClean.DupSNPs.duplicated_snps import flipGenotype
+
 
 def main(argString=None):
     # Getting and checking the options
@@ -121,9 +124,11 @@ def main(argString=None):
                              gold_input_prefix + ".cleaned",
                              keepSample=args.out + ".gold_samples2keep")
         print "   - Keeping samples from source panel"
-        exclude_SNPs_samples(args.out + ".source_panel",
-                             args.out + ".source_panel.cleaned",
-                             keepSample=args.out + ".source_panel_samples2keep")
+        exclude_SNPs_samples(
+            args.out + ".source_panel",
+            args.out + ".source_panel.cleaned",
+            keepSample=args.out + ".source_panel_samples2keep",
+        )
         print "   - Computing statistics"
         compute_statistics(args.out + ".duplicated_samples",
                            gold_input_prefix + ".cleaned",
@@ -138,8 +143,10 @@ def read_source_manifest(file_name):
     if file_name.endswith(".gz"):
         open_function = gzip.open
     with open_function(file_name, 'rb') as input_file:
-        header_index = dict([(col_name, i) for i, col_name in
-                                    enumerate(input_file.readline().rstrip("\r\n").split("\t"))])
+        header_index = dict([
+            (col_name, i) for i, col_name in
+            enumerate(input_file.readline().rstrip("\r\n").split("\t"))
+        ])
         for col_name in {"Name", "SNP", "IlmnStrand"}:
             if col_name not in header_index:
                 msg = "{}: no column named {}".format(file_name, col_name)
@@ -178,25 +185,26 @@ def read_source_alleles(file_name):
 
 def illumina_to_snp(strand, snp):
     """Return the TOP strand of the marker.
-    
+
     Function that takes a strand (TOP or BOT) and a SNP (e.g. : [A/C]) and
     returns a space separated AlleleA[space]AlleleB string.
 
     :param strand: Either "TOP" or "BOT"
     :type strand: str
 
-    :param snp: Either [A/C], [A/T], [G/C], [T/C], [A/G], [C/G], [T/A] or [T/G].
+    :param snp: [A/C], [A/T], [G/C], [T/C], [A/G], [C/G], [T/A] or [T/G].
     :type snp: str
 
-    :returns: The nucleotide for allele A and the nucleotide for allele B (space separated)
+    :returns: The nucleotide for allele A and the nucleotide for allele B
+              (space separated)
     :rtype: str
 
     """
 
-    # This correspondancy matrix converts the alleles 
+    # This correspondence matrix converts the alleles
     # from the annotation file to the appropriate
     # alleles for TOP strand.
-    # This dictates most of the bahavior for this script.
+    # This dictates most of the behavior for this script.
     # Modify it to customize allele conversion.
     illumina_correspondance = {
         "[A/C]": {
@@ -232,7 +240,6 @@ def illumina_to_snp(strand, snp):
     return illumina_correspondance[snp][strand]
 
 
-
 def compute_statistics(out_dir, gold_prefix, source_prefix, same_samples,
                        use_sge, final_out_prefix):
     """Compute the statistics."""
@@ -252,22 +259,29 @@ def compute_statistics(out_dir, gold_prefix, source_prefix, same_samples,
     for k, (gold_sample, source_sample) in enumerate(same_samples):
         # Preparing the files
         try:
-            with open(out_prefix + "_{}_gold.samples".format(k), 'w') as output_file:
+            filename = out_prefix + "_{}_gold.samples".format(k)
+            with open(filename, 'w') as output_file:
                 print >>output_file, "\t".join(gold_sample)
-            with open(out_prefix + "_{}_source.samples".format(k), "w") as output_file:
+
+            filename = out_prefix + "_{}_source.samples".format(k)
+            with open(filename, "w") as output_file:
                 print >>output_file, "\t".join(source_sample)
+
         except IOError:
             msg = "can't write in dir {}".format(out_dir)
             raise ProgramError(msg)
 
     # Preparing the files
     nb = len(same_samples)
-    keepSamples([gold_prefix]*nb + [source_prefix]*nb,
-                [out_prefix + "_{}_gold.samples".format(i) for i in range(nb)] +
-                [out_prefix + "_{}_source.samples".format(i) for i in range(nb)],
-                [out_prefix + "_{}_gold".format(i) for i in range(nb)] +
-                [out_prefix + "_{}_source".format(i) for i in range(nb)],
-                use_sge, transpose=True)
+    keepSamples(
+        [gold_prefix]*nb + [source_prefix]*nb,
+        [out_prefix + "_{}_gold.samples".format(i) for i in range(nb)] +
+        [out_prefix + "_{}_source.samples".format(i) for i in range(nb)],
+        [out_prefix + "_{}_gold".format(i) for i in range(nb)] +
+        [out_prefix + "_{}_source".format(i) for i in range(nb)],
+        use_sge,
+        transpose=True,
+    )
 
     # Creating reports
     # The diff file
@@ -332,7 +346,8 @@ def compute_statistics(out_dir, gold_prefix, source_prefix, same_samples,
             raise ProgramError(msg)
 
         # The genotyped markers in both, with their number
-        genotyped_markers = source_genotypes.viewkeys() & gold_genotypes.viewkeys()
+        genotyped_markers = source_genotypes.viewkeys() & \
+            gold_genotypes.viewkeys()
         nb_genotyped = len(genotyped_markers)
 
         # Finding the number of differences, and creating the diff file
@@ -400,7 +415,9 @@ def check_fam_for_samples(required_samples, source, gold):
                 gold_samples.add(sample)
 
     # Checking if we got everything
-    print "      - Found {} samples in source panel".format(len(source_samples))
+    print "      - Found {} samples in source panel".format(
+        len(source_samples),
+    )
     print "      - Found {} samples in gold standard".format(len(gold_samples))
 
     if len(required_samples - (source_samples | gold_samples)) != 0:
@@ -464,7 +481,8 @@ def exclude_SNPs_samples(inPrefix, outPrefix, exclusionSNP=None,
         msg = "Something wront with development... work on that source code..."
         raise ProgramError(msg)
 
-    plinkCommand = ["plink", "--noweb", "--bfile", inPrefix, "--out", outPrefix]
+    plinkCommand = ["plink", "--noweb", "--bfile", inPrefix, "--out",
+                    outPrefix]
     if exclusionSNP is not None:
         # We want to exclude SNP
         plinkCommand.extend(["--exclude", exclusionSNP])
@@ -498,8 +516,9 @@ def findFlippedSNPs(goldFrqFile1, sourceAlleles, outPrefix):
 
             if i == 0:
                 # This is the header
-                headerIndex = dict([(row[j], j) \
-                                        for j in xrange(len(row))])
+                headerIndex = dict([
+                    (row[j], j) for j in xrange(len(row))
+                ])
 
                 # Checking the columns
                 for columnName in ["SNP", "A1", "A2"]:
@@ -536,7 +555,10 @@ def findFlippedSNPs(goldFrqFile1, sourceAlleles, outPrefix):
 
     toRemoveOutputFileExplanation = None
     try:
-        toRemoveOutputFileExplanation = open(outPrefix + ".snp_to_remove.explanation", "w")
+        toRemoveOutputFileExplanation = open(
+            outPrefix + ".snp_to_remove.explanation",
+            "w",
+        )
         print >>toRemoveOutputFileExplanation, "\t".join(["Name", "Reason",
                                                           "Alleles 1",
                                                           "Alleles 2"])
@@ -550,13 +572,16 @@ def findFlippedSNPs(goldFrqFile1, sourceAlleles, outPrefix):
 
         if (len(alleles1) == 2) and (len(alleles2) == 2):
             # Both are heterozygous
-            if ({"A", "T"} == alleles1 and {"A", "T"} == alleles2) or ({"C", "G"} == alleles1 and {"C", "G"} == alleles2):
+            if (({"A", "T"} == alleles1 and {"A", "T"} == alleles2) or
+                    ({"C", "G"} == alleles1 and {"C", "G"} == alleles2)):
                 # We can't flip those..., so we remove them
                 print >>toRemoveOutputFile, snpName
-                print >>toRemoveOutputFileExplanation, "\t".join([snpName,
-                                                                  "Undetermined",
-                                                                  "".join(alleles1),
-                                                                  "".join(alleles2)])
+                print >>toRemoveOutputFileExplanation, "\t".join([
+                    snpName,
+                    "Undetermined",
+                    "".join(alleles1),
+                    "".join(alleles2),
+                ])
             else:
                 if alleles1 != alleles2:
                     # Let's try the flip one
@@ -566,10 +591,12 @@ def findFlippedSNPs(goldFrqFile1, sourceAlleles, outPrefix):
                     else:
                         # Those SNP are discordant...
                         print >>toRemoveOutputFile, snpName
-                        print >>toRemoveOutputFileExplanation, "\t".join([snpName,
-                                                                          "Invalid",
-                                                                          "".join(alleles1),
-                                                                          "".join(alleles2)])
+                        print >>toRemoveOutputFileExplanation, "\t".join([
+                            snpName,
+                            "Invalid",
+                            "".join(alleles1),
+                            "".join(alleles2),
+                        ])
         else:
             # We want to remove this SNP, because there is at least one
             # homozygous individual
@@ -629,7 +656,7 @@ def findOverlappingSNPsWithGoldStandard(prefix, gold_prefixe, out_prefix,
     # Removing duplicates from the list
     if not use_marker_names:
         print ("      - There are {} duplicated markers "
-            "in {};".format(len(duplicates), prefix + ".bim"))
+               "in {};".format(len(duplicates), prefix + ".bim"))
         print "        removing them for simplicity..."
         for snpID in duplicates:
             del sourceSnpToExtract[snpID]
@@ -684,8 +711,10 @@ def findOverlappingSNPsWithGoldStandard(prefix, gold_prefixe, out_prefix,
         for snpID in goldSnpToExtract.iterkeys():
             print >>sourceOutputFile, sourceSnpToExtract[snpID]
             print >>goldOutputFile, goldSnpToExtract[snpID]
-            print >>changeNameOutputFile, "\t".join([goldSnpToExtract[snpID],
-                                                     sourceSnpToExtract[snpID]])
+            print >>changeNameOutputFile, "\t".join([
+                goldSnpToExtract[snpID],
+                sourceSnpToExtract[snpID],
+            ])
 
     # Closing the output file
     goldOutputFile.close()
@@ -701,8 +730,9 @@ def extractSNPs(prefixes, snpToExtractFileNames, outPrefixes, runSGE):
     if runSGE:
         # Add the environment variable for DRMAA package
         if "DRMAA_LIBRARY_PATH" not in os.environ:
-            os.environ["DRMAA_LIBRARY_PATH"] = "/shares/data/sge/lib/lx24-amd64/libdrmaa.so.1.0"
-        
+            t = "/shares/data/sge/lib/lx24-amd64/libdrmaa.so.1.0"
+            os.environ["DRMAA_LIBRARY_PATH"] = t
+
         # Import the python drmaa library
         import drmaa
 
@@ -766,8 +796,9 @@ def keepSamples(prefixes, samplesToExtractFileNames, outPrefixes,
     if runSGE:
         # Add the environment variable for DRMAA package
         if "DRMAA_LIBRARY_PATH" not in os.environ:
-            os.environ["DRMAA_LIBRARY_PATH"] = "/shares/data/sge/lib/lx24-amd64/libdrmaa.so.1.0"
-        
+            t = "/shares/data/sge/lib/lx24-amd64/libdrmaa.so.1.0"
+            os.environ["DRMAA_LIBRARY_PATH"] = t
+
         # Import the python drmaa library
         import drmaa
 
@@ -871,7 +902,8 @@ def checkArgs(args):
                "[--source-manifest] or a file containing alleles for each "
                "marker [--source-alleles]")
         raise ProgramError(msg)
-    if (args.source_manifest is not None) and (args.source_alleles is not None):
+    if ((args.source_manifest is not None) and
+            (args.source_alleles is not None)):
         msg = ("use either --source-manifest or --source-alleles, not both")
         raise ProgramError(msg)
     # Check for the manifests
@@ -887,17 +919,17 @@ def checkArgs(args):
     return True
 
 
-def parseArgs(argString=None): # pragma: no cover
+def parseArgs(argString=None):  # pragma: no cover
     """Parses the command line options and arguments.
 
     :returns: A :py:class:`numpy.Namespace` object created by
               the :py:mod:`argparse` module. It contains the values of the
               different options.
 
-    ===============  ======  ===================================================
+    ===============  ======  ==================================================
         Options       Type                     Description
-    ===============  ======  ===================================================
-    ===============  ======  ===================================================
+    ===============  ======  ==================================================
+    ===============  ======  ==================================================
 
     .. note::
         No option check is done here (except for the one automatically done by
@@ -915,7 +947,7 @@ def parseArgs(argString=None): # pragma: no cover
 
 class ProgramError(Exception):
     """An :py:class:`Exception` raised in case of a problem.
-    
+
     :param msg: the message to print to the user before exiting.
     :type msg: string
 
@@ -968,9 +1000,9 @@ group = parser.add_argument_group("Options")
 group.add_argument("--sge", action="store_true",
                    help="Use SGE for parallelization.")
 group.add_argument("--do-not-flip", action="store_true",
-                   help=("Do not flip SNPs. WARNING: only use this option only "
-                         "if the Gold Standard was generated using the same "
-                         "chip (hence, flipping is unnecessary)."))
+                   help=("Do not flip SNPs. WARNING: only use this option "
+                         "only if the Gold Standard was generated using the "
+                         "same chip (hence, flipping is unnecessary)."))
 group.add_argument("--use-marker-names", action="store_true",
                    help=("Use marker names instead of (chr, position). "
                          "WARNING: only use this options only if the Gold "
