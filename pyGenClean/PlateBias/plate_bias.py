@@ -49,17 +49,17 @@ def main(argString=None):
     for key, value in vars(args).iteritems():
         print "      --{} {}".format(key, value)
 
-#     # Run plink
-#     print "   - Running Plink to check the plate bias"
-#     executePlateBiasAnalysis(args)
-#
-#     # Extract significant SNPs
-#     print "   - Extracting significant SNPs"
-#     extractSignificantSNPs(args.out)
-#
-#     # Remove significant SNPs using plink
-#     print "   - Computing frequency of significant SNPs"
-#     computeFrequencyOfSignificantSNPs(args)
+    # Run plink
+    print "   - Running Plink to check the plate bias"
+    executePlateBiasAnalysis(args)
+
+    # Extract significant SNPs
+    print "   - Extracting significant SNPs"
+    extractSignificantSNPs(args.out)
+
+    # Remove significant SNPs using plink
+    print "   - Computing frequency of significant SNPs"
+    computeFrequencyOfSignificantSNPs(args)
 
 
 def extractSignificantSNPs(prefix):

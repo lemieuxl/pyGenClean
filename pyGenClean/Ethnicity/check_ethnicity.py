@@ -83,108 +83,108 @@ def main(argString=None):
     for key, value in vars(args).iteritems():
         print "      --{} {}".format(key, value)
 
-#    # Find overlap with the reference file
-#    print "   - Finding overlapping SNPs between reference and source panels"
+    # Find overlap with the reference file
+    print "   - Finding overlapping SNPs between reference and source panels"
     referencePrefixes = [args.ceu_bfile, args.yri_bfile, args.jpt_chb_bfile]
     popNames = ["CEU", "YRI", "JPT-CHB"]
-#    findOverlappingSNPsWithReference(args.bfile, referencePrefixes, args.out)
-#
-#    # Extract the required SNPs using Plink
-#    print "   - Extracting overlapping SNPs from the reference panels"
-#    extractSNPs(args.out + ".ref_snp_to_extract", referencePrefixes, popNames,
-#                args.out + ".reference_panel", args.sge, args)
-#    print "   - Extracting overlapping SNPs from the source panel"
-#    extractSNPs(args.out + ".source_snp_to_extract", [args.bfile], ["ALL"],
-#                args.out + ".source_panel", False, args)
-#
-#    # Combining the reference panel
-#    print "   - Combining the reference panels"
-#    combinePlinkBinaryFiles(
-#        [args.out + ".reference_panel." + i for i in popNames],
-#        args.out + ".reference_panel.ALL",
-#    )
-#
-#    # Renaming the reference file, so that the SNP names are the same
-#    print "   - Renaming reference panel's SNPs to match source panel"
-#    renameSNPs(args.out + ".reference_panel.ALL", args.out + ".update_names",
-#               args.out + ".reference_panel.ALL.rename")
-#
-#    # Computing the frequency
-#    print "   - Computing reference panel frequencies"
-#    computeFrequency(args.out + ".reference_panel.ALL.rename",
-#                     args.out + ".reference_panel.ALL.rename.frequency")
-#    print "   - Computing source panel frequencies"
-#    computeFrequency(args.out + ".source_panel.ALL",
-#                     args.out + ".source_panel.ALL.frequency")
-#
-#    # Finding the SNPs to flip and flip them in the reference panel
-#    print "   - Finding SNPs to flip or to exclude from reference panel"
-#    findFlippedSNPs(args.out + ".reference_panel.ALL.rename.frequency.frq",
-#                    args.out + ".source_panel.ALL.frequency.frq",
-#                    args.out)
-#
-#    # Excluding SNPs
-#    print "   - Excluding SNPs from reference panel"
-#    excludeSNPs(args.out + ".reference_panel.ALL.rename",
-#                args.out + ".reference_panel.ALL.rename.cleaned",
-#                args.out + ".snp_to_remove")
-#    print "   - Excluding SNPs from source panel"
-#    excludeSNPs(args.out + ".source_panel.ALL",
-#                args.out + ".source_panel.ALL.cleaned",
-#                args.out + ".snp_to_remove")
-#
-#    # Flipping the SNP that need to be flip in the reference
-#    print "   - Flipping SNPs in reference panel"
-#    flipSNPs(args.out + ".reference_panel.ALL.rename.cleaned",
-#             args.out + ".reference_panel.ALL.rename.cleaned.flipped",
-#             args.out + ".snp_to_flip_in_reference")
-#
-#    # Combining the reference panel
-#    print "   - Combining reference and source panels"
-#    combinePlinkBinaryFiles(
-#        [args.out + ".reference_panel.ALL.rename.cleaned.flipped",
-#         args.out + ".source_panel.ALL.cleaned"],
-#        args.out + ".final_dataset_for_genome",
-#    )
-#
-#    # Runing the relatedness step
-#    print "   - Creating the genome file using Plink"
-#    newBfile = runRelatedness(args.out + ".final_dataset_for_genome", args.out,
-#                              args)
-#
-#    # Creating the MDS file
-#    print "   - Creating the MDS file using Plink"
-#    createMDSFile(args.nb_components, newBfile,
-#                  args.out + ".mds", args.out + ".ibs.genome.genome")
-#
-#    # Creating the population files
-#    print "   - Creating a population file"
-#    famFiles = [args.out + ".reference_panel." + i + ".fam" for i in popNames]
-#    famFiles.append(args.out + ".source_panel.ALL.fam")
-#    labels = popNames + ["SOURCE"]
-#    createPopulationFile(famFiles, labels, args.out + ".population_file")
-#
-#    # Plot the MDS value
-#    print "   - Creating the MDS plot"
-#    plotMDS(args.out + ".mds.mds", args.out + ".mds",
-#            args.out + ".population_file", args)
-#
-#    # Finding the outliers
-#    print "   - Finding the outliers"
-#    find_the_outliers(args.out + ".mds.mds", args.out + ".population_file",
-#                      args.outliers_of, args.multiplier, args.out)
-#
-#    # De we need to create a scree plot?
-#    if args.create_scree_plot:
-#        # Computing the eigenvalues using smartpca
-#        print "   - Computing eigenvalues"
-#        compute_eigenvalues(args.out + ".ibs.pruned_data",
-#                            args.out + ".smartpca")
-#
-#        print "   - Creating scree plot"
-#        create_scree_plot(args.out + ".smartpca.evec.txt",
-#                          args.out + ".smartpca.scree_plot.png",
-#                          args.scree_plot_title)
+    findOverlappingSNPsWithReference(args.bfile, referencePrefixes, args.out)
+
+    # Extract the required SNPs using Plink
+    print "   - Extracting overlapping SNPs from the reference panels"
+    extractSNPs(args.out + ".ref_snp_to_extract", referencePrefixes, popNames,
+                args.out + ".reference_panel", args.sge, args)
+    print "   - Extracting overlapping SNPs from the source panel"
+    extractSNPs(args.out + ".source_snp_to_extract", [args.bfile], ["ALL"],
+                args.out + ".source_panel", False, args)
+
+    # Combining the reference panel
+    print "   - Combining the reference panels"
+    combinePlinkBinaryFiles(
+        [args.out + ".reference_panel." + i for i in popNames],
+        args.out + ".reference_panel.ALL",
+    )
+
+    # Renaming the reference file, so that the SNP names are the same
+    print "   - Renaming reference panel's SNPs to match source panel"
+    renameSNPs(args.out + ".reference_panel.ALL", args.out + ".update_names",
+               args.out + ".reference_panel.ALL.rename")
+
+    # Computing the frequency
+    print "   - Computing reference panel frequencies"
+    computeFrequency(args.out + ".reference_panel.ALL.rename",
+                     args.out + ".reference_panel.ALL.rename.frequency")
+    print "   - Computing source panel frequencies"
+    computeFrequency(args.out + ".source_panel.ALL",
+                     args.out + ".source_panel.ALL.frequency")
+
+    # Finding the SNPs to flip and flip them in the reference panel
+    print "   - Finding SNPs to flip or to exclude from reference panel"
+    findFlippedSNPs(args.out + ".reference_panel.ALL.rename.frequency.frq",
+                    args.out + ".source_panel.ALL.frequency.frq",
+                    args.out)
+
+    # Excluding SNPs
+    print "   - Excluding SNPs from reference panel"
+    excludeSNPs(args.out + ".reference_panel.ALL.rename",
+                args.out + ".reference_panel.ALL.rename.cleaned",
+                args.out + ".snp_to_remove")
+    print "   - Excluding SNPs from source panel"
+    excludeSNPs(args.out + ".source_panel.ALL",
+                args.out + ".source_panel.ALL.cleaned",
+                args.out + ".snp_to_remove")
+
+    # Flipping the SNP that need to be flip in the reference
+    print "   - Flipping SNPs in reference panel"
+    flipSNPs(args.out + ".reference_panel.ALL.rename.cleaned",
+             args.out + ".reference_panel.ALL.rename.cleaned.flipped",
+             args.out + ".snp_to_flip_in_reference")
+
+    # Combining the reference panel
+    print "   - Combining reference and source panels"
+    combinePlinkBinaryFiles(
+        [args.out + ".reference_panel.ALL.rename.cleaned.flipped",
+         args.out + ".source_panel.ALL.cleaned"],
+        args.out + ".final_dataset_for_genome",
+    )
+
+    # Runing the relatedness step
+    print "   - Creating the genome file using Plink"
+    newBfile = runRelatedness(args.out + ".final_dataset_for_genome", args.out,
+                              args)
+
+    # Creating the MDS file
+    print "   - Creating the MDS file using Plink"
+    createMDSFile(args.nb_components, newBfile,
+                  args.out + ".mds", args.out + ".ibs.genome.genome")
+
+    # Creating the population files
+    print "   - Creating a population file"
+    famFiles = [args.out + ".reference_panel." + i + ".fam" for i in popNames]
+    famFiles.append(args.out + ".source_panel.ALL.fam")
+    labels = popNames + ["SOURCE"]
+    createPopulationFile(famFiles, labels, args.out + ".population_file")
+
+    # Plot the MDS value
+    print "   - Creating the MDS plot"
+    plotMDS(args.out + ".mds.mds", args.out + ".mds",
+            args.out + ".population_file", args)
+
+    # Finding the outliers
+    print "   - Finding the outliers"
+    find_the_outliers(args.out + ".mds.mds", args.out + ".population_file",
+                      args.outliers_of, args.multiplier, args.out)
+
+    # De we need to create a scree plot?
+    if args.create_scree_plot:
+        # Computing the eigenvalues using smartpca
+        print "   - Computing eigenvalues"
+        compute_eigenvalues(args.out + ".ibs.pruned_data",
+                            args.out + ".smartpca")
+
+        print "   - Creating scree plot"
+        create_scree_plot(args.out + ".smartpca.evec.txt",
+                          args.out + ".smartpca.scree_plot.png",
+                          args.scree_plot_title)
 
 
 def create_scree_plot(in_filename, out_filename, plot_title):

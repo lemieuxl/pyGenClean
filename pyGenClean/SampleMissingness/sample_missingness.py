@@ -44,7 +44,7 @@ def main(argString=None):
 
     # Running Plink
     print "   - Running Plink"
-#     runPlink(args)
+    runPlink(args)
 
 
 def runPlink(options):

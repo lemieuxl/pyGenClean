@@ -75,96 +75,96 @@ def main(argString=None):
     for key, value in vars(args).iteritems():
         print "      --{} {}".format(key, value)
 
-#    # Reading the tfam file
-#    print "   - Reading TFAM"
-#    tfam = readTFAM(args.tfile + ".tfam")
-#
-#    # Find duplicated samples
-#    print "   - Finding duplicated samples"
-#    uniqueSamples, duplicatedSamples = findDuplicates(tfam)
-#
-#    # Prints the unique tfam
-#    print "   - Creating TFAM for unique samples"
-#    printUniqueTFAM(tfam, uniqueSamples, args.out)
-#
-#    # Process the TPED file
-#    print "   - Reading TPED (and creating TPED for unique samples)"
-#    tped, tpedSamples = processTPED(uniqueSamples, duplicatedSamples,
-#                                    args.tfile + ".tped", args.out)
-#
-#    if len(duplicatedSamples) == 0:
-#        print "   - There are no duplicates in {}.tfam".format(args.tfile)
-#        # There are no duplicated samples
-#        try:
-#            shutil.copy(args.out + ".unique_samples.tfam",
-#                        args.out + ".final.tfam")
-#        except IOError:
-#            msg = "%s.unique_samples.tfam: can't copy to " \
-#                  "%s.final.tfam" % (args.out, args.out)
-#            raise ProgramError(msg)
-#        try:
-#            shutil.copy(args.out + ".unique_samples.tped",
-#                        args.out + ".final.tped")
-#        except IOError:
-#            msg = "%s.unique_samples.tped: can't copy to " \
-#                  "%s.final.tped" % (args.out, args.out)
-#            raise ProgramError(msg)
-#
-#    else:
-#        # We continue
-#        # Compute statistics
-#        print ("   - Computing the completion and concordance of duplicated\n"
-#               "     samples")
-#        completion, concordance = computeStatistics(tped, tfam, tpedSamples,
-#                                                    duplicatedSamples,
-#                                                    args.out)
-#
-#        # Print the statistics
-#        print "   - Printing the statistics"
-#        completion_percentage = printStatistics(completion, concordance,
-#                                                tpedSamples, duplicatedSamples,
-#                                                args.out)
-#
-#        # Print the concordance file
-#        print "   - Printing the concordance file"
-#        concordance_percentage = printConcordance(concordance, args.out)
-#
-#        # Print the duplicated TFAM and TPED
-#        print "   - Creating TPED and TFAM for duplicated samples"
-#        printDuplicatedTPEDandTFAM(tped, tfam, tpedSamples, duplicatedSamples,
-#                                   args.out)
-#
-#        # Choose the best duplicates
-#        print "   - Choosing the best duplicates"
-#        chosenSamples, comp, conc = chooseBestDuplicates(
-#            tped,
-#            tpedSamples,
-#            duplicatedSamples,
-#            completion_percentage,
-#            concordance_percentage,
-#            args.out,
-#        )
-#
-#        # Clean the genotype of the chosen samples
-#        print ("   - Cleaning and creating unique TPED and TFAM from\n"
-#               "     duplicated samples")
-#        newTPED, newTFAM = createAndCleanTPED(
-#            tped,
-#            tfam,
-#            tpedSamples,
-#            duplicatedSamples,
-#            chosenSamples,
-#            args.out,
-#            comp,
-#            args.sample_completion_threshold,
-#            conc,
-#            args.sample_concordance_threshold,
-#        )
-#
-#        # Add the chosen TPED and TFAM
-#        print "   - Creating final TPED and TFAM file"
-#        addToTPEDandTFAM(newTPED, newTFAM, args.out,
-#                         args.out + ".unique_samples")
+    # Reading the tfam file
+    print "   - Reading TFAM"
+    tfam = readTFAM(args.tfile + ".tfam")
+
+    # Find duplicated samples
+    print "   - Finding duplicated samples"
+    uniqueSamples, duplicatedSamples = findDuplicates(tfam)
+
+    # Prints the unique tfam
+    print "   - Creating TFAM for unique samples"
+    printUniqueTFAM(tfam, uniqueSamples, args.out)
+
+    # Process the TPED file
+    print "   - Reading TPED (and creating TPED for unique samples)"
+    tped, tpedSamples = processTPED(uniqueSamples, duplicatedSamples,
+                                    args.tfile + ".tped", args.out)
+
+    if len(duplicatedSamples) == 0:
+        print "   - There are no duplicates in {}.tfam".format(args.tfile)
+        # There are no duplicated samples
+        try:
+            shutil.copy(args.out + ".unique_samples.tfam",
+                        args.out + ".final.tfam")
+        except IOError:
+            msg = "%s.unique_samples.tfam: can't copy to " \
+                  "%s.final.tfam" % (args.out, args.out)
+            raise ProgramError(msg)
+        try:
+            shutil.copy(args.out + ".unique_samples.tped",
+                        args.out + ".final.tped")
+        except IOError:
+            msg = "%s.unique_samples.tped: can't copy to " \
+                  "%s.final.tped" % (args.out, args.out)
+            raise ProgramError(msg)
+
+    else:
+        # We continue
+        # Compute statistics
+        print ("   - Computing the completion and concordance of duplicated\n"
+               "     samples")
+        completion, concordance = computeStatistics(tped, tfam, tpedSamples,
+                                                    duplicatedSamples,
+                                                    args.out)
+
+        # Print the statistics
+        print "   - Printing the statistics"
+        completion_percentage = printStatistics(completion, concordance,
+                                                tpedSamples, duplicatedSamples,
+                                                args.out)
+
+        # Print the concordance file
+        print "   - Printing the concordance file"
+        concordance_percentage = printConcordance(concordance, args.out)
+
+        # Print the duplicated TFAM and TPED
+        print "   - Creating TPED and TFAM for duplicated samples"
+        printDuplicatedTPEDandTFAM(tped, tfam, tpedSamples, duplicatedSamples,
+                                   args.out)
+
+        # Choose the best duplicates
+        print "   - Choosing the best duplicates"
+        chosenSamples, comp, conc = chooseBestDuplicates(
+            tped,
+            tpedSamples,
+            duplicatedSamples,
+            completion_percentage,
+            concordance_percentage,
+            args.out,
+        )
+
+        # Clean the genotype of the chosen samples
+        print ("   - Cleaning and creating unique TPED and TFAM from\n"
+               "     duplicated samples")
+        newTPED, newTFAM = createAndCleanTPED(
+            tped,
+            tfam,
+            tpedSamples,
+            duplicatedSamples,
+            chosenSamples,
+            args.out,
+            comp,
+            args.sample_completion_threshold,
+            conc,
+            args.sample_concordance_threshold,
+        )
+
+        # Add the chosen TPED and TFAM
+        print "   - Creating final TPED and TFAM file"
+        addToTPEDandTFAM(newTPED, newTFAM, args.out,
+                         args.out + ".unique_samples")
 
 
 def addToTPEDandTFAM(tped, tfam, prefix, toAddPrefix):

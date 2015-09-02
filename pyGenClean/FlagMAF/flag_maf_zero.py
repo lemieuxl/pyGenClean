@@ -46,13 +46,13 @@ def main(argString=None):
     for key, value in vars(args).iteritems():
         print "      --{} {}".format(key, value)
 
-#    # Compute frequency using plink
-#    print "   - Computing the frequencies using Plink"
-#    computeFrequency(args)
+    # Compute frequency using plink
+    print "   - Computing the frequencies using Plink"
+    computeFrequency(args)
 
-#    # Read the freqency file
-#    print "   - Flagging SNPs with MAF = 0"
-#    findSnpWithMaf0(args.out + ".frq", args.out)
+    # Read the freqency file
+    print "   - Flagging SNPs with MAF = 0"
+    findSnpWithMaf0(args.out + ".frq", args.out)
 
 
 def findSnpWithMaf0(freqFileName, prefix):

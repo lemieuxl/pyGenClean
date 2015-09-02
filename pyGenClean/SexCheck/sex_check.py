@@ -63,56 +63,56 @@ def main(argString=None):
     for key, value in vars(args).iteritems():
         print "    --{} {}".format(key.replace("_", "-"), value)
 
-#     # Reads the bim file to see if chromosome 23 is there
-#     hasSexProblems = None
-#     if not checkBim("{}.bim".format(args.bfile), args.nbChr23, "23"):
-#         print ("  - There are not enough markers on chromosome 23\n"
-#                "    Stopping now!")
-#     else:
-#         # Run plink "check-sex"
-#         print "  - Running Plink for sex check"
-#         runPlinkSexCheck(args)
-#
-#         # Reading plink "check-sex" output file
-#         print "  - Reading Plink's sex check output to find sex problems"
-#         hasSexProblems = readCheckSexFile(args.out + ".sexcheck",
-#                                           args.out + ".list_problem_sex",
-#                                           args.out + ".list_problem_sex_ids",
-#                                           args.femaleF, args.maleF)
-#
-#     if hasSexProblems is not None and hasSexProblems:
-#         # Run plink to recode chr 23 in a ped format
-#         print "  - Creating recoded file for chr23 using Plink"
-#         createPedChr23UsingPlink(args)
-#
-#         # Compute the hetero percentage
-#         print "  - Computing the heterozygous percentage"
-#         computeHeteroPercentage(args.out + ".chr23_recodeA.raw")
-#
-#         # Run plink to get chr 24
-#         if checkBim("{}.bim".format(args.bfile), 1, "24"):
-#             print "  - Creating recoded file for chr24 using Plink"
-#             createPedChr24UsingPlink(args)
-#
-#             # Compute the number of no call
-#             print "  - Computing the number of no calls"
-#             computeNoCall(args.out + ".chr24_recodeA.raw")
-#         else:
-#             print "  - Not enough markers on chr24"
-#
-#         # If required, let's plot the gender plot
-#         if args.gender_plot:
-#             print "  - Creating the gender plot"
-#             createGenderPlot(args.bfile, args.sex_chr_intensities,
-#                              args.out + ".list_problem_sex",
-#                              args.gender_plot_format, args.out)
-#
-#         # If required, let's plot the LRR and BAF plot
-#         if args.lrr_baf:
-#             print "  - Creating the LRR and BAF plot"
-#             createLrrBafPlot(args.lrr_baf_raw_dir,
-#                              args.out + ".list_problem_sex_ids",
-#                              args.lrr_baf_format, args.out)
+    # Reads the bim file to see if chromosome 23 is there
+    hasSexProblems = None
+    if not checkBim("{}.bim".format(args.bfile), args.nbChr23, "23"):
+        print ("  - There are not enough markers on chromosome 23\n"
+               "    Stopping now!")
+    else:
+        # Run plink "check-sex"
+        print "  - Running Plink for sex check"
+        runPlinkSexCheck(args)
+
+        # Reading plink "check-sex" output file
+        print "  - Reading Plink's sex check output to find sex problems"
+        hasSexProblems = readCheckSexFile(args.out + ".sexcheck",
+                                          args.out + ".list_problem_sex",
+                                          args.out + ".list_problem_sex_ids",
+                                          args.femaleF, args.maleF)
+
+    if hasSexProblems is not None and hasSexProblems:
+        # Run plink to recode chr 23 in a ped format
+        print "  - Creating recoded file for chr23 using Plink"
+        createPedChr23UsingPlink(args)
+
+        # Compute the hetero percentage
+        print "  - Computing the heterozygous percentage"
+        computeHeteroPercentage(args.out + ".chr23_recodeA.raw")
+
+        # Run plink to get chr 24
+        if checkBim("{}.bim".format(args.bfile), 1, "24"):
+            print "  - Creating recoded file for chr24 using Plink"
+            createPedChr24UsingPlink(args)
+
+            # Compute the number of no call
+            print "  - Computing the number of no calls"
+            computeNoCall(args.out + ".chr24_recodeA.raw")
+        else:
+            print "  - Not enough markers on chr24"
+
+        # If required, let's plot the gender plot
+        if args.gender_plot:
+            print "  - Creating the gender plot"
+            createGenderPlot(args.bfile, args.sex_chr_intensities,
+                             args.out + ".list_problem_sex",
+                             args.gender_plot_format, args.out)
+
+        # If required, let's plot the LRR and BAF plot
+        if args.lrr_baf:
+            print "  - Creating the LRR and BAF plot"
+            createLrrBafPlot(args.lrr_baf_raw_dir,
+                             args.out + ".list_problem_sex_ids",
+                             args.lrr_baf_format, args.out)
 
 
 def createGenderPlot(bfile, intensities, problematic_samples, format,

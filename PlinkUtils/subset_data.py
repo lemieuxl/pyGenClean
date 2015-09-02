@@ -47,9 +47,9 @@ def main(argString=None):
     for key, value in vars(args).iteritems():
         print "      --{} {}".format(key, value)
 
-#     # Subset the data
-#     print "   - Subsetting the data using Plink"
-#     subset_data(args)
+    # Subset the data
+    print "   - Subsetting the data using Plink"
+    subset_data(args)
 
 
 def subset_data(options):

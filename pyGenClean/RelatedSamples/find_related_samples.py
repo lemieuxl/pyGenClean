@@ -62,47 +62,47 @@ def main(argString=None):
     for key, value in vars(args).iteritems():
         print "      --{} {}".format(key, value)
 
-#    # Run plink
-#    print "   - Running Plink to extract SNPs according to LD"
-#    snpsToExtract = selectSNPsAccordingToLD(args)
-#
-#    # Check there is enough SNP in the output file
-#    print "   - Checking if there are enough extracted SNP"
-#    if not checkNumberOfSNP(snpsToExtract, args.min_nb_snp):
-#        # There are not enough markers
-#        print "      - There are not enough SNPs"
-#        print "        Stopping now"
-#
-#    else:
-#        # Extract the SNPs
-#        print "   - Extracting the SNPs using Plink"
-#        newBfile = extractSNPs(snpsToExtract, args)
-#
-#        # Run the genome command from plink
-#        print "   - Creating the genome file using Plink"
-#        genomeFileName = runGenome(newBfile, args)
-#
-#        if args.genome_only:
-#            # We just want the genome file
-#            return newBfile
-#
-#        # Extract related individuals
-#        print "   - Finding related individuals from genome file"
-#        related_data = extractRelatedIndividuals(genomeFileName, args.out,
-#                                                 args.ibs2_ratio)
-#        # Are there related samples?
-#        if related_data is None:
-#            print "   - There are no related samples in the dataset"
-#
-#        else:
-#            # Plot the related data
-#            print "   - Plotting related individuals"
-#            plot_related_data(related_data["IBS2_RATIO"], related_data["Z1"],
-#                              related_data["CODE"], r"$Z_1$",
-#                              args.out + ".related_individuals_z1.png", args)
-#            plot_related_data(related_data["IBS2_RATIO"], related_data["Z2"],
-#                              related_data["CODE"], r"$Z_2$",
-#                              args.out + ".related_individuals_z2.png", args)
+    # Run plink
+    print "   - Running Plink to extract SNPs according to LD"
+    snpsToExtract = selectSNPsAccordingToLD(args)
+
+    # Check there is enough SNP in the output file
+    print "   - Checking if there are enough extracted SNP"
+    if not checkNumberOfSNP(snpsToExtract, args.min_nb_snp):
+        # There are not enough markers
+        print "      - There are not enough SNPs"
+        print "        Stopping now"
+
+    else:
+        # Extract the SNPs
+        print "   - Extracting the SNPs using Plink"
+        newBfile = extractSNPs(snpsToExtract, args)
+
+        # Run the genome command from plink
+        print "   - Creating the genome file using Plink"
+        genomeFileName = runGenome(newBfile, args)
+
+        if args.genome_only:
+            # We just want the genome file
+            return newBfile
+
+        # Extract related individuals
+        print "   - Finding related individuals from genome file"
+        related_data = extractRelatedIndividuals(genomeFileName, args.out,
+                                                 args.ibs2_ratio)
+        # Are there related samples?
+        if related_data is None:
+            print "   - There are no related samples in the dataset"
+
+        else:
+            # Plot the related data
+            print "   - Plotting related individuals"
+            plot_related_data(related_data["IBS2_RATIO"], related_data["Z1"],
+                              related_data["CODE"], r"$Z_1$",
+                              args.out + ".related_individuals_z1.png", args)
+            plot_related_data(related_data["IBS2_RATIO"], related_data["Z2"],
+                              related_data["CODE"], r"$Z_2$",
+                              args.out + ".related_individuals_z2.png", args)
 
 
 def plot_related_data(x, y, code, ylabel, fileName, options):

@@ -58,53 +58,53 @@ def main(argString=None):
     for key, value in vars(args).iteritems():
         print "      --{} {}".format(key, value)
 
-#    # Compute the number of markers
-#    print "   - Counting the number of markers"
-#    nbMarkers = computeNumberOfMarkers(args.bfile + ".bim")
-#
-#    if nbMarkers <= 0:
-#        print "      - There are no markers"
-#        print "        Stopping now"
-#    else:
-#        print "      - There are {} markers".format(nbMarkers)
-#
-#        customThreshold = str(0.05 / nbMarkers)
-#
-#        # Run the plink command
-#        print ("   - Computing the HW equilibrium for "
-#               "{}".format(customThreshold))
-#        computeHWE(args.bfile, customThreshold,
-#                   args.out + ".threshold_" + customThreshold)
-#        print "   - Computing the HW equilibrium for {}".format(args.hwe)
-#        computeHWE(args.bfile, args.hwe, args.out + ".threshold_" + args.hwe)
-#
-#        # Compare the BIM files
-#        print ("   - Creating the flagged SNP list for "
-#               "{}".format(customThreshold))
-#        custom_snps = compareBIMfiles(
-#            args.bfile + ".bim",
-#            args.out + ".threshold_" + customThreshold + ".bim",
-#            args.out + ".snp_flag_threshold_" + customThreshold,
-#        )
-#        print "   - Creating the flagged SNP list for {}".format(args.hwe)
-#        hwe_snps = compareBIMfiles(
-#            args.bfile + ".bim",
-#            args.out + ".threshold_" + args.hwe + ".bim",
-#            args.out + ".snp_flag_threshold_" + args.hwe,
-#        )
-#
-#        print ("   - Creating the in between SNP list ([{}, "
-#               "{}[)".format(args.hwe, customThreshold))
-#        file_name = args.out + ".snp_flag_threshold_between_{}-{}".format(
-#            args.hwe,
-#            customThreshold,
-#        )
-#        try:
-#            with open(file_name, 'w') as output_file:
-#                print >>output_file, "\n".join(hwe_snps - custom_snps)
-#        except IOError:
-#            msg = "{}: can't write file".format(file_name)
-#            raise ProgramError(msg)
+    # Compute the number of markers
+    print "   - Counting the number of markers"
+    nbMarkers = computeNumberOfMarkers(args.bfile + ".bim")
+
+    if nbMarkers <= 0:
+        print "      - There are no markers"
+        print "        Stopping now"
+    else:
+        print "      - There are {} markers".format(nbMarkers)
+
+        customThreshold = str(0.05 / nbMarkers)
+
+        # Run the plink command
+        print ("   - Computing the HW equilibrium for "
+               "{}".format(customThreshold))
+        computeHWE(args.bfile, customThreshold,
+                   args.out + ".threshold_" + customThreshold)
+        print "   - Computing the HW equilibrium for {}".format(args.hwe)
+        computeHWE(args.bfile, args.hwe, args.out + ".threshold_" + args.hwe)
+
+        # Compare the BIM files
+        print ("   - Creating the flagged SNP list for "
+               "{}".format(customThreshold))
+        custom_snps = compareBIMfiles(
+            args.bfile + ".bim",
+            args.out + ".threshold_" + customThreshold + ".bim",
+            args.out + ".snp_flag_threshold_" + customThreshold,
+        )
+        print "   - Creating the flagged SNP list for {}".format(args.hwe)
+        hwe_snps = compareBIMfiles(
+            args.bfile + ".bim",
+            args.out + ".threshold_" + args.hwe + ".bim",
+            args.out + ".snp_flag_threshold_" + args.hwe,
+        )
+
+        print ("   - Creating the in between SNP list ([{}, "
+               "{}[)".format(args.hwe, customThreshold))
+        file_name = args.out + ".snp_flag_threshold_between_{}-{}".format(
+            args.hwe,
+            customThreshold,
+        )
+        try:
+            with open(file_name, 'w') as output_file:
+                print >>output_file, "\n".join(hwe_snps - custom_snps)
+        except IOError:
+            msg = "{}: can't write file".format(file_name)
+            raise ProgramError(msg)
 
 
 def compareBIMfiles(beforeFileName, afterFileName, outputFileName):

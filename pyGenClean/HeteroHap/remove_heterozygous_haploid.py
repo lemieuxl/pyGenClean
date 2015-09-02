@@ -37,9 +37,9 @@ def main(argString=None):
     for key, value in vars(args).iteritems():
         print "      --{} {}".format(key, value)
 
-#    # Run plink
-#    print "   - Running Plink to set heterozygous haploid as missing"
-#    runPlink(args)
+    # Run plink
+    print "   - Running Plink to set heterozygous haploid as missing"
+    runPlink(args)
 
 
 def runPlink(options):

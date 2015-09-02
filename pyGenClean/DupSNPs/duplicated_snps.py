@@ -78,99 +78,99 @@ def main(argString=None):
     for key, value in vars(args).iteritems():
         print "      --{} {}".format(key, value)
 
-#    # Reading the map file
-#    print "   - Reading MAP file"
-#    mapF = readMAP(args.tfile + ".map", args.out)
-#
-#    # Reading the tfam file
-#    print "   - Reading TFAM file"
-#    tfam = readTFAM(args.tfile + ".tfam")
-#
-#    # Find unique snps
-#    print "   - Finding unique SNPs"
-#    uniqueSNPs = findUniques(mapF)
-#
-#    # Process the TPED file
-#    print "   - Reading TPED file"
-#    tped, duplicatedSNPs = processTPED(uniqueSNPs, mapF,
-#                                       args.tfile + ".tped",
-#                                       args.tfile + ".tfam", args.out)
-#
-#    if len(tped) == 0:
-#        print "   - There are no duplicated SNPs"
-#        print "      - Creating final TFAM"
-#        # Copying the files
-#        # The TFAM
-#        try:
-#            shutil.copy(args.out + ".unique_snps.tfam",
-#                        args.out + ".final.tfam")
-#        except IOError:
-#            msg = "%s.unique_snps.tfam: can't copy file to " \
-#                  "%s.final.tfam" % (args.out, args.out)
-#            raise ProgramError(msg)
-#
-#        # The TPED
-#        print "      - Creating final TPED"
-#        try:
-#            shutil.copy(args.out + ".unique_snps.tped",
-#                        args.out + ".final.tped")
-#        except IOError:
-#            msg = "%s.unique_snps.tped: can't copy file to " \
-#                  "%s.final.tped" % (args.out, args.out)
-#            raise ProgramError(msg)
-#
-#    else:
-#        # We print the TPED and TFAM for the duplicated SNPs
-#        print "   - Printing duplicated SNPs TPED and TFAM files"
-#        printDuplicatedTPEDandTFAM(tped, args.tfile + ".tfam", args.out)
-#
-#        # Computing the frequency of the duplicated SNPs
-#        print "   - Computing duplicated SNPs' frequencies"
-#        dupSNPsFreq = computeFrequency(args.out + ".duplicated_snps",
-#                                       args.out)
-#
-#        # Compute statistics
-#        print "   - Computing concordance and completion of duplicated SNPs"
-#        completion, concordance = computeStatistics(tped, tfam, duplicatedSNPs)
-#
-#        # Print the statistics
-#        print "   - Printing duplicated SNPs summary file and finding errors"
-#        print "     within duplicates"
-#        snpsToComplete = printProblems(completion, concordance, tped,
-#                                       duplicatedSNPs, dupSNPsFreq, args.out,
-#                                       args.frequency_difference)
-#
-#        # Print the concordance file
-#        print "   - Printing concordance file"
-#        printConcordance(concordance, args.out, tped, duplicatedSNPs)
-#
-#        # Choose the best SNP
-#        print "   - Choosing best SNP for each duplicates"
-#        chosenSNPs, comp, conc = chooseBestSnps(tped, duplicatedSNPs,
-#                                                completion, concordance,
-#                                                args.out)
-#
-#        # Complete the SNPs
-#        print ("   - Completing chosen duplicates (removing discordant\n"
-#               "     genotypes)")
-#        newTPED, snpToRemove = createAndCleanTPED(
-#            tped,
-#            tfam,
-#            duplicatedSNPs,
-#            args.out,
-#            chosenSNPs,
-#            comp,
-#            conc,
-#            snpsToComplete,
-#            args.tfile + ".tfam",
-#            args.snp_completion_threshold,
-#            args.snp_concordance_threshold,
-#        )
-#
-#        # Creates the final tped
-#        print "   - Writing final TPED and TFAM file"
-#        createFinalTPEDandTFAM(newTPED, args.out + ".unique_snps",
-#                               args.out, snpToRemove)
+    # Reading the map file
+    print "   - Reading MAP file"
+    mapF = readMAP(args.tfile + ".map", args.out)
+
+    # Reading the tfam file
+    print "   - Reading TFAM file"
+    tfam = readTFAM(args.tfile + ".tfam")
+
+    # Find unique snps
+    print "   - Finding unique SNPs"
+    uniqueSNPs = findUniques(mapF)
+
+    # Process the TPED file
+    print "   - Reading TPED file"
+    tped, duplicatedSNPs = processTPED(uniqueSNPs, mapF,
+                                       args.tfile + ".tped",
+                                       args.tfile + ".tfam", args.out)
+
+    if len(tped) == 0:
+        print "   - There are no duplicated SNPs"
+        print "      - Creating final TFAM"
+        # Copying the files
+        # The TFAM
+        try:
+            shutil.copy(args.out + ".unique_snps.tfam",
+                        args.out + ".final.tfam")
+        except IOError:
+            msg = "%s.unique_snps.tfam: can't copy file to " \
+                  "%s.final.tfam" % (args.out, args.out)
+            raise ProgramError(msg)
+
+        # The TPED
+        print "      - Creating final TPED"
+        try:
+            shutil.copy(args.out + ".unique_snps.tped",
+                        args.out + ".final.tped")
+        except IOError:
+            msg = "%s.unique_snps.tped: can't copy file to " \
+                  "%s.final.tped" % (args.out, args.out)
+            raise ProgramError(msg)
+
+    else:
+        # We print the TPED and TFAM for the duplicated SNPs
+        print "   - Printing duplicated SNPs TPED and TFAM files"
+        printDuplicatedTPEDandTFAM(tped, args.tfile + ".tfam", args.out)
+
+        # Computing the frequency of the duplicated SNPs
+        print "   - Computing duplicated SNPs' frequencies"
+        dupSNPsFreq = computeFrequency(args.out + ".duplicated_snps",
+                                       args.out)
+
+        # Compute statistics
+        print "   - Computing concordance and completion of duplicated SNPs"
+        completion, concordance = computeStatistics(tped, tfam, duplicatedSNPs)
+
+        # Print the statistics
+        print "   - Printing duplicated SNPs summary file and finding errors"
+        print "     within duplicates"
+        snpsToComplete = printProblems(completion, concordance, tped,
+                                       duplicatedSNPs, dupSNPsFreq, args.out,
+                                       args.frequency_difference)
+
+        # Print the concordance file
+        print "   - Printing concordance file"
+        printConcordance(concordance, args.out, tped, duplicatedSNPs)
+
+        # Choose the best SNP
+        print "   - Choosing best SNP for each duplicates"
+        chosenSNPs, comp, conc = chooseBestSnps(tped, duplicatedSNPs,
+                                                completion, concordance,
+                                                args.out)
+
+        # Complete the SNPs
+        print ("   - Completing chosen duplicates (removing discordant\n"
+               "     genotypes)")
+        newTPED, snpToRemove = createAndCleanTPED(
+            tped,
+            tfam,
+            duplicatedSNPs,
+            args.out,
+            chosenSNPs,
+            comp,
+            conc,
+            snpsToComplete,
+            args.tfile + ".tfam",
+            args.snp_completion_threshold,
+            args.snp_concordance_threshold,
+        )
+
+        # Creates the final tped
+        print "   - Writing final TPED and TFAM file"
+        createFinalTPEDandTFAM(newTPED, args.out + ".unique_snps",
+                               args.out, snpToRemove)
 
 
 def createFinalTPEDandTFAM(tped, toReadPrefix, prefix, snpToRemove):
