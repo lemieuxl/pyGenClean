@@ -28,10 +28,11 @@ from glob import glob
 from collections import namedtuple, Counter
 
 import pyGenClean
-import pyGenClean.LaTeX as latex_template
 import pyGenClean.FlagHW.flag_hw as flag_hw
-import pyGenClean.LaTeX.AutoReport as AutoReport
+import pyGenClean.LaTeX.utils as latex_template
 import pyGenClean.SexCheck.sex_check as sex_check
+from pyGenClean.pipeline_error import ProgramError
+import pyGenClean.LaTeX.auto_report as auto_report
 import pyGenClean.PlateBias.plate_bias as plate_bias
 import pyGenClean.FlagMAF.flag_maf_zero as flag_maf_zero
 import pyGenClean.DupSNPs.duplicated_snps as duplicated_snps
@@ -201,11 +202,17 @@ def main():
     logo_path = os.path.join(os.environ["HOME"], "Pictures",
                              "statgen_logo.png")
     report_name = os.path.join(dirname, "automatic_report.tex")
-    AutoReport.create_report(dirname, report_name, project_name=project_name,
-                             logo_path=logo_path, steps=steps,
-                             descriptions=descriptions,
-                             summaries=latex_summaries,
-                             background=dummy_background)
+    auto_report.create_report(
+        dirname,
+        report_name,
+        project_name=project_name,
+        logo_path=logo_path,
+        steps=steps,
+        descriptions=descriptions,
+        summaries=latex_summaries,
+        background=dummy_background,
+        summary_fn=os.path.join(dirname, "results_summary.txt"),
+    )
 
 
 def run_duplicated_samples(in_prefix, in_type, out_prefix, base_dir, options):
@@ -2922,26 +2929,6 @@ def parse_args():
 
     """
     return parser.parse_args()
-
-
-class ProgramError(Exception):
-    """An :py:class:`Exception` raised in case of a problem.
-
-    :param msg: the message to print to the user before exiting.
-    :type msg: string
-
-    """
-    def __init__(self, msg):
-        """Construction of the :py:class:`ProgramError` class.
-
-        :param msg: the message to print to the user
-        :type msg: string
-
-        """
-        self.message = str(msg)
-
-    def __str__(self):
-        return self.message
 
 
 # The parser object
