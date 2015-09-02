@@ -18,7 +18,8 @@
 import os
 from datetime import datetime
 
-import pyGenClean.LaTeX as latex
+import pyGenClean.LaTeX.utils as latex
+from pyGenClean.pipeline_error import ProgramError
 from pyGenClean import __version__ as pygenclean_version
 
 
@@ -39,6 +40,7 @@ def create_report(outdirname, report_filename, **kwargs):
     assert "background" in kwargs
     assert "descriptions" in kwargs
     assert "project_name" in kwargs
+    assert "summary_fn" in kwargs
 
     # Getting the required information
     project_name = kwargs["project_name"]
@@ -48,6 +50,7 @@ def create_report(outdirname, report_filename, **kwargs):
     summaries = kwargs["summaries"]
     descriptions = kwargs["descriptions"]
     background_section = latex.wrap_lines(kwargs["background"])
+    summary_fn = kwargs["summary_fn"]
 
     # Writing the method steps to a separate file (for access later)
     step_filename = os.path.join(outdirname, "steps_summary.tex")
@@ -78,6 +81,17 @@ def create_report(outdirname, report_filename, **kwargs):
         volume="29",
         number="13",
         pages="1704--1705",
+    ) + "\n" * 2 + latex.bib_entry(
+        name="plink",
+        authors="Purcell S, Neale B, Todd-Brown K, Thomas L, Ferreira MAR, "
+                "Bender D, Maller J, Sklar P, de Bakker PIW, Daly MJ, Sham PC",
+        title="PLINK: a tool set for whole-genome association and "
+              "population-based linkage analyses",
+        journal="American Journal of Human Genetics",
+        year="2007",
+        volume="81",
+        number="3",
+        pages="559--575",
     )
 
     # Getting the template
@@ -110,8 +124,90 @@ def create_report(outdirname, report_filename, **kwargs):
                 bibliography_content=biblio_entry,
                 pygenclean_version=pygenclean_version,
                 step_filename=os.path.basename(step_filename),
+                final_results=_create_summary_table(
+                    summary_fn,
+                    latex.jinja2_env.get_template("summary_table.tex"),
+                ),
             )
 
     except IOError:
         msg = "{}: could not create report".format(report_filename)
         raise ProgramError(msg)
+
+
+def _create_summary_table(fn, template):
+    """Creates the final table.
+
+    :param fn: the name of the file containing the summary.
+    :param template: the Jinja2 template.
+
+    :type fn: string
+    :type template: Jinja2.template
+
+    """
+    # The final data
+    table_data = []
+
+    # Reading the summary file
+    with open(fn, "r") as i_file:
+        data = None
+
+        line = i_file.readline()
+        while line != "":
+            if line.startswith("#"):
+                # If there is data, this isn't the first line, so we save
+                if data:
+                    table_data.append(data)
+
+                # This is the 'header' of a section (hence a new section)
+                data = dict(
+                    header=line.rstrip("\r\n").split(" ")[1],
+                    data=[],
+                )
+
+                # Changing to next line
+                line = i_file.readline()
+                continue
+
+            # If the line starts with '---', then it's a horizontal line
+            if line.startswith("---"):
+                data["data"].append(dict(hline=True))
+
+                # Changing to next line
+                line = i_file.readline()
+                continue
+
+            # If the line starts with '  -', then it's a sub section
+            if line.startswith("  -"):
+                tmp = map(
+                    latex.sanitize_tex,
+                    line[4:].rstrip("\r\n").split("\t"),
+                )
+                if tmp[0].startswith("x"):
+                    tmp[0] = latex.inline_math(r"\times " + tmp[0][1:])
+
+                data["data"].append(dict(
+                    hline=False,
+                    multicol=False,
+                    row_data=tmp,
+                ))
+
+                # Changing to next line
+                line = i_file.readline()
+                continue
+
+            # This is a regular line
+            data["data"].append(dict(
+                hline=False,
+                multicol=True,
+                row_data=map(
+                    latex.sanitize_tex,
+                    line.rstrip("\r\n").split("\t"),
+                ),
+            ))
+
+            # Skipping to next line
+            line = i_file.readline()
+
+    # Rendering
+    return template.render(table_data=table_data)
