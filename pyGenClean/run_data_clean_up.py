@@ -83,30 +83,30 @@ def main():
     # Reading the configuration file
     order, conf = read_config_file(args.conf)
 
-#     # The directory name
-#     dirname = "data_clean_up."
-#     dirname += datetime.datetime.today().strftime("%Y-%m-%d_%H.%M.%S")
-#     if os.path.isdir(dirname):
-#         answer = "N"
-#         if not args.overwrite:
-#             # The directory already exists...
-#             print >>sys.stderr, ("WARNING: {}: directory already "
-#                                  "exists".format(dirname))
-#             print >>sys.stderr, "Overwrite [Y/N]? ",
-#             answer = raw_input()
-#         if args.overwrite or answer.upper() == "Y":
-#             # Delete everything with the directory
-#             shutil.rmtree(dirname)
-#         elif answer.upper() == "N":
-#             print >>sys.stderr, "STOPING NOW"
-#             sys.exit(0)
-#         else:
-#             msg = "{}: not a valid answer (Y or N)".format(answer)
-#             raise ProgramError(msg)
+#    # The directory name
+#    dirname = "data_clean_up."
+#    dirname += datetime.datetime.today().strftime("%Y-%m-%d_%H.%M.%S")
+#    if os.path.isdir(dirname):
+#        answer = "N"
+#        if not args.overwrite:
+#            # The directory already exists...
+#            print >>sys.stderr, ("WARNING: {}: directory already "
+#                                 "exists".format(dirname))
+#            print >>sys.stderr, "Overwrite [Y/N]? ",
+#            answer = raw_input()
+#        if args.overwrite or answer.upper() == "Y":
+#            # Delete everything with the directory
+#            shutil.rmtree(dirname)
+#        elif answer.upper() == "N":
+#            print >>sys.stderr, "STOPING NOW"
+#            sys.exit(0)
+#        else:
+#            msg = "{}: not a valid answer (Y or N)".format(answer)
+#            raise ProgramError(msg)
 #
-#     # Creating the output directory
-#     os.mkdir(dirname)
-    dirname = "data_clean_up.2014-09-03_15.18.17"
+#    # Creating the output directory
+#    os.mkdir(dirname)
+    dirname = "data_clean_up.2015-08-28_14.07.07"
 
     # Executing the data clean up
     current_input = None
@@ -121,20 +121,30 @@ def main():
         current_input = args.file
         current_input_type = "file"
 
-    # Creating the result summary file
-    try:
-        with open(os.path.join(dirname, "results_summary.tex"), "w") as o_file:
-            pass
-    except IOError:
-        msg = "{}: cannot write summary".format(dirname)
-        raise ProgramError(msg)
-
     # Creating the excluded files
     try:
         with open(os.path.join(dirname, "excluded_markers.txt"), "w") as o_f:
             pass
         with open(os.path.join(dirname, "excluded_samples.txt"), "w") as o_f:
             pass
+    except IOError:
+        msg = "{}: cannot write summary".format(dirname)
+        raise ProgramError(msg)
+
+    # Counting the number of markers and samples in the datafile
+    nb_markers, nb_samples = count_markers_samples(current_input,
+                                                   current_input_type)
+#    nb_markers, nb_samples = 2372568, 830
+
+    # Creating the result summary file containing the initial numbers
+    try:
+        with open(os.path.join(dirname, "results_summary.txt"), "w") as o_file:
+            print >>o_file, "# initial"
+            print >>o_file, ("Initial number of markers\t"
+                             "{:,d}".format(nb_markers))
+            print >>o_file, ("Initial number of samples\t"
+                             "{:,d}".format(nb_samples))
+            print >>o_file, "---"
     except IOError:
         msg = "{}: cannot write summary".format(dirname)
         raise ProgramError(msg)
@@ -236,19 +246,19 @@ def run_duplicated_samples(in_prefix, in_type, out_prefix, base_dir, options):
     options += ["--{}".format(required_type), in_prefix,
                 "--out", script_prefix]
 
-    # We run the script
-    try:
-        duplicated_samples.main(options)
-    except duplicated_samples.ProgramError as e:
-        msg = "duplicated_samples: {}".format(e)
-        raise ProgramError(msg)
+#    # We run the script
+#    try:
+#        duplicated_samples.main(options)
+#    except duplicated_samples.ProgramError as e:
+#        msg = "duplicated_samples: {}".format(e)
+#        raise ProgramError(msg)
 
     # Reading the number of duplicated samples
     duplicated_count = None
     with open(script_prefix + ".duplicated_samples.tfam", "r") as i_file:
-        duplicated_count = Counter(
-            [tuple(line.rstrip("\r\n").split("\t")[:2]) for line in i_file]
-        )
+        duplicated_count = Counter([
+            tuple(createRowFromPlinkSpacedOutput(line)[:2]) for line in i_file
+        ])
 
     # Counting the number of zeroed out genotypes per duplicated sample
     zeroed_out = None
@@ -386,6 +396,21 @@ def run_duplicated_samples(in_prefix, in_type, out_prefix, base_dir, options):
         msg = "{}: cannot write LaTeX summary".format(latex_file)
         raise ProgramError(msg)
 
+    # Writing the summary results
+    with open(os.path.join(base_dir, "results_summary.txt"), "a") as o_file:
+        print >>o_file, "# {}".format(script_prefix)
+        counter = Counter(duplicated_count.values()).most_common()
+        print >>o_file, "Number of replicated samples"
+        for rep_type, rep_count in counter:
+            print >>o_file, "  - x{}\t{:,d}\t\t-{:,d}".format(
+                rep_type,
+                rep_count,
+                (rep_count * rep_type) - rep_count,
+            )
+        print >>o_file, ("Poorly chosen replicated "
+                         "samples\t{:,d}".format(len(not_good_still)))
+        print >>o_file, "---"
+
     # We know this step does produce a new data set (tfile), so we return it
     return (os.path.join(out_prefix, "dup_samples.final"), "tfile", latex_file,
             duplicated_samples.desc)
@@ -438,7 +463,7 @@ def run_duplicated_snps(in_prefix, in_type, out_prefix, base_dir, options):
         try:
             with open(in_prefix + ".tped", 'r') as inputFile:
                 for line in inputFile:
-                    row = line.rstrip("\r\n").split("\t")
+                    row = createRowFromPlinkSpacedOutput(line)
                     print >>outputFile, "\t".join(row[:4])
         except IOError:
             msg = "{}: no such file".format(in_prefix + ".tped")
@@ -451,19 +476,21 @@ def run_duplicated_snps(in_prefix, in_type, out_prefix, base_dir, options):
     options += ["--{}".format(required_type), in_prefix,
                 "--out", script_prefix]
 
-    # We run the script
-    try:
-        duplicated_snps.main(options)
-    except duplicated_snps.ProgramError as e:
-        msg = "duplicated_snps: {}".format(e)
-        raise ProgramError(msg)
+#    # We run the script
+#    try:
+#        duplicated_snps.main(options)
+#    except duplicated_snps.ProgramError as e:
+#        msg = "duplicated_snps: {}".format(e)
+#        raise ProgramError(msg)
 
     # Reading the number of duplicated markers
     duplicated_count = None
     with open(script_prefix + ".duplicated_snps.tped", "r") as i_file:
         duplicated_count = Counter(
-            (i[0], i[3]) for i in
-            [tuple(line.rstrip("\r\n").split("\t")[:4]) for line in i_file]
+            (i[0], i[3]) for i in [
+                tuple(createRowFromPlinkSpacedOutput(line)[:4])
+                for line in i_file
+            ]
         )
 
     # Counting the number of zeroed out genotypes per duplicated markers
@@ -492,14 +519,19 @@ def run_duplicated_snps(in_prefix, in_type, out_prefix, base_dir, options):
     not_good_still = chosen_markers & not_good_enough
 
     # Adding the 'not chosen markers' to the list of excluded markers
-    nb_removed = None
+    removed_markers = None
     o_filename = os.path.join(base_dir, "excluded_markers.txt")
     with open(script_prefix + ".removed_duplicates", "r") as i_file:
-        not_chosen = set(i_file.read().splitlines())
-        nb_removed = len(not_chosen)
+        removed_markers = set(i_file.read().splitlines())
         with open(o_filename, "a") as o_file:
-            for line in not_chosen:
-                print >>o_file, line + "\t" + "removed duplicate"
+            for marker_id in removed_markers:
+                print >>o_file, marker_id + "\t" + "removed duplicate"
+
+    # Reading the markers with problem
+    problematic_markers = set()
+    with open(script_prefix + ".problems", "r") as i_file:
+        for markers in i_file.read().splitlines()[1:]:
+            problematic_markers |= set(markers.split("\t")[2].split(";"))
 
     # We create a LaTeX summary
     latex_file = os.path.join(script_prefix + ".summary.tex")
@@ -536,9 +568,9 @@ def run_duplicated_snps(in_prefix, in_type, out_prefix, base_dir, options):
                 text = (
                     "A total of {:,d} marker{} {} excluded while creating the "
                     "final dataset.".format(
-                        nb_removed,
-                        "s" if nb_removed > 1 else "",
-                        "were" if nb_removed > 1 else "was",
+                        len(removed_markers),
+                        "s" if len(removed_markers) > 1 else "",
+                        "were" if len(removed_markers) > 1 else "was",
                     )
                 )
                 print >>o_file, latex_template.wrap_lines(text)
@@ -562,6 +594,27 @@ def run_duplicated_snps(in_prefix, in_type, out_prefix, base_dir, options):
     except IOError:
         msg = "{}: cannot write LaTeX summary".format(latex_file)
         raise ProgramError(msg)
+
+    # Writing the summary results
+    with open(os.path.join(base_dir, "results_summary.txt"), "a") as o_file:
+        print >>o_file, "# {}".format(script_prefix)
+        counter = Counter(duplicated_count.values()).most_common()
+        print >>o_file, "Number of replicated markers"
+        for rep_type, rep_count in counter:
+            print >>o_file, "  - x{}\t{:,d}\t-{:,d}".format(
+                rep_type,
+                rep_count,
+                (rep_count * rep_type) - rep_count,
+            )
+        print >>o_file, ("Poorly chosen replicated markers\t"
+                         "{nb:,d}\t+{nb:,d}".format(nb=len(not_good_still)))
+        print >>o_file, ("Problematic markers not chosen\t"
+                         "{nb:,d}\t+{nb:,d}".format(
+                            nb=len(problematic_markers - chosen_markers)
+                         ))
+        print >>o_file, ("Final number of excluded markers\t"
+                         "{nb:,d}".format(nb=len(removed_markers)))
+        print >>o_file, "---"
 
     # We know this step does produce a new data set (tfile), so we return it
     return (os.path.join(out_prefix, "dup_snps.final"), "tfile", latex_file,
@@ -593,8 +646,8 @@ def run_noCall_hetero_snps(in_prefix, in_type, out_prefix, base_dir, options):
     type is the good one, or to create it if needed.
 
     """
-#     # Creating the output directory
-#     os.mkdir(out_prefix)
+#    # Creating the output directory
+#    os.mkdir(out_prefix)
 
     # We know we need a tfile
     required_type = "tfile"
@@ -606,12 +659,12 @@ def run_noCall_hetero_snps(in_prefix, in_type, out_prefix, base_dir, options):
     options += ["--{}".format(required_type), in_prefix,
                 "--out", script_prefix]
 
-    # We run the script
-    try:
-        noCall_hetero_snps.main(options)
-    except noCall_hetero_snps.ProgramError as e:
-        msg = "noCall_hetero_snps: {}".format(e)
-        raise ProgramError(msg)
+#    # We run the script
+#    try:
+#        noCall_hetero_snps.main(options)
+#    except noCall_hetero_snps.ProgramError as e:
+#        msg = "noCall_hetero_snps: {}".format(e)
+#        raise ProgramError(msg)
 
     # We want to save in a file the markers and samples that were removed
     # There are two files to look at, which contains only one row, the name of
@@ -621,27 +674,22 @@ def run_noCall_hetero_snps(in_prefix, in_type, out_prefix, base_dir, options):
     nb_all_failed = 0
     nb_all_hetero = 0
     o_filename = os.path.join(base_dir, "excluded_markers.txt")
-    try:
-        with open(o_filename, "a") as o_file:
-            # The first file
-            i_filename = script_prefix + ".allFailed"
-            if os.path.isfile(i_filename):
-                with open(i_filename, "r") as i_file:
-                    for line in i_file:
-                        nb_all_failed += 1
-                        print >>o_file, line.rstrip("\r\n") + "\tall failed"
+    with open(o_filename, "a") as o_file:
+        # The first file
+        i_filename = script_prefix + ".allFailed"
+        if os.path.isfile(i_filename):
+            with open(i_filename, "r") as i_file:
+                for line in i_file:
+                    nb_all_failed += 1
+                    print >>o_file, line.rstrip("\r\n") + "\tall failed"
 
-            # The second file
-            i_filename = os.path.join(script_prefix + ".allHetero")
-            if os.path.isfile(i_filename):
-                with open(i_filename, "r") as i_file:
-                    for line in i_file:
-                        nb_all_hetero += 1
-                        print >>o_file, line.rstrip("\r\n") + "\tall hetero"
-
-    except IOError:
-        msg = "{}: can't write to file".format(o_filename)
-        raise ProgramError(msg)
+        # The second file
+        i_filename = os.path.join(script_prefix + ".allHetero")
+        if os.path.isfile(i_filename):
+            with open(i_filename, "r") as i_file:
+                for line in i_file:
+                    nb_all_hetero += 1
+                    print >>o_file, line.rstrip("\r\n") + "\tall hetero"
 
     # We write a LaTeX summary
     latex_file = os.path.join(script_prefix + ".summary.tex")
@@ -665,6 +713,16 @@ def run_noCall_hetero_snps(in_prefix, in_type, out_prefix, base_dir, options):
     except IOError:
         msg = "{}: cannot write LaTeX summary".format(latex_file)
         raise ProgramError(msg)
+
+    # Writing the summary results
+    with open(os.path.join(base_dir, "results_summary.txt"), "a") as o_file:
+        print >>o_file, "# {}".format(script_prefix)
+        print >>o_file, ("Number of completely failed markers\t"
+                         "{nb:,d}\t-{nb:,d}".format(nb=nb_all_failed))
+        print >>o_file, "---"
+        print >>o_file, ("Number of all heterozygous markers\t"
+                         "{nb:,d}\t-{nb:,d}".format(nb=nb_all_hetero))
+        print >>o_file, "---"
 
     # We know this step does produce a new data set (tfile), so we return it
     # along with the report name
@@ -697,8 +755,8 @@ def run_sample_missingness(in_prefix, in_type, out_prefix, base_dir, options):
     if the file input file type is the good one, or to create it if needed.
 
     """
-#     # Creating the output directory
-#     os.mkdir(out_prefix)
+#    # Creating the output directory
+#    os.mkdir(out_prefix)
 
     # We are looking at what we have
     required_type = "tfile"
@@ -714,12 +772,12 @@ def run_sample_missingness(in_prefix, in_type, out_prefix, base_dir, options):
     if required_type == "bfile":
         options.append("--is-bfile")
 
-    # We run the script
-    try:
-        sample_missingness.main(options)
-    except sample_missingness.ProgramError as e:
-        msg = "sample_missingness: {}".format(e)
-        raise ProgramError(msg)
+#    # We run the script
+#    try:
+#        sample_missingness.main(options)
+#    except sample_missingness.ProgramError as e:
+#        msg = "sample_missingness: {}".format(e)
+#        raise ProgramError(msg)
 
     # We want to modify the description, so that it contains the option used
     desc = sample_missingness.desc
@@ -738,22 +796,15 @@ def run_sample_missingness(in_prefix, in_type, out_prefix, base_dir, options):
     #     - prefix.irem (file will exists only if samples were removed)
     nb_samples = 0
     o_filename = os.path.join(base_dir, "excluded_samples.txt")
-    try:
-        # Checking if the file exists
-        i_filename = script_prefix + ".irem"
-        if os.path.isfile(i_filename):
-            # True, so sample were removed
-            with open(i_filename, "r") as i_file, \
-                    open(o_filename, "a") as o_file:
-                for line in i_file:
-                    nb_samples += 1
-                    print >>o_file, line.rstrip("\r\n") + "\tmind {}".format(
-                        mind_value,
-                    )
-
-    except IOError:
-        msg = "{}: can't write to file".format(o_filename)
-        raise ProgramError(msg)
+    i_filename = script_prefix + ".irem"
+    if os.path.isfile(i_filename):
+        # True, so sample were removed
+        with open(i_filename, "r") as i_file, open(o_filename, "a") as o_file:
+            for line in i_file:
+                nb_samples += 1
+                print >>o_file, line.rstrip("\r\n") + "\tmind {}".format(
+                    mind_value,
+                )
 
     # We write a LaTeX summary
     latex_file = os.path.join(script_prefix + ".summary.tex")
@@ -774,6 +825,16 @@ def run_sample_missingness(in_prefix, in_type, out_prefix, base_dir, options):
     except IOError:
         msg = "{}: cannot write LaTeX summary".format(latex_file)
         raise ProgramError(msg)
+
+    # Writing the summary results
+    with open(os.path.join(base_dir, "results_summary.txt"), "a") as o_file:
+        print >>o_file, "# {}".format(script_prefix)
+        print >>o_file, ("Number of samples with call rate less or equal to "
+                         "{t}\t{nb:,d}\t\t-{nb:,d}".format(
+                            t=mind_value,
+                            nb=nb_samples,
+                         ))
+        print >>o_file, "---"
 
     # We know this step does produce a new data set (bfile), so we return it
     return os.path.join(out_prefix, "clean_mind"), "bfile", latex_file, desc
@@ -804,8 +865,8 @@ def run_snp_missingness(in_prefix, in_type, out_prefix, base_dir, options):
     the good one, or to create it if needed.
 
     """
-#     # Creating the output directory
-#     os.mkdir(out_prefix)
+#    # Creating the output directory
+#    os.mkdir(out_prefix)
 
     # We know we need a bfile
     required_type = "bfile"
@@ -817,12 +878,12 @@ def run_snp_missingness(in_prefix, in_type, out_prefix, base_dir, options):
     options += ["--{}".format(required_type), in_prefix,
                 "--out", script_prefix]
 
-    # We run the script
-    try:
-        snp_missingness.main(options)
-    except snp_missingness.ProgramError as e:
-        msg = "snp_missingness: {}".format(e)
-        raise ProgramError(msg)
+#    # We run the script
+#    try:
+#        snp_missingness.main(options)
+#    except snp_missingness.ProgramError as e:
+#        msg = "snp_missingness: {}".format(e)
+#        raise ProgramError(msg)
 
     # We want to modify the description, so that it contains the option used
     desc = snp_missingness.desc
@@ -841,22 +902,17 @@ def run_snp_missingness(in_prefix, in_type, out_prefix, base_dir, options):
     #     - prefix.removed_snps
     nb_markers = 0
     o_filename = os.path.join(base_dir, "excluded_markers.txt")
-    try:
-        # Checking if the file exists
-        i_filename = script_prefix + ".removed_snps"
-        if os.path.isfile(i_filename):
-            # True, so sample were removed
-            with open(i_filename, "r") as i_file, \
-                    open(o_filename, "a") as o_file:
-                for line in i_file:
-                    nb_markers += 1
-                    print >>o_file, line.rstrip("\r\n") + "\tgeno {}".format(
-                        geno_value,
-                    )
-
-    except IOError:
-        msg = "{}: can't write to file".format(o_filename)
-        raise ProgramError(msg)
+    # Checking if the file exists
+    i_filename = script_prefix + ".removed_snps"
+    if os.path.isfile(i_filename):
+        # True, so sample were removed
+        with open(i_filename, "r") as i_file, \
+                open(o_filename, "a") as o_file:
+            for line in i_file:
+                nb_markers += 1
+                print >>o_file, line.rstrip("\r\n") + "\tgeno {}".format(
+                    geno_value,
+                )
 
     # We write a LaTeX summary
     latex_file = os.path.join(script_prefix + ".summary.tex")
@@ -877,6 +933,16 @@ def run_snp_missingness(in_prefix, in_type, out_prefix, base_dir, options):
     except IOError:
         msg = "{}: cannot write LaTeX summary".format(latex_file)
         raise ProgramError(msg)
+
+    # Writing the summary results
+    with open(os.path.join(base_dir, "results_summary.txt"), "a") as o_file:
+        print >>o_file, "# {}".format(script_prefix)
+        print >>o_file, ("Number of markers with call rate less or equal to "
+                         "{t}\t{nb:,d}\t-{nb:,d}".format(
+                            t=geno_value,
+                            nb=nb_markers,
+                         ))
+        print >>o_file, "---"
 
     # We know this step does produce a new data set (bfile), so we return it
     return os.path.join(out_prefix, "clean_geno"), "bfile", latex_file, desc
@@ -911,8 +977,8 @@ def run_sex_check(in_prefix, in_type, out_prefix, base_dir, options):
         files. Hence, this function returns the input file prefix and its type.
 
     """
-#     # Creating the output directory
-#     os.mkdir(out_prefix)
+#    # Creating the output directory
+#    os.mkdir(out_prefix)
 
     # We know we need a bfile
     required_type = "bfile"
@@ -924,12 +990,12 @@ def run_sex_check(in_prefix, in_type, out_prefix, base_dir, options):
     options += ["--{}".format(required_type), in_prefix,
                 "--out", script_prefix]
 
-    # We run the script
-    try:
-        sex_check.main(options)
-    except sex_check.ProgramError as e:
-        msg = "sex_check {}".format(e)
-        raise ProgramError(msg)
+#    # We run the script
+#    try:
+#        sex_check.main(options)
+#    except sex_check.ProgramError as e:
+#        msg = "sex_check {}".format(e)
+#        raise ProgramError(msg)
 
     # Reading the hetero file on X
     hetero = {}
@@ -997,12 +1063,14 @@ def run_sex_check(in_prefix, in_type, out_prefix, base_dir, options):
     # problem will only have the header line (and no data)
     nb_problems = 0
     table = []
+    nb_no_genetic = 0
+    nb_discordant = 0
     with open(script_prefix + ".list_problem_sex", "r") as i_file:
         # Reading the header
         header = i_file.readline().rstrip("\r\n").split("\t")
         table.append(header)
         header = {name: i for i, name in enumerate(header)}
-        for required_col in ("FID", "IID"):
+        for required_col in ("FID", "IID", "SNPSEX"):
             if required_col not in header:
                 msg = "{}: no column named {}".format(
                     script_prefix + ".list_problem_sex",
@@ -1024,6 +1092,12 @@ def run_sex_check(in_prefix, in_type, out_prefix, base_dir, options):
                 row[header[col]] = latex_template.sanitize_tex(
                     row[header[col]]
                 )
+
+            # Counting
+            if row[header["SNPSEX"]] == "0":
+                nb_no_genetic += 1
+            else:
+                nb_discordand += 1
 
             table.append(row)
             table[-1].append(
@@ -1205,6 +1279,14 @@ def run_sex_check(in_prefix, in_type, out_prefix, base_dir, options):
         msg = "{}: cannot write LaTeX summary".format(latex_file)
         raise ProgramError(msg)
 
+    # Writing the summary results
+    with open(os.path.join(base_dir, "results_summary.txt"), "a") as o_file:
+        print >>o_file, "# {}".format(script_prefix)
+        print >>o_file, "Number of samples with gender problem"
+        print >>o_file, "  - no genetic gender\t{:,d}".format(nb_no_genetic)
+        print >>o_file, "  - discordant gender\t{:,d}".format(nb_discordant)
+        print >>o_file, "---"
+
     # We know this step does not produce a new data set, so we return the
     # original one
     return in_prefix, required_type, latex_file, sex_check.desc
@@ -1239,8 +1321,8 @@ def run_plate_bias(in_prefix, in_type, out_prefix, base_dir, options):
         files. Hence, this function returns the input file prefix and its type.
 
     """
-#     # Creating the output directory
-#     os.mkdir(out_prefix)
+#    # Creating the output directory
+#    os.mkdir(out_prefix)
 
     # We know we need bfile
     required_type = "bfile"
@@ -1252,12 +1334,12 @@ def run_plate_bias(in_prefix, in_type, out_prefix, base_dir, options):
     options += ["--{}".format(required_type), in_prefix,
                 "--out", script_prefix]
 
-    # We run the script
-    try:
-        plate_bias.main(options)
-    except plate_bias.ProgramError as e:
-        msg = "plate_bias: {}".format(e)
-        raise ProgramError(msg)
+#    # We run the script
+#    try:
+#        plate_bias.main(options)
+#    except plate_bias.ProgramError as e:
+#        msg = "plate_bias: {}".format(e)
+#        raise ProgramError(msg)
 
     # Reading the MAF before hand
     maf = {}
@@ -1314,6 +1396,7 @@ def run_plate_bias(in_prefix, in_type, out_prefix, base_dir, options):
                     row[header["OR"]],
                     plate_name,
                 ])
+    nb_markers = len(table) - 1
 
     # Getting the p value threshold
     p_threshold = str(plate_bias.parser.get_default("pfilter"))
@@ -1329,15 +1412,15 @@ def run_plate_bias(in_prefix, in_type, out_prefix, base_dir, options):
                 "After performing the plate bias analysis using Plink, a "
                 "total of {:,d} marker{} had a significant result ({} a value "
                 "less than {}).".format(
-                    len(table) - 1,
-                    "s" if len(table) - 1 > 1 else "",
+                    nb_markers,
+                    "s" if nb_markers > 1 else "",
                     r"\textit{i.e.}",
                     latex_template.format_numbers(p_threshold),
                 )
             )
             print >>o_file, latex_template.wrap_lines(text)
 
-            if len(table) - 1 > 0:
+            if nb_markers > 0:
                 table_label = script_prefix.replace("/", "_") + "_plate_bias"
                 text = (
                     r"Table~\ref{" + table_label + "} summarizes the plate "
@@ -1355,8 +1438,8 @@ def run_plate_bias(in_prefix, in_type, out_prefix, base_dir, options):
                     "Summary of the plate bias analysis performed by Plink. "
                     "Only significant marker{} {} shown (threshold of "
                     "{}).".format(
-                        "s" if len(table) - 1 > 1 else "",
-                        "are" if len(table) - 1 > 1 else "is",
+                        "s" if nb_markers > 1 else "",
+                        "are" if nb_markers > 1 else "is",
                         latex_template.format_numbers(p_threshold),
                     )
                 )
@@ -1376,6 +1459,13 @@ def run_plate_bias(in_prefix, in_type, out_prefix, base_dir, options):
     except IOError:
         msg = "{}: cannot write LaTeX summary".format(latex_file)
         raise ProgramError(msg)
+
+    # Writing the summary results
+    with open(os.path.join(base_dir, "results_summary.txt"), "a") as o_file:
+        print >>o_file, "# {}".format(script_prefix)
+        print >>o_file, ("Number of markers with plate bias (p<{})\t"
+                         "{:,d}".format(p_threshold, nb_markers))
+        print >>o_file, "---"
 
     # We know this step doesn't produce an new data set, so we return the old
     # prefix and the old in_type
@@ -1421,12 +1511,12 @@ def run_remove_heterozygous_haploid(in_prefix, in_type, out_prefix, base_dir,
     options += ["--{}".format(required_type), in_prefix,
                 "--out", script_prefix]
 
-    # We run the script
-    try:
-        remove_heterozygous_haploid.main(options)
-    except remove_heterozygous_haploid.ProgramError as e:
-        msg = "remove_heterozygous_haploid: {}".format(e)
-        raise ProgramError(msg)
+#    # We run the script
+#    try:
+#        remove_heterozygous_haploid.main(options)
+#    except remove_heterozygous_haploid.ProgramError as e:
+#        msg = "remove_heterozygous_haploid: {}".format(e)
+#        raise ProgramError(msg)
 
     # We get the number of genotypes that were set to missing
     nb_hh_missing = None
@@ -1457,6 +1547,13 @@ def run_remove_heterozygous_haploid(in_prefix, in_type, out_prefix, base_dir,
     except IOError:
         msg = "{}: cannot write LaTeX summary".format(latex_file)
         raise ProgramError(msg)
+
+    # Writing the summary results
+    with open(os.path.join(base_dir, "results_summary.txt"), "a") as o_file:
+        print >>o_file, "# {}".format(script_prefix)
+        print >>o_file, ("Number of heterozygous haploid genotypes set to "
+                         "missing\t{:,d}".format(nb_hh_missing))
+        print >>o_file, "---"
 
     # We know this step produces an new data set (bfile), so we return it
     return (os.path.join(out_prefix, "without_hh_genotypes"), "bfile",
@@ -1507,12 +1604,12 @@ def run_find_related_samples(in_prefix, in_type, out_prefix, base_dir,
     options += ["--{}".format(required_type), in_prefix,
                 "--out", script_prefix]
 
-    # We run the script
-    try:
-        find_related_samples.main(options)
-    except find_related_samples.ProgramError as e:
-        msg = "find_related_samples: {}".format(e)
-        raise ProgramError(msg)
+#    # We run the script
+#    try:
+#        find_related_samples.main(options)
+#    except find_related_samples.ProgramError as e:
+#        msg = "find_related_samples: {}".format(e)
+#        raise ProgramError(msg)
 
     # Reading the file containing all samples that are related
     #   - ibs.related_individuals
@@ -1544,6 +1641,12 @@ def run_find_related_samples(in_prefix, in_type, out_prefix, base_dir,
             tuple(i.rstrip("\r\n").split("\t")) for i in i_file
         }
 
+    # Counting the number of markers used for computing IBS values
+    nb_markers_ibs = 0
+    with open(script_prefix + ".pruned_data.bim", "r") as i_file:
+        for line in i_file:
+            nb_markers_ibs += 1
+
     # We write a LaTeX summary
     latex_file = os.path.join(script_prefix + ".summary.tex")
     try:
@@ -1552,10 +1655,12 @@ def run_find_related_samples(in_prefix, in_type, out_prefix, base_dir,
                 find_related_samples.pretty_name,
             )
             text = (
-                "According to Plink relatedness analysis, {:,d} unique "
-                "sample{} {} related to at least one other sample. A total of "
-                "{:,d} sample{} {} randomly selected for downstream exclusion "
-                "from the dataset.".format(
+                "According to Plink relatedness analysis (using {:,d} "
+                "marker{}), {:,d} unique sample{} {} related to at least one "
+                "other sample. A total of {:,d} sample{} {} randomly selected "
+                "for downstream exclusion from the dataset.".format(
+                    nb_markers_ibs,
+                    "s" if nb_markers_ibs > 1 else "",
                     len(related_samples),
                     "s" if len(related_samples) > 1 else "",
                     "were" if len(related_samples) > 1 else "was",
@@ -1626,6 +1731,15 @@ def run_find_related_samples(in_prefix, in_type, out_prefix, base_dir,
         msg = "{}: cannot write LaTeX summary".format(latex_file)
         raise ProgramError(msg)
 
+    # Writing the summary results
+    with open(os.path.join(base_dir, "results_summary.txt"), "a") as o_file:
+        print >>o_file, "# {}".format(script_prefix)
+        print >>o_file, ("Number of markers used for IBS analysis\t"
+                         "{:,d}".format(nb_markers_ibs))
+        print >>o_file, ("Number of unique related samples\t"
+                         "{:,d}".format(len(related_samples)))
+        print >>o_file, "---"
+
     # We know this step doesn't produce an new data set, so we return the old
     # prefix and the old in_type
     return in_prefix, required_type, latex_file, find_related_samples.desc
@@ -1674,12 +1788,12 @@ def run_check_ethnicity(in_prefix, in_type, out_prefix, base_dir, options):
     options += ["--{}".format(required_type), in_prefix,
                 "--out", script_prefix]
 
-    # We run the script
-    try:
-        check_ethnicity.main(options)
-    except check_ethnicity.ProgramError as e:
-        msg = "check_ethnicity: {}".format(e)
-        raise ProgramError(msg)
+#    # We run the script
+#    try:
+#        check_ethnicity.main(options)
+#    except check_ethnicity.ProgramError as e:
+#        msg = "check_ethnicity: {}".format(e)
+#        raise ProgramError(msg)
 
     # Getting the multiplier value
     multiplier = check_ethnicity.parser.get_default("multiplier")
@@ -1696,6 +1810,12 @@ def run_check_ethnicity(in_prefix, in_type, out_prefix, base_dir, options):
     with open(script_prefix + ".outliers", "r") as i_file:
         outliers = {tuple(line.rstrip("\r\n").split("\t")) for line in i_file}
 
+    # Computing the number of markers used
+    nb_markers_mds = 0
+    with open(script_prefix + ".ibs.pruned_data.bim", "r") as i_file:
+        for line in i_file:
+            nb_markers_mds += 1
+
     # We write a LaTeX summary
     latex_file = os.path.join(script_prefix + ".summary.tex")
     try:
@@ -1704,8 +1824,10 @@ def run_check_ethnicity(in_prefix, in_type, out_prefix, base_dir, options):
                 check_ethnicity.pretty_name,
             )
             text = (
-                "Using a multiplier of {}, there was a total of {:,d} "
-                "outlier{} of the {} population.".format(
+                "Using {:,d} marker{} and a multiplier of {}, there was a "
+                "total of {:,d} outlier{} of the {} population.".format(
+                    nb_markers_mds,
+                    "s" if nb_markers_mds > 1 else "",
                     multiplier,
                     len(outliers),
                     "s" if len(outliers) > 1 else "",
@@ -1770,6 +1892,15 @@ def run_check_ethnicity(in_prefix, in_type, out_prefix, base_dir, options):
         msg = "{}: cannot write LaTeX summary".format(latex_file)
         raise ProgramError(msg)
 
+    # Writing the summary results
+    with open(os.path.join(base_dir, "results_summary.txt"), "a") as o_file:
+        print >>o_file, "# {}".format(script_prefix)
+        print >>o_file, ("Number of markers used for MDS analysis\t"
+                         "{:,d}".format(nb_markers_mds))
+        print >>o_file, ("Number of {} outliers\t"
+                         "{:,d}".format(outliers_of, len(outliers)))
+        print >>o_file, "---"
+
     # We know this step doesn't produce an new data set, so we return the old
     # prefix and the old in_type
     return in_prefix, required_type, latex_file, check_ethnicity.desc
@@ -1817,12 +1948,12 @@ def run_flag_maf_zero(in_prefix, in_type, out_prefix, base_dir, options):
     options += ["--{}".format(required_type), in_prefix,
                 "--out", script_prefix]
 
-    # We run the script
-    try:
-        flag_maf_zero.main(options)
-    except flag_maf_zero.ProgramError as e:
-        msg = "flag_maf_zero: {}".format(e)
-        raise ProgramError(msg)
+#    # We run the script
+#    try:
+#        flag_maf_zero.main(options)
+#    except flag_maf_zero.ProgramError as e:
+#        msg = "flag_maf_zero: {}".format(e)
+#        raise ProgramError(msg)
 
     # Reading the file to compute the number of flagged markers
     nb_flagged = None
@@ -1853,6 +1984,13 @@ def run_flag_maf_zero(in_prefix, in_type, out_prefix, base_dir, options):
     except IOError:
         msg = "{}: cannot write LaTeX summary".format(latex_file)
         raise ProgramError(msg)
+
+    # Writing the summary results
+    with open(os.path.join(base_dir, "results_summary.txt"), "a") as o_file:
+        print >>o_file, "# {}".format(script_prefix)
+        print >>o_file, ("Number of markers flagged for MAF\t"
+                         "{:,d}".format(nb_flagged))
+        print >>o_file, "---"
 
     # We know this step doesn't produce an new data set, so we return the old
     # prefix and the old in_type
@@ -1901,12 +2039,12 @@ def run_flag_hw(in_prefix, in_type, out_prefix, base_dir, options):
     options += ["--{}".format(required_type), in_prefix,
                 "--out", script_prefix]
 
-    # We run the script
-    try:
-        flag_hw.main(options)
-    except flag_hw.ProgramError as e:
-        msg = "flag_hw: {}".format(e)
-        raise ProgramError(msg)
+#    # We run the script
+#    try:
+#        flag_hw.main(options)
+#    except flag_hw.ProgramError as e:
+#        msg = "flag_hw: {}".format(e)
+#        raise ProgramError(msg)
 
     # Finding the two files containing the list of flagged markers
     filenames = glob(script_prefix + ".snp_flag_threshold_[0-9]*")
@@ -1967,6 +2105,20 @@ def run_flag_hw(in_prefix, in_type, out_prefix, base_dir, options):
     except IOError:
         msg = "{}: cannot write LaTeX summary".format(latex_file)
         raise ProgramError(msg)
+
+    # Writing the summary results
+    with open(os.path.join(base_dir, "results_summary.txt"), "a") as o_file:
+        print >>o_file, "# {}".format(script_prefix)
+        print >>o_file, "Number of markers flagged for HW"
+        print >>o_file, "  - {}\t{:,d}".format(
+                            sorted_keys[0],
+                            thresholds[sorted_keys[0]][0],
+                        )
+        print >>o_file, "  - {}\t{:,d}".format(
+                            sorted_keys[1],
+                            thresholds[sorted_keys[1]][0],
+                        )
+        print >>o_file, "---"
 
     # We know this step doesn't produce an new data set, so we return the old
     # prefix and the old in_type
@@ -2069,28 +2221,44 @@ def run_subset_data(in_prefix, in_type, out_prefix, base_dir, options):
         The output file type is the same as the input file type.
 
     """
-#     # Creating the output directory
-#     os.mkdir(out_prefix)
+#    # Creating the output directory
+#    os.mkdir(out_prefix)
 
     # The prefix of the script
     script_prefix = os.path.join(out_prefix, "subset")
+
+    # The extension of the marker and sample file
+    markers_ext = None
+    samples_ext = None
 
     # Looking at what we have
     required_type = None
     if in_type == "bfile":
         required_type = "bfile"
+        markers_ext = ".bim"
+        samples_ext = ".fam"
+
     elif in_type == "tfile":
         required_type = "tfile"
+        markers_ext = ".tped"
+        samples_ext = ".tfam"
+
     else:
         required_type = "file"
+        markers_ext = ".map"
+        samples_ext = ".ped"
+
     if "--is-bfile" in set(options):
         required_type = "bfile"
+
+    # Checking the input file
     check_input_files(in_prefix, in_type, required_type)
 
     # We need to inject the name of the input file and the name of the output
     # prefix
     options += ["--ifile", in_prefix,
                 "--out", os.path.join(out_prefix, "subset")]
+
     if required_type == "bfile":
         options.append("--is-bfile")
     elif required_type == "tfile":
@@ -2098,41 +2266,117 @@ def run_subset_data(in_prefix, in_type, out_prefix, base_dir, options):
     else:
         options.append("--is-file")
 
-    # We run the script
-    try:
-        subset_data.main(options)
-    except subset_data.ProgramError as e:
-        msg = "subset_data: {}".format(e)
-        raise ProgramError(msg)
+#    # We run the script
+#    try:
+#        subset_data.main(options)
+#    except subset_data.ProgramError as e:
+#        msg = "subset_data: {}".format(e)
+#        raise ProgramError(msg)
 
+    # What was done
     is_extract = "--extract" in options
     is_exclude = "--exclude" in options
     is_keep = "--keep" in options
     is_remove = "--remove" in options
 
+    # The files before the subset
+    samples_before_fn = in_prefix
+    markers_before_fn = in_prefix
+
+    # The files after the subset
+    samples_after_fn = script_prefix
+    markers_after_fn = script_prefix
+
+    # The name of the subset file for markers and samples
+    sample_subset_fn = None
+    marker_subset_fn = None
+
+    # The samples and markers that were removed
+    removed_samples = None
+    removed_markers = None
+
+    # The set of samples and markers before subset
+    samples_before = None
+    markers_before = None
+    # The set of remaining samples and markers after subset
+    samples_after = None
+    markers_after = None
+
     # Markers were extracted
     nb_extract = None
     if is_extract:
-        with open(options[options.index("--extract") + 1], "r") as i_file:
+        # Counting the number of markers that were extracted
+        marker_subset_fn = options[options.index("--extract") + 1]
+        with open(marker_subset_fn, "r") as i_file:
             nb_extract = sum(1 for line in i_file)
 
     # Markers were excluded
     nb_exclude = None
     if is_exclude:
-        with open(options[options.index("--exclude") + 1], "r") as i_file:
+        marker_subset_fn = options[options.index("--exclude") + 1]
+        with open(marker_subset_fn, "r") as i_file:
             nb_exclude = sum(1 for line in i_file)
+
+    # Checking the difference between both (for markers)
+    if is_extract or is_exclude:
+        markers_before_fn += markers_ext
+        markers_after_fn += ".bim" if required_type == "bfile" else markers_ext
+
+        markers_before = None
+        with open(markers_before_fn, "r") as i_file:
+            markers_before = {
+                createRowFromPlinkSpacedOutput(line)[1] for line in i_file
+            }
+
+        with open(markers_after_fn, "r") as i_file:
+            markers_after = {
+                createRowFromPlinkSpacedOutput(line)[1] for line in i_file
+            }
+
+        removed_markers = {
+            name: "subset {}".format(os.path.relpath(
+                marker_subset_fn,
+                base_dir,
+            )) for name in markers_before - markers_after
+        }
 
     # Samples were kept
     nb_keep = None
     if is_keep:
-        with open(options[options.index("--keep") + 1], "r") as i_file:
+        sample_subset_fn = options[options.index("--keep") + 1]
+        with open(sample_subset_fn, "r") as i_file:
             nb_keep = sum(1 for line in i_file)
 
     # Samples were removed
     nb_remove = None
     if is_remove:
-        with open(options[options.index("--remove") + 1], "r") as i_file:
+        sample_subset_fn = options[options.index("--remove") + 1]
+        with open(sample_subset_fn, "r") as i_file:
             nb_remove = sum(1 for line in i_file)
+
+    if is_keep or is_remove:
+        samples_before_fn += samples_ext
+        samples_after_fn += ".fam" if required_type == "bfile" else samples_ext
+
+        samples_before = None
+        with open(samples_before_fn, "r") as i_file:
+            samples_before = {
+                tuple(createRowFromPlinkSpacedOutput(line)[:2])
+                for line in i_file
+            }
+
+        with open(samples_after_fn, "r") as i_file:
+            samples_after = {
+                tuple(createRowFromPlinkSpacedOutput(line)[:2])
+                for line in i_file
+            }
+
+        removed_samples = {
+            "\t".join(name): "subset {}".format(os.path.relpath(
+                sample_subset_fn,
+                base_dir,
+            )) for name in samples_before - samples_after
+        }
 
     # Reading the log file to gather what is left
     log_file = None
@@ -2155,6 +2399,14 @@ def run_subset_data(in_prefix, in_type, out_prefix, base_dir, options):
     if nb_marker_end:
         nb_marker_end = int(nb_marker_end.group(1))
 
+    # Checking the number of samples
+    if nb_marker_end != len(markers_after):
+        raise ProgramError("Something went wrong with Plink's subset (numbers "
+                           "are different from data and log file)")
+    if nb_marker_start - nb_marker_end != len(removed_markers):
+        raise ProgramError("Something went wrong with Plink's subset (numbers "
+                           "are different from data and log file)")
+
     # Checking the number of samples at the beginning
     nb_sample_start = re.search(
         r"(\d+) individuals read from \[ {}".format(in_prefix),
@@ -2171,6 +2423,14 @@ def run_subset_data(in_prefix, in_type, out_prefix, base_dir, options):
     if nb_sample_end:
         nb_sample_end = int(nb_sample_end.group(1)) + \
                         int(nb_sample_end.group(2))
+
+    # Checking the number of samples
+    if nb_sample_end != len(samples_after):
+        raise ProgramError("Something went wrong with Plink's subset (numbers "
+                           "are different from data and log file)")
+    if nb_sample_start - nb_sample_end != len(removed_samples):
+        raise ProgramError("Something went wrong with Plink's subset (numbers "
+                           "are different from data and log file)")
 
     # We write a LaTeX summary
     latex_file = os.path.join(script_prefix + ".summary.tex")
@@ -2236,6 +2496,36 @@ def run_subset_data(in_prefix, in_type, out_prefix, base_dir, options):
         msg = "{}: cannot write LaTeX summary".format(latex_file)
         raise ProgramError(msg)
 
+    # Writing the excluded samples
+    o_filename = os.path.join(base_dir, "excluded_samples.txt")
+    with open(o_filename, "a") as o_file:
+        for value in removed_samples.items():
+            print >>o_file, "\t".join(value)
+
+    # Writing the excluded markers to file
+    o_filename = os.path.join(base_dir, "excluded_markers.txt")
+    with open(o_filename, "a") as o_file:
+        for value in removed_markers.items():
+            print >>o_file, "\t".join(value)
+
+    # Writing the summary results
+    with open(os.path.join(base_dir, "results_summary.txt"), "a") as o_file:
+        print >>o_file, "# {}".format(script_prefix)
+        if nb_marker_end != nb_marker_start:
+            print >>o_file, "Number of markers excluded"
+            print >>o_file, ("  - {fn}\t{nb:,d}\t-{nb:,d}".format(
+                                fn=marker_subset_fn,
+                                nb=nb_marker_start - nb_marker_end,
+                            ))
+            print >>o_file, "---"
+        if nb_sample_end != nb_sample_start:
+            print >>o_file, "Number of samples removed"
+            print >>o_file, ("  - {fn}\t{nb:,d}\t\t-{nb:,d}".format(
+                                fn=sample_subset_fn,
+                                nb=nb_sample_start - nb_sample_end,
+                            ))
+            print >>o_file, "---"
+
     # We know this step does produce a new data set (bfile), so we return it
     return (os.path.join(out_prefix, "subset"), required_type, latex_file,
             subset_data.desc)
@@ -2261,6 +2551,51 @@ def run_command(command):
     except subprocess.CalledProcessError:
         msg = "couldn't run command\n{}".format(command)
         raise ProgramError(msg)
+
+
+def count_markers_samples(prefix, file_type):
+    """Counts the number of markers and samples in plink file.
+
+    :param prefix: the prefix of the files.
+    :param file_type: the file type.
+
+    :type prefix: string
+    :type file_type: string
+
+    :returns: the number of markers and samples (in a tuple).
+
+    """
+    # The files that will need counting
+    sample_file = None
+    marker_file = None
+
+    if file_type == "bfile":
+        # Binary files (.bed, .bim and .fam)
+        sample_file = prefix + ".fam"
+        marker_file = prefix + ".bim"
+
+    elif file_type == "file":
+        # Pedfile (.ped and .map)
+        sample_file = prefix + ".ped"
+        marker_file = prefix + ".map"
+
+    elif file_type == "tfile":
+        # Transposed pedfile (.tped and .tfam)
+        sample_file = prefix + ".tfam"
+        marker_file = prefix + ".tped"
+
+    # Counting (this may take some time)
+    nb_samples = 0
+    with open(sample_file, "r") as f:
+        for line in f:
+            nb_samples += 1
+
+    nb_markers = 0
+    with open(marker_file, "r") as f:
+        for line in f:
+            nb_markers += 1
+
+    return nb_markers, nb_samples
 
 
 def check_input_files(prefix, the_type, required_type):
