@@ -84,30 +84,29 @@ def main():
     # Reading the configuration file
     order, conf = read_config_file(args.conf)
 
-#    # The directory name
-#    dirname = "data_clean_up."
-#    dirname += datetime.datetime.today().strftime("%Y-%m-%d_%H.%M.%S")
-#    if os.path.isdir(dirname):
-#        answer = "N"
-#        if not args.overwrite:
-#            # The directory already exists...
-#            print >>sys.stderr, ("WARNING: {}: directory already "
-#                                 "exists".format(dirname))
-#            print >>sys.stderr, "Overwrite [Y/N]? ",
-#            answer = raw_input()
-#        if args.overwrite or answer.upper() == "Y":
-#            # Delete everything with the directory
-#            shutil.rmtree(dirname)
-#        elif answer.upper() == "N":
-#            print >>sys.stderr, "STOPING NOW"
-#            sys.exit(0)
-#        else:
-#            msg = "{}: not a valid answer (Y or N)".format(answer)
-#            raise ProgramError(msg)
-#
-#    # Creating the output directory
-#    os.mkdir(dirname)
-    dirname = "data_clean_up.2015-08-28_14.07.07"
+    # The directory name
+    dirname = "data_clean_up."
+    dirname += datetime.datetime.today().strftime("%Y-%m-%d_%H.%M.%S")
+    if os.path.isdir(dirname):
+        answer = "N"
+        if not args.overwrite:
+            # The directory already exists...
+            print >>sys.stderr, ("WARNING: {}: directory already "
+                                 "exists".format(dirname))
+            print >>sys.stderr, "Overwrite [Y/N]? ",
+            answer = raw_input()
+        if args.overwrite or answer.upper() == "Y":
+            # Delete everything with the directory
+            shutil.rmtree(dirname)
+        elif answer.upper() == "N":
+            print >>sys.stderr, "STOPING NOW"
+            sys.exit(0)
+        else:
+            msg = "{}: not a valid answer (Y or N)".format(answer)
+            raise ProgramError(msg)
+
+    # Creating the output directory
+    os.mkdir(dirname)
 
     # Executing the data clean up
     current_input = None
@@ -135,7 +134,6 @@ def main():
     # Counting the number of markers and samples in the datafile
     nb_markers, nb_samples = count_markers_samples(current_input,
                                                    current_input_type)
-#    nb_markers, nb_samples = 2372568, 830
 
     # Creating the result summary file containing the initial numbers
     try:
@@ -240,8 +238,8 @@ def run_duplicated_samples(in_prefix, in_type, out_prefix, base_dir, options):
     good one, or to create it if needed.
 
     """
-#    # Creating the output directory
-#    os.mkdir(out_prefix)
+    # Creating the output directory
+    os.mkdir(out_prefix)
 
     # We know we need tfile
     required_type = "tfile"
@@ -253,12 +251,12 @@ def run_duplicated_samples(in_prefix, in_type, out_prefix, base_dir, options):
     options += ["--{}".format(required_type), in_prefix,
                 "--out", script_prefix]
 
-#    # We run the script
-#    try:
-#        duplicated_samples.main(options)
-#    except duplicated_samples.ProgramError as e:
-#        msg = "duplicated_samples: {}".format(e)
-#        raise ProgramError(msg)
+    # We run the script
+    try:
+        duplicated_samples.main(options)
+    except duplicated_samples.ProgramError as e:
+        msg = "duplicated_samples: {}".format(e)
+        raise ProgramError(msg)
 
     # Reading the number of duplicated samples
     duplicated_count = None
@@ -452,8 +450,8 @@ def run_duplicated_snps(in_prefix, in_type, out_prefix, base_dir, options):
         :py:mod:`DupSNPs.duplicated_snps` module.
 
     """
-#    # Creating the output directory
-#    os.mkdir(out_prefix)
+    # Creating the output directory
+    os.mkdir(out_prefix)
 
     # We know we need a tfile
     required_type = "tfile"
@@ -483,12 +481,12 @@ def run_duplicated_snps(in_prefix, in_type, out_prefix, base_dir, options):
     options += ["--{}".format(required_type), in_prefix,
                 "--out", script_prefix]
 
-#    # We run the script
-#    try:
-#        duplicated_snps.main(options)
-#    except duplicated_snps.ProgramError as e:
-#        msg = "duplicated_snps: {}".format(e)
-#        raise ProgramError(msg)
+    # We run the script
+    try:
+        duplicated_snps.main(options)
+    except duplicated_snps.ProgramError as e:
+        msg = "duplicated_snps: {}".format(e)
+        raise ProgramError(msg)
 
     # Reading the number of duplicated markers
     duplicated_count = None
@@ -653,8 +651,8 @@ def run_noCall_hetero_snps(in_prefix, in_type, out_prefix, base_dir, options):
     type is the good one, or to create it if needed.
 
     """
-#    # Creating the output directory
-#    os.mkdir(out_prefix)
+    # Creating the output directory
+    os.mkdir(out_prefix)
 
     # We know we need a tfile
     required_type = "tfile"
@@ -666,12 +664,12 @@ def run_noCall_hetero_snps(in_prefix, in_type, out_prefix, base_dir, options):
     options += ["--{}".format(required_type), in_prefix,
                 "--out", script_prefix]
 
-#    # We run the script
-#    try:
-#        noCall_hetero_snps.main(options)
-#    except noCall_hetero_snps.ProgramError as e:
-#        msg = "noCall_hetero_snps: {}".format(e)
-#        raise ProgramError(msg)
+    # We run the script
+    try:
+        noCall_hetero_snps.main(options)
+    except noCall_hetero_snps.ProgramError as e:
+        msg = "noCall_hetero_snps: {}".format(e)
+        raise ProgramError(msg)
 
     # We want to save in a file the markers and samples that were removed
     # There are two files to look at, which contains only one row, the name of
@@ -762,8 +760,8 @@ def run_sample_missingness(in_prefix, in_type, out_prefix, base_dir, options):
     if the file input file type is the good one, or to create it if needed.
 
     """
-#    # Creating the output directory
-#    os.mkdir(out_prefix)
+    # Creating the output directory
+    os.mkdir(out_prefix)
 
     # We are looking at what we have
     required_type = "tfile"
@@ -779,12 +777,12 @@ def run_sample_missingness(in_prefix, in_type, out_prefix, base_dir, options):
     if required_type == "bfile":
         options.append("--is-bfile")
 
-#    # We run the script
-#    try:
-#        sample_missingness.main(options)
-#    except sample_missingness.ProgramError as e:
-#        msg = "sample_missingness: {}".format(e)
-#        raise ProgramError(msg)
+    # We run the script
+    try:
+        sample_missingness.main(options)
+    except sample_missingness.ProgramError as e:
+        msg = "sample_missingness: {}".format(e)
+        raise ProgramError(msg)
 
     # We want to modify the description, so that it contains the option used
     desc = sample_missingness.desc
@@ -872,8 +870,8 @@ def run_snp_missingness(in_prefix, in_type, out_prefix, base_dir, options):
     the good one, or to create it if needed.
 
     """
-#    # Creating the output directory
-#    os.mkdir(out_prefix)
+    # Creating the output directory
+    os.mkdir(out_prefix)
 
     # We know we need a bfile
     required_type = "bfile"
@@ -885,12 +883,12 @@ def run_snp_missingness(in_prefix, in_type, out_prefix, base_dir, options):
     options += ["--{}".format(required_type), in_prefix,
                 "--out", script_prefix]
 
-#    # We run the script
-#    try:
-#        snp_missingness.main(options)
-#    except snp_missingness.ProgramError as e:
-#        msg = "snp_missingness: {}".format(e)
-#        raise ProgramError(msg)
+    # We run the script
+    try:
+        snp_missingness.main(options)
+    except snp_missingness.ProgramError as e:
+        msg = "snp_missingness: {}".format(e)
+        raise ProgramError(msg)
 
     # We want to modify the description, so that it contains the option used
     desc = snp_missingness.desc
@@ -984,8 +982,8 @@ def run_sex_check(in_prefix, in_type, out_prefix, base_dir, options):
         files. Hence, this function returns the input file prefix and its type.
 
     """
-#    # Creating the output directory
-#    os.mkdir(out_prefix)
+    # Creating the output directory
+    os.mkdir(out_prefix)
 
     # We know we need a bfile
     required_type = "bfile"
@@ -997,12 +995,12 @@ def run_sex_check(in_prefix, in_type, out_prefix, base_dir, options):
     options += ["--{}".format(required_type), in_prefix,
                 "--out", script_prefix]
 
-#    # We run the script
-#    try:
-#        sex_check.main(options)
-#    except sex_check.ProgramError as e:
-#        msg = "sex_check {}".format(e)
-#        raise ProgramError(msg)
+    # We run the script
+    try:
+        sex_check.main(options)
+    except sex_check.ProgramError as e:
+        msg = "sex_check {}".format(e)
+        raise ProgramError(msg)
 
     # Reading the hetero file on X
     hetero = {}
@@ -1328,8 +1326,8 @@ def run_plate_bias(in_prefix, in_type, out_prefix, base_dir, options):
         files. Hence, this function returns the input file prefix and its type.
 
     """
-#    # Creating the output directory
-#    os.mkdir(out_prefix)
+    # Creating the output directory
+    os.mkdir(out_prefix)
 
     # We know we need bfile
     required_type = "bfile"
@@ -1341,12 +1339,12 @@ def run_plate_bias(in_prefix, in_type, out_prefix, base_dir, options):
     options += ["--{}".format(required_type), in_prefix,
                 "--out", script_prefix]
 
-#    # We run the script
-#    try:
-#        plate_bias.main(options)
-#    except plate_bias.ProgramError as e:
-#        msg = "plate_bias: {}".format(e)
-#        raise ProgramError(msg)
+    # We run the script
+    try:
+        plate_bias.main(options)
+    except plate_bias.ProgramError as e:
+        msg = "plate_bias: {}".format(e)
+        raise ProgramError(msg)
 
     # Reading the MAF before hand
     maf = {}
@@ -1505,8 +1503,8 @@ def run_remove_heterozygous_haploid(in_prefix, in_type, out_prefix, base_dir,
     type is the good one, or to create it if needed.
 
     """
-#    # Creating the output directory
-#    os.mkdir(out_prefix)
+    # Creating the output directory
+    os.mkdir(out_prefix)
 
     # We know we need bfile
     required_type = "bfile"
@@ -1518,12 +1516,12 @@ def run_remove_heterozygous_haploid(in_prefix, in_type, out_prefix, base_dir,
     options += ["--{}".format(required_type), in_prefix,
                 "--out", script_prefix]
 
-#    # We run the script
-#    try:
-#        remove_heterozygous_haploid.main(options)
-#    except remove_heterozygous_haploid.ProgramError as e:
-#        msg = "remove_heterozygous_haploid: {}".format(e)
-#        raise ProgramError(msg)
+    # We run the script
+    try:
+        remove_heterozygous_haploid.main(options)
+    except remove_heterozygous_haploid.ProgramError as e:
+        msg = "remove_heterozygous_haploid: {}".format(e)
+        raise ProgramError(msg)
 
     # We get the number of genotypes that were set to missing
     nb_hh_missing = None
@@ -1598,8 +1596,8 @@ def run_find_related_samples(in_prefix, in_type, out_prefix, base_dir,
         and its type.
 
     """
-#    # Creating the output directory
-#    os.mkdir(out_prefix)
+    # Creating the output directory
+    os.mkdir(out_prefix)
 
     # We know we need bfile
     required_type = "bfile"
@@ -1611,12 +1609,12 @@ def run_find_related_samples(in_prefix, in_type, out_prefix, base_dir,
     options += ["--{}".format(required_type), in_prefix,
                 "--out", script_prefix]
 
-#    # We run the script
-#    try:
-#        find_related_samples.main(options)
-#    except find_related_samples.ProgramError as e:
-#        msg = "find_related_samples: {}".format(e)
-#        raise ProgramError(msg)
+    # We run the script
+    try:
+        find_related_samples.main(options)
+    except find_related_samples.ProgramError as e:
+        msg = "find_related_samples: {}".format(e)
+        raise ProgramError(msg)
 
     # Reading the file containing all samples that are related
     #   - ibs.related_individuals
@@ -1782,8 +1780,8 @@ def run_check_ethnicity(in_prefix, in_type, out_prefix, base_dir, options):
         its type.
 
     """
-#    # Creating the output directory
-#    os.mkdir(out_prefix)
+    # Creating the output directory
+    os.mkdir(out_prefix)
 
     # We know we need bfile
     required_type = "bfile"
@@ -1795,12 +1793,12 @@ def run_check_ethnicity(in_prefix, in_type, out_prefix, base_dir, options):
     options += ["--{}".format(required_type), in_prefix,
                 "--out", script_prefix]
 
-#    # We run the script
-#    try:
-#        check_ethnicity.main(options)
-#    except check_ethnicity.ProgramError as e:
-#        msg = "check_ethnicity: {}".format(e)
-#        raise ProgramError(msg)
+    # We run the script
+    try:
+        check_ethnicity.main(options)
+    except check_ethnicity.ProgramError as e:
+        msg = "check_ethnicity: {}".format(e)
+        raise ProgramError(msg)
 
     # Getting the multiplier value
     multiplier = check_ethnicity.parser.get_default("multiplier")
@@ -1942,8 +1940,8 @@ def run_flag_maf_zero(in_prefix, in_type, out_prefix, base_dir, options):
         files. Hence, this function returns the input file prefix and its type.
 
     """
-#    # Creating the output directory
-#    os.mkdir(out_prefix)
+    # Creating the output directory
+    os.mkdir(out_prefix)
 
     # We know we need bfile
     required_type = "bfile"
@@ -1955,12 +1953,12 @@ def run_flag_maf_zero(in_prefix, in_type, out_prefix, base_dir, options):
     options += ["--{}".format(required_type), in_prefix,
                 "--out", script_prefix]
 
-#    # We run the script
-#    try:
-#        flag_maf_zero.main(options)
-#    except flag_maf_zero.ProgramError as e:
-#        msg = "flag_maf_zero: {}".format(e)
-#        raise ProgramError(msg)
+    # We run the script
+    try:
+        flag_maf_zero.main(options)
+    except flag_maf_zero.ProgramError as e:
+        msg = "flag_maf_zero: {}".format(e)
+        raise ProgramError(msg)
 
     # Reading the file to compute the number of flagged markers
     nb_flagged = None
@@ -2033,8 +2031,8 @@ def run_flag_hw(in_prefix, in_type, out_prefix, base_dir, options):
         Hence, this function returns the input file prefix and its type.
 
     """
-#    # Creating the output directory
-#    os.mkdir(out_prefix)
+    # Creating the output directory
+    os.mkdir(out_prefix)
 
     # We know we need bfile
     required_type = "bfile"
@@ -2046,12 +2044,12 @@ def run_flag_hw(in_prefix, in_type, out_prefix, base_dir, options):
     options += ["--{}".format(required_type), in_prefix,
                 "--out", script_prefix]
 
-#    # We run the script
-#    try:
-#        flag_hw.main(options)
-#    except flag_hw.ProgramError as e:
-#        msg = "flag_hw: {}".format(e)
-#        raise ProgramError(msg)
+    # We run the script
+    try:
+        flag_hw.main(options)
+    except flag_hw.ProgramError as e:
+        msg = "flag_hw: {}".format(e)
+        raise ProgramError(msg)
 
     # Finding the two files containing the list of flagged markers
     filenames = glob(script_prefix + ".snp_flag_threshold_[0-9]*")
@@ -2228,8 +2226,8 @@ def run_subset_data(in_prefix, in_type, out_prefix, base_dir, options):
         The output file type is the same as the input file type.
 
     """
-#    # Creating the output directory
-#    os.mkdir(out_prefix)
+    # Creating the output directory
+    os.mkdir(out_prefix)
 
     # The prefix of the script
     script_prefix = os.path.join(out_prefix, "subset")
@@ -2273,12 +2271,12 @@ def run_subset_data(in_prefix, in_type, out_prefix, base_dir, options):
     else:
         options.append("--is-file")
 
-#    # We run the script
-#    try:
-#        subset_data.main(options)
-#    except subset_data.ProgramError as e:
-#        msg = "subset_data: {}".format(e)
-#        raise ProgramError(msg)
+    # We run the script
+    try:
+        subset_data.main(options)
+    except subset_data.ProgramError as e:
+        msg = "subset_data: {}".format(e)
+        raise ProgramError(msg)
 
     # What was done
     is_extract = "--extract" in options
