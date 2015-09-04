@@ -29,7 +29,7 @@
 \BLOCK{ if data["multicol"] }
 \multicolumn{2}{p{0.6\textwidth}}{\VAR{ data["row_data"][0] }}\BLOCK{ if data["row_data"]|length > 1 } & \BLOCK{ else } \\ \BLOCK{ endif }
 \BLOCK{ else }
- & $\centerdot$ \VAR{ data["row_data"][0] }\BLOCK{ if data["row_data"]|length > 1 } & \BLOCK{ else } \\ \BLOCK{ endif }
+ & - \VAR{ data["row_data"][0] }\BLOCK{ if data["row_data"]|length > 1 } & \BLOCK{ else } \\ \BLOCK{ endif }
 \BLOCK{ endif }
 \BLOCK{ for value in data["row_data"][1:] }
 \VAR{ value }\BLOCK{ if loop.last } \\ \BLOCK{ else } & \BLOCK{ endif }
