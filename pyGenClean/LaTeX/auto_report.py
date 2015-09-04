@@ -34,11 +34,15 @@ def create_report(outdirname, report_filename, **kwargs):
 
     """
     # Checking the required variables
-    assert "steps" in kwargs
+    if "steps" in kwargs:
+        assert "descriptions" in kwargs
+        assert "steps_filename" not in kwargs
+    else:
+        assert "steps_filename" in kwargs
+        assert "descriptions" not in kwargs
     assert "logo_path" in kwargs
     assert "summaries" in kwargs
     assert "background" in kwargs
-    assert "descriptions" in kwargs
     assert "project_name" in kwargs
     assert "summary_fn" in kwargs
 
@@ -46,20 +50,22 @@ def create_report(outdirname, report_filename, **kwargs):
     project_name = kwargs["project_name"]
     logo_path = kwargs["logo_path"]
     prog_version = ".".join(pygenclean_version)
-    steps = kwargs["steps"]
     summaries = kwargs["summaries"]
-    descriptions = kwargs["descriptions"]
     background_section = latex.wrap_lines(kwargs["background"])
     summary_fn = kwargs["summary_fn"]
 
     # Writing the method steps to a separate file (for access later)
-    step_filename = os.path.join(outdirname, "steps_summary.tex")
-    with open(step_filename, "w") as o_file:
-        for step, desc in zip(steps, descriptions):
-            step = step.replace("_", r"\_")
-            to_print = latex.item(desc)
-            to_print += " ({})".format(latex.texttt(step))
-            print >>o_file, latex.wrap_lines(to_print) + "\n"
+    steps_filename = None
+    if "steps_filename" in kwargs:
+        steps_filename = kwargs["steps_filename"]
+    else:
+        steps_filename = os.path.join(outdirname, "steps_summary.tex")
+        with open(steps_filename, "w") as o_file:
+            for step, desc in zip(kwargs["steps"], kwargs["descriptions"]):
+                step = step.replace("_", r"\_")
+                to_print = latex.item(desc)
+                to_print += " ({})".format(latex.texttt(step))
+                print >>o_file, latex.wrap_lines(to_print) + "\n"
 
     # Adding the content of the results section
     result_summaries = []
@@ -123,7 +129,7 @@ def create_report(outdirname, report_filename, **kwargs):
                 conclusions_content="",
                 bibliography_content=biblio_entry,
                 pygenclean_version=pygenclean_version,
-                step_filename=os.path.basename(step_filename),
+                steps_filename=os.path.basename(steps_filename),
                 final_results=_create_summary_table(
                     summary_fn,
                     latex.jinja2_env.get_template("summary_table.tex"),
@@ -179,12 +185,13 @@ def _create_summary_table(fn, template):
 
             # If the line starts with '  -', then it's a sub section
             if line.startswith("  -"):
-                tmp = map(
-                    latex.sanitize_tex,
-                    line[4:].rstrip("\r\n").split("\t"),
-                )
-                if tmp[0].startswith("x"):
-                    tmp[0] = latex.inline_math(r"\times " + tmp[0][1:])
+                tmp = line[4:].rstrip("\r\n").split("\t")
+                if data["header"].endswith("/subset"):
+                    tmp[0] = r"\path{" + tmp[0] + "}"
+                else:
+                    tmp = map(latex.sanitize_tex, tmp)
+                    if tmp[0].startswith("x"):
+                        tmp[0] = latex.inline_math(r"\times " + tmp[0][1:])
 
                 data["data"].append(dict(
                     hline=False,

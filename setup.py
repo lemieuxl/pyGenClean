@@ -84,6 +84,7 @@ def setup_package():
                 "pyGenClean_plot_MDS=PlinkUtils.plot_MDS_standalone:main",
                 "pyGenClean_subset_data=PlinkUtils.subset_data:main",
                 "pyGenClean_plot_eigenvalues=pyGenClean.Ethnicity.plot_eigenvalues:main",
+                "pyGenClean_merge_reports=pyGenClean.LaTeX.merge_reports:safe_main",
             ],
         },
         install_requires=["matplotlib >= 1.2.0", "numpy >= 1.6.2",
