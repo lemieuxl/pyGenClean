@@ -21,7 +21,7 @@ import argparse
 
 import numpy as npy
 
-from PlinkUtils import createRowFromPlinkSpacedOutput as create_row
+from pyGenClean.PlinkUtils import createRowFromPlinkSpacedOutput as create_row
 
 
 def main(argString=None):

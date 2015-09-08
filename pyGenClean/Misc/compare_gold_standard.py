@@ -23,7 +23,7 @@ import shutil
 import argparse
 import subprocess
 
-from PlinkUtils import createRowFromPlinkSpacedOutput
+from pyGenClean.PlinkUtils import createRowFromPlinkSpacedOutput
 from pyGenClean.DupSNPs.duplicated_snps import flipGenotype
 
 

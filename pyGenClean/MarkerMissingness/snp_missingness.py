@@ -20,7 +20,7 @@ import sys
 import argparse
 import subprocess
 
-import PlinkUtils.compare_bim as CompareBIM
+import pyGenClean.PlinkUtils.compare_bim as CompareBIM
 
 
 def main(argString=None):

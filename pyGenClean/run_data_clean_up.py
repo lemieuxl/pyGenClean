@@ -47,8 +47,8 @@ from pyGenClean.LaTeX.merge_reports import add_custom_options as report_options
 import pyGenClean.HeteroHap.remove_heterozygous_haploid \
                                                 as remove_heterozygous_haploid
 
-import PlinkUtils.subset_data as subset_data
-from PlinkUtils import createRowFromPlinkSpacedOutput
+import pyGenClean.PlinkUtils.subset_data as subset_data
+from pyGenClean.PlinkUtils import createRowFromPlinkSpacedOutput
 
 
 # Getting the version
@@ -2231,10 +2231,10 @@ def run_subset_data(in_prefix, in_type, out_prefix, base_dir, options):
               prefix for the next script) and the type of the output files
               (``bfile``).
 
-    This function calls the :py:mod:`PlinkUtils.subset_data` module. The
-    required file type for this module is ``bfile``, hence the need to use the
-    :py:func:`check_input_files` to check if the file input file type is the
-    good one, or to create it if needed.
+    This function calls the :py:mod:`pyGenClean.PlinkUtils.subset_data` module.
+    The required file type for this module is ``bfile``, hence the need to use
+    the :py:func:`check_input_files` to check if the file input file type is
+    the good one, or to create it if needed.
 
     .. note::
         The output file type is the same as the input file type.

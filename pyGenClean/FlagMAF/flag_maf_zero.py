@@ -20,7 +20,7 @@ import sys
 import argparse
 import subprocess
 
-from PlinkUtils import createRowFromPlinkSpacedOutput
+from pyGenClean.PlinkUtils import createRowFromPlinkSpacedOutput
 
 
 def main(argString=None):

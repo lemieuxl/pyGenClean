@@ -20,8 +20,8 @@ import sys
 import argparse
 import subprocess
 
-import PlinkUtils.plot_MDS as PlotMDS
-from PlinkUtils import createRowFromPlinkSpacedOutput
+import pyGenClean.PlinkUtils.plot_MDS as PlotMDS
+from pyGenClean.PlinkUtils import createRowFromPlinkSpacedOutput
 
 import pyGenClean.Ethnicity.find_outliers as find_outliers
 from pyGenClean.DupSNPs.duplicated_snps import flipGenotype
