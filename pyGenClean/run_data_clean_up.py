@@ -1338,8 +1338,9 @@ def run_plate_bias(in_prefix, in_type, out_prefix, base_dir, options):
     the good one, or to create it if needed.
 
     .. note::
-        The :py:mod:`pyGenClean.PlateBias.plate_bias` module doesn't return usable output
-        files. Hence, this function returns the input file prefix and its type.
+        The :py:mod:`pyGenClean.PlateBias.plate_bias` module doesn't return
+        usable output files. Hence, this function returns the input file prefix
+        and its type.
 
     """
     # Creating the output directory
@@ -2930,16 +2931,21 @@ def parse_args():
               :py:mod:`argparse` module. It contains the values of the
               different options.
 
-    ===============   =======  ================================================
-        Options        Type                      Description
-    ===============   =======  ================================================
-    ``--bfile``       String   The input binary file prefix from Plink.
-    ``--tfile``       String   The input transposed file prefix from Plink.
-    ``--file``        String   The input file prefix from Plink.
-    ``--conf``        String   The parameter file for the data clean up.
-    ``--overwrite``   Boolean  Overwrites output directories without asking the
-                               user.
-    ===============   =======  ================================================
+    ======================= =======  ==========================================
+             Options         Type                      Description
+    ======================= =======  ==========================================
+    ``--bfile``             String   The input binary file prefix from Plink.
+    ``--tfile``             String   The input transposed file prefix from
+                                     Plink.
+    ``--file``              String   The input file prefix from Plink.
+    ``--conf``              String   The parameter file for the data clean up.
+    ``--overwrite``         Boolean  Overwrites output directories without
+                                     asking the user.
+    ``--report-author``     String   The current project number.
+    ``--report-number``     String   The current project author.
+    ``--report-background`` String   Text of file containing the background
+                                     section of the report.
+    ======================= =======  ==========================================
 
     .. note::
         No option check is done here (except for the one automatically done by

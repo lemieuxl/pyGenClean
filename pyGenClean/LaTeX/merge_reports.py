@@ -291,10 +291,14 @@ def parseArgs(argString=None):  # pragma: no cover
               :py:mod:`argparse` module. It contains the values of the
               different options.
 
-    ================ ====== ==================================================
-        Options       Type                    Description
-    ================ ====== ==================================================
-    ================ ====== ==================================================
+    ======================= ====== ============================================
+             Options         Type                    Description
+    ======================= ====== ============================================
+    ``--report-author``     String The current project number.
+    ``--report-number``     String The current project author.
+    ``--report-background`` String Text of file containing the background
+                                   section of the report.
+    ======================= ====== ============================================
 
     .. note::
         No option check is done here (except for the one automatically done by
@@ -324,7 +328,7 @@ def add_custom_options(parser):
                              "[default: %(default)s]")
     parser.add_argument("--report-number", type=str, metavar="NUMBER",
                         default="Simple Project",
-                        help="The current project auhtor. "
+                        help="The current project author. "
                              "[default: %(default)s]")
     parser.add_argument("--report-background", type=str, metavar="BACKGROUND",
                         default="The aim of this project is to perform data "
