@@ -62,11 +62,11 @@ The Algorithm
 -------------
 
 For more information about the actual algorithms and source codes (the
-:py:mod:`MarkerMissingness.snp_missingness` module), refer to the following
-sections.
+:py:mod:`pyGenClean.MarkerMissingness.snp_missingness` module), refer to the
+following sections.
 
-MarkerMissingness.snp_missingness
-.................................
+pyGenClean.MarkerMissingness.snp_missingness
+............................................
 
-.. automodule:: MarkerMissingness.snp_missingness
+.. automodule:: pyGenClean.MarkerMissingness.snp_missingness
     :members:

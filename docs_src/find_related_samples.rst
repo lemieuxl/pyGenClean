@@ -100,8 +100,8 @@ the output prefix shown is the one by default [*i.e.* ``ibs``]):
         ``--sge`` is used.
     *   ``ibs.genome``: PLINK's results including IBS values.
 
-5.  One file provided by the :py:mod:`RelatedSamples.find_related_samples` and
-    three files provided by :py:mod:`RelatedSamples.merge_related_samples`:
+5.  One file provided by the :py:mod:`pyGenClean.RelatedSamples.find_related_samples` and
+    three files provided by :py:mod:`pyGenClean.RelatedSamples.merge_related_samples`:
 
     * ``ibs.related_individuals``: a subset of the ``ibs.genome.genome`` file
         containing only samples that are considered to be related. Three columns
@@ -109,7 +109,7 @@ the output prefix shown is the one by default [*i.e.* ``ibs``]):
         (the value that is considered to find related individuals), ``status``
         (the type of relatedness [*e.g.* twins]) and ``code`` (a numerical code
         that represent the ``status``). This file is provided by the
-        :py:mod:`RelatedSamples.find_related_samples` module.
+        :py:mod:`pyGenClean.RelatedSamples.find_related_samples` module.
     *   ``ibs.merged_related_individuals``: a file aggregating related samples
         in groups, containing the following columns: ``index`` (the group
         number), ``FID1`` (the family ID of the first sample), ``IID1`` (the
@@ -146,7 +146,7 @@ The first plot (:ref:`ibs_z1_figure` figure) that is created is :math:`Z_1` in
 function of :math:`IBS2^*_{ratio}` (where each point represents a pair of
 related individuals. The color code comes from the different value of
 :math:`Z_0`, :math:`Z_1` and :math:`Z_2`, as described in the
-:py:func:`RelatedSamples.find_related_samples.extractRelatedIndividuals`
+:py:func:`pyGenClean.RelatedSamples.find_related_samples.extractRelatedIndividuals`
 function. In this plot, there are four locations where related samples tend to
 accumulate (first degree relatives (full sibs), second degree relatives
 (half-sibs, grand-parent-child or uncle-nephew), parent-child and twins (or
@@ -180,18 +180,18 @@ The Algorithm
 -------------
 
 For more information about the actual algorithms and source codes (the
-:py:mod:`RelatedSamples.find_related_samples` and
-:py:mod:`RelatedSamples.merge_related_samples` modules), refer to the following
-sections.
+:py:mod:`pyGenClean.RelatedSamples.find_related_samples` and
+:py:mod:`pyGenClean.RelatedSamples.merge_related_samples` modules), refer to
+the following sections.
 
-RelatedSamples.find_related_samples
-...................................
+pyGenClean.RelatedSamples.find_related_samples
+..............................................
 
-.. automodule:: RelatedSamples.find_related_samples
+.. automodule:: pyGenClean.RelatedSamples.find_related_samples
     :members:
 
-RelatedSamples.merge_related_samples
-....................................
+pyGenClean.RelatedSamples.merge_related_samples
+...............................................
 
-.. automodule:: RelatedSamples.merge_related_samples
+.. automodule:: pyGenClean.RelatedSamples.merge_related_samples
     :members:

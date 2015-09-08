@@ -150,11 +150,11 @@ The Algorithm
 -------------
 
 For more information about the actual algorithms and source codes (the
-:py:mod:`DupSamples.duplicated_samples` module), refer to the following
-sections.
+:py:mod:`pyGenClean.DupSamples.duplicated_samples` module), refer to the
+following sections.
 
-DupSamples.duplicated_samples
-.............................
+pyGenClean.DupSamples.duplicated_samples
+........................................
 
-.. automodule:: DupSamples.duplicated_samples
+.. automodule:: pyGenClean.DupSamples.duplicated_samples
     :members:
