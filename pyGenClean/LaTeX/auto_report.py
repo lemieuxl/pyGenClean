@@ -54,9 +54,11 @@ def create_report(outdirname, report_filename, **kwargs):
     project_name = kwargs["project_name"]
     prog_version = ".".join(pygenclean_version)
     summaries = kwargs["summaries"]
-    background_section = latex.wrap_lines(kwargs["background"])
     summary_fn = kwargs["summary_fn"]
     report_author = kwargs["report_author"]
+
+    # Formatting the background section
+    background_section = _format_background(kwargs["background"])
 
     # Writing the method steps to a separate file (for access later)
     steps_filename = None
@@ -149,6 +151,36 @@ def create_report(outdirname, report_filename, **kwargs):
     except IOError:
         msg = "{}: could not create report".format(report_filename)
         raise ProgramError(msg)
+
+
+def _format_background(background):
+    """Formats the background section
+
+    :param background: the background content or file.
+
+    :type background: string or file
+
+    :returns: the background content.
+    :rtype: string
+
+    """
+    # Getting the background
+    if os.path.isfile(background):
+        with open(background, "r") as i_file:
+            background = i_file.read().splitlines()
+    else:
+        background = background.splitlines()
+
+    # Formatting
+    final_background = ""
+    for line in background:
+        if line == "":
+            final_background += r"\\" + "\n\n"
+            continue
+
+        final_background += latex.wrap_lines(latex.sanitize_tex(line))
+
+    return final_background
 
 
 def _create_summary_table(fn, template, nb_samples, nb_markers):

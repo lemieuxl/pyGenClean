@@ -208,21 +208,6 @@ def main():
             else:
                 print >>o_file, current_input + s
 
-    # A dummy background section content
-    dummy_background = (
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. "
-        "Suspendisse lectus ligula, volutpat eget convallis a, porttitor "
-        "vitae est. Pellentesque ornare ipsum vitae odio sodales, eu "
-        "elementum urna pretium. Donec luctus non leo sed euismod. Phasellus "
-        "in diam et leo fringilla adipiscing ullamcorper nec sapien. Sed "
-        "condimentum metus at lacus vehicula vulputate. Nam fermentum "
-        "faucibus ipsum ut gravida. In sed felis tellus. Aliquam imperdiet, "
-        "augue et eleifend cursus, elit risus accumsan justo, eu aliquam "
-        "quam massa id risus. Donec sagittis orci lorem, a vulputate lacus "
-        "sodales ut. Proin massa massa, aliquet vitae felis et, porttitor "
-        "ornare enim."
-    )
-
     # We create the automatic report
     report_name = os.path.join(dirname, "automatic_report.tex")
     auto_report.create_report(
@@ -232,7 +217,7 @@ def main():
         steps=steps,
         descriptions=descriptions,
         summaries=latex_summaries,
-        background=dummy_background,
+        background=args.report_background,
         summary_fn=os.path.join(dirname, "results_summary.txt"),
         report_author=args.report_author,
         initial_files=os.path.join(dirname, "initial_files.txt"),

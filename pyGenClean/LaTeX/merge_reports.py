@@ -140,7 +140,6 @@ def get_final_numbers(filename, out_dir):
     # Copying the file
     shutil.copy(filename, out_dir)
 
-
     # Reading the number of markers and samples
     nb_samples = None
     nb_markers = None
@@ -227,21 +226,6 @@ def generate_report(out_dir, latex_summaries, nb_markers, nb_samples, options):
     :type options: argparse.Namespace
 
     """
-    # A dummy background section content
-    dummy_background = (
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. "
-        "Suspendisse lectus ligula, volutpat eget convallis a, porttitor "
-        "vitae est. Pellentesque ornare ipsum vitae odio sodales, eu "
-        "elementum urna pretium. Donec luctus non leo sed euismod. Phasellus "
-        "in diam et leo fringilla adipiscing ullamcorper nec sapien. Sed "
-        "condimentum metus at lacus vehicula vulputate. Nam fermentum "
-        "faucibus ipsum ut gravida. In sed felis tellus. Aliquam imperdiet, "
-        "augue et eleifend cursus, elit risus accumsan justo, eu aliquam "
-        "quam massa id risus. Donec sagittis orci lorem, a vulputate lacus "
-        "sodales ut. Proin massa massa, aliquet vitae felis et, porttitor "
-        "ornare enim."
-    )
-
     # We create the automatic report
     report_name = os.path.join(out_dir, "merged_reports.tex")
     auto_report.create_report(
@@ -250,7 +234,7 @@ def generate_report(out_dir, latex_summaries, nb_markers, nb_samples, options):
         project_name=options.report_number,
         steps_filename=os.path.join(out_dir, "steps_summary.tex"),
         summaries=latex_summaries,
-        background=dummy_background,
+        background=options.report_background,
         summary_fn=os.path.join(out_dir, "results_summary.txt"),
         report_author=options.report_author,
         initial_files=os.path.join(out_dir, "initial_files.txt"),
@@ -342,6 +326,11 @@ def add_custom_options(parser):
                         default="Simple Project",
                         help="The current project auhtor. "
                              "[default: %(default)s]")
+    parser.add_argument("--report-background", type=str, metavar="BACKGROUND",
+                        default="The aim of this project is to perform data "
+                                "QC prior to genetic analysis.",
+                        help="Text of file containing the background section "
+                             "of the report.")
 
 
 class ProgramError(Exception):
