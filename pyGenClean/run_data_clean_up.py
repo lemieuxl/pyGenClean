@@ -188,6 +188,26 @@ def main():
         steps.append(script_name)
         descriptions.append(desc)
 
+    # Counting the final number of samples and markers
+    nb_markers, nb_samples = count_markers_samples(current_input,
+                                                   current_input_type)
+
+    # Getting the final suffixes
+    suffixes = None
+    if current_input_type == "tfile":
+        suffixes = ((".tped", nb_markers), (".tfam", nb_samples))
+    elif current_input_type == "bfile":
+        suffixes = ((".bed", None), (".bim", nb_markers), (".fam", nb_samples))
+    else:
+        suffixes = ((".ped", nb_samples), (".map", nb_markers))
+
+    with open(os.path.join(dirname, "final_files.txt"), "w") as o_file:
+        for s, nb in suffixes:
+            if nb:
+                print >>o_file, current_input + s + "\t{:,d}".format(nb)
+            else:
+                print >>o_file, current_input + s
+
     # A dummy background section content
     dummy_background = (
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit. "
@@ -216,6 +236,9 @@ def main():
         summary_fn=os.path.join(dirname, "results_summary.txt"),
         report_author=args.report_author,
         initial_files=os.path.join(dirname, "initial_files.txt"),
+        final_files=os.path.join(dirname, "final_files.txt"),
+        final_nb_markers="{:,d}".format(nb_markers),
+        final_nb_samples="{:,d}".format(nb_samples),
     )
 
 

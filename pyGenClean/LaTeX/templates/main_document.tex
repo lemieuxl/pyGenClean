@@ -154,8 +154,18 @@ Briefly, the clean up procedure was as follow:
 \VAR{ final_results }
 
 
+\clearpage
+
 \section{Conclusions}
-\VAR{ conclusions_content }
+After the genetic data clean up procedure, a total of \VAR{ final_nb_samples }
+samples and \VAR{ final_nb_markers } markers remained. The following files are
+available for downstream analysis.
+
+\begin{itemize}
+\BLOCK{ for fn in final_files }
+\item \path{\VAR{ fn }}
+\BLOCK{ endfor }
+\end{itemize}
 
 \begin{thebibliography}{9}
 \VAR{ bibliography_content }

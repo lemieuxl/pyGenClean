@@ -21,6 +21,9 @@
 \hline
 \endhead
 
+\hline
+\endlastfoot
+
 \BLOCK{ for row_data in table_data }
 \BLOCK{ for data in row_data["data"] }
 \BLOCK{ if data["hline"] }
@@ -38,6 +41,12 @@
 
 \BLOCK{ endfor }
 \BLOCK{ endfor }
+
+\multicolumn{2}{p{0.6\textwidth}}{Final number of markers} &
+\VAR{ final_nb_markers } \\
+
+\multicolumn{2}{p{0.6\textwidth}}{Final number of samples} &
+\VAR{ final_nb_samples } \\
 
 \end{longtable}
 

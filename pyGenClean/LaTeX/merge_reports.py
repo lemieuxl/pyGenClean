@@ -56,11 +56,18 @@ def main(argString=None):
     copy_initial_files(os.path.join(qc_dir[0], "initial_files.txt"),
                        args.out_dir)
 
+    # Get the final number of markers and samples
+    final_nb_markers, final_nb_samples = get_final_numbers(
+        os.path.join(qc_dir[-1], "final_files.txt"),
+        args.out_dir,
+    )
+
     # Getting the steps summary file (TeX)
     summary_files = get_summary_files(qc_dir)
 
     # Generating the report
-    generate_report(args.out_dir, summary_files, args)
+    generate_report(args.out_dir, summary_files, final_nb_markers,
+                    final_nb_samples, args)
 
 
 def order_qc_dir(dirnames):
@@ -117,6 +124,43 @@ def copy_initial_files(filename, out_dir):
     shutil.copy(filename, out_dir)
 
 
+def get_final_numbers(filename, out_dir):
+    """Copy the final_files file and get the number of markers and samples.
+
+    :param filename: the name of the file.
+    :param out_dir: the output directory.
+
+    :type filename: string
+    :type out_dir: string
+
+    :returns: the final number of markers and samples
+    :rtype: tuple
+
+    """
+    # Copying the file
+    shutil.copy(filename, out_dir)
+
+
+    # Reading the number of markers and samples
+    nb_samples = None
+    nb_markers = None
+    with open(filename, "r") as i_file:
+        for line in i_file:
+            row = line.rstrip("\r\n").split("\t")
+            if len(row) == 1:
+                continue
+            path, ext = os.path.splitext(row[0])
+            if ext in {".bim", ".tped", ".map"}:
+                nb_markers = row[1]
+            elif ext in {".fam", ".ped", ".tfam"}:
+                nb_samples = row[1]
+
+    assert nb_samples
+    assert nb_markers
+
+    return nb_markers, nb_samples
+
+
 def get_summary_files(dirnames):
     """Gets the TeX summary files for each test.
 
@@ -167,15 +211,19 @@ def get_summary_files(dirnames):
     return [os.path.abspath(fn) for fn in final_summary_files]
 
 
-def generate_report(out_dir, latex_summaries, options):
+def generate_report(out_dir, latex_summaries, nb_markers, nb_samples, options):
     """Generates the report.
 
     :param out_dir: the output directory.
     :param latex_summaries: the list of LaTeX summaries.
+    :param nb_markers: the final number of markers.
+    :param nb_samples: the final number of samples.
     :param options: the list of options.
 
     :type out_dir: string
     :type latex_summaries: list
+    :type nb_markers: string
+    :type nb_samples: string
     :type options: argparse.Namespace
 
     """
@@ -206,6 +254,9 @@ def generate_report(out_dir, latex_summaries, options):
         summary_fn=os.path.join(out_dir, "results_summary.txt"),
         report_author=options.report_author,
         initial_files=os.path.join(out_dir, "initial_files.txt"),
+        final_files=os.path.join(out_dir, "final_files.txt"),
+        final_nb_markers=nb_markers,
+        final_nb_samples=nb_samples,
     )
 
 
@@ -235,7 +286,8 @@ def checkArgs(args):
 
         # Checking that each directory contains the required files
         for fn in ("excluded_markers.txt", "excluded_samples.txt",
-                   "results_summary.txt", "steps_summary.tex"):
+                   "results_summary.txt", "steps_summary.tex",
+                   "initial_files.txt", "final_files.txt"):
             required_fn = os.path.join(dn, fn)
             if not os.path.isfile(required_fn):
                 raise ProgramError("{}: missing required "

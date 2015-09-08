@@ -46,6 +46,9 @@ def create_report(outdirname, report_filename, **kwargs):
     assert "summary_fn" in kwargs
     assert "report_author" in kwargs
     assert "initial_files" in kwargs
+    assert "final_nb_markers" in kwargs
+    assert "final_nb_samples" in kwargs
+    assert "final_files" in kwargs
 
     # Getting the required information
     project_name = kwargs["project_name"]
@@ -80,6 +83,11 @@ def create_report(outdirname, report_filename, **kwargs):
     initial_files = None
     with open(kwargs["initial_files"], "r") as i_file:
         initial_files = i_file.read().splitlines()
+
+    # Reading the final_files file
+    final_files = None
+    with open(kwargs["final_files"], "r") as i_file:
+        final_files = [i.split("\t")[0] for i in i_file.read().splitlines()]
 
     # Adding the bibliography content
     biblio_entry = latex.bib_entry(
@@ -122,16 +130,20 @@ def create_report(outdirname, report_filename, **kwargs):
                 year=today.year,
                 background_content=background_section,
                 result_summaries=result_summaries,
-                conclusions_content="",
                 bibliography_content=biblio_entry,
                 pygenclean_version=pygenclean_version,
                 steps_filename=os.path.basename(steps_filename),
                 final_results=_create_summary_table(
                     summary_fn,
                     latex.jinja2_env.get_template("summary_table.tex"),
+                    nb_samples=kwargs["final_nb_samples"],
+                    nb_markers=kwargs["final_nb_markers"],
                 ),
                 report_author=report_author,
                 initial_files=initial_files,
+                final_files=final_files,
+                final_nb_samples=kwargs["final_nb_samples"],
+                final_nb_markers=kwargs["final_nb_markers"],
             )
 
     except IOError:
@@ -139,14 +151,18 @@ def create_report(outdirname, report_filename, **kwargs):
         raise ProgramError(msg)
 
 
-def _create_summary_table(fn, template):
+def _create_summary_table(fn, template, nb_samples, nb_markers):
     """Creates the final table.
 
     :param fn: the name of the file containing the summary.
     :param template: the Jinja2 template.
+    :param nb_samples: the final number of samples.
+    :param nb_markers: the final number of markers.
 
     :type fn: string
     :type template: Jinja2.template
+    :type nb_samples: string
+    :type nb_markers: string
 
     """
     # The final data
@@ -220,4 +236,5 @@ def _create_summary_table(fn, template):
     table_data.append(data)
 
     # Rendering
-    return template.render(table_data=table_data)
+    return template.render(table_data=table_data, final_nb_markers=nb_markers,
+                           final_nb_samples=nb_samples)
