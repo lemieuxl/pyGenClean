@@ -22,10 +22,10 @@ import subprocess
 
 import numpy as npy
 
-from pyGenClean.PlinkUtils import createRowFromPlinkSpacedOutput
+from .import gender_plot
+from . import baf_lrr_plot
 
-import pyGenClean.SexCheck.gender_plot as gender_plot
-import pyGenClean.SexCheck.baf_lrr_plot as baf_lrr_plot
+from ..PlinkUtils import createRowFromPlinkSpacedOutput
 
 
 def main(argString=None):
