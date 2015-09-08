@@ -926,10 +926,43 @@ def parseArgs(argString=None):  # pragma: no cover
               the :py:mod:`argparse` module. It contains the values of the
               different options.
 
-    ===============  ======  ==================================================
-        Options       Type                     Description
-    ===============  ======  ==================================================
-    ===============  ======  ==================================================
+    ====================== ======= ============================================
+        Options              Type                   Description
+    ====================== ======= ============================================
+    ``--bfile``            string  The input file prefix (will find the plink
+                                   binary files by appending the prefix to the
+                                   ``.bim``, ``.bed`` and ``.fam`` files,
+                                   respectively).
+    ``--gold-bfile``       string  The input file prefix (will find the plink
+                                   binary files by appending the prefix to the
+                                   ``.bim``, ``.bed`` and ``.fam`` files,
+                                   respectively) for the Gold Standard.
+    ``--same-samples``     string  A file containing samples which are present
+                                   in both the gold standard and the source
+                                   panel. One line by identity and tab
+                                   separated. For each row, first sample is
+                                   Gold Standard, second is source panel.
+    ``--source-manifest``  string  The illumina marker manifest. This file
+                                   should have tabs as field separator. There
+                                   should be no lines before the main header
+                                   line. There should be no lines after the
+                                   last data line.
+    ``--source-alleles``   string  A file containing the source alleles (TOP).
+                                   Two columns (separated by tabulation, one
+                                   with the marker name, the other with the
+                                   alleles (separated by space). No header.
+    ``--sge``              boolean Use SGE for parallelization.
+    ``--do-not-flip``      boolean Do not flip SNPs. WARNING: only use this
+                                   option only if the Gold Standard was
+                                   generated using the same chip (hence,
+                                   flipping is unnecessary).
+    ``--use-marker-names`` boolean Use marker names instead of (chr, position).
+                                   WARNING: only use this options only if the
+                                   Gold Standard was generated using the same
+                                   chip (hence, they have the same marker
+                                   names).
+    ``--out``              string  The prefix of the output files.
+    ====================== ======= ============================================
 
     .. note::
         No option check is done here (except for the one automatically done by
@@ -975,11 +1008,11 @@ group = parser.add_argument_group("Input File")
 group.add_argument("--bfile", type=str, metavar="FILE", required=True,
                    help=("The input file prefix (will find the plink binary "
                          "files by appending the prefix to the .bim, .bed and "
-                         ".fam files, respectively."))
+                         ".fam files, respectively)."))
 group.add_argument("--gold-bfile", type=str, metavar="FILE", required=True,
                    help=("The input file prefix (will find the plink binary "
                          "files by appending the prefix to the .bim, .bed and "
-                         ".fam files, respectively.) for the Gold Standard"))
+                         ".fam files, respectively) for the Gold Standard."))
 group.add_argument("--same-samples", type=str, metavar="FILE", required=True,
                    help=("A file containing samples which are present in both "
                          "the gold standard and the source panel. One line by "
