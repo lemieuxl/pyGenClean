@@ -20,13 +20,13 @@ import sys
 import argparse
 import subprocess
 
-import pyGenClean.PlinkUtils.plot_MDS as PlotMDS
-from pyGenClean.PlinkUtils import createRowFromPlinkSpacedOutput
+from ..PlinkUtils import plot_MDS as PlotMDS
+from ..PlinkUtils import createRowFromPlinkSpacedOutput
 
-import pyGenClean.Ethnicity.find_outliers as find_outliers
-from pyGenClean.DupSNPs.duplicated_snps import flipGenotype
-import pyGenClean.Ethnicity.plot_eigenvalues as PlotEigenvalues
-import pyGenClean.RelatedSamples.find_related_samples as Relatedness
+from . import find_outliers
+from . import plot_eigenvalues as PlotEigenvalues
+from ..DupSNPs.duplicated_snps import flipGenotype
+from ..RelatedSamples import find_related_samples as Relatedness
 
 
 class Dummy(object):
