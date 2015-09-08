@@ -27,28 +27,30 @@ import ConfigParser
 from glob import glob
 from collections import namedtuple, Counter
 
-import pyGenClean.FlagHW.flag_hw as flag_hw
-import pyGenClean.LaTeX.utils as latex_template
-import pyGenClean.SexCheck.sex_check as sex_check
-from pyGenClean import __version__ as prog_version
-from pyGenClean.pipeline_error import ProgramError
-import pyGenClean.LaTeX.auto_report as auto_report
-import pyGenClean.PlateBias.plate_bias as plate_bias
-import pyGenClean.FlagMAF.flag_maf_zero as flag_maf_zero
-import pyGenClean.DupSNPs.duplicated_snps as duplicated_snps
-import pyGenClean.Ethnicity.check_ethnicity as check_ethnicity
-import pyGenClean.Misc.compare_gold_standard as compare_gold_standard
-import pyGenClean.DupSamples.duplicated_samples as duplicated_samples
-import pyGenClean.MarkerMissingness.snp_missingness as snp_missingness
-import pyGenClean.SampleMissingness.sample_missingness as sample_missingness
-import pyGenClean.NoCallHetero.clean_noCall_hetero_snps as noCall_hetero_snps
-import pyGenClean.RelatedSamples.find_related_samples as find_related_samples
-from pyGenClean.LaTeX.merge_reports import add_custom_options as report_options
-import pyGenClean.HeteroHap.remove_heterozygous_haploid \
-                                                as remove_heterozygous_haploid
+from . import __version__ as prog_version
 
-import pyGenClean.PlinkUtils.subset_data as subset_data
-from pyGenClean.PlinkUtils import createRowFromPlinkSpacedOutput
+from .pipeline_error import ProgramError
+
+from .FlagHW import flag_hw
+from .SexCheck import sex_check
+from .PlateBias import plate_bias
+from .FlagMAF import flag_maf_zero
+from .DupSNPs import duplicated_snps
+from .Ethnicity import check_ethnicity
+from .Misc import compare_gold_standard
+from .DupSamples import duplicated_samples
+from .MarkerMissingness import snp_missingness
+from .RelatedSamples import find_related_samples
+from .SampleMissingness import sample_missingness
+from .HeteroHap import remove_heterozygous_haploid
+from .LaTeX.merge_reports import add_custom_options as report_options
+from .NoCallHetero import clean_noCall_hetero_snps as noCall_hetero_snps
+
+from .LaTeX import auto_report
+from .LaTeX import utils as latex_template
+
+from .PlinkUtils import subset_data
+from .PlinkUtils import createRowFromPlinkSpacedOutput
 
 
 def main():
