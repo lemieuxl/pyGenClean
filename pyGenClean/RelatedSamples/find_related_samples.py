@@ -24,9 +24,9 @@ import subprocess
 from collections import defaultdict
 
 import numpy as npy
-from pyGenClean.PlinkUtils import createRowFromPlinkSpacedOutput
-from pyGenClean.RelatedSamples.merge_related_samples \
-                                                import merge_related_samples
+
+from ..PlinkUtils import createRowFromPlinkSpacedOutput
+from ..RelatedSamples import merge_related_samples
 
 
 def main(argString=None):
