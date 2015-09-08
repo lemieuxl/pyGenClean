@@ -27,7 +27,7 @@ from collections import defaultdict
 
 import numpy as npy
 
-from pyGenClean.PlinkUtils import createRowFromPlinkSpacedOutput
+from ..PlinkUtils import createRowFromPlinkSpacedOutput
 
 
 def main(argString=None):
