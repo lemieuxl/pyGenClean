@@ -36,7 +36,7 @@ def createRowFromPlinkSpacedOutput(line):
 
     :param: line: a line from a Plink's report file.
 
-    :type: line: string
+    :type: line: str
 
     :returns: an array containing each field from the input line.
 

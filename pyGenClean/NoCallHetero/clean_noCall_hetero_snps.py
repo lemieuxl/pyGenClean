@@ -28,7 +28,7 @@ def main(argString=None):
 
     :param argString: the options.
 
-    :type argString: list of strings
+    :type argString: list
 
     These are the steps:
 
@@ -57,9 +57,9 @@ def processTPEDandTFAM(tped, tfam, prefix):
     :param tfam: the name of the ``tfam`` file.
     :param prefix: the prefix of the output files.
 
-    :type tped: string
-    :type tfam: string
-    :type prefix: string
+    :type tped: str
+    :type tfam: str
+    :type prefix: str
 
     Copies the original ``tfam`` file into ``prefix.tfam``. Then, it reads the
     ``tped`` file and keeps in memory two sets containing the markers which are
@@ -171,7 +171,7 @@ def parseArgs(argString=None):  # pragma: no cover
 
     :param argString: the options.
 
-    :type argString: list of strings
+    :type argString: list
 
     :returns: A :py:class:`argparse.Namespace` object created by the
               :py:mod:`argparse` module. It contains the values of the
@@ -203,7 +203,7 @@ class ProgramError(Exception):
 
     :param msg: the message to print to the user before exiting.
 
-    :type msg: string
+    :type msg: str
 
     """
     def __init__(self, msg):
@@ -211,7 +211,7 @@ class ProgramError(Exception):
 
         :param msg: the message to print to the user
 
-        :type msg: string
+        :type msg: str
 
         """
         self.message = str(msg)

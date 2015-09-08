@@ -33,7 +33,7 @@ def main(argString=None):
 
     :param argString: the options.
 
-    :type argString: list of strings
+    :type argString: list
 
     These are the following steps:
 
@@ -125,11 +125,11 @@ def createGenderPlot(bfile, intensities, problematic_samples, format,
     :param format: the format of the output plot.
     :param out_prefix: the prefix of the output file.
 
-    :type bfile: string
-    :type intensities: string
-    :type problematic_samples: string
-    :type format: string
-    :type out_prefix: string
+    :type bfile: str
+    :type intensities: str
+    :type problematic_samples: str
+    :type format: str
+    :type out_prefix: str
 
     Creates the gender plot of the samples using the
     :py:mod:`pyGenClean.SexCheck.gender_plot` module.
@@ -153,10 +153,10 @@ def createLrrBafPlot(raw_dir, problematic_samples, format, out_prefix):
     :param format: the format of the plot.
     :param out_prefix: the prefix of the output file.
 
-    :type raw_dir: string
-    :type problematic_samples: string
-    :type format: string
-    :type out_prefix: string
+    :type raw_dir: str
+    :type problematic_samples: str
+    :type format: str
+    :type out_prefix: str
 
     Creates the LRR (Log R Ratio) and BAF (B Allele Frequency) of the
     problematic samples using the :py:mod:`pyGenClean.SexCheck.baf_lrr_plot`
@@ -186,9 +186,9 @@ def checkBim(fileName, minNumber, chromosome):
     :param minNumber:
     :param chromosome:
 
-    :type fileName: string
+    :type fileName: str
     :type minNumber: int
-    :type chromosome: string
+    :type chromosome: str
 
     :returns: ``True`` if there are at least ``minNumber`` markers on
               chromosome ``chromosome``, ``False`` otherwise.
@@ -210,7 +210,7 @@ def computeNoCall(fileName):
 
     :param fileName: the name of the file
 
-    :type fileName: string
+    :type fileName: str
 
     Reads the ``ped`` file created by Plink using the ``recodeA`` options (see
     :py:func:`createPedChr24UsingPlink`) and computes the number and percentage
@@ -257,7 +257,7 @@ def computeHeteroPercentage(fileName):
 
     :param fileName: the name of the input file.
 
-    :type fileName: string
+    :type fileName: str
 
     Reads the ``ped`` file created by Plink using the ``recodeA`` options (see
     :py:func:`createPedChr23UsingPlink`) and computes the heterozygosity
@@ -322,9 +322,9 @@ def readCheckSexFile(fileName, allProblemsFileName, idsFileName, femaleF,
     :param femaleF: the F threshold for females.
     :param maleF: the F threshold for males.
 
-    :type fileName: string
-    :type allProblemsFileName: string
-    :type idsFileName: string
+    :type fileName: str
+    :type allProblemsFileName: str
+    :type idsFileName: str
     :type femaleF: float
     :type maleF: float
 
@@ -498,7 +498,7 @@ def runCommand(command):
 
     :param command: the command to run.
 
-    :type command: list of strings
+    :type command: list
 
     Tries to run a command. If it fails, raise a :py:class:`ProgramError`. This
     function uses the :py:mod:`subprocess` module.
@@ -556,7 +556,7 @@ def parseArgs(argString=None):  # pragma: no cover
 
     :param argString: the options.
 
-    :type argString: list of strings
+    :type argString: list
 
     :returns: A :py:class:`argparse.Namespace` object created by the
               :py:mod:`argparse` module. It contains the values of the
@@ -603,7 +603,7 @@ class ProgramError(Exception):
 
     :param msg: the message to print to the user before exiting.
 
-    :type msg: string
+    :type msg: str
 
     """
     def __init__(self, msg):
@@ -611,7 +611,7 @@ class ProgramError(Exception):
 
         :param msg: the message to print to the user.
 
-        :type msg: string
+        :type msg: str
 
         """
         self.message = str(msg)

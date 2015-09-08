@@ -58,8 +58,8 @@ def readPopulations(inputFileName, requiredPopulation):
     :param inputFileName: the name of the population file.
     :param requiredPopulation: the required population.
 
-    :type inputFileName: string
-    :type requiredPopulation: list of string
+    :type inputFileName: str
+    :type requiredPopulation: list
 
     :returns: a :py:class:`dict` containing the population of each samples.
 
@@ -111,12 +111,12 @@ def plotMDS(data, theOrders, theLabels, theColors, theAlphas, theSizes,
     :param options: the options.
 
     :type data: list of numpy.array
-    :type theOrders: list of int
-    :type theLabels: list of string
-    :type theColors: list of string
-    :type theAlphas: list of float
-    :type theSizes: list of int
-    :type theMarkers: list of string
+    :type theOrders: list
+    :type theLabels: list
+    :type theColors: list
+    :type theAlphas: list
+    :type theSizes: list
+    :type theMarkers: list
     :type options: argparse.Namespace
 
     """
@@ -207,11 +207,11 @@ def extractData(fileName, populations, population_order, xaxis, yaxis):
     :param xaxis: the component to print as the X axis.
     :param yaxis: the component to print as the Y axis.
 
-    :type fileName: string
+    :type fileName: str
     :type populations: dict
-    :type population_order: list of string
-    :type xaxis: string
-    :type yaxis: string
+    :type population_order: list
+    :type xaxis: str
+    :type yaxis: str
 
     :returns: the MDS data with information about the population of each
               sample. The first element of the returned tuple is a tuple. The
@@ -394,14 +394,14 @@ class ProgramError(Exception):
     """An :py:class:`Exception` raised in case of a problem.
 
     :param msg: the message to print to the user before exiting.
-    :type msg: string
+    :type msg: str
 
     """
     def __init__(self, msg):
         """Construction of the :py:class:`ProgramError` class.
 
         :param msg: the message to print to the user
-        :type msg: string
+        :type msg: str
 
         """
         self.message = str(msg)

@@ -28,7 +28,7 @@ def main(argString=None):
 
     :param argString: the options.
 
-    :type argString: list of strings
+    :type argString: list
 
     These are the steps:
 
@@ -56,13 +56,13 @@ def main(argString=None):
 def check_file_names(samples, raw_dir, options):
     """Check if all files are present.
 
-    :param samples: a list of tuples with the family ID as first element
-                    (string) and sample ID as last element (string).
+    :param samples: a list of tuples with the family ID as first element (str)
+                    and sample ID as last element (str).
     :param raw_dir: the directory containing the raw files.
     :param options: the options.
 
     :type samples: list of tuples
-    :type raw_dir: string
+    :type raw_dir: str
     :type options: argparse.Namespace
 
     :returns: a dict containing samples as key (a tuple with the family ID as
@@ -99,7 +99,7 @@ def read_problematic_samples(file_name):
     :param file_name: the name of the file containing problematic samples after
                       sex check.
 
-    :type file_name: string
+    :type file_name: str
 
     :returns: a set of problematic samples (tuple containing the family ID as
               first element and the sample ID as last element).
@@ -127,7 +127,7 @@ def encode_chromosome(chromosome):
 
     :param chromosome: the chromosome to encode.
 
-    :type chromosome: string
+    :type chromosome: str
 
     :returns: the encoded chromosome.
 
@@ -331,7 +331,7 @@ def parseArgs(argString=None):  # pragma: no cover
 
     :param argString: the options.
 
-    :type argString: list of strings
+    :type argString: list
 
     :returns: A :py:class:`argparse.Namespace` object created by the
               :py:mod:`argparse` module. It contains the values of the
@@ -370,7 +370,7 @@ class ProgramError(Exception):
 
     :param msg: the message to print to the user before exiting.
 
-    :type msg: string
+    :type msg: str
 
     """
     def __init__(self, msg):
@@ -378,7 +378,7 @@ class ProgramError(Exception):
 
         :param msg: the message to print to the user
 
-        :type msg: string
+        :type msg: str
 
         """
         self.message = str(msg)

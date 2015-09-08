@@ -33,7 +33,7 @@ def main(argString=None):
 
     :param argString: the options.
 
-    :type argString: list of strings
+    :type argString: list
 
     These are the steps performed by this module:
 
@@ -116,9 +116,9 @@ def compareBIMfiles(beforeFileName, afterFileName, outputFileName):
                            differences between the ``before`` and the ``after``
                            files.
 
-    :type beforeFileName: string
-    :type afterFileName: string
-    :type outputFileName: string
+    :type beforeFileName: str
+    :type afterFileName: str
+    :type outputFileName: str
 
     :returns: the number of differences between the two files.
 
@@ -151,7 +151,7 @@ def computeNumberOfMarkers(inputFileName):
 
     :param inputFileName: the name of the ``bim`` file.
 
-    :type inputFileName: string
+    :type inputFileName: str
 
     :returns: the number of marker in the ``bim`` file.
 
@@ -170,9 +170,9 @@ def computeHWE(prefix, threshold, outPrefix):
     :param threshold: the Hardy Weinberg threshold.
     :param outPrefix: the prefix of the output file.
 
-    :type prefix: string
-    :type threshold: string
-    :type outPrefix: string
+    :type prefix: str
+    :type threshold: str
+    :type outPrefix: str
 
     Uses Plink to exclude markers that failed the Hardy-Weinberg test at a
     specified significance threshold.
@@ -188,7 +188,7 @@ def runCommand(command):
 
     :param command: the command to run.
 
-    :type command: list of strings
+    :type command: list
 
     Tries to run a command. If it fails, raise a :py:class:`ProgramError`. This
     function uses the :py:mod:`subprocess` module.
@@ -246,7 +246,7 @@ def parseArgs(argString=None):  # pragma: no cover
 
     :param argString: the options.
 
-    :type argString: list of strings
+    :type argString: list
 
     :returns: A :py:class:`argparse.Namespace` object created by
               the :py:mod:`argparse` module. It contains the values of the
@@ -279,14 +279,14 @@ class ProgramError(Exception):
 
     :param msg: the message to print to the user before exiting.
 
-    :type msg: string
+    :type msg: str
 
     """
     def __init__(self, msg):
         """Construction of the :py:class:`ProgramError` class.
 
         :param msg: the message to print to the user
-        :type msg: string
+        :type msg: str
 
         """
         self.message = str(msg)

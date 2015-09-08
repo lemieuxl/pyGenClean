@@ -29,7 +29,7 @@ def main(argString=None):
 
     :param argString: the options.
 
-    :type argString: list of strings
+    :type argString: list
 
     These are the steps:
 
@@ -67,7 +67,7 @@ def extractSignificantSNPs(prefix):
 
     :param prefix: the prefix of the input file.
 
-    :type prefix: string
+    :type prefix: str
 
     Reads a list of significant markers (``prefix.assoc.fisher``) after plate
     bias analysis with Plink. Writes a file (``prefix.significant_SNPs.txt``)
@@ -149,7 +149,7 @@ def runCommand(command):
 
     :param command: the command to run.
 
-    :type command: list of strings
+    :type command: list
 
     Tries to run a command. If it fails, raise a :py:class:`ProgramError`. This
     function uses the :py:mod:`subprocess` module.
@@ -200,7 +200,7 @@ def parseArgs(argString=None):  # pragma: no cover
 
     :param argString: the options.
 
-    :type argString: list of strings
+    :type argString: list
 
     :returns: A :py:class:`argparse.Namespace` object created by the
               :py:mod:`argparse` module. It contains the values of the
@@ -236,7 +236,7 @@ class ProgramError(Exception):
 
     :param msg: the message to print to the user before exiting.
 
-    :type msg: string
+    :type msg: str
 
     """
     def __init__(self, msg):
@@ -244,7 +244,7 @@ class ProgramError(Exception):
 
         :param msg: the message to print to the user
 
-        :type msg: string
+        :type msg: str
 
         """
         self.message = str(msg)

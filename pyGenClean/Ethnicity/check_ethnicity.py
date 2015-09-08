@@ -38,7 +38,7 @@ def main(argString=None):
 
     :param argString: the options.
 
-    :type argString: list of strings
+    :type argString: list
 
     These are the steps of this module:
 
@@ -194,9 +194,9 @@ def create_scree_plot(in_filename, out_filename, plot_title):
     :param out_filename: the name of the output file.
     :param plot_title: the title of the scree plot.
 
-    :type in_filename: string
-    :type out_filename: string
-    :type plot_title: string
+    :type in_filename: str
+    :type out_filename: str
+    :type plot_title: str
 
     """
     # Constructing the arguments
@@ -217,8 +217,8 @@ def compute_eigenvalues(in_prefix, out_prefix):
     :param in_prefix: the prefix of the input files.
     :param out_prefix: the prefix of the output files.
 
-    :type in_prefix: string
-    :type out_prefix: string
+    :type in_prefix: str
+    :type out_prefix: str
 
     Creates a "parameter file" used by smartpca and runs it.
 
@@ -250,11 +250,11 @@ def find_the_outliers(mds_file_name, population_file_name, ref_pop_name,
                        modify the strictness of the outlier removal procedure.
     :param out_prefix: the prefix of the output file.
 
-    :type mds_file_name: string
-    :type population_file_name: string
-    :type ref_pop_name: string
+    :type mds_file_name: str
+    :type population_file_name: str
+    :type ref_pop_name: str
     :type multiplier: float
-    :type out_prefix: string
+    :type out_prefix: str
 
     Uses the :py:mod:`pyGenClean.Ethnicity.find_outliers` modules to find
     outliers. It requires the ``mds`` file created by :py:func:`createMDSFile`
@@ -279,9 +279,9 @@ def createPopulationFile(inputFiles, labels, outputFileName):
     :param labels: the list of labels (corresponding to the input files).
     :param outputFileName: the name of the output file.
 
-    :type inputFiles: list of strings
-    :type labels: list of strings
-    :type outputFileName: string
+    :type inputFiles: list
+    :type labels: list
+    :type outputFileName: str
 
     The ``inputFiles`` is in reality a list of ``tfam`` files composed of
     samples. For each of those ``tfam`` files, there is a label associated with
@@ -331,9 +331,9 @@ def plotMDS(inputFileName, outPrefix, populationFileName, options):
     :param populationFileName: the name of the population file.
     :param options: the options
 
-    :type inputFileName: string
-    :type outPrefix: string
-    :type populationFileName: string
+    :type inputFileName: str
+    :type outPrefix: str
+    :type populationFileName: str
     :type options: argparse.Namespace
 
     Plots the ``mds`` value according to the ``inputFileName`` file (``mds``)
@@ -389,9 +389,9 @@ def createMDSFile(nb_components, inPrefix, outPrefix, genomeFileName):
     :param genomeFileName: the name of the ``genome`` file.
 
     :type nb_components: int
-    :type inPrefix: string
-    :type outPrefix: string
-    :type genomeFileName: string
+    :type inPrefix: str
+    :type outPrefix: str
+    :type genomeFileName: str
 
     Using Plink, computes the MDS values for each individual using the
     ``inPrefix``, ``genomeFileName`` and the number of components. The results
@@ -412,8 +412,8 @@ def runRelatedness(inputPrefix, outPrefix, options):
     :param outPrefix: the prefix of the output file.
     :param options: the options
 
-    :type inputPrefix: string
-    :type outPrefix: string
+    :type inputPrefix: str
+    :type outPrefix: str
     :type options: argparse.Namespace
 
     :returns: the prefix of the new bfile.
@@ -458,7 +458,7 @@ def allFileExists(fileList):
 
     :param fileList: the list of file to check.
 
-    :type fileList: list of strings
+    :type fileList: list
 
     Check if all the files in ``fileList`` exists.
 
@@ -476,9 +476,9 @@ def flipSNPs(inPrefix, outPrefix, flipFileName):
     :param outPrefix: the prefix of the output file.
     :param flipFileName: the name of the file containing the markers to flip.
 
-    :type inPrefix: string
-    :type outPrefix: string
-    :type flipFileName: string
+    :type inPrefix: str
+    :type outPrefix: str
+    :type flipFileName: str
 
     Using Plink, flip a set of markers in ``inPrefix``, and saves the results
     in ``outPrefix``. The list of markers to be flipped is in ``flipFileName``.
@@ -497,9 +497,9 @@ def excludeSNPs(inPrefix, outPrefix, exclusionFileName):
     :param exclusionFileName: the name of the file containing the markers to be
                               excluded.
 
-    :type inPrefix: string
-    :type outPrefix: string
-    :type exclusionFileName: string
+    :type inPrefix: str
+    :type outPrefix: str
+    :type exclusionFileName: str
 
     Using Plink, exclude a list of markers from ``inPrefix``, and saves the
     results in ``outPrefix``. The list of markers are in ``exclusionFileName``.
@@ -518,9 +518,9 @@ def renameSNPs(inPrefix, updateFileName, outPrefix):
                            names.
     :param outPrefix: the prefix of the output file.
 
-    :type inPrefix: string
-    :type updateFileName: string
-    :type outPrefix: string
+    :type inPrefix: str
+    :type updateFileName: str
+    :type outPrefix: str
 
     Using Plink, changes the name of the markers in ``inPrefix`` using
     ``updateFileName``. It saves the results in ``outPrefix``.
@@ -539,9 +539,9 @@ def findFlippedSNPs(frqFile1, frqFile2, outPrefix):
     :param frqFile2: the name of the second frequency file.
     :param outPrefix: the prefix of the output files.
 
-    :type frqFile1: string
-    :type frqFile2: string
-    :type outPrefix: string
+    :type frqFile1: str
+    :type frqFile2: str
+    :type outPrefix: str
 
     By reading two frequency files (``frqFile1`` and ``frqFile2``), it finds a
     list of markers that need to be flipped so that the first file becomes
@@ -645,8 +645,8 @@ def computeFrequency(prefix, outPrefix):
                    compute frequencies.
     :param outPrefix: the prefix of the output files.
 
-    :type prefix: string
-    :type outPrefix: string
+    :type prefix: str
+    :type outPrefix: str
 
     Uses Plink to compute the frequency of all the markers in the ``prefix``
     binary file.
@@ -664,8 +664,8 @@ def combinePlinkBinaryFiles(prefixes, outPrefix):
                      combined.
     :param outPrefix: the prefix of the output file (the combined file).
 
-    :type prefixes: list of strings
-    :type outPrefix: string
+    :type prefixes: list
+    :type outPrefix: str
 
     It uses Plink to merge a list of binary files (which is a list of prefixes
     (strings)), and create the final data set which as ``outPrefix`` as the
@@ -702,9 +702,9 @@ def findOverlappingSNPsWithReference(prefix, referencePrefixes, outPrefix):
     :param referencePrefixes: the prefix of the reference population files.
     :param outPrefix: the prefix of the output files.
 
-    :type prefix: string
-    :type referencePrefixes: list of strings
-    :type outPrefix: string
+    :type prefix: str
+    :type referencePrefixes: list
+    :type outPrefix: str
 
     It starts by reading the ``bim`` file of the source data set
     (``prefix.bim``). It finds all the markers (excluding the duplicated ones).
@@ -813,10 +813,10 @@ def extractSNPs(snpToExtractFileName, referencePrefixes, popNames, outPrefix,
     :param runSGE: Whether using SGE or not.
     :param options: the options.
 
-    :type snpToExtractFileName: string
-    :type referencePrefixes: list of string
-    :type popNames: list of string
-    :type outPrefix: string
+    :type snpToExtractFileName: str
+    :type referencePrefixes: list of str
+    :type popNames: list of str
+    :type outPrefix: str
     :type runSGE: boolean
     :type options: argparse.Namespace
 
@@ -899,7 +899,7 @@ def runCommand(command):
 
     :param command: the command to run.
 
-    :type command: list of strings
+    :type command: list
 
     Tries to run a command. If it fails, raise a :py:class:`ProgramError`. This
     function uses the :py:mod:`subprocess` module.
@@ -991,7 +991,7 @@ def parseArgs(argString=None):  # pragma: no cover
 
     :param argString: the options.
 
-    :type argString: list of string
+    :type argString: list
 
     :returns: A :py:class:`argparse.Namespace` object created by
               the :py:mod:`argparse` module. It contains the values of the
@@ -1055,7 +1055,7 @@ class ProgramError(Exception):
 
     :param msg: the message to print to the user before exiting.
 
-    :type msg: string
+    :type msg: str
 
     """
     def __init__(self, msg):
@@ -1063,7 +1063,7 @@ class ProgramError(Exception):
 
         :param msg: the message to print to the user
 
-        :type msg: string
+        :type msg: str
 
         """
         self.message = str(msg)

@@ -28,7 +28,7 @@ def main(argString=None):
 
     :param argString: the options.
 
-    :type argString: list of strings
+    :type argString: list
 
     These are the steps:
 
@@ -75,7 +75,7 @@ def read_sex_problems(file_name):
 
     :param file_name: the name of the file containing sex problems.
 
-    :type file_name: string
+    :type file_name: str
 
     :returns: a :py:class:`frozenset` containing samples with sex problem.
 
@@ -108,7 +108,7 @@ def encode_chr(chromosome):
 
     :param chromosome: the chromosome to encode.
 
-    :type chromosome: string
+    :type chromosome: str
 
     :returns: the encoded chromosome as :py:class:`int`.
 
@@ -167,7 +167,7 @@ def encode_gender(gender):
 
     :param gender: the gender to encode.
 
-    :type gender: string
+    :type gender: str
 
     :returns: the encoded gender.
 
@@ -202,7 +202,7 @@ def read_bim(file_name):
 
     :param file_name: the name of the ``bim`` file.
 
-    :type file_name: string
+    :type file_name: str
 
     :returns: a :py:class:`dict` containing the chromosomal location of each
               marker on the sexual chromosomes.
@@ -227,7 +227,7 @@ def read_fam(file_name):
 
     :param file_name: the ``fam`` file to read.
 
-    :type file_name: string
+    :type file_name: str
 
     :returns: a :py:class:`dict` containing the gender of each samples.
 
@@ -388,7 +388,7 @@ def print_data_to_file(data, file_name):
     :param file_name: the name of the output file.
 
     :type data: numpy.recarray
-    :type file_name: string
+    :type file_name: str
 
     """
     try:
@@ -406,7 +406,7 @@ def read_summarized_intensities(prefix):
 
     :param prefix: the prefix of the six files.
 
-    :type prefix: string
+    :type prefix: str
 
     :returns: a :py:class`numpy.recarray` containing the following columns (for
               each of the samples): ``sampleID``, ``chr23``, ``chr24``,
@@ -506,7 +506,7 @@ def read_intensities(file_name, needed_markers_chr, needed_samples_gender,
     :param needed_samples_gender: the gender of all the samples.
     :param sex_problems: the sample with sex problem.
 
-    :type file_name: string
+    :type file_name: str
     :type needed_markers_chr: dict
     :type needed_samples_gender: dict
     :type sex_problems: frozenset
@@ -691,7 +691,7 @@ def parseArgs(argString=None):  # pragma: no cover
 
     :param argString: the options.
 
-    :type argString: list of strings
+    :type argString: list
 
     :returns: A :py:class:`argparse.Namespace` object created by the
               :py:mod:`argparse` module. It contains the values of the
@@ -736,7 +736,7 @@ class ProgramError(Exception):
 
     :param msg: the message to print to the user before exiting.
 
-    :type msg: string
+    :type msg: str
 
     """
     def __init__(self, msg):
@@ -744,7 +744,7 @@ class ProgramError(Exception):
 
         :param msg: the message to print to the user
 
-        :type msg: string
+        :type msg: str
 
         """
         self.message = str(msg)

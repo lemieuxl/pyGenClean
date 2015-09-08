@@ -49,9 +49,10 @@ def section(name):
     """Creates a new section in LaTeX.
 
     :param name: the name of the new section.
-    :type name: string
+    :type name: str
 
     :returns: a LaTeX string containing a new section.
+    :rtype: str
 
     """
     return r"\section{" + name + "}"
@@ -61,9 +62,10 @@ def subsection(name):
     """Creates a new section in LaTeX.
 
     :param name: the name of the new section.
-    :type name: string
+    :type name: str
 
     :returns: a LaTeX string containing a new section.
+    :rtype: str
 
     """
     return r"\subsection{" + name + "}"
@@ -73,7 +75,7 @@ def item(text):
     """Returns an LaTeX item (for enumerate or itemize).
 
     :param text: the text.
-    :type text: string
+    :type text: str
 
     :returns: a LaTeX item.
 
@@ -85,7 +87,7 @@ def texttt(text):
     """Returns type writer font.
 
     :param text: the text.
-    :type text: string.
+    :type text: str
 
     :returns: a type writer font.
 
@@ -97,7 +99,7 @@ def textit(text):
     """Returns italic font.
 
     :param text: the text.
-    :type text: string.
+    :type text: str
 
     :returns: an italic font.
 
@@ -109,7 +111,7 @@ def textbf(text):
     """Returns bold font.
 
     :param text: the text.
-    :type text: string.
+    :type text: str
 
     :returns: an bold font.
 
@@ -129,14 +131,14 @@ def bib_entry(**kwargs):
     :param number: the number.
     :param pages: the pages.
 
-    :type name: string
-    :type authors: string
-    :type title: string
-    :type journal: string
-    :type year: string
-    :type volume: string
-    :type number: string
-    :type pages: string
+    :type name: str
+    :type authors: str
+    :type title: str
+    :type journal: str
+    :type year: str
+    :type volume: str
+    :type number: str
+    :type pages: str
 
     :returns: a bib entry.
 
@@ -156,10 +158,11 @@ def wrap_lines(content, length=80):
     :param content: the content to wrap.
     :param legnth: the maximum length to wrap the content.
 
-    :type content: string
+    :type content: str
     :type length: int
 
     :returns: a string containing the wrapped content.
+    :rtype: str
 
     """
     return "\n".join(textwrap.wrap(content, length, break_long_words=False))
@@ -169,9 +172,10 @@ def format_numbers(number):
     """Formats number in the scientific notation for LaTeX.
 
     :param number: the number to format.
-    :type number: string
+    :type number: str
 
     :returns: a string containing the scientific notation of the number.
+    :rtype: str
 
     """
     # Matching
@@ -192,7 +196,7 @@ def sanitize_fig_name(name):
     """Sanitizes the name of a file (for including graphics in LaTeX).
 
     :param name: the name of the file to sanitize.
-    :type name: string
+    :type name: str
 
     :returns: the sanitized name.
 
@@ -209,7 +213,7 @@ def sanitize_tex(original_text):
 
     :param original_text: the text to sanitize for LaTeX.
 
-    :type original_text: string
+    :type original_text: str
 
     :returns: the sanitize text.
 

@@ -182,8 +182,8 @@ def createFinalTPEDandTFAM(tped, toReadPrefix, prefix, snpToRemove):
     :param snpToRemove: the markers to remove.
 
     :type tped: numpy.array
-    :type toReadPrefix: string
-    :type prefix: string
+    :type toReadPrefix: str
+    :type prefix: str
     :type snpToRemove: set
 
     Starts by copying the unique markers' ``tfam`` file to
@@ -243,14 +243,14 @@ def createAndCleanTPED(tped, tfam, snps, prefix, chosenSNPs, completion,
     :param concordanceT: the concordance threshold.
 
     :type tped: numpy.array
-    :type tfam: list of tuples of strings
+    :type tfam: list
     :type snps: dict
-    :type prefix: string
+    :type prefix: str
     :type chosenSNPs: dict
     :type completion: numpy.array
     :type concordance: dict
     :type snpsToComplete: set
-    :type tfamFileName: string
+    :type tfamFileName: str
     :type completionT: float
     :type concordanceT: float
 
@@ -447,7 +447,7 @@ def chooseBestSnps(tped, snps, trueCompletion, trueConcordance, prefix):
     :type snps: dict
     :type trueCompletion: numpy.array
     :type trueConcordance: dict
-    :type prefix: string
+    :type prefix: str
 
     :returns: a tuple containing the chosen indexes (:py:class:`dict`) as the
               first element, the completion (:py:class:`numpy.array`) as the
@@ -563,8 +563,8 @@ def computeFrequency(prefix, outPrefix):
     :param prefix: the prefix of the input files.
     :param outPrefix: the prefix of the output files.
 
-    :type prefix: string
-    :type outPrefix: string
+    :type prefix: str
+    :type outPrefix: str
 
     :returns: a :py:class:`dict` containing the frequency of each marker.
 
@@ -624,7 +624,7 @@ def runCommand(command):
 
     :param command: the command to run.
 
-    :type command: list of strings
+    :type command: list
 
     Tries to run a command using :py:mod:`subprocess`.
 
@@ -647,8 +647,8 @@ def printDuplicatedTPEDandTFAM(tped, tfamFileName, outPrefix):
     :param outPrefix: the output prefix.
 
     :type tped: numpy.array
-    :type tfamFileName: string
-    :type outPrefix: string
+    :type tfamFileName: str
+    :type outPrefix: str
 
     First, it copies the original ``tfam`` into
     ``outPrefix.duplicated_snps.tfam``. Then, it prints the ``tped`` of
@@ -685,7 +685,7 @@ def printConcordance(concordance, prefix, tped, snps):
     :param snps: the position of the duplicated markers in the ``tped``.
 
     :type concordance: dict
-    :type prefix: string
+    :type prefix: str
     :type tped: numpy.array
     :type snps: dict
 
@@ -737,7 +737,7 @@ def printProblems(completion, concordance, tped, snps, frequencies, prefix,
     :type tped: numpy.array
     :type snps: dict
     :type frequencies: dict
-    :type prefix: string
+    :type prefix: str
     :type diffFreq: float
 
     :returns: a :py:class:`set` containing duplicated markers to complete.
@@ -934,7 +934,7 @@ def computeStatistics(tped, tfam, snps):
     :param snps: the position of the duplicated markers in the ``tped``.
 
     :type tped: numpy.array
-    :type tfam: list of tuples of strings
+    :type tfam: list
     :type snps: dict
 
     :returns: a tuple containing the completion of duplicated markers
@@ -1148,9 +1148,9 @@ def processTPED(uniqueSNPs, mapF, fileName, tfam, prefix):
 
     :type uniqueSNPs: dict
     :type mapF: list
-    :type fileName: string
-    :type tfam: string
-    :type prefix: string
+    :type fileName: str
+    :type tfam: str
+    :type prefix: str
 
     :returns: a tuple with the representation of the ``tped`` file
               (:py:class:`numpy.array`) as first element, and the updated
@@ -1213,7 +1213,7 @@ def findUniques(mapF):
 
     :param mapF: representation of a ``map`` file.
 
-    :type mapF: list of tuple of string
+    :type mapF: list
 
     :returns: a :py:class:`dict` containing unique markers (according to their
               genomic localisation).
@@ -1250,7 +1250,7 @@ def readTFAM(fileName):
 
     :param fileName: the name of the ``tfam`` file.
 
-    :type fileName: string
+    :type fileName: str
 
     :returns: a representation the ``tfam`` file (:py:class:`numpy.array`).
 
@@ -1272,7 +1272,7 @@ def readMAP(fileName, prefix):
 
     :param fileName: the name of the ``map`` file.
 
-    :type fileName: string
+    :type fileName: str
 
     :returns: a list of tuples, representing the ``map`` file.
 
@@ -1367,7 +1367,7 @@ def parseArgs(argString=None):  # pragma: no cover
 
     :param argString: the options.
 
-    :type argString: list of strings
+    :type argString: list
 
     :returns: A :py:class:`argparse.Namespace` object created by the
               :py:mod:`argparse` module. It contains the values of the
@@ -1407,7 +1407,7 @@ class ProgramError(Exception):
 
     :param msg: the message to print to the user before exiting.
 
-    :type msg: string
+    :type msg: str
 
     """
     def __init__(self, msg):
@@ -1415,7 +1415,7 @@ class ProgramError(Exception):
 
         :param msg: the message to print to the user
 
-        :type msg: string
+        :type msg: str
 
         """
         self.message = str(msg)

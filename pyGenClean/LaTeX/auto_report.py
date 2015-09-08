@@ -29,8 +29,8 @@ def create_report(outdirname, report_filename, **kwargs):
     :param report_filename: the name of the file.
     :param outdirname: the name of the output directory.
 
-    :type report_filename: string
-    :type outdirname: string
+    :type report_filename: str
+    :type outdirname: str
 
     """
     # Checking the required variables
@@ -158,10 +158,10 @@ def _format_background(background):
 
     :param background: the background content or file.
 
-    :type background: string or file
+    :type background: str or file
 
     :returns: the background content.
-    :rtype: string
+    :rtype: str
 
     """
     # Getting the background
@@ -191,10 +191,10 @@ def _create_summary_table(fn, template, nb_samples, nb_markers):
     :param nb_samples: the final number of samples.
     :param nb_markers: the final number of markers.
 
-    :type fn: string
+    :type fn: str
     :type template: Jinja2.template
-    :type nb_samples: string
-    :type nb_markers: string
+    :type nb_samples: str
+    :type nb_markers: str
 
     """
     # The final data

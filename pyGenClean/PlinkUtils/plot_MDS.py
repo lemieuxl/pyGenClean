@@ -66,7 +66,7 @@ def readPopulations(inputFileName):
 
     :param inputFileName: the name of the population file.
 
-    :type inputFileName: string
+    :type inputFileName: str
 
     :returns: a :py:class:`dict` of population for each of the samples.
 
@@ -108,11 +108,11 @@ def plotMDS(data, theOrders, theLabels, theColors, theSizes, theMarkers,
     :param options: the options.
 
     :type data: list of numpy.array
-    :type theOrders: list of int
-    :type theLabels: list of string
-    :type theColors: list of string
-    :type theSizes: list of int
-    :type theMarkers: list of string
+    :type theOrders: list
+    :type theLabels: list
+    :type theColors: list
+    :type theSizes: list
+    :type theMarkers: list
     :type options: argparse.Namespace
 
     """
@@ -165,7 +165,7 @@ def extractData(fileName, populations):
     :param fileName: the name of the MDS file.
     :param populations: the population of each sample in the MDS file.
 
-    :type fileName: string
+    :type fileName: str
     :type fileName: dict
 
     :returns: the MDS data with information about the population of each
@@ -328,7 +328,7 @@ class ProgramError(Exception):
 
     :param msg: the message to print to the user before exiting.
 
-    :type msg: string
+    :type msg: str
 
     """
     def __init__(self, msg):
@@ -336,7 +336,7 @@ class ProgramError(Exception):
 
         :param msg: the message to print to the user
 
-        :type msg: string
+        :type msg: str
 
         """
         self.message = str(msg)

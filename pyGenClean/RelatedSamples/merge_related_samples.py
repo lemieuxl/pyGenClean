@@ -27,7 +27,7 @@ def main(argString=None):
 
     :param argString: the options.
 
-    :type argString: list of strings
+    :type argString: list
 
     """
     # Getting and checking the options
@@ -44,8 +44,8 @@ def merge_related_samples(file_name, out_prefix, no_status):
     :param out_prefix: the prefix of the output files.
     :param no_status: is there a status column in the file?
 
-    :type file_name: string
-    :type out_prefix: string
+    :type file_name: str
+    :type out_prefix: str
     :type no_status: boolean
 
     In the output file, there are a pair of samples per line. Hence, one can
@@ -192,7 +192,7 @@ def parseArgs(argString=None):  # pragma: no cover
 
     :param argString: the options.
 
-    :type argString: list of strings
+    :type argString: list
 
     :returns: A :py:class:`argparse.Namespace` object created by the
               :py:mod:`argparse` module. It contains the values of the
@@ -226,7 +226,7 @@ class ProgramError(Exception):
 
     :param msg: the message to print to the user before exiting.
 
-    :type msg: string
+    :type msg: str
 
     """
     def __init__(self, msg):
@@ -234,7 +234,7 @@ class ProgramError(Exception):
 
         :param msg: the message to print to the user
 
-        :type msg: string
+        :type msg: str
 
         """
         self.message = str(msg)

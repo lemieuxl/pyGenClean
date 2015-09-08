@@ -66,7 +66,7 @@ def compareSNPs(before, after, outFileName):
 
     :type before: set
     :type after: set
-    :type outFileName: string
+    :type outFileName: str
 
     Finds the difference between two sets of markers, and write them in the
     ``outFileName`` file.
@@ -104,7 +104,7 @@ def readBIM(fileName):
 
     :param fileName: the name of the BIM file to read.
 
-    :type fileName: string
+    :type fileName: str
 
     :returns: the set of markers in the BIM file.
 
@@ -201,7 +201,7 @@ class ProgramError(Exception):
 
     :param msg: the message to print to the user before exiting.
 
-    :type msg: string
+    :type msg: str
 
     """
     def __init__(self, msg):
@@ -209,7 +209,7 @@ class ProgramError(Exception):
 
         :param msg: the message to print to the user
 
-        :type msg: string
+        :type msg: str
 
         """
         self.message = str(msg)

@@ -34,7 +34,7 @@ def main(argString=None):
 
     :param argString: the options.
 
-    :type argString: list of strings
+    :type argString: list
 
     Here are the steps for this function:
 
@@ -117,9 +117,9 @@ def plot_related_data(x, y, code, ylabel, fileName, options):
 
     :type x: numpy.array of floats
     :type y: numpy.array of floats
-    :type code: numpy.array of strings
-    :type ylabel: string
-    :type fileName: string
+    :type code: numpy.array
+    :type ylabel: str
+    :type fileName: str
     :type options: argparse.Namespace
 
     There are four different relation codes (represented by 4 different color
@@ -199,8 +199,8 @@ def extractRelatedIndividuals(fileName, outPrefix, ibs2_ratio_threshold):
     :param ibs2_ratio_threshold: the ibs2 ratio threshold (tells if sample pair
                                  is related or not).
 
-    :type fileName: string
-    :type outPrefix: string
+    :type fileName: str
+    :type outPrefix: str
     :type ibs2_ratio_threshold: float
 
     :returns: a :py:class:`numpy.recarray` data set containing (for each
@@ -378,7 +378,7 @@ def checkNumberOfSNP(fileName, minimumNumber):
     :param minimumNumber: the minimum number of markers that needs to be in the
                           file.
 
-    :type fileName: string
+    :type fileName: str
     :type minimumNumber: int
 
     :returns: ``True`` if there is enough markers in the file, ``False``
@@ -408,9 +408,9 @@ def splitFile(inputFileName, linePerFile, outPrefix):
     :param linePerFile: the number of line per file (after splitting).
     :param outPrefix: the prefix of the output files.
 
-    :type inputFileName: string
+    :type inputFileName: str
     :type linePerFile: int
-    :type outPrefix: string
+    :type outPrefix: str
 
     :returns: the number of created temporary files.
 
@@ -474,7 +474,7 @@ def runGenome(bfile, options):
     :param bfile: the input file prefix.
     :param options: the options.
 
-    :type bfile: string
+    :type bfile: str
     :type options: argparse.Namespace
 
     :returns: the name of the ``genome`` file.
@@ -519,7 +519,7 @@ def mergeGenomeLogFiles(outPrefix, nbSet):
     :param outPrefix: the prefix of the output files.
     :param nbSet: The number of set of files to merge together.
 
-    :type outPrefix: string
+    :type outPrefix: str
     :type nbSet: int
 
     :returns: the name of the output file (the ``genome`` file).
@@ -614,10 +614,10 @@ def runGenomeSGE(bfile, freqFile, nbJob, outPrefix, options):
     :param outPrefix: the prefix of all the output files.
     :param options: the options.
 
-    :type bfile: string
-    :type freqFile: string
+    :type bfile: str
+    :type freqFile: str
     :type nbJob: int
-    :type outPrefix: string
+    :type outPrefix: str
     :type options: argparse.Namespace
 
     Runs Plink with the ``genome`` options on the cluster (using SGE).
@@ -693,7 +693,7 @@ def extractSNPs(snpsToExtract, options):
     :param snpsToExtract: the name of the file containing markers to extract.
     :param options: the options
 
-    :type snpsToExtract: string
+    :type snpsToExtract: str
     :type options: argparse.Namespace
 
     :returns: the prefix of the output files.
@@ -736,7 +736,7 @@ def runCommand(command):
 
     :param command: the command to run.
 
-    :type command: list of strings
+    :type command: list
 
     Tries to run a command. If it fails, raise a :py:class:`ProgramError`. This
     function uses the :py:mod:`subprocess` module.
@@ -814,7 +814,7 @@ def parseArgs(argString=None):  # pragma: no cover
 
     :param argString: the options.
 
-    :type argString: list of strings
+    :type argString: list
 
     :returns: A :py:class:`argparse.Namespace` object created by
               the :py:mod:`argparse` module. It contains the values of the
@@ -861,7 +861,7 @@ class ProgramError(Exception):
 
     :param msg: the message to print to the user before exiting.
 
-    :type msg: string
+    :type msg: str
 
     """
     def __init__(self, msg):
@@ -869,7 +869,7 @@ class ProgramError(Exception):
 
         :param msg: the message to print to the user
 
-        :type msg: string
+        :type msg: str
 
         """
         self.message = str(msg)

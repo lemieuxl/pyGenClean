@@ -94,7 +94,7 @@ def merge_required_files(dirnames, out_dir):
     :param out_dir: the name of the output directory.
 
     :type dirnames: list
-    :type out_dir: string
+    :type out_dir: str
 
     """
     # The list of files to merge
@@ -117,8 +117,8 @@ def copy_initial_files(filename, out_dir):
     :param filename: the name of the file.
     :param out_dir: the name of the output directory
 
-    :type dirname: string
-    :type out_dir: string
+    :type dirname: str
+    :type out_dir: str
 
     """
     shutil.copy(filename, out_dir)
@@ -130,8 +130,8 @@ def get_final_numbers(filename, out_dir):
     :param filename: the name of the file.
     :param out_dir: the output directory.
 
-    :type filename: string
-    :type out_dir: string
+    :type filename: str
+    :type out_dir: str
 
     :returns: the final number of markers and samples
     :rtype: tuple
@@ -219,10 +219,10 @@ def generate_report(out_dir, latex_summaries, nb_markers, nb_samples, options):
     :param nb_samples: the final number of samples.
     :param options: the list of options.
 
-    :type out_dir: string
+    :type out_dir: str
     :type latex_summaries: list
-    :type nb_markers: string
-    :type nb_samples: string
+    :type nb_markers: str
+    :type nb_samples: str
     :type options: argparse.Namespace
 
     """
@@ -342,7 +342,7 @@ class ProgramError(Exception):
 
     :param msg: the message to print to the user before exiting.
 
-    :type msg: string
+    :type msg: str
 
     """
     def __init__(self, msg):
@@ -350,7 +350,7 @@ class ProgramError(Exception):
 
         :param msg: the message to print to the user
 
-        :type msg: string
+        :type msg: str
 
         """
         self.message = str(msg)

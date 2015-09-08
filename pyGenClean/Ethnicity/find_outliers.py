@@ -107,7 +107,7 @@ def find_outliers(mds, centers, center_info, ref_pop, options):
     :type mds: numpy.recarray
     :type centers: numpy.array
     :type center_info: dict
-    :type ref_pop: string
+    :type ref_pop: str
     :type options: argparse.Namespace
 
     :returns: a :py:class:`set` of outliers from the ``ref_pop`` population.
@@ -388,9 +388,9 @@ def read_mds_file(file_name, c1, c2, pops):
     :param c2: the second component to read (y axis).
     :param pops: the population of each sample.
 
-    :type file_name: string
-    :type c1: string
-    :type c2: string
+    :type file_name: str
+    :type c1: str
+    :type c2: str
     :type pops: dict
 
     :returns: a :py:class:`numpy.recarray` (one sample per line) with the
@@ -450,7 +450,7 @@ def read_population_file(file_name):
 
     :param file_name: the name of the population file.
 
-    :type file_name: string
+    :type file_name: str
 
     :returns: a :py:class:`dict` containing the population for each of the
               samples.
@@ -525,7 +525,7 @@ def parseArgs(argString=None):  # pragma: no cover
 
     :param argString: the options.
 
-    :type argString: list of string
+    :type argString: list
 
     :returns: A :py:class:`argparse.Namespace` object created by the
               :py:mod:`argparse` module. It contains the values of the
@@ -594,7 +594,7 @@ class ProgramError(Exception):
 
     :param msg: the message to print to the user before exiting.
 
-    :type msg: string
+    :type msg: str
 
     """
     def __init__(self, msg):
@@ -602,7 +602,7 @@ class ProgramError(Exception):
 
         :param msg: the message to print to the user
 
-        :type msg: string
+        :type msg: str
 
         """
         self.message = str(msg)

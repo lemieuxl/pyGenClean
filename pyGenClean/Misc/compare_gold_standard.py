@@ -949,14 +949,14 @@ class ProgramError(Exception):
     """An :py:class:`Exception` raised in case of a problem.
 
     :param msg: the message to print to the user before exiting.
-    :type msg: string
+    :type msg: str
 
     """
     def __init__(self, msg):
         """Construction of the :py:class:`ProgramError` class.
 
         :param msg: the message to print to the user
-        :type msg: string
+        :type msg: str
 
         """
         self.message = str(msg)

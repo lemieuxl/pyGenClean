@@ -31,7 +31,7 @@ def main(argString=None):
 
     :param argString: the options
 
-    :type argString: list of strings
+    :type argString: list
 
     Here are the steps for the duplicated samples step.
 
@@ -177,8 +177,8 @@ def addToTPEDandTFAM(tped, tfam, prefix, toAddPrefix):
 
     :type tped: :py:class:`numpy.array`
     :type tfam: :py:class:`numpy.array`
-    :type prefix: string
-    :type toAddPrefix: string
+    :type prefix: str
+    :type toAddPrefix: str
 
     Here are the steps of this function:
 
@@ -281,7 +281,7 @@ def createAndCleanTPED(tped, tfam, samples, oldSamples, chosenSamples,
     :type samples: dict
     :type oldSamples: dict
     :type chosenSamples: dict
-    :type prefix: string
+    :type prefix: str
     :type completion: :py:class:`numpy.array`
     :type completionT: float
     :type concordance: dict
@@ -442,7 +442,7 @@ def chooseBestDuplicates(tped, samples, oldSamples, completion,
     :type oldSamples: dict
     :type completion: :py:class:`numpy.array`
     :type concordance_all: dict
-    :type prefix: string
+    :type prefix: str
 
     :returns: a tuple where the first element is a list of the chosen samples'
               indexes, the second on is the completion and the last one is the
@@ -570,7 +570,7 @@ def printDuplicatedTPEDandTFAM(tped, tfam, samples, oldSamples, prefix):
     :type tfam: :py:class:`numpy.array`
     :type samples: dict
     :type oldSamples: dict
-    :type prefix: string
+    :type prefix: str
 
     The ``tped`` and ``tfam`` files are written in
     ``prefix.duplicated_samples.tped`` and ``prefix.duplicated_samples.tfam``,
@@ -616,7 +616,7 @@ def printConcordance(concordance, prefix):
     :param prefix: the prefix of all the files.
 
     :type concordance: dict
-    :type prefix: string
+    :type prefix: str
 
     :returns: the concordance percentage (dict)
 
@@ -674,7 +674,7 @@ def printStatistics(completion, concordance, tpedSamples, oldSamples, prefix):
     :type concordance: dict
     :type tpedSamples: dict
     :type oldSamples: dict
-    :type prefix: string
+    :type prefix: str
 
     :returns: the completion for each duplicated samples, as a
               :py:class:`numpy.array`.
@@ -754,7 +754,7 @@ def computeStatistics(tped, tfam, samples, oldSamples, prefix):
     :type tfam: :py:class:`numpy.array`
     :type samples: dict
     :type oldSamples: dict
-    :type prefix: string
+    :type prefix: str
 
     :returns: a tuple containing the completion (:py:class:`numpy.array`) as
               first element, and the concordance (:py:class:`dict`) as last
@@ -924,8 +924,8 @@ def processTPED(uniqueSamples, duplicatedSamples, fileName, prefix):
 
     :type uniqueSamples: dict
     :type duplicatedSamples: collections.defaultdict
-    :type fileName: string
-    :type prefix: string
+    :type fileName: str
+    :type prefix: str
 
     :returns: a tuple containing the ``tped`` (:py:class:`numpy.array`) as
               first element, and the updated positions of the duplicated
@@ -986,9 +986,9 @@ def printUniqueTFAM(tfam, samples, prefix):
     :param samples: the position of the samples
     :param prefix: the prefix of the output file name
 
-    :type tfam: list of tuples of strings
+    :type tfam: list
     :type samples: dict
-    :type prefix: string
+    :type prefix: str
 
     """
     fileName = prefix + ".unique_samples.tfam"
@@ -1005,7 +1005,7 @@ def findDuplicates(tfam):
     """Finds the duplicates in a TFAM.
 
     :param tfam: representation of a ``tfam`` file.
-    :type tfam: list of tuple of string
+    :type tfam: list
 
     :returns: two :py:class:`dict`, containing unique and duplicated samples
               position.
@@ -1040,7 +1040,7 @@ def readTFAM(fileName):
 
     :param fileName: the name of the ``tfam`` file.
 
-    :type fileName: string
+    :type fileName: str
 
     :returns: a list of tuples, representing the ``tfam`` file.
 
@@ -1101,7 +1101,7 @@ def parseArgs(argString=None):  # pragma: no cover
 
     :param argString: the options
 
-    :type argString: list of strings
+    :type argString: list
 
     :returns: A :py:class:`argparse.Namespace` object created by
               the :py:mod:`argparse` module. It contains the values of the
@@ -1136,14 +1136,14 @@ class ProgramError(Exception):
 
     :param msg: the message to print to the user before exiting.
 
-    :type msg: string
+    :type msg: str
 
     """
     def __init__(self, msg):
         """Construction of the :py:class:`ProgramError` class.
 
         :param msg: the message to print to the user
-        :type msg: string
+        :type msg: str
 
         """
         self.message = str(msg)

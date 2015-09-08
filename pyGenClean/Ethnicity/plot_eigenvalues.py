@@ -56,7 +56,7 @@ def create_scree_plot(data, o_filename, options):
     :param options: the options.
 
     :type data: numpy.ndarray
-    :type o_filename: string
+    :type o_filename: str
     :type options: argparse.Namespace
 
     """
@@ -127,7 +127,7 @@ def read_eigenvalues(i_filename):
 
     :param i_filename: the name of the input file.
 
-    :type i_filename: string
+    :type i_filename: str
 
     :returns: a :py:class:`numpy.ndarray` array containing the eigenvalues.
 
@@ -217,7 +217,7 @@ class ProgramError(Exception):
 
     :param msg: the message to print to the user before exiting.
 
-    :type msg: string
+    :type msg: str
 
     """
     def __init__(self, msg):
@@ -225,7 +225,7 @@ class ProgramError(Exception):
 
         :param msg: the message to print to the user.
 
-        :type msg: string
+        :type msg: str
 
         """
         self.message = str(msg)

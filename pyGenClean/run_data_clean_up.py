@@ -234,11 +234,11 @@ def run_duplicated_samples(in_prefix, in_type, out_prefix, base_dir, options):
     :param base_dir: the output directory.
     :param options: the options needed.
 
-    :type in_prefix: string
-    :type in_type: string
-    :type out_prefix: string
-    :type base_dir: string
-    :type options: list of strings
+    :type in_prefix: str
+    :type in_type: str
+    :type out_prefix: str
+    :type base_dir: str
+    :type options: list
 
     :returns: a tuple containing the prefix of the output files (the input
               prefix for the next script) and the type of the output files
@@ -442,11 +442,11 @@ def run_duplicated_snps(in_prefix, in_type, out_prefix, base_dir, options):
     :param base_dir: the output directory.
     :param options: the options needed.
 
-    :type in_prefix: string
-    :type in_type: string
-    :type out_prefix: string
-    :type base_dir: string
-    :type options: list of strings
+    :type in_prefix: str
+    :type in_type: str
+    :type out_prefix: str
+    :type base_dir: str
+    :type options: list
 
     :returns: a tuple containing the prefix of the output files (the input
               prefix for the next script) and the type of the output files
@@ -647,11 +647,11 @@ def run_noCall_hetero_snps(in_prefix, in_type, out_prefix, base_dir, options):
     :param base_dir: the output directory.
     :param options: the options needed.
 
-    :type in_prefix: string
-    :type in_type: string
-    :type out_prefix: string
-    :type base_dir: string
-    :type options: list of strings
+    :type in_prefix: str
+    :type in_type: str
+    :type out_prefix: str
+    :type base_dir: str
+    :type options: list
 
     :returns: a tuple containing the prefix of the output files (the input
               prefix for the next script) and the type of the output files
@@ -757,11 +757,11 @@ def run_sample_missingness(in_prefix, in_type, out_prefix, base_dir, options):
     :param base_dir: the output directory.
     :param options: the options needed.
 
-    :type in_prefix: string
-    :type in_type: string
-    :type out_prefix: string
-    :type base_dir: string
-    :type options: list of strings
+    :type in_prefix: str
+    :type in_type: str
+    :type out_prefix: str
+    :type base_dir: str
+    :type options: list
 
     :returns: a tuple containing the prefix of the output files (the input
               prefix for the next script) and the type of the output files
@@ -868,11 +868,11 @@ def run_snp_missingness(in_prefix, in_type, out_prefix, base_dir, options):
     :param base_dir: the output directory.
     :param options: the options needed.
 
-    :type in_prefix: string
-    :type in_type: string
-    :type out_prefix: string
-    :type base_dir: string
-    :type options: list of strings
+    :type in_prefix: str
+    :type in_type: str
+    :type out_prefix: str
+    :type base_dir: str
+    :type options: list
 
     :returns: a tuple containing the prefix of the output files (the input
               prefix for the next script) and the type of the output files
@@ -977,11 +977,11 @@ def run_sex_check(in_prefix, in_type, out_prefix, base_dir, options):
     :param base_dir: the output directory.
     :param options: the options needed.
 
-    :type in_prefix: string
-    :type in_type: string
-    :type out_prefix: string
-    :type base_dir: string
-    :type options: list of strings
+    :type in_prefix: str
+    :type in_type: str
+    :type out_prefix: str
+    :type base_dir: str
+    :type options: list
 
     :returns: a tuple containing the prefix of the output files (the input
               prefix for the next script) and the type of the output files
@@ -1322,11 +1322,11 @@ def run_plate_bias(in_prefix, in_type, out_prefix, base_dir, options):
     :param base_dir: the output directory.
     :param options: the options needed.
 
-    :type in_prefix: string
-    :type in_type: string
-    :type out_prefix: string
-    :type base_dir: string
-    :type options: list of strings
+    :type in_prefix: str
+    :type in_type: str
+    :type out_prefix: str
+    :type base_dir: str
+    :type options: list
 
     :returns: a tuple containing the prefix of the output files (the input
               prefix for the next script) and the type of the output files
@@ -1504,11 +1504,11 @@ def run_remove_heterozygous_haploid(in_prefix, in_type, out_prefix, base_dir,
     :param base_dir: the output directory.
     :param options: the options needed.
 
-    :type in_prefix: string
-    :type in_type: string
-    :type out_prefix: string
-    :type base_dir: string
-    :type options: list of strings
+    :type in_prefix: str
+    :type in_type: str
+    :type out_prefix: str
+    :type base_dir: str
+    :type options: list
 
     :returns: a tuple containing the prefix of the output files (the input
               prefix for the next script) and the type of the output files
@@ -1593,11 +1593,11 @@ def run_find_related_samples(in_prefix, in_type, out_prefix, base_dir,
     :param base_dir: the output directory.
     :param options: the options needed.
 
-    :type in_prefix: string
-    :type in_type: string
-    :type out_prefix: string
-    :type base_dir: string
-    :type options: list of strings
+    :type in_prefix: str
+    :type in_type: str
+    :type out_prefix: str
+    :type base_dir: str
+    :type options: list
 
     :returns: a tuple containing the prefix of the output files (the input
               prefix for the next script) and the type of the output files
@@ -1778,11 +1778,11 @@ def run_check_ethnicity(in_prefix, in_type, out_prefix, base_dir, options):
     :param base_dir: the output directory.
     :param options: the options needed.
 
-    :type in_prefix: string
-    :type in_type: string
-    :type out_prefix: string
-    :type base_dir: string
-    :type options: list of strings
+    :type in_prefix: str
+    :type in_type: str
+    :type out_prefix: str
+    :type base_dir: str
+    :type options: list
 
     :returns: a tuple containing the prefix of the output files (the input
               prefix for the next script) and the type of the output files
@@ -1939,11 +1939,11 @@ def run_flag_maf_zero(in_prefix, in_type, out_prefix, base_dir, options):
     :param base_dir: the output directory.
     :param options: the options needed.
 
-    :type in_prefix: string
-    :type in_type: string
-    :type out_prefix: string
-    :type base_dir: string
-    :type options: list of strings
+    :type in_prefix: str
+    :type in_type: str
+    :type out_prefix: str
+    :type base_dir: str
+    :type options: list
 
     :returns: a tuple containing the prefix of the output files (the input
               prefix for the next script) and the type of the output files
@@ -2031,11 +2031,11 @@ def run_flag_hw(in_prefix, in_type, out_prefix, base_dir, options):
     :param base_dir: the output directory.
     :param options: the options needed.
 
-    :type in_prefix: string
-    :type in_type: string
-    :type out_prefix: string
-    :type base_dir: string
-    :type options: list of strings
+    :type in_prefix: str
+    :type in_type: str
+    :type out_prefix: str
+    :type base_dir: str
+    :type options: list
 
     :returns: a tuple containing the prefix of the output files (the input
               prefix for the next script) and the type of the output files
@@ -2161,11 +2161,11 @@ def run_compare_gold_standard(in_prefix, in_type, out_prefix, base_dir,
     :param base_dir: the output directory.
     :param options: the options needed.
 
-    :type in_prefix: string
-    :type in_type: string
-    :type out_prefix: string
-    :type base_dir: string
-    :type options: list of strings
+    :type in_prefix: str
+    :type in_type: str
+    :type out_prefix: str
+    :type base_dir: str
+    :type options: list
 
     :returns: a tuple containing the prefix of the output files (the input
               prefix for the next script) and the type of the output files
@@ -2228,11 +2228,11 @@ def run_subset_data(in_prefix, in_type, out_prefix, base_dir, options):
     :param base_dir: the output directory.
     :param options: the options needed.
 
-    :type in_prefix: string
-    :type in_type: string
-    :type out_prefix: string
-    :type base_dir: string
-    :type options: list of strings
+    :type in_prefix: str
+    :type in_type: str
+    :type out_prefix: str
+    :type base_dir: str
+    :type options: list
 
     :returns: a tuple containing the prefix of the output files (the input
               prefix for the next script) and the type of the output files
@@ -2563,7 +2563,7 @@ def run_command(command):
 
     :param command: the command to run.
 
-    :type command: list of strings
+    :type command: list
 
     Tries to run a command. If it fails, raise a :py:class:`ProgramError`.
 
@@ -2586,8 +2586,8 @@ def count_markers_samples(prefix, file_type):
     :param prefix: the prefix of the files.
     :param file_type: the file type.
 
-    :type prefix: string
-    :type file_type: string
+    :type prefix: str
+    :type file_type: str
 
     :returns: the number of markers and samples (in a tuple).
 
@@ -2633,9 +2633,9 @@ def check_input_files(prefix, the_type, required_type):
     :param required_type: the required type of the input files (bfile, tfile or
                           file).
 
-    :type prefix: string
-    :type the_type: string
-    :type required_type: string
+    :type prefix: str
+    :type the_type: str
+    :type required_type: str
 
     :returns: ``True`` if everything is OK.
 
@@ -2733,7 +2733,7 @@ def all_files_exist(file_list):
 
     :param file_list: the names of files to check.
 
-    :type file_list: list of strings
+    :type file_list: list
 
     :returns: ``True`` if all files exist, ``False`` otherwise.
 
@@ -2749,7 +2749,7 @@ def read_config_file(filename):
 
     :param filename: the name of the file containing the configuration.
 
-    :type filename: string
+    :type filename: str
 
     :returns: A tuple where the first element is a list of sections, and the
               second element is a map containing the configuration (options and
