@@ -43,11 +43,11 @@ from .MarkerMissingness import snp_missingness
 from .RelatedSamples import find_related_samples
 from .SampleMissingness import sample_missingness
 from .HeteroHap import remove_heterozygous_haploid
-from .LaTeX.merge_reports import add_custom_options as report_options
 from .NoCallHetero import clean_noCall_hetero_snps as noCall_hetero_snps
 
 from .LaTeX import auto_report
 from .LaTeX import utils as latex_template
+from .LaTeX.merge_reports import add_custom_options as report_options
 
 from .PlinkUtils import subset_data
 from .PlinkUtils import createRowFromPlinkSpacedOutput
