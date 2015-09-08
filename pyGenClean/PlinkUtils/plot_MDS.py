@@ -21,7 +21,7 @@ import argparse
 
 import numpy as npy
 
-from PlinkUtils import createRowFromPlinkSpacedOutput
+from pyGenClean.PlinkUtils import createRowFromPlinkSpacedOutput
 
 
 desc = """Creates a MDS plot"""
