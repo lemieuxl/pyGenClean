@@ -400,7 +400,8 @@ group.add_argument("--out", type=str, metavar="FILE",
                          "%(default)s]"))
 
 
-if __name__ == "__main__":
+def safe_main():
+    """A safe version of the main function (that catches ProgramError)."""
     try:
         main()
     except KeyboardInterrupt:
@@ -408,3 +409,7 @@ if __name__ == "__main__":
         sys.exit(0)
     except ProgramError as e:
         parser.error(e.message)
+
+
+if __name__ == "__main__":
+    safe_main()

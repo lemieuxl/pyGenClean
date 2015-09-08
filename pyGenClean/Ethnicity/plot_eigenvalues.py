@@ -252,8 +252,9 @@ group = parser.add_argument_group("Output Options")
 group.add_argument("--out", metavar="FILE", default="scree_plot.png", type=str,
                    help="The name of the output file [%(default)s]")
 
-# Calling the main, if necessary
-if __name__ == "__main__":
+
+def safe_main():
+    """A safe version of the main function (that catches ProgramError)."""
     try:
         main()
     except KeyboardInterrupt:
@@ -261,3 +262,8 @@ if __name__ == "__main__":
         sys.exit(0)
     except ProgramError as e:
         parser.error(e.message)
+
+
+# Calling the main, if necessary
+if __name__ == "__main__":
+    safe_main()
