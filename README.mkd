@@ -13,20 +13,20 @@ analysis.
 
 Here are the dependencies that must be installed before _pyGenClean_:
 
-*   [Python][1] (>= 2.7, but not 3.0)
-*   [NumPy][2] (>= 1.6.2)
-*   [matplotlib][3] (>= 1.2.0)
-*   [scipy][4] (>= 0.11.0)
-*   [scikit-learn][5] (>= 0.12.1)
-*   [drmaa][6] (>= 0.5, optional)
-*   [PLINK][7] (1.07)
+*   [Python](http://python.org/) (>= 2.7, but not 3.0)
+*   [NumPy](http://www.numpy.org/) (>= 1.6.2)
+*   [matplotlib](http://matplotlib.org/) (>= 1.2.0)
+*   [scipy](http://www.scipy.org/) (>= 0.11.0)
+*   [scikit-learn](http://scikit-learn.org/stable/) (>= 0.12.1)
+*   [drmaa](http://code.google.com/p/drmaa-python/) (>= 0.5, optional)
+*   [PLINK](http://pngu.mgh.harvard.edu/~purcell/plink/) (1.07)
 
 
 
 ## Installation ##
 
 For Linux users, we recommend installing _pyGenClean_ in a Python
-[virtualenv][7] (virtual environment).
+[virtualenv](http://pypi.python.org/pypi/virtualenv) (virtual environment).
 
 _pyGenClean_ should work on Windows and MacOS, even though it hasn't been fully
 tested for full compatibility. It has been tried on Windows XP (32 bits) and
@@ -34,16 +34,5 @@ Windows 7 (64 bits, but with a 32 bits Python 2.7 installation) without known
 problems.
 
 For a step by step installation on both Linux and Windows operation systems, see
-_pyGenClean_ documentation, located [here][9].
+_pyGenClean_ documentation, located [here](http://www.statgen.org/).
 
-
-
-[1]: http://python.org/
-[2]: http://www.numpy.org/
-[3]: http://matplotlib.org/
-[4]: http://www.scipy.org/
-[5]: http://scikit-learn.org/stable/
-[6]: http://code.google.com/p/drmaa-python/
-[7]: http://pypi.python.org/pypi/virtualenv
-[8]: http://pngu.mgh.harvard.edu/~purcell/plink/
-[9]: http://www.statgen.org/

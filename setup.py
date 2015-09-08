@@ -1,0 +1,118 @@
+#!/usr/bin/env python
+
+# How to build source distribution (might add --plat-name win32)
+# python setup.py sdist --format bztar
+# python setup.py sdist --format gztar
+# python setup.py sdist --format zip
+# python setup.py bdist --format msi
+
+
+import os
+import sys
+import glob
+import shutil
+from setuptools import setup
+
+
+MAJOR = 1
+MINOR = 7
+MICRO = 0
+VERSION = "{}.{}".format(MAJOR, MINOR, MICRO)
+
+
+def write_version_file(fn=None):
+    if fn is None:
+        fn = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            os.path.join("pyGenClean", "version.py"),
+        )
+
+    content = ("\n# THIS FILE WAS GENERATED AUTOMATICALLY BY PYGENCLEAN\n"
+               'pygenclean_version = "{version}"\n')
+
+    a = open(fn, "w")
+    try:
+        a.write(content.format(version=VERSION))
+    finally:
+        a.close()
+
+
+def setup_package():
+    # Saving the version into a file
+    write_version_file()
+
+    # Check the Python version
+    major, minor, micro, s, tmp = sys.version_info
+    if major == 2 and minor < 7 or major < 2:
+        raise SystemExit("""pyGenClean requires Python 2.7 or later.""")
+    if major == 3:
+        raise SystemExit("""pyGenClean doesn't work on Python 3...""")
+
+    setup(
+        name="pyGenClean",
+        version=VERSION,
+        description="Automated data clean up pipeline for genetic data",
+        long_description=("This package provides tools to automatically "
+                          "perform genetic data clean up (QC steps) prior to "
+                          "a genome-wide association study."),
+        author="Louis-Philippe Lemieux Perreault",
+        author_email="louis-philippe.lemieux.perreault@umontreal.ca",
+        url="https://github.com/lemieuxl/pyGenClean",
+        license="GPL",
+        entry_points={
+            "console_scripts": [
+                "run_pyGenClean=pyGenClean.run_data_clean_up:main",
+                "pyGenClean_duplicated_samples=pyGenClean.DupSamples.duplicated_samples:main",
+                "pyGenClean_duplicated_snps=pyGenClean.DupSNPs.duplicated_snps:main",
+                "pyGenClean_clean_noCall_hetero_snps=pyGenClean.NoCallHetero.clean_noCall_hetero_snps:main",
+                "pyGenClean_heterozygosity_plot=pyGenClean.NoCallHetero.heterozygosity_plot:main",
+                "pyGenClean_sample_missingness=pyGenClean.SampleMissingness.sample_missingness:main",
+                "pyGenClean_snp_missingness=pyGenClean.MarkerMissingness.snp_missingness:main",
+                "pyGenClean_sex_check=pyGenClean.SexCheck.sex_check:main",
+                "pyGenClean_gender_plot=pyGenClean.SexCheck.gender_plot:main",
+                "pyGenClean_baf_lrr_plot=pyGenClean.SexCheck.baf_lrr_plot:main",
+                "pyGenClean_plate_bias=pyGenClean.PlateBias.plate_bias:main",
+                "pyGenClean_remove_heterozygous_haploid=pyGenClean.HeteroHap.remove_heterozygous_haploid:main",
+                "pyGenClean_find_related_samples=pyGenClean.RelatedSamples.find_related_samples:main",
+                "pyGenClean_merge_related_samples=pyGenClean.RelatedSamples.merge_related_samples:main",
+                "pyGenClean_check_ethnicity=pyGenClean.Ethnicity.check_ethnicity:main",
+                "pyGenClean_find_outliers=pyGenClean.Ethnicity.find_outliers:main",
+                "pyGenClean_flag_maf_zero=pyGenClean.FlagMAF.flag_maf_zero:main",
+                "pyGenClean_flag_hw=pyGenClean.FlagHW.flag_hw:main",
+                "pyGenClean_compare_gold_standard=pyGenClean.Misc.compare_gold_standard:main",
+                "pyGenClean_compare_bim=PlinkUtils.compare_bim:main",
+                "pyGenClean_plot_MDS=PlinkUtils.plot_MDS_standalone:main",
+                "pyGenClean_subset_data=PlinkUtils.subset_data:main",
+                "pyGenClean_plot_eigenvalues=pyGenClean.Ethnicity.plot_eigenvalues:main",
+                "pyGenClean_merge_reports=pyGenClean.LaTeX.merge_reports:safe_main",
+            ],
+        },
+        install_requires=["matplotlib >= 1.2.0", "numpy >= 1.6.2",
+                          "scipy >= 0.11.0", "scikit-learn >= 0.12.1",
+                          "drmaa >= 0.5", "jinja2 >= 2.7.3"],
+        packages=["pyGenClean", "pyGenClean.Ethnicity", "pyGenClean.PlateBias",
+                  "pyGenClean.DupSamples", "pyGenClean.SexCheck",
+                  "pyGenClean.MarkerMissingness", "pyGenClean.FlagMAF",
+                  "pyGenClean.FlagHW", "pyGenClean.RelatedSamples",
+                  "pyGenClean.DupSNPs", "pyGenClean.Misc", "pyGenClean.LaTeX",
+                  "pyGenClean.HeteroHap", "pyGenClean.SampleMissingness",
+                  "pyGenClean.NoCallHetero", "PlinkUtils"],
+        package_data={"pyGenClean.LaTeX": ["templates/*.tex"]},
+        classifiers=[
+            "Development Status :: 5 - Production/Stable",
+            "Intended Audience :: Science/Research",
+            "License :: OSI Approved :: GNU General Public License (GPL)",
+            "Operating System :: Unix",
+            "Operating System :: POSIX :: Linux",
+            "Operating System :: MacOS :: MacOS X",
+            "Operating System :: Microsoft :: Windows",
+            "Programming Language :: Python",
+            "Programming Language :: Python :: 2.7",
+            "Topic :: Scientific/Engineering :: Bio-Informatics"
+        ],
+        keywords="bioinformatics quality control genetic",
+    )
+    return
+
+if __name__ == "__main__":
+    setup_package()

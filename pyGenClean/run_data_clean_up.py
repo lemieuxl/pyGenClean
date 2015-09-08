@@ -1,0 +1,3021 @@
+#!/usr/bin/env python2.7
+
+# This file is part of pyGenClean.
+#
+# pyGenClean is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later
+# version.
+#
+# pyGenClean is distributed in the hope that it will be useful, but WITHOUT ANY
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+# A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with
+# pyGenClean.  If not, see <http://www.gnu.org/licenses/>.
+
+
+import os
+import re
+import sys
+import shutil
+import datetime
+import argparse
+import itertools
+import subprocess
+import ConfigParser
+from glob import glob
+from collections import namedtuple, Counter
+
+import pyGenClean
+import pyGenClean.FlagHW.flag_hw as flag_hw
+import pyGenClean.LaTeX.utils as latex_template
+import pyGenClean.SexCheck.sex_check as sex_check
+from pyGenClean.pipeline_error import ProgramError
+import pyGenClean.LaTeX.auto_report as auto_report
+import pyGenClean.PlateBias.plate_bias as plate_bias
+import pyGenClean.FlagMAF.flag_maf_zero as flag_maf_zero
+import pyGenClean.DupSNPs.duplicated_snps as duplicated_snps
+import pyGenClean.Ethnicity.check_ethnicity as check_ethnicity
+import pyGenClean.Misc.compare_gold_standard as compare_gold_standard
+import pyGenClean.DupSamples.duplicated_samples as duplicated_samples
+import pyGenClean.MarkerMissingness.snp_missingness as snp_missingness
+import pyGenClean.SampleMissingness.sample_missingness as sample_missingness
+import pyGenClean.NoCallHetero.clean_noCall_hetero_snps as noCall_hetero_snps
+import pyGenClean.RelatedSamples.find_related_samples as find_related_samples
+from pyGenClean.LaTeX.merge_reports import add_custom_options as report_options
+import pyGenClean.HeteroHap.remove_heterozygous_haploid \
+                                                as remove_heterozygous_haploid
+
+import PlinkUtils.subset_data as subset_data
+from PlinkUtils import createRowFromPlinkSpacedOutput
+
+
+# Getting the version
+prog_version = pyGenClean.__version__
+
+
+def main():
+    """The main function.
+
+    These are the steps performed for the data clean up:
+
+    1. Prints the version number.
+    2. Reads the configuration file (:py:func:`read_config_file`).
+    3. Creates a new directory with ``data_clean_up`` as prefix and the date
+       and time as suffix. In the improbable event that the directory already
+       exists, asks the user the permission to overwrite it.
+    4. Check the input file type (``bfile``, ``tfile`` or ``file``).
+    5. Creates an intermediate directory with the section as prefix and the
+       script name as suffix (inside the previous directory).
+    6. Runs the required script in order (according to the configuration file
+       section).
+
+    .. note::
+        The main function is not responsible to check if the required files
+        exist. This should be done in the ``run`` functions.
+
+    """
+    # Getting and checking the options
+    args = parse_args()
+    check_args(args)
+
+    print "Data Clean Up version {}".format(prog_version)
+
+    # Reading the configuration file
+    order, conf = read_config_file(args.conf)
+
+    # The directory name
+    dirname = "data_clean_up."
+    dirname += datetime.datetime.today().strftime("%Y-%m-%d_%H.%M.%S")
+    if os.path.isdir(dirname):
+        answer = "N"
+        if not args.overwrite:
+            # The directory already exists...
+            print >>sys.stderr, ("WARNING: {}: directory already "
+                                 "exists".format(dirname))
+            print >>sys.stderr, "Overwrite [Y/N]? ",
+            answer = raw_input()
+        if args.overwrite or answer.upper() == "Y":
+            # Delete everything with the directory
+            shutil.rmtree(dirname)
+        elif answer.upper() == "N":
+            print >>sys.stderr, "STOPING NOW"
+            sys.exit(0)
+        else:
+            msg = "{}: not a valid answer (Y or N)".format(answer)
+            raise ProgramError(msg)
+
+    # Creating the output directory
+    os.mkdir(dirname)
+
+    # Executing the data clean up
+    current_input = None
+    current_input_type = None
+    suffixes = None
+    if args.tfile is not None:
+        current_input = args.tfile
+        current_input_type = "tfile"
+        suffixes = (".tped", ".tfam")
+    elif args.bfile is not None:
+        current_input = args.bfile
+        current_input_type = "bfile"
+        suffixes = (".bed", ".bim", ".fam")
+    else:
+        current_input = args.file
+        current_input_type = "file"
+        suffixes = (".ped", ".map")
+
+    # Creating the excluded files
+    try:
+        with open(os.path.join(dirname, "excluded_markers.txt"), "w") as o_f:
+            pass
+        with open(os.path.join(dirname, "excluded_samples.txt"), "w") as o_f:
+            pass
+        with open(os.path.join(dirname, "initial_files.txt"), "w") as o_file:
+            for s in suffixes:
+                print >>o_file, current_input + s
+
+    except IOError:
+        msg = "{}: cannot write summary".format(dirname)
+        raise ProgramError(msg)
+
+    # Counting the number of markers and samples in the datafile
+    nb_markers, nb_samples = count_markers_samples(current_input,
+                                                   current_input_type)
+
+    # Creating the result summary file containing the initial numbers
+    try:
+        with open(os.path.join(dirname, "results_summary.txt"), "w") as o_file:
+            print >>o_file, "# initial"
+            print >>o_file, ("Initial number of markers\t"
+                             "{:,d}".format(nb_markers))
+            print >>o_file, ("Initial number of samples\t"
+                             "{:,d}".format(nb_samples))
+            print >>o_file, "---"
+    except IOError:
+        msg = "{}: cannot write summary".format(dirname)
+        raise ProgramError(msg)
+
+    latex_summaries = []
+    steps = []
+    descriptions = []
+    for number in order:
+        # Getting the script name and its options
+        script_name, options = conf[number]
+
+        # Getting the output prefix
+        output_prefix = os.path.join(dirname,
+                                     "{}_{}".format(number, script_name))
+
+        # Getting the function to use
+        function_to_use = available_functions[script_name]
+
+        # Executing the function
+        print "\nRunning {} {}".format(number, script_name)
+        print "   - Using {} as prefix for input files".format(current_input)
+        print "   - Results will be in [ {} ]".format(output_prefix)
+        current_input, current_input_type, summary, desc = function_to_use(
+            current_input,
+            current_input_type,
+            output_prefix,
+            dirname,
+            options,
+        )
+
+        # Saving what's necessary for the LaTeX report
+        latex_summaries.append(summary)
+        steps.append(script_name)
+        descriptions.append(desc)
+
+    # Counting the final number of samples and markers
+    nb_markers, nb_samples = count_markers_samples(current_input,
+                                                   current_input_type)
+
+    # Getting the final suffixes
+    suffixes = None
+    if current_input_type == "tfile":
+        suffixes = ((".tped", nb_markers), (".tfam", nb_samples))
+    elif current_input_type == "bfile":
+        suffixes = ((".bed", None), (".bim", nb_markers), (".fam", nb_samples))
+    else:
+        suffixes = ((".ped", nb_samples), (".map", nb_markers))
+
+    with open(os.path.join(dirname, "final_files.txt"), "w") as o_file:
+        for s, nb in suffixes:
+            if nb:
+                print >>o_file, current_input + s + "\t{:,d}".format(nb)
+            else:
+                print >>o_file, current_input + s
+
+    # We create the automatic report
+    report_name = os.path.join(dirname, "automatic_report.tex")
+    auto_report.create_report(
+        dirname,
+        report_name,
+        project_name=args.report_number,
+        steps=steps,
+        descriptions=descriptions,
+        summaries=latex_summaries,
+        background=args.report_background,
+        summary_fn=os.path.join(dirname, "results_summary.txt"),
+        report_author=args.report_author,
+        initial_files=os.path.join(dirname, "initial_files.txt"),
+        final_files=os.path.join(dirname, "final_files.txt"),
+        final_nb_markers="{:,d}".format(nb_markers),
+        final_nb_samples="{:,d}".format(nb_samples),
+    )
+
+
+def run_duplicated_samples(in_prefix, in_type, out_prefix, base_dir, options):
+    """Runs step1 (duplicated samples).
+
+    :param in_prefix: the prefix of the input files.
+    :param in_type: the type of the input files.
+    :param out_prefix: the output prefix.
+    :param base_dir: the output directory.
+    :param options: the options needed.
+
+    :type in_prefix: string
+    :type in_type: string
+    :type out_prefix: string
+    :type base_dir: string
+    :type options: list of strings
+
+    :returns: a tuple containing the prefix of the output files (the input
+              prefix for the next script) and the type of the output files
+              (``tfile``).
+
+    This function calls the :py:mod:`DupSamples.duplicated_samples` module. The
+    required file type for this module is ``tfile``, hence the need to use the
+    :py:func:`check_input_files` to check if the file input file type is the
+    good one, or to create it if needed.
+
+    """
+    # Creating the output directory
+    os.mkdir(out_prefix)
+
+    # We know we need tfile
+    required_type = "tfile"
+    check_input_files(in_prefix, in_type, required_type)
+
+    # We need to inject the name of the input file and the name of the output
+    # prefix
+    script_prefix = os.path.join(out_prefix, "dup_samples")
+    options += ["--{}".format(required_type), in_prefix,
+                "--out", script_prefix]
+
+    # We run the script
+    try:
+        duplicated_samples.main(options)
+    except duplicated_samples.ProgramError as e:
+        msg = "duplicated_samples: {}".format(e)
+        raise ProgramError(msg)
+
+    # Reading the number of duplicated samples
+    duplicated_count = None
+    with open(script_prefix + ".duplicated_samples.tfam", "r") as i_file:
+        duplicated_count = Counter([
+            tuple(createRowFromPlinkSpacedOutput(line)[:2]) for line in i_file
+        ])
+
+    # Counting the number of zeroed out genotypes per duplicated sample
+    zeroed_out = None
+    with open(script_prefix + ".zeroed_out", "r") as i_file:
+        zeroed_out = Counter([
+            tuple(line.rstrip("\r\n").split("\t")[:2])
+            for line in i_file.read().splitlines()[1:]
+        ])
+    nb_zeroed_out = sum(zeroed_out.values())
+
+    # Checking the not good enough samples
+    not_good_enough = None
+    with open(script_prefix + ".not_good_enough", "r") as i_file:
+        not_good_enough = {
+            tuple(line.rstrip("\r\n").split("\t")[:4])
+            for line in i_file.read().splitlines()[1:]
+        }
+
+    # Checking which samples were chosen
+    chosen_sample = None
+    with open(script_prefix + ".chosen_samples.info", "r") as i_file:
+        chosen_sample = {
+            tuple(line.rstrip("\r\n").split("\t"))
+            for line in i_file.read().splitlines()[1:]
+        }
+
+    # Finding if some 'not_good_enough' samples were chosen
+    not_good_still = {s[2:] for s in chosen_sample & not_good_enough}
+
+    # We create a LaTeX summary
+    latex_file = os.path.join(script_prefix + ".summary.tex")
+    try:
+        with open(latex_file, "w") as o_file:
+            print >>o_file, latex_template.subsection(
+                duplicated_samples.pretty_name
+            )
+            text = (
+                "A total of {:,d} duplicated sample{} {} found.".format(
+                    len(duplicated_count),
+                    "s" if len(duplicated_count) > 1 else "",
+                    "were" if len(duplicated_count) > 1 else "was",
+                )
+            )
+            print >>o_file, latex_template.wrap_lines(text)
+
+            if len(duplicated_count) > 0:
+                text = (
+                    "While merging duplicates, a total of {:,d} genotype{} {} "
+                    "zeroed out. A total of {:,d} sample{} {} found to not be "
+                    "good enough for duplicate completion.".format(
+                        nb_zeroed_out,
+                        "s" if nb_zeroed_out > 1 else "",
+                        "were" if nb_zeroed_out > 1 else "was",
+                        len(not_good_enough),
+                        "s" if len(not_good_enough) > 1 else "",
+                        "were" if len(not_good_enough) > 1 else "was",
+                    )
+                )
+                print >>o_file, latex_template.wrap_lines(text)
+
+                table_label = script_prefix.replace("/", "_") + "_dup_samples"
+                text = (
+                    r"Table~\ref{" + table_label + "} summarizes the number "
+                    "of each duplicated sample with some characteristics."
+                )
+                print >>o_file, latex_template.wrap_lines(text)
+
+                if len(not_good_still) > 0:
+                    text = latex_template.textbf(
+                        "There {} {:,d} sample{} that {} not good enough for "
+                        "completion, but {} still selected as the best "
+                        "duplicate (see Table~{}).".format(
+                            "were" if len(not_good_still) > 1 else "was",
+                            len(not_good_still),
+                            "s" if len(not_good_still) > 1 else "",
+                            "were" if len(not_good_still) > 1 else "was",
+                            "were" if len(not_good_still) > 1 else "was",
+                            r"~\ref{" + table_label + "}"
+                        )
+                    )
+                    print >>o_file, latex_template.wrap_lines(text)
+
+                # Getting the template
+                longtable_template = latex_template.jinja2_env.get_template(
+                    "longtable_template.tex",
+                )
+
+                # The table caption
+                table_caption = (
+                    "Summary of the {:,d} duplicated sample{}. The number of "
+                    "duplicates and the total number of zeroed out genotypes "
+                    "are show.".format(
+                        len(duplicated_count),
+                        "s" if len(duplicated_count) > 1 else "",
+                    )
+                )
+
+                if len(not_good_still) > 0:
+                    table_caption += (
+                        " A total of {:,d} sample{} (highlighted) {} not good "
+                        "enough for completion, but {} chosen as the best "
+                        "duplicate, and {} still in the final "
+                        "dataset).".format(
+                            len(not_good_still),
+                            "s" if len(not_good_still) > 1 else "",
+                            "were" if len(not_good_still) > 1 else "was",
+                            "were" if len(not_good_still) > 1 else "was",
+                            "are" if len(not_good_still) > 1 else "is",
+                        )
+                    )
+
+                duplicated_samples_list = duplicated_count.most_common()
+                print >>o_file, longtable_template.render(
+                    table_caption=table_caption,
+                    table_label=table_label,
+                    nb_col=4,
+                    col_alignments="llrr",
+                    text_size="scriptsize",
+                    header_data=[("FID", 1), ("IID", 1), ("Nb Duplicate", 1),
+                                 ("Nb Zeroed", 1)],
+                    tabular_data=[
+                        [latex_template.sanitize_tex(fid),
+                         latex_template.sanitize_tex(iid),
+                         "{:,d}".format(nb),
+                         "{:,d}".format(zeroed_out[(fid, iid)])]
+                        for (fid, iid), nb in duplicated_samples_list
+                    ],
+                    highlighted=[
+                        (fid, iid) in not_good_still
+                        for fid, iid in [i[0] for i in duplicated_samples_list]
+                    ],
+                )
+
+    except IOError:
+        msg = "{}: cannot write LaTeX summary".format(latex_file)
+        raise ProgramError(msg)
+
+    # Writing the summary results
+    with open(os.path.join(base_dir, "results_summary.txt"), "a") as o_file:
+        print >>o_file, "# {}".format(script_prefix)
+        counter = Counter(duplicated_count.values()).most_common()
+        print >>o_file, "Number of replicated samples"
+        for rep_type, rep_count in counter:
+            print >>o_file, "  - x{}\t{:,d}\t\t-{:,d}".format(
+                rep_type,
+                rep_count,
+                (rep_count * rep_type) - rep_count,
+            )
+        print >>o_file, ("Poorly chosen replicated "
+                         "samples\t{:,d}".format(len(not_good_still)))
+        print >>o_file, "---"
+
+    # We know this step does produce a new data set (tfile), so we return it
+    return (os.path.join(out_prefix, "dup_samples.final"), "tfile", latex_file,
+            duplicated_samples.desc)
+
+
+def run_duplicated_snps(in_prefix, in_type, out_prefix, base_dir, options):
+    """Runs step2 (duplicated snps).
+
+    :param in_prefix: the prefix of the input files.
+    :param in_type: the type of the input files.
+    :param out_prefix: the output prefix.
+    :param base_dir: the output directory.
+    :param options: the options needed.
+
+    :type in_prefix: string
+    :type in_type: string
+    :type out_prefix: string
+    :type base_dir: string
+    :type options: list of strings
+
+    :returns: a tuple containing the prefix of the output files (the input
+              prefix for the next script) and the type of the output files
+              (``tfile``).
+
+    This function calls the :py:mod:`DupSNPs.duplicated_snps` module. The
+    required file type for this module is ``tfile``, hence the need to use the
+    :py:func:`check_input_files` to check if the file input file type is the
+    good one, or to create it if needed.
+
+    .. note::
+        This function creates a ``map`` file, needed for the
+        :py:mod:`DupSNPs.duplicated_snps` module.
+
+    """
+    # Creating the output directory
+    os.mkdir(out_prefix)
+
+    # We know we need a tfile
+    required_type = "tfile"
+    check_input_files(in_prefix, in_type, required_type)
+
+    # This step require a map file (we now have a tfile)
+    if not os.path.isfile(in_prefix + ".map"):
+        outputFile = None
+        try:
+            outputFile = open(in_prefix + ".map", "w")
+        except IOError:
+            msg = "{}: can't write file".format(in_prefix + ".map")
+            raise ProgramError(msg)
+        try:
+            with open(in_prefix + ".tped", 'r') as inputFile:
+                for line in inputFile:
+                    row = createRowFromPlinkSpacedOutput(line)
+                    print >>outputFile, "\t".join(row[:4])
+        except IOError:
+            msg = "{}: no such file".format(in_prefix + ".tped")
+            raise ProgramError(msg)
+        outputFile.close()
+
+    # We need to inject the name of the input file and the name of the output
+    # prefix
+    script_prefix = os.path.join(out_prefix, "dup_snps")
+    options += ["--{}".format(required_type), in_prefix,
+                "--out", script_prefix]
+
+    # We run the script
+    try:
+        duplicated_snps.main(options)
+    except duplicated_snps.ProgramError as e:
+        msg = "duplicated_snps: {}".format(e)
+        raise ProgramError(msg)
+
+    # Reading the number of duplicated markers
+    duplicated_count = None
+    with open(script_prefix + ".duplicated_snps.tped", "r") as i_file:
+        duplicated_count = Counter(
+            (i[0], i[3]) for i in [
+                tuple(createRowFromPlinkSpacedOutput(line)[:4])
+                for line in i_file
+            ]
+        )
+
+    # Counting the number of zeroed out genotypes per duplicated markers
+    zeroed_out = None
+    with open(script_prefix + ".zeroed_out", "r") as i_file:
+        zeroed_out = Counter([
+            tuple(line.rstrip("\r\n").split("\t")[:2])
+            for line in i_file.read().splitlines()[1:]
+        ])
+    nb_zeroed_out = sum(zeroed_out.values())
+
+    # Checking the not good enough markers
+    not_good_enough = None
+    with open(script_prefix + ".not_good_enough", "r") as i_file:
+        not_good_enough = {
+            line.rstrip("\r\n").split("\t")[0]
+            for line in i_file.read().splitlines()[1:]
+        }
+
+    # Checking which markers were chosen
+    chosen_markers = None
+    with open(script_prefix + ".chosen_snps.info", "r") as i_file:
+        chosen_markers = set(i_file.read().splitlines())
+
+    # Finding if some 'not_good_enough' samples were chosen
+    not_good_still = chosen_markers & not_good_enough
+
+    # Adding the 'not chosen markers' to the list of excluded markers
+    removed_markers = None
+    o_filename = os.path.join(base_dir, "excluded_markers.txt")
+    with open(script_prefix + ".removed_duplicates", "r") as i_file:
+        removed_markers = set(i_file.read().splitlines())
+        with open(o_filename, "a") as o_file:
+            for marker_id in removed_markers:
+                print >>o_file, marker_id + "\t" + "removed duplicate"
+
+    # Reading the markers with problem
+    problematic_markers = set()
+    with open(script_prefix + ".problems", "r") as i_file:
+        for markers in i_file.read().splitlines()[1:]:
+            problematic_markers |= set(markers.split("\t")[2].split(";"))
+
+    # We create a LaTeX summary
+    latex_file = os.path.join(script_prefix + ".summary.tex")
+    try:
+        with open(latex_file, "w") as o_file:
+            print >>o_file, latex_template.subsection(
+                duplicated_snps.pretty_name
+            )
+
+            text = (
+                "A total of {:,d} duplicated marker{} {} found.".format(
+                    len(duplicated_count),
+                    "s" if len(duplicated_count) > 1 else "",
+                    "were" if len(duplicated_count) > 1 else "was",
+                )
+            )
+            print >>o_file, latex_template.wrap_lines(text)
+
+            if len(duplicated_count) > 0:
+                text = (
+                    "While merging duplicates, a total of {:,d} genotype{} {} "
+                    "zeroed out. A total of {:,d} marker{} {} found to not be "
+                    "good enough for duplicate completion.".format(
+                        nb_zeroed_out,
+                        "s" if nb_zeroed_out > 1 else "",
+                        "were" if nb_zeroed_out > 1 else "was",
+                        len(not_good_enough),
+                        "s" if len(not_good_enough) > 1 else "",
+                        "were" if len(not_good_enough) > 1 else "was",
+                    )
+                )
+                print >>o_file, latex_template.wrap_lines(text)
+
+                text = (
+                    "A total of {:,d} marker{} {} excluded while creating the "
+                    "final dataset.".format(
+                        len(removed_markers),
+                        "s" if len(removed_markers) > 1 else "",
+                        "were" if len(removed_markers) > 1 else "was",
+                    )
+                )
+                print >>o_file, latex_template.wrap_lines(text)
+
+                if len(not_good_still) > 0:
+                    text = latex_template.textbf(
+                        "There {} {:,d} marker{} that {} not good enough for "
+                        "completion, but {} still selected as the best "
+                        "duplicate and {} still present in the final "
+                        "dataset.".format(
+                            "were" if len(not_good_still) > 1 else "was",
+                            len(not_good_still),
+                            "s" if len(not_good_still) > 1 else "",
+                            "were" if len(not_good_still) > 1 else "was",
+                            "were" if len(not_good_still) > 1 else "was",
+                            "are" if len(not_good_still) > 1 else "is",
+                        )
+                    )
+                    print >>o_file, latex_template.wrap_lines(text)
+
+    except IOError:
+        msg = "{}: cannot write LaTeX summary".format(latex_file)
+        raise ProgramError(msg)
+
+    # Writing the summary results
+    with open(os.path.join(base_dir, "results_summary.txt"), "a") as o_file:
+        print >>o_file, "# {}".format(script_prefix)
+        counter = Counter(duplicated_count.values()).most_common()
+        print >>o_file, "Number of replicated markers"
+        for rep_type, rep_count in counter:
+            print >>o_file, "  - x{}\t{:,d}\t-{:,d}".format(
+                rep_type,
+                rep_count,
+                (rep_count * rep_type) - rep_count,
+            )
+        print >>o_file, ("Poorly chosen replicated markers\t"
+                         "{nb:,d}\t+{nb:,d}".format(nb=len(not_good_still)))
+        print >>o_file, ("Problematic markers not chosen\t"
+                         "{nb:,d}\t+{nb:,d}".format(
+                            nb=len(problematic_markers - chosen_markers)
+                         ))
+        print >>o_file, ("Final number of excluded markers\t"
+                         "{nb:,d}".format(nb=len(removed_markers)))
+        print >>o_file, "---"
+
+    # We know this step does produce a new data set (tfile), so we return it
+    return (os.path.join(out_prefix, "dup_snps.final"), "tfile", latex_file,
+            duplicated_snps.desc)
+
+
+def run_noCall_hetero_snps(in_prefix, in_type, out_prefix, base_dir, options):
+    """Runs step 3 (clean no call and hetero).
+
+    :param in_prefix: the prefix of the input files.
+    :param in_type: the type of the input files.
+    :param out_prefix: the output prefix.
+    :param base_dir: the output directory.
+    :param options: the options needed.
+
+    :type in_prefix: string
+    :type in_type: string
+    :type out_prefix: string
+    :type base_dir: string
+    :type options: list of strings
+
+    :returns: a tuple containing the prefix of the output files (the input
+              prefix for the next script) and the type of the output files
+              (``tfile``).
+
+    This function calls the :py:mod:`NoCallHetero.clean_noCall_hetero_snps`
+    module. The required file type for this module is ``tfile``, hence the need
+    to use the :py:func:`check_input_files` to check if the file input file
+    type is the good one, or to create it if needed.
+
+    """
+    # Creating the output directory
+    os.mkdir(out_prefix)
+
+    # We know we need a tfile
+    required_type = "tfile"
+    check_input_files(in_prefix, in_type, required_type)
+
+    # We need to inject the name of the input file and the name of the output
+    # prefix
+    script_prefix = os.path.join(out_prefix, "clean_noCall_hetero")
+    options += ["--{}".format(required_type), in_prefix,
+                "--out", script_prefix]
+
+    # We run the script
+    try:
+        noCall_hetero_snps.main(options)
+    except noCall_hetero_snps.ProgramError as e:
+        msg = "noCall_hetero_snps: {}".format(e)
+        raise ProgramError(msg)
+
+    # We want to save in a file the markers and samples that were removed
+    # There are two files to look at, which contains only one row, the name of
+    # the markers:
+    #     - prefix.allFailed
+    #     - prefix.allHetero
+    nb_all_failed = 0
+    nb_all_hetero = 0
+    o_filename = os.path.join(base_dir, "excluded_markers.txt")
+    with open(o_filename, "a") as o_file:
+        # The first file
+        i_filename = script_prefix + ".allFailed"
+        if os.path.isfile(i_filename):
+            with open(i_filename, "r") as i_file:
+                for line in i_file:
+                    nb_all_failed += 1
+                    print >>o_file, line.rstrip("\r\n") + "\tall failed"
+
+        # The second file
+        i_filename = os.path.join(script_prefix + ".allHetero")
+        if os.path.isfile(i_filename):
+            with open(i_filename, "r") as i_file:
+                for line in i_file:
+                    nb_all_hetero += 1
+                    print >>o_file, line.rstrip("\r\n") + "\tall hetero"
+
+    # We write a LaTeX summary
+    latex_file = os.path.join(script_prefix + ".summary.tex")
+    try:
+        with open(latex_file, "w") as o_file:
+            print >>o_file, latex_template.subsection(
+                noCall_hetero_snps.pretty_name,
+            )
+            text = (
+                "After scrutiny, {:,d} marker{} were excluded from the "
+                "dataset because of a call rate of 0. Also, {:,d} marker{} "
+                "were excluded from the dataset because all samples were "
+                "heterozygous (excluding the mitochondrial "
+                "chromosome)".format(nb_all_failed,
+                                     "s" if nb_all_failed > 0 else "",
+                                     nb_all_hetero,
+                                     "s" if nb_all_hetero > 0 else "")
+            )
+            print >>o_file, latex_template.wrap_lines(text, 80)
+
+    except IOError:
+        msg = "{}: cannot write LaTeX summary".format(latex_file)
+        raise ProgramError(msg)
+
+    # Writing the summary results
+    with open(os.path.join(base_dir, "results_summary.txt"), "a") as o_file:
+        print >>o_file, "# {}".format(script_prefix)
+        print >>o_file, ("Number of completely failed markers\t"
+                         "{nb:,d}\t-{nb:,d}".format(nb=nb_all_failed))
+        print >>o_file, "---"
+        print >>o_file, ("Number of all heterozygous markers\t"
+                         "{nb:,d}\t-{nb:,d}".format(nb=nb_all_hetero))
+        print >>o_file, "---"
+
+    # We know this step does produce a new data set (tfile), so we return it
+    # along with the report name
+    return (os.path.join(out_prefix, "clean_noCall_hetero"), "tfile",
+            latex_file, noCall_hetero_snps.desc)
+
+
+def run_sample_missingness(in_prefix, in_type, out_prefix, base_dir, options):
+    """Runs step4 (clean mind).
+
+    :param in_prefix: the prefix of the input files.
+    :param in_type: the type of the input files.
+    :param out_prefix: the output prefix.
+    :param base_dir: the output directory.
+    :param options: the options needed.
+
+    :type in_prefix: string
+    :type in_type: string
+    :type out_prefix: string
+    :type base_dir: string
+    :type options: list of strings
+
+    :returns: a tuple containing the prefix of the output files (the input
+              prefix for the next script) and the type of the output files
+              (``bfile``).
+
+    This function calls the :py:mod:`SampleMissingness.sample_missingness`
+    module. The required file type for this module is either a ``bfile`` or a
+    ``tfile``, hence the need to use the :py:func:`check_input_files` to check
+    if the file input file type is the good one, or to create it if needed.
+
+    """
+    # Creating the output directory
+    os.mkdir(out_prefix)
+
+    # We are looking at what we have
+    required_type = "tfile"
+    if in_type == "bfile":
+        required_type = "bfile"
+    check_input_files(in_prefix, in_type, required_type)
+
+    # We need to inject the name of the input file and the name of the output
+    # prefix
+    script_prefix = os.path.join(out_prefix, "clean_mind")
+    options += ["--ifile", in_prefix,
+                "--out", script_prefix]
+    if required_type == "bfile":
+        options.append("--is-bfile")
+
+    # We run the script
+    try:
+        sample_missingness.main(options)
+    except sample_missingness.ProgramError as e:
+        msg = "sample_missingness: {}".format(e)
+        raise ProgramError(msg)
+
+    # We want to modify the description, so that it contains the option used
+    desc = sample_missingness.desc
+    mind_value = sample_missingness.parser.get_default("mind")
+    if "--mind" in options:
+        # Since we already run the script, we know that the mind option is a
+        # valid float
+        mind_value = options[options.index("--mind") + 1]
+    if desc[-1] == ".":
+        desc = desc[:-1] + r" (${}={}$).".format(latex_template.texttt("mind"),
+                                                 mind_value)
+
+    # We want to save in a file the samples that were removed
+    # There is one file to look at, which contains only one row, the name of
+    # the samples:
+    #     - prefix.irem (file will exists only if samples were removed)
+    nb_samples = 0
+    o_filename = os.path.join(base_dir, "excluded_samples.txt")
+    i_filename = script_prefix + ".irem"
+    if os.path.isfile(i_filename):
+        # True, so sample were removed
+        with open(i_filename, "r") as i_file, open(o_filename, "a") as o_file:
+            for line in i_file:
+                nb_samples += 1
+                print >>o_file, line.rstrip("\r\n") + "\tmind {}".format(
+                    mind_value,
+                )
+
+    # We write a LaTeX summary
+    latex_file = os.path.join(script_prefix + ".summary.tex")
+    try:
+        with open(latex_file, "w") as o_file:
+            print >>o_file, latex_template.subsection(
+                sample_missingness.pretty_name,
+            )
+            text = ("Using a {} threshold of {} ({} keeping only samples with "
+                    r"a missing rate $\leq {}$), {:,d} sample{} were excluded "
+                    "from the dataset.".format(latex_template.texttt("mind"),
+                                               mind_value,
+                                               latex_template.textit("i.e."),
+                                               mind_value, nb_samples,
+                                               "s" if nb_samples > 0 else ""))
+            print >>o_file, latex_template.wrap_lines(text)
+
+    except IOError:
+        msg = "{}: cannot write LaTeX summary".format(latex_file)
+        raise ProgramError(msg)
+
+    # Writing the summary results
+    with open(os.path.join(base_dir, "results_summary.txt"), "a") as o_file:
+        print >>o_file, "# {}".format(script_prefix)
+        print >>o_file, ("Number of samples with call rate less or equal to "
+                         "{t}\t{nb:,d}\t\t-{nb:,d}".format(
+                            t=mind_value,
+                            nb=nb_samples,
+                         ))
+        print >>o_file, "---"
+
+    # We know this step does produce a new data set (bfile), so we return it
+    return os.path.join(out_prefix, "clean_mind"), "bfile", latex_file, desc
+
+
+def run_snp_missingness(in_prefix, in_type, out_prefix, base_dir, options):
+    """Run step5 (clean geno).
+
+    :param in_prefix: the prefix of the input files.
+    :param in_type: the type of the input files.
+    :param out_prefix: the output prefix.
+    :param base_dir: the output directory.
+    :param options: the options needed.
+
+    :type in_prefix: string
+    :type in_type: string
+    :type out_prefix: string
+    :type base_dir: string
+    :type options: list of strings
+
+    :returns: a tuple containing the prefix of the output files (the input
+              prefix for the next script) and the type of the output files
+              (``bfile``).
+
+    This function calls the :py:mod:`MarkerMissingness.snp_missingness` module.
+    The required file type for this module is ``bfile``, hence the need to use
+    the :py:func:`check_input_files` to check if the file input file type is
+    the good one, or to create it if needed.
+
+    """
+    # Creating the output directory
+    os.mkdir(out_prefix)
+
+    # We know we need a bfile
+    required_type = "bfile"
+    check_input_files(in_prefix, in_type, required_type)
+
+    # We need to inject the name of the input file and the name of the output
+    # prefix
+    script_prefix = os.path.join(out_prefix, "clean_geno")
+    options += ["--{}".format(required_type), in_prefix,
+                "--out", script_prefix]
+
+    # We run the script
+    try:
+        snp_missingness.main(options)
+    except snp_missingness.ProgramError as e:
+        msg = "snp_missingness: {}".format(e)
+        raise ProgramError(msg)
+
+    # We want to modify the description, so that it contains the option used
+    desc = snp_missingness.desc
+    geno_value = snp_missingness.parser.get_default("geno")
+    if "--geno" in options:
+        # Since we already run the script, we know that the mind option is a
+        # valid float
+        geno_value = options[options.index("--geno") + 1]
+    if desc[-1] == ".":
+        desc = desc[:-1] + r" (${}={}$).".format(latex_template.texttt("mind"),
+                                                 geno_value)
+
+    # We want to save in a file the samples that were removed
+    # There is one file to look at, which contains only one row, the name of
+    # the samples:
+    #     - prefix.removed_snps
+    nb_markers = 0
+    o_filename = os.path.join(base_dir, "excluded_markers.txt")
+    # Checking if the file exists
+    i_filename = script_prefix + ".removed_snps"
+    if os.path.isfile(i_filename):
+        # True, so sample were removed
+        with open(i_filename, "r") as i_file, \
+                open(o_filename, "a") as o_file:
+            for line in i_file:
+                nb_markers += 1
+                print >>o_file, line.rstrip("\r\n") + "\tgeno {}".format(
+                    geno_value,
+                )
+
+    # We write a LaTeX summary
+    latex_file = os.path.join(script_prefix + ".summary.tex")
+    try:
+        with open(latex_file, "w") as o_file:
+            print >>o_file, latex_template.subsection(
+                snp_missingness.pretty_name,
+            )
+            text = ("Using a {} threshold of {} ({} keeping only markers with "
+                    r"a missing rate $\leq {}$), {:,d} marker{} were excluded "
+                    "from the dataset.".format(latex_template.texttt("geno"),
+                                               geno_value,
+                                               latex_template.textit("i.e."),
+                                               geno_value, nb_markers,
+                                               "s" if nb_markers > 0 else ""))
+            print >>o_file, latex_template.wrap_lines(text)
+
+    except IOError:
+        msg = "{}: cannot write LaTeX summary".format(latex_file)
+        raise ProgramError(msg)
+
+    # Writing the summary results
+    with open(os.path.join(base_dir, "results_summary.txt"), "a") as o_file:
+        print >>o_file, "# {}".format(script_prefix)
+        print >>o_file, ("Number of markers with call rate less or equal to "
+                         "{t}\t{nb:,d}\t-{nb:,d}".format(
+                            t=geno_value,
+                            nb=nb_markers,
+                         ))
+        print >>o_file, "---"
+
+    # We know this step does produce a new data set (bfile), so we return it
+    return os.path.join(out_prefix, "clean_geno"), "bfile", latex_file, desc
+
+
+def run_sex_check(in_prefix, in_type, out_prefix, base_dir, options):
+    """Runs step6 (sexcheck).
+
+    :param in_prefix: the prefix of the input files.
+    :param in_type: the type of the input files.
+    :param out_prefix: the output prefix.
+    :param base_dir: the output directory.
+    :param options: the options needed.
+
+    :type in_prefix: string
+    :type in_type: string
+    :type out_prefix: string
+    :type base_dir: string
+    :type options: list of strings
+
+    :returns: a tuple containing the prefix of the output files (the input
+              prefix for the next script) and the type of the output files
+              (``bfile``).
+
+    This function calls the :py:mod:`SexCheck.sex_check` module. The required
+    file type for this module is ``bfile``, hence the need to use the
+    :py:func:`check_input_files` to check if the file input file type is the
+    good one, or to create it if needed.
+
+    .. note::
+        The :py:mod:`SexCheck.sex_check` module doesn't return usable output
+        files. Hence, this function returns the input file prefix and its type.
+
+    """
+    # Creating the output directory
+    os.mkdir(out_prefix)
+
+    # We know we need a bfile
+    required_type = "bfile"
+    check_input_files(in_prefix, in_type, required_type)
+
+    # We need to inject the name of the input file and the name of the output
+    # prefix
+    script_prefix = os.path.join(out_prefix, "sexcheck")
+    options += ["--{}".format(required_type), in_prefix,
+                "--out", script_prefix]
+
+    # We run the script
+    try:
+        sex_check.main(options)
+    except sex_check.ProgramError as e:
+        msg = "sex_check {}".format(e)
+        raise ProgramError(msg)
+
+    # Reading the hetero file on X
+    hetero = {}
+    with open(script_prefix + ".chr23_recodeA.raw.hetero", "r") as i_file:
+        header = {
+            name: i for i, name in
+            enumerate(createRowFromPlinkSpacedOutput(i_file.readline()))
+        }
+        for required_col in ("PED", "ID", "HETERO"):
+            if required_col not in header:
+                msg = "{}: no column named {}".format(
+                    script_prefix + ".chr23_recodeA.raw.hetero",
+                    required_col,
+                )
+                raise ProgramError(msg)
+
+        # Reading the data
+        for line in i_file:
+            row = line.rstrip("\r\n").split("\t")
+            famid = row[header["PED"]]
+            indid = row[header["ID"]]
+
+            # Formatting the hetero value
+            het = None
+            try:
+                het = "{:.4f}".format(float(row[header["HETERO"]]))
+            except:
+                het = "N/A"
+
+            hetero[(famid, indid)] = het
+
+    # Reading the number of no call on Y
+    nb_no_call = {}
+    with open(script_prefix + ".chr24_recodeA.raw.noCall", "r") as i_file:
+        header = {
+            name: i for i, name in
+            enumerate(createRowFromPlinkSpacedOutput(i_file.readline()))
+        }
+        for required_col in ("PED", "ID", "nbGeno", "nbNoCall"):
+            if required_col not in header:
+                msg = "{}: no column named {}".format(
+                    script_prefix + ".chr24_recodeA.raw.noCall",
+                    required_col,
+                )
+                raise ProgramError(msg)
+
+        # Reading the data
+        for line in i_file:
+            row = line.rstrip("\r\n").split("\t")
+            famid = row[header["PED"]]
+            indid = row[header["ID"]]
+
+            # Getting the statistics
+            nb_geno = row[header["nbGeno"]]
+            nb_nocall = row[header["nbNoCall"]]
+
+            percent = None
+            try:
+                percent = "{:.4f}".format(float(nb_nocall) / float(nb_geno))
+            except:
+                percent = "N/A"
+            nb_no_call[(famid, indid)] = percent
+
+    # Reading the problem file to gather statistics. Note that dataset without
+    # problem will only have the header line (and no data)
+    nb_problems = 0
+    table = []
+    nb_no_genetic = 0
+    nb_discordant = 0
+    with open(script_prefix + ".list_problem_sex", "r") as i_file:
+        # Reading the header
+        header = i_file.readline().rstrip("\r\n").split("\t")
+        table.append(header)
+        header = {name: i for i, name in enumerate(header)}
+        for required_col in ("FID", "IID", "SNPSEX"):
+            if required_col not in header:
+                msg = "{}: no column named {}".format(
+                    script_prefix + ".list_problem_sex",
+                    required_col,
+                )
+                raise ProgramError(msg)
+
+        # Adding the missing column name
+        table[-1].append("HET")
+        table[-1].append(r"\%NOCALL")
+
+        # Reading the rest of the data
+        for line in i_file:
+            nb_problems += 1
+
+            # Sanitizing
+            row = line.rstrip("\r\n").split("\t")
+            for col in ("FID", "IID"):
+                row[header[col]] = latex_template.sanitize_tex(
+                    row[header[col]]
+                )
+
+            # Counting
+            if row[header["SNPSEX"]] == "0":
+                nb_no_genetic += 1
+            else:
+                nb_discordand += 1
+
+            table.append(row)
+            table[-1].append(
+                hetero.get((row[header["FID"]], row[header["IID"]]), "N/A"),
+            )
+            table[-1].append(
+                nb_no_call.get((row[header["FID"]], row[header["IID"]]), "N/A")
+            )
+
+    # Getting the value for the maleF option
+    male_f = sex_check.parser.get_default("maleF")
+    if "--maleF" in options:
+        male_f = options[options.index("--maleF") + 1]
+
+    # Getting the value for the femaleF option
+    female_f = sex_check.parser.get_default("femaleF")
+    if "--femaleF" in options:
+        female_f = options[options.index("--femaleF") + 1]
+
+    # We write a LaTeX summary
+    latex_file = os.path.join(script_prefix + ".summary.tex")
+    try:
+        with open(latex_file, "w") as o_file:
+            print >>o_file, latex_template.subsection(sex_check.pretty_name)
+            text = (
+                "Using $F$ thresholds of {male_f} and {female_f} for males "
+                "and females respectively, {nb_problems:,d} sample{plural} "
+                "had gender problem according to Plink.".format(
+                    male_f=male_f,
+                    female_f=female_f,
+                    nb_problems=nb_problems,
+                    plural="s" if nb_problems > 1 else "",
+                )
+            )
+            print >>o_file, latex_template.wrap_lines(text)
+
+            # The float template
+            float_template = latex_template.jinja2_env.get_template(
+                "float_template.tex",
+            )
+
+            if nb_problems > 0:
+                # The label and text for the table
+                table_label = (script_prefix + "_problems").replace("/", "_")
+                text = (
+                    r"Table~\ref{" + table_label + "} summarizes the gender "
+                    "problems encountered during the analysis."
+                )
+                print >>o_file, latex_template.wrap_lines(text)
+
+                # Getting the template
+                longtable_template = latex_template.jinja2_env.get_template(
+                    "longtable_template.tex",
+                )
+
+                # Rendering
+                print >>o_file, longtable_template.render(
+                    table_caption="Summarization of the gender problems "
+                                  "encountered during Plink's analysis. "
+                                  "HET is the heterozygosity rate on the X "
+                                  r"chromosome. \%NOCALL is the percentage of "
+                                  "no calls on the Y chromosome.",
+                    table_label=table_label,
+                    nb_col=len(table[1]),
+                    col_alignments="llrrlrrrr",
+                    text_size="scriptsize",
+                    header_data=zip(table[0], [1 for i in table[0]]),
+                    tabular_data=sorted(
+                        table[1:],
+                        key=lambda item: (item[0], item[1]),
+                    ),
+                )
+
+            # If there is a figure, we add it here
+            if os.path.isfile(script_prefix + ".png"):
+                # Getting the templates
+                graphic_template = latex_template.jinja2_env.get_template(
+                    "graphics_template.tex",
+                )
+
+                # Adding the figure
+                text = (
+                    r"Figure~\ref{" + script_prefix.replace("/", "_") + "} "
+                    r"shows the $\bar{y}$ intensities versus the $\bar{x}$ "
+                    "intensities for each samples. Problematic samples are "
+                    "shown using triangles."
+                )
+                print >>o_file, latex_template.wrap_lines(text)
+
+                # Getting the paths
+                graphics_path, path = os.path.split(script_prefix + ".png")
+                graphics_path = os.path.abspath(graphics_path)
+
+                print >>o_file, float_template.render(
+                    float_type="figure",
+                    float_placement="H",
+                    float_caption="Gender check using Plink. Mean $x$ and $y$ "
+                                  "intensities are shown for each sample. "
+                                  "Males are shown in blue, and females in "
+                                  "red. Triangles show problematic samples "
+                                  "(green for males, mauve for females). "
+                                  "Unknown gender are shown in gray.",
+                    float_label=script_prefix.replace("/", "_"),
+                    float_content=graphic_template.render(
+                        width=r"0.8\textwidth",
+                        graphics_path=graphics_path + "/",
+                        path=latex_template.sanitize_fig_name(path),
+                    ),
+                )
+
+            # If there is a 'sexcheck.LRR_BAF' directory, then there are LRR
+            # and BAF plots.
+            if os.path.isdir(script_prefix + ".LRR_BAF"):
+                figures = glob(
+                    os.path.join(script_prefix + ".LRR_BAF", "*.png"),
+                )
+                if len(figures):
+                    # Getting the sample IDs
+                    sample_ids = [
+                        re.search(
+                            "^baf_lrr_(\S+)_lrr_baf.png$",
+                            os.path.basename(figure),
+                        ) for figure in figures
+                    ]
+                    sample_ids = [
+                        "unknown sample" if not sample else sample.group(1)
+                        for sample in sample_ids
+                    ]
+
+                    # Getting the labels
+                    labels = [
+                        (script_prefix + "_baf_lrr_" +
+                         os.path.splitext(sample)[0]).replace("/", "_")
+                        for sample in sample_ids
+                    ]
+
+                    fig_1 = labels[0]
+                    fig_2 = ""
+                    if len(figures) > 1:
+                        fig_2 = labels[-1]
+                    text = (
+                        "Figure" + ("s" if len(figures) > 1 else "") +
+                        r"~\ref{" + fig_1 + "} " +
+                        (r"to \ref{" + fig_2 + "} " if fig_2 else "") +
+                        "show" + (" " if len(figures) > 1 else "s ") + "the "
+                        "log R ratio and the B allele frequency versus the "
+                        "position on chromosome X and Y for the problematic "
+                        "sample{}.".format("s" if len(figures) > 1 else "")
+                    )
+                    print >>o_file, latex_template.wrap_lines(text)
+
+                    zipped = zip(figures, sample_ids, labels)
+                    for figure, sample_id, label in zipped:
+                        sample_id = latex_template.sanitize_tex(sample_id)
+
+                        # Getting the paths
+                        graphics_path, path = os.path.split(figure)
+                        graphics_path = os.path.abspath(graphics_path)
+
+                        caption = (
+                            "Plots showing the log R ratio and the B allele "
+                            "frequency for chromosome X and Y (on the left "
+                            "and right, respectively) for sample "
+                            "{}.".format(sample_id)
+                        )
+                        print >>o_file, float_template.render(
+                            float_type="figure",
+                            float_placement="H",
+                            float_caption=caption,
+                            float_label=label,
+                            float_content=graphic_template.render(
+                                width=r"\textwidth",
+                                graphics_path=graphics_path + "/",
+                                path=latex_template.sanitize_fig_name(path),
+                            ),
+                        )
+
+    except IOError:
+        msg = "{}: cannot write LaTeX summary".format(latex_file)
+        raise ProgramError(msg)
+
+    # Writing the summary results
+    with open(os.path.join(base_dir, "results_summary.txt"), "a") as o_file:
+        print >>o_file, "# {}".format(script_prefix)
+        print >>o_file, "Number of samples with gender problem"
+        print >>o_file, "  - no genetic gender\t{:,d}".format(nb_no_genetic)
+        print >>o_file, "  - discordant gender\t{:,d}".format(nb_discordant)
+        print >>o_file, "---"
+
+    # We know this step does not produce a new data set, so we return the
+    # original one
+    return in_prefix, required_type, latex_file, sex_check.desc
+
+
+def run_plate_bias(in_prefix, in_type, out_prefix, base_dir, options):
+    """Runs step7 (plate bias).
+
+    :param in_prefix: the prefix of the input files.
+    :param in_type: the type of the input files.
+    :param out_prefix: the output prefix.
+    :param base_dir: the output directory.
+    :param options: the options needed.
+
+    :type in_prefix: string
+    :type in_type: string
+    :type out_prefix: string
+    :type base_dir: string
+    :type options: list of strings
+
+    :returns: a tuple containing the prefix of the output files (the input
+              prefix for the next script) and the type of the output files
+              (``bfile``).
+
+    This function calls the :py:mod:`PlateBias.plate_bias` module. The required
+    file type for this module is ``bfile``, hence the need to use the
+    :py:func:`check_input_files` to check if the file input file type is the
+    good one, or to create it if needed.
+
+    .. note::
+        The :py:mod:`PlateBias.plate_bias` module doesn't return usable output
+        files. Hence, this function returns the input file prefix and its type.
+
+    """
+    # Creating the output directory
+    os.mkdir(out_prefix)
+
+    # We know we need bfile
+    required_type = "bfile"
+    check_input_files(in_prefix, in_type, required_type)
+
+    # We need to inject the name of the input file and the name of the output
+    # prefix
+    script_prefix = os.path.join(out_prefix, "plate_bias")
+    options += ["--{}".format(required_type), in_prefix,
+                "--out", script_prefix]
+
+    # We run the script
+    try:
+        plate_bias.main(options)
+    except plate_bias.ProgramError as e:
+        msg = "plate_bias: {}".format(e)
+        raise ProgramError(msg)
+
+    # Reading the MAF before hand
+    maf = {}
+    with open(script_prefix + ".significant_SNPs.frq", "r") as i_file:
+        header = {
+            name: i for i, name in
+            enumerate(createRowFromPlinkSpacedOutput(i_file.readline()))
+        }
+        for required_col in ("CHR", "SNP", "MAF"):
+            if required_col not in header:
+                msg = "{}: missing column {}".format(
+                    script_prefix + ".significant_SNPs.frq",
+                    required_col,
+                )
+                raise ProgramError(msg)
+
+        for line in i_file:
+            row = createRowFromPlinkSpacedOutput(line)
+            marker_id = row[header["SNP"]]
+            maf[(row[header["CHR"]], row[header["SNP"]])] = row[header["MAF"]]
+
+    # Reading the p values
+    table = [["chrom", "pos", "name", "maf", "p", "odds", "plate"]]
+    for filename in glob(script_prefix + "*.fisher"):
+        plate_name = re.search(
+            r"/plate_bias\.(\S+)\.assoc\.fisher$",
+            filename,
+        )
+        if plate_name:
+            plate_name = latex_template.sanitize_tex(plate_name.group(1))
+        else:
+            plate_name = "unknown"
+
+        with open(filename, "r") as i_file:
+            header = {
+                name: i for i, name in
+                enumerate(createRowFromPlinkSpacedOutput(i_file.readline()))
+            }
+            for required_col in ["CHR", "SNP", "BP", "P", "OR"]:
+                if required_col not in header:
+                    msg = "{}: missing column {}".format(filename,
+                                                         required_col)
+                    raise ProgramError(msg)
+
+            for line in i_file:
+                row = createRowFromPlinkSpacedOutput(line)
+
+                table.append([
+                    row[header["CHR"]],
+                    row[header["BP"]],
+                    latex_template.sanitize_tex(row[header["SNP"]]),
+                    maf.get((row[header["CHR"]], row[header["SNP"]]), "N/A"),
+                    latex_template.format_numbers(row[header["P"]]),
+                    row[header["OR"]],
+                    plate_name,
+                ])
+    nb_markers = len(table) - 1
+
+    # Getting the p value threshold
+    p_threshold = str(plate_bias.parser.get_default("pfilter"))
+    if "--pfilter" in options:
+        p_threshold = str(options[options.index("--pfilter") + 1])
+
+    # We write a LaTeX summary
+    latex_file = os.path.join(script_prefix + ".summary.tex")
+    try:
+        with open(latex_file, "w") as o_file:
+            print >>o_file, latex_template.subsection(plate_bias.pretty_name)
+            text = (
+                "After performing the plate bias analysis using Plink, a "
+                "total of {:,d} marker{} had a significant result ({} a value "
+                "less than {}).".format(
+                    nb_markers,
+                    "s" if nb_markers > 1 else "",
+                    r"\textit{i.e.}",
+                    latex_template.format_numbers(p_threshold),
+                )
+            )
+            print >>o_file, latex_template.wrap_lines(text)
+
+            if nb_markers > 0:
+                table_label = script_prefix.replace("/", "_") + "_plate_bias"
+                text = (
+                    r"Table~\ref{" + table_label + "} summarizes the plate "
+                    "bias results."
+                )
+                print >>o_file, latex_template.wrap_lines(text)
+
+                # Getting the template
+                longtable_template = latex_template.jinja2_env.get_template(
+                    "longtable_template.tex",
+                )
+
+                # The table caption
+                table_caption = (
+                    "Summary of the plate bias analysis performed by Plink. "
+                    "Only significant marker{} {} shown (threshold of "
+                    "{}).".format(
+                        "s" if nb_markers > 1 else "",
+                        "are" if nb_markers > 1 else "is",
+                        latex_template.format_numbers(p_threshold),
+                    )
+                )
+                print >>o_file, longtable_template.render(
+                    table_caption=table_caption,
+                    table_label=table_label,
+                    nb_col=len(table[1]),
+                    col_alignments="rrlrrrl",
+                    text_size="scriptsize",
+                    header_data=zip(table[0], [1 for i in table[0]]),
+                    tabular_data=sorted(
+                        table[1:],
+                        key=lambda item: (int(item[0]), int(item[1])),
+                    ),
+                )
+
+    except IOError:
+        msg = "{}: cannot write LaTeX summary".format(latex_file)
+        raise ProgramError(msg)
+
+    # Writing the summary results
+    with open(os.path.join(base_dir, "results_summary.txt"), "a") as o_file:
+        print >>o_file, "# {}".format(script_prefix)
+        print >>o_file, ("Number of markers with plate bias (p<{})\t"
+                         "{:,d}".format(p_threshold, nb_markers))
+        print >>o_file, "---"
+
+    # We know this step doesn't produce an new data set, so we return the old
+    # prefix and the old in_type
+    return in_prefix, required_type, latex_file, plate_bias.desc
+
+
+def run_remove_heterozygous_haploid(in_prefix, in_type, out_prefix, base_dir,
+                                    options):
+    """Runs step8 (remove heterozygous haploid).
+
+    :param in_prefix: the prefix of the input files.
+    :param in_type: the type of the input files.
+    :param out_prefix: the output prefix.
+    :param base_dir: the output directory.
+    :param options: the options needed.
+
+    :type in_prefix: string
+    :type in_type: string
+    :type out_prefix: string
+    :type base_dir: string
+    :type options: list of strings
+
+    :returns: a tuple containing the prefix of the output files (the input
+              prefix for the next script) and the type of the output files
+              (``bfile``).
+
+    This function calls the :py:mod:`HeteroHap.remove_heterozygous_haploid`
+    module. The required file type for this module is ``bfile``, hence the need
+    to use the :py:func:`check_input_files` to check if the file input file
+    type is the good one, or to create it if needed.
+
+    """
+    # Creating the output directory
+    os.mkdir(out_prefix)
+
+    # We know we need bfile
+    required_type = "bfile"
+    check_input_files(in_prefix, in_type, required_type)
+
+    # We need to inject the name of the input file and the name of the output
+    # prefix
+    script_prefix = os.path.join(out_prefix, "without_hh_genotypes")
+    options += ["--{}".format(required_type), in_prefix,
+                "--out", script_prefix]
+
+    # We run the script
+    try:
+        remove_heterozygous_haploid.main(options)
+    except remove_heterozygous_haploid.ProgramError as e:
+        msg = "remove_heterozygous_haploid: {}".format(e)
+        raise ProgramError(msg)
+
+    # We get the number of genotypes that were set to missing
+    nb_hh_missing = None
+    with open(script_prefix + ".log", "r") as i_file:
+        nb_hh_missing = re.search(
+            r"(\d+) heterozygous haploid genotypes; set to missing",
+            i_file.read(),
+        )
+    if nb_hh_missing:
+        nb_hh_missing = int(nb_hh_missing.group(1))
+
+    # We write a LaTeX summary
+    latex_file = os.path.join(script_prefix + ".summary.tex")
+    try:
+        with open(latex_file, "w") as o_file:
+            print >>o_file, latex_template.subsection(
+                remove_heterozygous_haploid.pretty_name
+            )
+            text = (
+                "After Plink's heterozygous haploid analysis, a total of "
+                "{:,d} genotype{} were set to missing.".format(
+                    nb_hh_missing,
+                    "s" if nb_hh_missing - 1 > 1 else "",
+                )
+            )
+            print >>o_file, latex_template.wrap_lines(text)
+
+    except IOError:
+        msg = "{}: cannot write LaTeX summary".format(latex_file)
+        raise ProgramError(msg)
+
+    # Writing the summary results
+    with open(os.path.join(base_dir, "results_summary.txt"), "a") as o_file:
+        print >>o_file, "# {}".format(script_prefix)
+        print >>o_file, ("Number of heterozygous haploid genotypes set to "
+                         "missing\t{:,d}".format(nb_hh_missing))
+        print >>o_file, "---"
+
+    # We know this step produces an new data set (bfile), so we return it
+    return (os.path.join(out_prefix, "without_hh_genotypes"), "bfile",
+            latex_file, remove_heterozygous_haploid.desc)
+
+
+def run_find_related_samples(in_prefix, in_type, out_prefix, base_dir,
+                             options):
+    """Runs step9 (find related samples).
+
+    :param in_prefix: the prefix of the input files.
+    :param in_type: the type of the input files.
+    :param out_prefix: the output prefix.
+    :param base_dir: the output directory.
+    :param options: the options needed.
+
+    :type in_prefix: string
+    :type in_type: string
+    :type out_prefix: string
+    :type base_dir: string
+    :type options: list of strings
+
+    :returns: a tuple containing the prefix of the output files (the input
+              prefix for the next script) and the type of the output files
+              (``bfile``).
+
+    This function calls the :py:mod:`RelatedSamples.find_related_samples`
+    module. The required file type for this module is ``bfile``, hence the need
+    to use the :py:func:`check_input_files` to check if the file input file
+    type is the good one, or to create it if needed.
+
+    .. note::
+        The :py:mod:`RelatedSamples.find_related_samples` module doesn't return
+        usable output files. Hence, this function returns the input file prefix
+        and its type.
+
+    """
+    # Creating the output directory
+    os.mkdir(out_prefix)
+
+    # We know we need bfile
+    required_type = "bfile"
+    check_input_files(in_prefix, in_type, required_type)
+
+    # We need to inject the name of the input file and the name of the output
+    # prefix
+    script_prefix = os.path.join(out_prefix, "ibs")
+    options += ["--{}".format(required_type), in_prefix,
+                "--out", script_prefix]
+
+    # We run the script
+    try:
+        find_related_samples.main(options)
+    except find_related_samples.ProgramError as e:
+        msg = "find_related_samples: {}".format(e)
+        raise ProgramError(msg)
+
+    # Reading the file containing all samples that are related
+    #   - ibs.related_individuals
+    related_samples = set()
+    with open(script_prefix + ".related_individuals", "r") as i_file:
+        header = {
+            name: i for i, name in
+            enumerate(createRowFromPlinkSpacedOutput(i_file.readline()))
+        }
+        for required_col in ["FID1", "IID1", "FID2", "IID2"]:
+            if required_col not in header:
+                msg = "{}: missing column {}".format(
+                    script_prefix + ".related_individuals",
+                    required_col,
+                )
+                raise ProgramError(msg)
+
+        # Reading the rest of the data
+        for line in i_file:
+            row = createRowFromPlinkSpacedOutput(line)
+            related_samples.add((row[header["FID1"]], row[header["IID1"]]))
+            related_samples.add((row[header["FID2"]], row[header["IID2"]]))
+
+    # Reading file containing samples that should be discarded
+    #   - ibs.discarded_related_individuals
+    discarded_samples = None
+    with open(script_prefix + ".discarded_related_individuals", "r") as i_file:
+        discarded_samples = {
+            tuple(i.rstrip("\r\n").split("\t")) for i in i_file
+        }
+
+    # Counting the number of markers used for computing IBS values
+    nb_markers_ibs = 0
+    with open(script_prefix + ".pruned_data.bim", "r") as i_file:
+        for line in i_file:
+            nb_markers_ibs += 1
+
+    # We write a LaTeX summary
+    latex_file = os.path.join(script_prefix + ".summary.tex")
+    try:
+        with open(latex_file, "w") as o_file:
+            print >>o_file, latex_template.subsection(
+                find_related_samples.pretty_name,
+            )
+            text = (
+                "According to Plink relatedness analysis (using {:,d} "
+                "marker{}), {:,d} unique sample{} {} related to at least one "
+                "other sample. A total of {:,d} sample{} {} randomly selected "
+                "for downstream exclusion from the dataset.".format(
+                    nb_markers_ibs,
+                    "s" if nb_markers_ibs > 1 else "",
+                    len(related_samples),
+                    "s" if len(related_samples) > 1 else "",
+                    "were" if len(related_samples) > 1 else "was",
+                    len(discarded_samples),
+                    "s" if len(discarded_samples) > 1 else "",
+                    "were" if len(discarded_samples) > 1 else "was",
+                )
+            )
+            print >>o_file, latex_template.wrap_lines(text)
+
+            # Adding the first figure (if present)
+            fig_1 = script_prefix + ".related_individuals_z1.png"
+            fig_1_label = script_prefix.replace("/", "_") + "_z1"
+            if os.path.isfile(fig_1):
+                text = (
+                    r"Figure~\ref{" + fig_1_label + "} shows $Z_1$ versus "
+                    r"$IBS2_{ratio}^\ast$ for all related samples found by "
+                    r"Plink."
+                )
+                print >>o_file, latex_template.wrap_lines(text)
+
+            # Adding the second figure (if present)
+            fig_2 = script_prefix + ".related_individuals_z2.png"
+            fig_2_label = script_prefix.replace("/", "_") + "_z2"
+            if os.path.isfile(fig_1):
+                text = (
+                    r"Figure~\ref{" + fig_2_label + "} shows $Z_2$ versus "
+                    r"$IBS2_{ratio}^\ast$ for all related samples found by "
+                    r"Plink."
+                )
+                print >>o_file, latex_template.wrap_lines(text)
+
+            # Getting the required template
+            float_template = latex_template.jinja2_env.get_template(
+                "float_template.tex",
+            )
+            graphic_template = latex_template.jinja2_env.get_template(
+                "graphics_template.tex",
+            )
+
+            figures = (fig_1, fig_2)
+            labels = (fig_1_label, fig_2_label)
+            graph_types = ("$Z_1$", "$Z_2$")
+            for fig, label, graph_type in zip(figures, labels, graph_types):
+                if os.path.isfile(fig):
+                    # Getting the paths
+                    graphics_path, path = os.path.split(fig)
+                    graphics_path = os.path.abspath(graphics_path)
+
+                    # Printing
+                    caption = (
+                        graph_type + r" versus $IBS2_{ratio}^\ast$ for all "
+                        "related samples found by Plink in the IBS analysis."
+                    )
+                    print >>o_file, float_template.render(
+                        float_type="figure",
+                        float_placement="H",
+                        float_caption=caption,
+                        float_label=label,
+                        float_content=graphic_template.render(
+                            width=r"0.8\textwidth",
+                            graphics_path=graphics_path + "/",
+                            path=latex_template.sanitize_fig_name(path),
+                        ),
+                    )
+
+    except IOError:
+        msg = "{}: cannot write LaTeX summary".format(latex_file)
+        raise ProgramError(msg)
+
+    # Writing the summary results
+    with open(os.path.join(base_dir, "results_summary.txt"), "a") as o_file:
+        print >>o_file, "# {}".format(script_prefix)
+        print >>o_file, ("Number of markers used for IBS analysis\t"
+                         "{:,d}".format(nb_markers_ibs))
+        print >>o_file, ("Number of unique related samples\t"
+                         "{:,d}".format(len(related_samples)))
+        print >>o_file, "---"
+
+    # We know this step doesn't produce an new data set, so we return the old
+    # prefix and the old in_type
+    return in_prefix, required_type, latex_file, find_related_samples.desc
+
+
+def run_check_ethnicity(in_prefix, in_type, out_prefix, base_dir, options):
+    """Runs step10 (check ethnicity).
+
+    :param in_prefix: the prefix of the input files.
+    :param in_type: the type of the input files.
+    :param out_prefix: the output prefix.
+    :param base_dir: the output directory.
+    :param options: the options needed.
+
+    :type in_prefix: string
+    :type in_type: string
+    :type out_prefix: string
+    :type base_dir: string
+    :type options: list of strings
+
+    :returns: a tuple containing the prefix of the output files (the input
+              prefix for the next script) and the type of the output files
+              (``bfile``).
+
+    This function calls the :py:mod:`Ethnicity.check_ethnicity` module. The
+    required file type for this module is ``bfile``, hence the need to use the
+    :py:func:`check_input_files` to check if the file input file type is the
+    good one, or to create it if needed.
+
+    .. note::
+        The :py:mod:`Ethnicity.check_ethnicity` module doesn't return usable
+        output files. Hence, this function returns the input file prefix and
+        its type.
+
+    """
+    # Creating the output directory
+    os.mkdir(out_prefix)
+
+    # We know we need bfile
+    required_type = "bfile"
+    check_input_files(in_prefix, in_type, required_type)
+
+    # We need to inject the name of the input file and the name of the output
+    # prefix
+    script_prefix = os.path.join(out_prefix, "ethnicity")
+    options += ["--{}".format(required_type), in_prefix,
+                "--out", script_prefix]
+
+    # We run the script
+    try:
+        check_ethnicity.main(options)
+    except check_ethnicity.ProgramError as e:
+        msg = "check_ethnicity: {}".format(e)
+        raise ProgramError(msg)
+
+    # Getting the multiplier value
+    multiplier = check_ethnicity.parser.get_default("multiplier")
+    if "--multiplier" in options:
+        multiplier = options[options.index("--multiplier") + 1]
+
+    # Getting the population of which the outliers were computed from
+    outliers_of = check_ethnicity.parser.get_default("outliers_of")
+    if "--outliers-of" in options:
+        outliers_of = options[options.index("--outliers-of") + 1]
+
+    # Computing the number of outliers
+    outliers = None
+    with open(script_prefix + ".outliers", "r") as i_file:
+        outliers = {tuple(line.rstrip("\r\n").split("\t")) for line in i_file}
+
+    # Computing the number of markers used
+    nb_markers_mds = 0
+    with open(script_prefix + ".ibs.pruned_data.bim", "r") as i_file:
+        for line in i_file:
+            nb_markers_mds += 1
+
+    # We write a LaTeX summary
+    latex_file = os.path.join(script_prefix + ".summary.tex")
+    try:
+        with open(latex_file, "w") as o_file:
+            print >>o_file, latex_template.subsection(
+                check_ethnicity.pretty_name,
+            )
+            text = (
+                "Using {:,d} marker{} and a multiplier of {}, there was a "
+                "total of {:,d} outlier{} of the {} population.".format(
+                    nb_markers_mds,
+                    "s" if nb_markers_mds > 1 else "",
+                    multiplier,
+                    len(outliers),
+                    "s" if len(outliers) > 1 else "",
+                    outliers_of,
+                )
+            )
+            print >>o_file, latex_template.wrap_lines(text)
+
+            # Adding the figure if it exists
+            fig = script_prefix + ".outliers.png"
+            if os.path.isfile(fig):
+                # Getting the paths
+                graphics_path, path = os.path.split(fig)
+                graphics_path = os.path.abspath(graphics_path)
+
+                # Getting the required template
+                float_template = latex_template.jinja2_env.get_template(
+                    "float_template.tex",
+                )
+                graphic_template = latex_template.jinja2_env.get_template(
+                    "graphics_template.tex",
+                )
+
+                # The label
+                label = script_prefix.replace("/", "_") + "_outliers"
+
+                text = (
+                    r"Figure~\ref{" + label + "} shows the first two "
+                    "principal components of the MDS analysis, where outliers "
+                    "of the " + outliers_of + " population are shown in grey."
+                )
+                print >>o_file, latex_template.wrap_lines(text)
+
+                # Printing
+                caption = (
+                    "MDS plots showing the first two principal components of "
+                    "the source dataset with the reference panels. The "
+                    "outliers of the {} population are shown in grey, while "
+                    "samples of the source dataset that resemble the {} "
+                    "population is shown in orange. A multiplier of {} was "
+                    "used to find the {:,d} outlier{}.".format(
+                        outliers_of,
+                        outliers_of,
+                        multiplier,
+                        len(outliers),
+                        "s" if len(outliers) > 1 else "",
+                    )
+                )
+                print >>o_file, float_template.render(
+                    float_type="figure",
+                    float_placement="H",
+                    float_caption=caption,
+                    float_label=label,
+                    float_content=graphic_template.render(
+                        width=r"0.8\textwidth",
+                        graphics_path=graphics_path + "/",
+                        path=latex_template.sanitize_fig_name(path),
+                    ),
+                )
+
+    except IOError:
+        msg = "{}: cannot write LaTeX summary".format(latex_file)
+        raise ProgramError(msg)
+
+    # Writing the summary results
+    with open(os.path.join(base_dir, "results_summary.txt"), "a") as o_file:
+        print >>o_file, "# {}".format(script_prefix)
+        print >>o_file, ("Number of markers used for MDS analysis\t"
+                         "{:,d}".format(nb_markers_mds))
+        print >>o_file, ("Number of {} outliers\t"
+                         "{:,d}".format(outliers_of, len(outliers)))
+        print >>o_file, "---"
+
+    # We know this step doesn't produce an new data set, so we return the old
+    # prefix and the old in_type
+    return in_prefix, required_type, latex_file, check_ethnicity.desc
+
+
+def run_flag_maf_zero(in_prefix, in_type, out_prefix, base_dir, options):
+    """Runs step11 (flag MAF zero).
+
+    :param in_prefix: the prefix of the input files.
+    :param in_type: the type of the input files.
+    :param out_prefix: the output prefix.
+    :param base_dir: the output directory.
+    :param options: the options needed.
+
+    :type in_prefix: string
+    :type in_type: string
+    :type out_prefix: string
+    :type base_dir: string
+    :type options: list of strings
+
+    :returns: a tuple containing the prefix of the output files (the input
+              prefix for the next script) and the type of the output files
+              (``bfile``).
+
+    This function calls the :py:mod:`FlagMAF.flag_maf_zero` module. The
+    required file type for this module is ``bfile``, hence the need to use the
+    :py:func:`check_input_files` to check if the file input file type is the
+    good one, or to create it if needed.
+
+    .. note::
+        The :py:mod:`FlagMAF.flag_maf_zero` module doesn't return usable output
+        files. Hence, this function returns the input file prefix and its type.
+
+    """
+    # Creating the output directory
+    os.mkdir(out_prefix)
+
+    # We know we need bfile
+    required_type = "bfile"
+    check_input_files(in_prefix, in_type, required_type)
+
+    # We need to inject the name of the input file and the name of the output
+    # prefix
+    script_prefix = os.path.join(out_prefix, "flag_maf_0")
+    options += ["--{}".format(required_type), in_prefix,
+                "--out", script_prefix]
+
+    # We run the script
+    try:
+        flag_maf_zero.main(options)
+    except flag_maf_zero.ProgramError as e:
+        msg = "flag_maf_zero: {}".format(e)
+        raise ProgramError(msg)
+
+    # Reading the file to compute the number of flagged markers
+    nb_flagged = None
+    flagged_fn = script_prefix + ".list"
+    with open(flagged_fn, "r") as i_file:
+        nb_flagged = len(i_file.read().splitlines())
+
+    # We write a LaTeX summary
+    latex_file = os.path.join(script_prefix + ".summary.tex")
+    try:
+        with open(latex_file, "w") as o_file:
+            print >>o_file, latex_template.subsection(
+                flag_maf_zero.pretty_name
+            )
+            safe_fn = latex_template.sanitize_tex(os.path.basename(flagged_fn))
+            text = (
+                "After computing minor allele frequencies (MAF) of all "
+                "markers using Plink, a total of {:,d} marker{} had a MAF "
+                "of zero and were flagged ({}).".format(
+                    nb_flagged,
+                    "s" if nb_flagged - 1 > 1 else "",
+                    "see file " + latex_template.texttt(safe_fn) +
+                    " for more information"
+                )
+            )
+            print >>o_file, latex_template.wrap_lines(text)
+
+    except IOError:
+        msg = "{}: cannot write LaTeX summary".format(latex_file)
+        raise ProgramError(msg)
+
+    # Writing the summary results
+    with open(os.path.join(base_dir, "results_summary.txt"), "a") as o_file:
+        print >>o_file, "# {}".format(script_prefix)
+        print >>o_file, ("Number of markers flagged for MAF\t"
+                         "{:,d}".format(nb_flagged))
+        print >>o_file, "---"
+
+    # We know this step doesn't produce an new data set, so we return the old
+    # prefix and the old in_type
+    return in_prefix, required_type, latex_file, flag_maf_zero.desc
+
+
+def run_flag_hw(in_prefix, in_type, out_prefix, base_dir, options):
+    """Runs step12 (flag HW).
+
+    :param in_prefix: the prefix of the input files.
+    :param in_type: the type of the input files.
+    :param out_prefix: the output prefix.
+    :param base_dir: the output directory.
+    :param options: the options needed.
+
+    :type in_prefix: string
+    :type in_type: string
+    :type out_prefix: string
+    :type base_dir: string
+    :type options: list of strings
+
+    :returns: a tuple containing the prefix of the output files (the input
+              prefix for the next script) and the type of the output files
+              (``bfile``).
+
+    This function calls the :py:mod:`FlagHW.flag_hw` module. The required file
+    type for this module is ``bfile``, hence the need to use the
+    :py:func:`check_input_files` to check if the file input file type is the
+    good one, or to create it if needed.
+
+    .. note::
+        The :py:mod:`FlagHW.flag_hw` module doesn't return usable output files.
+        Hence, this function returns the input file prefix and its type.
+
+    """
+    # Creating the output directory
+    os.mkdir(out_prefix)
+
+    # We know we need bfile
+    required_type = "bfile"
+    check_input_files(in_prefix, in_type, required_type)
+
+    # We need to inject the name of the input file and the name of the output
+    # prefix
+    script_prefix = os.path.join(out_prefix, "flag_hw")
+    options += ["--{}".format(required_type), in_prefix,
+                "--out", script_prefix]
+
+    # We run the script
+    try:
+        flag_hw.main(options)
+    except flag_hw.ProgramError as e:
+        msg = "flag_hw: {}".format(e)
+        raise ProgramError(msg)
+
+    # Finding the two files containing the list of flagged markers
+    filenames = glob(script_prefix + ".snp_flag_threshold_[0-9]*")
+    thresholds = {}
+    for filename in filenames:
+        # Finding the threshold of the file
+        threshold = re.sub(
+            r"^flag_hw.snp_flag_threshold_",
+            "",
+            os.path.basename(filename),
+        )
+
+        # Counting the number of markers in the file
+        nb_markers = None
+        with open(filename, "r") as i_file:
+            nb_markers = len(i_file.read().splitlines())
+
+        # Saving the values
+        thresholds[threshold] = (nb_markers, filename)
+
+    # We create the LaTeX summary
+    latex_file = os.path.join(script_prefix + ".summary.tex")
+    try:
+        with open(latex_file, "w") as o_file:
+            print >>o_file, latex_template.subsection(
+                flag_hw.pretty_name
+            )
+
+            # Data to write
+            sorted_keys = sorted(thresholds.keys(), key=float)
+
+            text = (
+                "Markers which failed Hardy-Weinberg equilibrium test (using "
+                "Plink) were flagged. A total of {:,d} marker{} failed with a "
+                "threshold of {}. A total of {:,d} marker{} failed with a "
+                "threshold of {}. For a total list, check the files {} and "
+                "{}, respectively.".format(
+                    thresholds[sorted_keys[0]][0],
+                    "s" if thresholds[sorted_keys[0]][0] - 1 > 1 else "",
+                    latex_template.format_numbers(sorted_keys[0]),
+                    thresholds[sorted_keys[1]][0],
+                    "s" if thresholds[sorted_keys[1]][0] - 1 > 1 else "",
+                    latex_template.format_numbers(sorted_keys[1]),
+                    latex_template.texttt(
+                        latex_template.sanitize_tex(os.path.basename(
+                            thresholds[sorted_keys[0]][1],
+                        )),
+                    ),
+                    latex_template.texttt(
+                        latex_template.sanitize_tex(os.path.basename(
+                            thresholds[sorted_keys[1]][1],
+                        )),
+                    ),
+                )
+            )
+            print >>o_file, latex_template.wrap_lines(text)
+
+    except IOError:
+        msg = "{}: cannot write LaTeX summary".format(latex_file)
+        raise ProgramError(msg)
+
+    # Writing the summary results
+    with open(os.path.join(base_dir, "results_summary.txt"), "a") as o_file:
+        print >>o_file, "# {}".format(script_prefix)
+        print >>o_file, "Number of markers flagged for HW"
+        print >>o_file, "  - {}\t{:,d}".format(
+                            sorted_keys[0],
+                            thresholds[sorted_keys[0]][0],
+                        )
+        print >>o_file, "  - {}\t{:,d}".format(
+                            sorted_keys[1],
+                            thresholds[sorted_keys[1]][0],
+                        )
+        print >>o_file, "---"
+
+    # We know this step doesn't produce an new data set, so we return the old
+    # prefix and the old in_type
+    return in_prefix, required_type, latex_file, flag_hw.desc
+
+
+def run_compare_gold_standard(in_prefix, in_type, out_prefix, base_dir,
+                              options):
+    """Compares with a gold standard data set (compare_gold_standard.
+
+    :param in_prefix: the prefix of the input files.
+    :param in_type: the type of the input files.
+    :param out_prefix: the output prefix.
+    :param base_dir: the output directory.
+    :param options: the options needed.
+
+    :type in_prefix: string
+    :type in_type: string
+    :type out_prefix: string
+    :type base_dir: string
+    :type options: list of strings
+
+    :returns: a tuple containing the prefix of the output files (the input
+              prefix for the next script) and the type of the output files
+              (``bfile``).
+
+    This function calls the :py:mod:`Misc.compare_gold_standard` module. The
+    required file type for this module is ``bfile``, hence the need to use the
+    :py:func:`check_input_files` to check if the file input file type is the
+    good one, or to create it if needed.
+
+    .. note::
+        The :py:mod:`Misc.compare_gold_standard` module doesn't return usable
+        output files. Hence, this function returns the input file prefix and
+        its type.
+
+    """
+    # Creating the output directory
+    os.mkdir(out_prefix)
+
+    # We know we need bfile
+    required_type = "bfile"
+    check_input_files(in_prefix, in_type, required_type)
+
+    # We need to inject the name of the input file and the name of the output
+    # prefix
+    script_prefix = os.path.join(out_prefix, "compare_with_gold")
+    options += ["--{}".format(required_type), in_prefix,
+                "--out", script_prefix]
+
+    # We run the script
+    try:
+        compare_gold_standard.main(options)
+    except compare_gold_standard.ProgramError as e:
+        msg = "compare_gold_standard: {}".format(e)
+        raise ProgramError(msg)
+
+    # We create the LaTeX summary
+    latex_file = os.path.join(script_prefix + ".summary.tex")
+    try:
+        with open(latex_file, "w") as o_file:
+            print >>o_file, latex_template.subsection(
+                compare_gold_standard.pretty_name
+            )
+
+    except IOError:
+        msg = "{}: cannot write LaTeX summary".format(latex_file)
+        raise ProgramError(msg)
+
+    # We know this step doesn't produce an new data set, so we return the old
+    # prefix and the old in_type
+    return in_prefix, required_type, latex_file, compare_gold_standard.desc
+
+
+def run_subset_data(in_prefix, in_type, out_prefix, base_dir, options):
+    """Subsets the data.
+
+    :param in_prefix: the prefix of the input files.
+    :param in_type: the type of the input files.
+    :param out_prefix: the output prefix.
+    :param base_dir: the output directory.
+    :param options: the options needed.
+
+    :type in_prefix: string
+    :type in_type: string
+    :type out_prefix: string
+    :type base_dir: string
+    :type options: list of strings
+
+    :returns: a tuple containing the prefix of the output files (the input
+              prefix for the next script) and the type of the output files
+              (``bfile``).
+
+    This function calls the :py:mod:`PlinkUtils.subset_data` module. The
+    required file type for this module is ``bfile``, hence the need to use the
+    :py:func:`check_input_files` to check if the file input file type is the
+    good one, or to create it if needed.
+
+    .. note::
+        The output file type is the same as the input file type.
+
+    """
+    # Creating the output directory
+    os.mkdir(out_prefix)
+
+    # The prefix of the script
+    script_prefix = os.path.join(out_prefix, "subset")
+
+    # The extension of the marker and sample file
+    markers_ext = None
+    samples_ext = None
+
+    # Looking at what we have
+    required_type = None
+    if in_type == "bfile":
+        required_type = "bfile"
+        markers_ext = ".bim"
+        samples_ext = ".fam"
+
+    elif in_type == "tfile":
+        required_type = "tfile"
+        markers_ext = ".tped"
+        samples_ext = ".tfam"
+
+    else:
+        required_type = "file"
+        markers_ext = ".map"
+        samples_ext = ".ped"
+
+    if "--is-bfile" in set(options):
+        required_type = "bfile"
+
+    # Checking the input file
+    check_input_files(in_prefix, in_type, required_type)
+
+    # We need to inject the name of the input file and the name of the output
+    # prefix
+    options += ["--ifile", in_prefix,
+                "--out", os.path.join(out_prefix, "subset")]
+
+    if required_type == "bfile":
+        options.append("--is-bfile")
+    elif required_type == "tfile":
+        options.append("--is-tfile")
+    else:
+        options.append("--is-file")
+
+    # We run the script
+    try:
+        subset_data.main(options)
+    except subset_data.ProgramError as e:
+        msg = "subset_data: {}".format(e)
+        raise ProgramError(msg)
+
+    # What was done
+    is_extract = "--extract" in options
+    is_exclude = "--exclude" in options
+    is_keep = "--keep" in options
+    is_remove = "--remove" in options
+
+    # The files before the subset
+    samples_before_fn = in_prefix
+    markers_before_fn = in_prefix
+
+    # The files after the subset
+    samples_after_fn = script_prefix
+    markers_after_fn = script_prefix
+
+    # The name of the subset file for markers and samples
+    sample_subset_fn = None
+    marker_subset_fn = None
+
+    # The samples and markers that were removed
+    removed_samples = None
+    removed_markers = None
+
+    # The set of samples and markers before subset
+    samples_before = None
+    markers_before = None
+    # The set of remaining samples and markers after subset
+    samples_after = None
+    markers_after = None
+
+    # Markers were extracted
+    nb_extract = None
+    if is_extract:
+        # Counting the number of markers that were extracted
+        marker_subset_fn = options[options.index("--extract") + 1]
+        with open(marker_subset_fn, "r") as i_file:
+            nb_extract = sum(1 for line in i_file)
+
+    # Markers were excluded
+    nb_exclude = None
+    if is_exclude:
+        marker_subset_fn = options[options.index("--exclude") + 1]
+        with open(marker_subset_fn, "r") as i_file:
+            nb_exclude = sum(1 for line in i_file)
+
+    # Checking the difference between both (for markers)
+    if is_extract or is_exclude:
+        markers_before_fn += markers_ext
+        markers_after_fn += ".bim" if required_type == "bfile" else markers_ext
+
+        markers_before = None
+        with open(markers_before_fn, "r") as i_file:
+            markers_before = {
+                createRowFromPlinkSpacedOutput(line)[1] for line in i_file
+            }
+
+        with open(markers_after_fn, "r") as i_file:
+            markers_after = {
+                createRowFromPlinkSpacedOutput(line)[1] for line in i_file
+            }
+
+        removed_markers = {
+            name: "subset {}".format(os.path.relpath(
+                marker_subset_fn,
+                base_dir,
+            )) for name in markers_before - markers_after
+        }
+
+    # Samples were kept
+    nb_keep = None
+    if is_keep:
+        sample_subset_fn = options[options.index("--keep") + 1]
+        with open(sample_subset_fn, "r") as i_file:
+            nb_keep = sum(1 for line in i_file)
+
+    # Samples were removed
+    nb_remove = None
+    if is_remove:
+        sample_subset_fn = options[options.index("--remove") + 1]
+        with open(sample_subset_fn, "r") as i_file:
+            nb_remove = sum(1 for line in i_file)
+
+    if is_keep or is_remove:
+        samples_before_fn += samples_ext
+        samples_after_fn += ".fam" if required_type == "bfile" else samples_ext
+
+        samples_before = None
+        with open(samples_before_fn, "r") as i_file:
+            samples_before = {
+                tuple(createRowFromPlinkSpacedOutput(line)[:2])
+                for line in i_file
+            }
+
+        with open(samples_after_fn, "r") as i_file:
+            samples_after = {
+                tuple(createRowFromPlinkSpacedOutput(line)[:2])
+                for line in i_file
+            }
+
+        removed_samples = {
+            "\t".join(name): "subset {}".format(os.path.relpath(
+                sample_subset_fn,
+                base_dir,
+            )) for name in samples_before - samples_after
+        }
+
+    # Reading the log file to gather what is left
+    log_file = None
+    with open(script_prefix + ".log", "r") as i_file:
+        log_file = i_file.read()
+
+    # Checking the number of markers at the beginning
+    nb_marker_start = re.search(
+        r"(\d+) markers to be included from \[ {}".format(in_prefix),
+        log_file,
+    )
+    if nb_marker_start:
+        nb_marker_start = int(nb_marker_start.group(1))
+
+    # Checking the number of markers at the end
+    nb_marker_end = re.search(
+        r"Before frequency and genotyping pruning, there are (\d+) SNPs",
+        log_file,
+    )
+    if nb_marker_end:
+        nb_marker_end = int(nb_marker_end.group(1))
+
+    # Checking the number of samples
+    if nb_marker_end != len(markers_after):
+        raise ProgramError("Something went wrong with Plink's subset (numbers "
+                           "are different from data and log file)")
+    if nb_marker_start - nb_marker_end != len(removed_markers):
+        raise ProgramError("Something went wrong with Plink's subset (numbers "
+                           "are different from data and log file)")
+
+    # Checking the number of samples at the beginning
+    nb_sample_start = re.search(
+        r"(\d+) individuals read from \[ {}".format(in_prefix),
+        log_file,
+    )
+    if nb_sample_start:
+        nb_sample_start = int(nb_sample_start.group(1))
+
+    # Checking the number of samples at the end
+    nb_sample_end = re.search(
+        r"(\d+) founders and (\d+) non-founders found",
+        log_file,
+    )
+    if nb_sample_end:
+        nb_sample_end = int(nb_sample_end.group(1)) + \
+                        int(nb_sample_end.group(2))
+
+    # Checking the number of samples
+    if nb_sample_end != len(samples_after):
+        raise ProgramError("Something went wrong with Plink's subset (numbers "
+                           "are different from data and log file)")
+    if nb_sample_start - nb_sample_end != len(removed_samples):
+        raise ProgramError("Something went wrong with Plink's subset (numbers "
+                           "are different from data and log file)")
+
+    # We write a LaTeX summary
+    latex_file = os.path.join(script_prefix + ".summary.tex")
+    try:
+        with open(latex_file, "w") as o_file:
+            print >>o_file, latex_template.subsection(subset_data.pretty_name)
+            text = ""
+            if is_extract:
+                text += (
+                    "The file for marker extraction contained {:,d} marker{}. "
+                    "Out of a total of {:,d} marker{}, {:,d} "
+                    "remained ({:,d} excluded).".format(
+                        nb_extract,
+                        "s" if nb_extract > 1 else "",
+                        nb_marker_start,
+                        "s" if nb_marker_start > 1 else "",
+                        nb_marker_end,
+                        nb_marker_start - nb_marker_end,
+                    )
+                )
+            if is_exclude:
+                text += (
+                    "The file for marker exclusion contained {:,d} marker{}. "
+                    "Out of a total of {:,d} marker{}, {:,d} "
+                    "remained ({:,d} excluded). ".format(
+                        nb_exclude,
+                        "s" if nb_exclude > 1 else "",
+                        nb_marker_start,
+                        "s" if nb_marker_start > 1 else "",
+                        nb_marker_end,
+                        nb_marker_start - nb_marker_end,
+                    )
+                )
+            if is_keep:
+                text += (
+                    "The file containing samples to keep contained {:,d} "
+                    "sample{}. Out of a total of {:,d} sample{}, {:,d} "
+                    "remained ({:,d} removed). ".format(
+                        nb_keep,
+                        "s" if nb_keep > 1 else "",
+                        nb_sample_start,
+                        "s" if nb_sample_start > 1 else "",
+                        nb_sample_end,
+                        nb_sample_start - nb_sample_end,
+                    )
+                )
+            if is_remove:
+                text += (
+                    "The file containing samples to remove contained {:,d} "
+                    "sample{}. Out of a total of {:,d} sample{}, {:,d} "
+                    "remained ({:,d} removed). ".format(
+                        nb_remove,
+                        "s" if nb_remove > 1 else "",
+                        nb_sample_start,
+                        "s" if nb_sample_start > 1 else "",
+                        nb_sample_end,
+                        nb_sample_start - nb_sample_end,
+                    )
+                )
+            print >>o_file, latex_template.wrap_lines(text)
+
+    except IOError:
+        msg = "{}: cannot write LaTeX summary".format(latex_file)
+        raise ProgramError(msg)
+
+    # Writing the excluded samples
+    o_filename = os.path.join(base_dir, "excluded_samples.txt")
+    with open(o_filename, "a") as o_file:
+        for value in removed_samples.items():
+            print >>o_file, "\t".join(value)
+
+    # Writing the excluded markers to file
+    o_filename = os.path.join(base_dir, "excluded_markers.txt")
+    with open(o_filename, "a") as o_file:
+        for value in removed_markers.items():
+            print >>o_file, "\t".join(value)
+
+    # Writing the summary results
+    with open(os.path.join(base_dir, "results_summary.txt"), "a") as o_file:
+        print >>o_file, "# {}".format(script_prefix)
+        if nb_marker_end != nb_marker_start:
+            print >>o_file, "Number of markers excluded"
+            print >>o_file, ("  - {fn}\t{nb:,d}\t-{nb:,d}".format(
+                                fn=marker_subset_fn,
+                                nb=nb_marker_start - nb_marker_end,
+                            ))
+            print >>o_file, "---"
+        if nb_sample_end != nb_sample_start:
+            print >>o_file, "Number of samples removed"
+            print >>o_file, ("  - {fn}\t{nb:,d}\t\t-{nb:,d}".format(
+                                fn=sample_subset_fn,
+                                nb=nb_sample_start - nb_sample_end,
+                            ))
+            print >>o_file, "---"
+
+    # We know this step does produce a new data set (bfile), so we return it
+    return (os.path.join(out_prefix, "subset"), required_type, latex_file,
+            subset_data.desc)
+
+
+def run_command(command):
+    """Run a command using subprocesses.
+
+    :param command: the command to run.
+
+    :type command: list of strings
+
+    Tries to run a command. If it fails, raise a :py:class:`ProgramError`.
+
+    .. warning::
+        The variable ``command`` should be a list of strings (no other type).
+
+    """
+    output = None
+    try:
+        output = subprocess.check_output(command, stderr=subprocess.STDOUT,
+                                         shell=False)
+    except subprocess.CalledProcessError:
+        msg = "couldn't run command\n{}".format(command)
+        raise ProgramError(msg)
+
+
+def count_markers_samples(prefix, file_type):
+    """Counts the number of markers and samples in plink file.
+
+    :param prefix: the prefix of the files.
+    :param file_type: the file type.
+
+    :type prefix: string
+    :type file_type: string
+
+    :returns: the number of markers and samples (in a tuple).
+
+    """
+    # The files that will need counting
+    sample_file = None
+    marker_file = None
+
+    if file_type == "bfile":
+        # Binary files (.bed, .bim and .fam)
+        sample_file = prefix + ".fam"
+        marker_file = prefix + ".bim"
+
+    elif file_type == "file":
+        # Pedfile (.ped and .map)
+        sample_file = prefix + ".ped"
+        marker_file = prefix + ".map"
+
+    elif file_type == "tfile":
+        # Transposed pedfile (.tped and .tfam)
+        sample_file = prefix + ".tfam"
+        marker_file = prefix + ".tped"
+
+    # Counting (this may take some time)
+    nb_samples = 0
+    with open(sample_file, "r") as f:
+        for line in f:
+            nb_samples += 1
+
+    nb_markers = 0
+    with open(marker_file, "r") as f:
+        for line in f:
+            nb_markers += 1
+
+    return nb_markers, nb_samples
+
+
+def check_input_files(prefix, the_type, required_type):
+    """Check that the file is of a certain file type.
+
+    :param prefix: the prefix of the input files.
+    :param the_type: the type of the input files (bfile, tfile or file).
+    :param required_type: the required type of the input files (bfile, tfile or
+                          file).
+
+    :type prefix: string
+    :type the_type: string
+    :type required_type: string
+
+    :returns: ``True`` if everything is OK.
+
+    Checks if the files are of the required type, according to their current
+    type. The available types are ``bfile`` (binary), ``tfile`` (transposed)
+    and ``file`` (normal).
+
+    """
+    # The files required for each type
+    bfile_type = {".bed", ".bim", ".fam"}
+    tfile_type = {".tped", ".tfam"}
+    file_type = {".ped", ".map"}
+
+    # Check if of bfile, tfile and file
+    plink_command = ["plink", "--noweb", "--out", prefix]
+    if required_type == "bfile":
+        # We need bfile
+        plink_command += ["--make-bed"]
+        if the_type == "bfile":
+            return True
+        elif the_type == "tfile":
+            # We have tfile, we need to create bfile from tfile
+            plink_command += ["--tfile", prefix]
+        elif the_type == "file":
+            # We have file, we need to create bfile from file
+            plink_command += ["--file", prefix]
+        else:
+            msg = "{}: no suitable input format...".format(prefix)
+            raise ProgramError(msg)
+
+        # We create the required files
+        if os.path.isfile(prefix + ".log"):
+            # There is a log file... we need to copy it
+            shutil.copyfile(prefix + ".log", prefix + ".olog")
+        run_command(plink_command)
+
+        # Everything is now fine
+        return True
+
+    elif required_type == "tfile":
+        # We need a tfile
+        plink_command += ["--recode", "--transpose", "--tab"]
+        if the_type == "tfile":
+            return True
+        elif the_type == "bfile":
+            # We have bfile, we need to create tfile from bfile
+            plink_command += ["--bfile", prefix]
+        elif the_type == "file":
+            # We have file, we need to create tfile from file
+            plink_command += ["--file", prefix]
+        else:
+            msg = "{}: no suitable input format...".format(prefix)
+            raise ProgramError(msg)
+
+        # We create the required files
+        if os.path.isfile(prefix + ".log"):
+            # There is a log file... we need to copy it
+            shutil.copyfile(prefix + ".log", prefix + ".olog")
+        run_command(plink_command)
+
+        # Everything is now fine
+        return True
+
+    elif required_type == "file":
+        # We need a file
+        plink_command += ["--recode", "--tab"]
+        if the_type == "file":
+            return True
+        elif the_type == "bfile":
+            # We have bfile, we need to create file from bfile
+            plink_command += ["--bfile", prefix]
+        elif the_type == "tfile":
+            # We have tfile, we need to create file from tfile
+            plink_command += ["--tfile", prefix]
+        else:
+            msg = "{}: no suitable input format...".format(prefix)
+            raise ProgramError(msg)
+
+        # We create the required files
+        if os.path.isfile(prefix + ".log"):
+            # There is a log file... we need to copy it
+            shutil.copyfile(prefix + ".log", prefix + ".olog")
+        run_command(plink_command)
+
+        # Everything is now fine
+        return True
+
+    else:
+        msg = "{}: unknown file format".format(required_type)
+        raise ProgramError(msg)
+
+
+def all_files_exist(file_list):
+    """Check if all files exist.
+
+    :param file_list: the names of files to check.
+
+    :type file_list: list of strings
+
+    :returns: ``True`` if all files exist, ``False`` otherwise.
+
+    """
+    all_exist = True
+    for filename in file_list:
+        all_exist = all_exist and os.path.isfile(filename)
+    return all_exist
+
+
+def read_config_file(filename):
+    """Reads the configuration file.
+
+    :param filename: the name of the file containing the configuration.
+
+    :type filename: string
+
+    :returns: A tuple where the first element is a list of sections, and the
+              second element is a map containing the configuration (options and
+              values).
+
+    The structure of the configuration file is important. Here is an example of
+    a configuration file::
+
+        [1] # Computes statistics on duplicated samples
+        script = duplicated_samples
+
+        [2] # Removes samples according to missingness
+        script = sample_missingness
+
+        [3] # Removes markers according to missingness
+        script = snp_missingness
+
+        [4] # Removes samples according to missingness (98%)
+        script = sample_missingness
+        mind = 0.02
+
+        [5] # Performs a sex check
+        script = sex_check
+
+        [6] # Flags markers with MAF=0
+        script = flag_maf_zero
+
+        [7] # Flags markers according to Hardy Weinberg
+        script = flag_hw
+
+        [8] # Subset the dataset (excludes markers and remove samples)
+        script = subset
+        exclude = .../filename
+        rempove = .../filename
+
+    Sections are in square brackets and must be ``integer``. The section number
+    represent the step at which the script will be run (*i.e.* from the
+    smallest number to the biggest). The sections must be continuous.
+
+    Each section contains the script names (``script`` variable) and options of
+    the script (all other variables) (*e.g.* section 4 runs the
+    ``sample_missingness`` script (:py:func:`run_sample_missingness`) with
+    option ``mind`` sets to 0.02).
+
+    Here is a list of the available scripts:
+
+    * ``duplicated_samples`` (:py:func:`run_duplicated_samples`)
+    * ``duplicated_snps`` (:py:func:`run_duplicated_snps`)
+    * ``noCall_hetero_snps`` (:py:func:`run_noCall_hetero_snps`)
+    * ``sample_missingness`` (:py:func:`run_sample_missingness`)
+    * ``snp_missingness`` (:py:func:`run_snp_missingness`)
+    * ``sex_check`` (:py:func:`run_sex_check`)
+    * ``plate_bias`` (:py:func:`run_plate_bias`)
+    * ``remove_heterozygous_haploid``
+      (:py:func:`run_remove_heterozygous_haploid`)
+    * ``find_related_samples`` (:py:func:`run_find_related_samples`)
+    * ``check_ethnicity`` (:py:func:`run_check_ethnicity`)
+    * ``flag_maf_zero`` (:py:func:`run_flag_maf_zero`)
+    * ``flag_hw`` (:py:func:`run_flag_hw`)
+    * ``subset`` (:py:func:`run_subset_data`)
+    * ``compare_gold_standard`` (:py:func:`run_compare_gold_standard`)
+
+    """
+    # Creating the config parser
+    config = ConfigParser.RawConfigParser(allow_no_value=True)
+    config.optionxform = str
+    config.read(filename)
+
+    # Checking the section names
+    sections = None
+    try:
+        sections = sorted([int(i) for i in config.sections()])
+    except ValueError:
+        # Section not integer
+        msg = ("{}: sections must be integers: "
+               "{}".format(filename, config.sections()))
+        raise ProgramError(msg)
+    if sections != range(min(sections), max(sections)+1):
+        # Missing a section
+        msg = "{}: maybe a section is missing: {}".format(filename, sections)
+        raise ProgramError(msg)
+    sections = [str(i) for i in sections]
+
+    # Reading the configuration for each sections
+    configuration = {}
+    for section in sections:
+        # Getting the script variable (and check it)
+        script_name = None
+        try:
+            script_name = config.get(section, "script")
+        except ConfigParser.NoOptionError:
+            msg = ("{}: section {}: no variable called "
+                   "'script'".format(filename, section))
+            raise ProgramError(msg)
+        if script_name not in available_modules:
+            msg = ("{}: section {}: script {}: invalid script "
+                   "name".format(filename, section, script_name))
+            raise ProgramError(msg)
+
+        # Getting the variables
+        options = []
+        for variable_name, variable_value in config.items(section):
+            unwanted_options = {"bfile", "tfile", "file", "out"}
+            if script_name in {"sample_missingness", "subset"}:
+                unwanted_options |= {"ifile", "is-bfile", "is-tfile"}
+            if script_name == "subset":
+                unwanted_options.add("is-file")
+            for unwanted in unwanted_options:
+                if variable_name == unwanted:
+                    msg = ("{}: section {}: do not use {} as an option for "
+                           "{}".format(filename, section, unwanted,
+                                       script_name))
+                    raise ProgramError(msg)
+            if variable_name != "script":
+                options.append("--" + variable_name)
+                if variable_value is not None:
+                    if variable_name in {"indep-pairwise", "sge-nodes",
+                                         "ibs-sge-nodes"}:
+                        # This is a special option
+                        options.extend(variable_value.split(" "))
+                    else:
+                        options.append(variable_value)
+
+        # Saving the configuration
+        configuration[section] = (script_name, options)
+
+    return sections, configuration
+
+
+def check_args(args):
+    """Checks the arguments and options.
+
+    :param args: an object containing the options and arguments of the program.
+
+    :type args: :py:class:`argparse.Namespace`
+
+    :returns: ``True`` if everything was OK.
+
+    If there is a problem with an option, an exception is raised using the
+    :py:class:`ProgramError` class, a message is printed to the
+    :class:`sys.stderr` and the program exits with error code 1.
+
+    """
+    # Checking the configuration file
+    if not os.path.isfile(args.conf):
+        msg = "{}: no such file".format(args.conf)
+        raise ProgramError(msg)
+
+    # Check the input files
+    if args.bfile is None and args.tfile is None and args.file is None:
+        msg = "needs one input file prefix (--bfile, --tfile or --file)"
+        raise ProgramError(msg)
+    if args.bfile is not None and args.tfile is None and args.file is None:
+        for fileName in [args.bfile + i for i in [".bed", ".bim", ".fam"]]:
+            if not os.path.isfile(fileName):
+                msg = "{}: no such file".format(fileName)
+                raise ProgramError(msg)
+    elif args.tfile is not None and args.bfile is None and args.file is None:
+        for fileName in [args.tfile + i for i in [".tped", ".tfam"]]:
+            if not os.path.isfile(fileName):
+                msg = "{}: no such file".format(fileName)
+                raise ProgramError(msg)
+    elif args.file is not None and args.bfile is None and args.tfile is None:
+        for fileName in [args.file + i for i in [".ped", ".map"]]:
+            if not os.path.isfile(fileName):
+                msg = "{}: no such file". format(fileName)
+                raise ProgramError(msg)
+    else:
+        msg = "needs only one input file prefix (--bfile, --tfile or --file)"
+        raise ProgramError(msg)
+
+    return True
+
+
+def parse_args():
+    """Parses the command line options and arguments.
+
+    :returns: A :py:class:`argparse.Namespace` object created by the
+              :py:mod:`argparse` module. It contains the values of the
+              different options.
+
+    ===============   =======  ================================================
+        Options        Type                      Description
+    ===============   =======  ================================================
+    ``--bfile``       String   The input binary file prefix from Plink.
+    ``--tfile``       String   The input transposed file prefix from Plink.
+    ``--file``        String   The input file prefix from Plink.
+    ``--conf``        String   The parameter file for the data clean up.
+    ``--overwrite``   Boolean  Overwrites output directories without asking the
+                               user.
+    ===============   =======  ================================================
+
+    .. note::
+        No option check is done here (except for the one automatically done by
+        :py:mod:`argparse`). Those need to be done elsewhere (see
+        :py:func:`checkArgs`).
+
+    """
+    return parser.parse_args()
+
+
+# The parser object
+desc = """Runs the data clean up (version {}).""".format(prog_version)
+parser = argparse.ArgumentParser(description=desc)
+parser.add_argument("-v", "--version", action="version",
+                    version="%(prog)s {}".format(prog_version))
+
+group = parser.add_argument_group("Input File")
+group.add_argument("--bfile", type=str, metavar="FILE",
+                   help=("The input file prefix (will find the plink "
+                         "binary files by appending the prefix to the "
+                         ".bim, .bed and .fam files, respectively)."))
+group.add_argument("--tfile", type=str, metavar="FILE",
+                   help=("The input file prefix (will find the plink "
+                         "transposed files by appending the prefix to the "
+                         ".tped and .tfam files, respectively)."))
+group.add_argument("--file", type=str, metavar="FILE",
+                   help=("The input file prefix (will find the plink "
+                         "files by appending the prefix to the "
+                         ".ped and .fam files)."))
+
+# The options
+group = parser.add_argument_group("Report Options")
+report_options(group)
+
+group = parser.add_argument_group("Configuration File")
+group.add_argument("--conf", type=str, metavar="FILE", required=True,
+                   help="The parameter file for the data clean up.")
+
+group = parser.add_argument_group("General Options")
+group.add_argument("--overwrite", action="store_true",
+                   help=("Overwrites output directories without asking the "
+                         "user. [DANGEROUS]"))
+
+# The available modules
+available_modules = {
+    "duplicated_samples": duplicated_samples,
+    "duplicated_snps": duplicated_snps,
+    "noCall_hetero_snps": noCall_hetero_snps,
+    "sample_missingness": sample_missingness,
+    "snp_missingness": snp_missingness,
+    "sex_check": sex_check,
+    "plate_bias": plate_bias,
+    "remove_heterozygous_haploid": remove_heterozygous_haploid,
+    "find_related_samples": find_related_samples,
+    "check_ethnicity": check_ethnicity,
+    "flag_maf_zero": flag_maf_zero,
+    "flag_hw": flag_hw,
+    "subset": subset_data,
+    "compare_gold_standard": compare_gold_standard,
+}
+available_functions = {
+    "duplicated_samples": run_duplicated_samples,
+    "duplicated_snps": run_duplicated_snps,
+    "noCall_hetero_snps": run_noCall_hetero_snps,
+    "sample_missingness": run_sample_missingness,
+    "snp_missingness": run_snp_missingness,
+    "sex_check": run_sex_check,
+    "plate_bias": run_plate_bias,
+    "remove_heterozygous_haploid": run_remove_heterozygous_haploid,
+    "find_related_samples": run_find_related_samples,
+    "check_ethnicity": run_check_ethnicity,
+    "flag_maf_zero": run_flag_maf_zero,
+    "flag_hw": run_flag_hw,
+    "subset": run_subset_data,
+    "compare_gold_standard": run_compare_gold_standard,
+}
+
+# Calling the main, if necessary
+if __name__ == "__main__":
+    try:
+        main()
+    except KeyboardInterrupt:
+        print >>sys.stderr, "Cancelled by user"
+        sys.exit(0)
+    except ProgramError as e:
+        parser.error(e.message)
