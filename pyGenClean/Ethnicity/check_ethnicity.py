@@ -61,8 +61,8 @@ def main(argString=None):
         (:py:func:`flipSNPs`).
     10. Combines the reference and the source panels
         (:py:func:`combinePlinkBinaryFiles`).
-    11. Runs part of :py:mod:`RelatedSamples.find_related_samples` on the
-        combined data set (:py:func:`runRelatedness`).
+    11. Runs part of :py:mod:`pyGenClean.RelatedSamples.find_related_samples`
+        on the combined data set (:py:func:`runRelatedness`).
     12. Creates the ``mds`` file from the combined data set and the result of
         previous step (:py:func:`createMDSFile`).
     13. Creates the population file (:py:func:`createPopulationFile`).
@@ -256,9 +256,9 @@ def find_the_outliers(mds_file_name, population_file_name, ref_pop_name,
     :type multiplier: float
     :type out_prefix: string
 
-    Uses the :py:mod:`Ethnicity.find_outliers` modules to find outliers. It
-    requires the ``mds`` file created by :py:func:`createMDSFile` and the
-    population file created by :py:func:`createPopulationFile`.
+    Uses the :py:mod:`pyGenClean.Ethnicity.find_outliers` modules to find
+    outliers. It requires the ``mds`` file created by :py:func:`createMDSFile`
+    and the population file created by :py:func:`createPopulationFile`.
 
     """
     options = ["--mds", mds_file_name, "--population-file",
@@ -418,7 +418,7 @@ def runRelatedness(inputPrefix, outPrefix, options):
 
     :returns: the prefix of the new bfile.
 
-    Runs :py:mod:`RelatedSamples.find_related_samples` using the
+    Runs :py:mod:`pyGenClean.RelatedSamples.find_related_samples` using the
     ``inputPrefix`` files and ``options`` options, and saves the results using
     the ``outPrefix`` prefix.
 

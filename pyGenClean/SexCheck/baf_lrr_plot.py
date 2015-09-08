@@ -105,9 +105,9 @@ def read_problematic_samples(file_name):
               first element and the sample ID as last element).
 
     Reads a file containing problematic samples after sex check. The file is
-    provided by the module :py:mod:`SexCheck.sex_check`. This file contains
-    two columns, the first one being the family ID and the second one, the
-    sample ID.
+    provided by the module :py:mod:`pyGenClean.SexCheck.sex_check`. This file
+    contains two columns, the first one being the family ID and the second one,
+    the sample ID.
 
     """
     problematic_samples = set()
@@ -139,7 +139,7 @@ def encode_chromosome(chromosome):
 
     .. testsetup::
 
-        from SexCheck.baf_lrr_plot import encode_chromosome
+        from pyGenClean.SexCheck.baf_lrr_plot import encode_chromosome
 
     .. doctest::
 

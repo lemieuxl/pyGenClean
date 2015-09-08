@@ -1099,7 +1099,7 @@ def flipGenotype(genotype):
 
     .. testsetup::
 
-        from DupSNPs.duplicated_snps import flipGenotype
+        from pyGenClean.DupSNPs.duplicated_snps import flipGenotype
 
     .. doctest::
 
