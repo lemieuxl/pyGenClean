@@ -27,10 +27,10 @@ import ConfigParser
 from glob import glob
 from collections import namedtuple, Counter
 
-import pyGenClean
 import pyGenClean.FlagHW.flag_hw as flag_hw
 import pyGenClean.LaTeX.utils as latex_template
 import pyGenClean.SexCheck.sex_check as sex_check
+from pyGenClean import __version__ as prog_version
 from pyGenClean.pipeline_error import ProgramError
 import pyGenClean.LaTeX.auto_report as auto_report
 import pyGenClean.PlateBias.plate_bias as plate_bias
@@ -49,10 +49,6 @@ import pyGenClean.HeteroHap.remove_heterozygous_haploid \
 
 import pyGenClean.PlinkUtils.subset_data as subset_data
 from pyGenClean.PlinkUtils import createRowFromPlinkSpacedOutput
-
-
-# Getting the version
-prog_version = pyGenClean.__version__
 
 
 def main():
