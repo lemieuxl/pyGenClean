@@ -43,6 +43,7 @@ import pyGenClean.MarkerMissingness.snp_missingness as snp_missingness
 import pyGenClean.SampleMissingness.sample_missingness as sample_missingness
 import pyGenClean.NoCallHetero.clean_noCall_hetero_snps as noCall_hetero_snps
 import pyGenClean.RelatedSamples.find_related_samples as find_related_samples
+from pyGenClean.LaTeX.merge_reports import add_custom_options as report_options
 import pyGenClean.HeteroHap.remove_heterozygous_haploid \
                                                 as remove_heterozygous_haploid
 
@@ -111,15 +112,19 @@ def main():
     # Executing the data clean up
     current_input = None
     current_input_type = None
+    suffixes = None
     if args.tfile is not None:
         current_input = args.tfile
         current_input_type = "tfile"
+        suffixes = (".tped", ".tfam")
     elif args.bfile is not None:
         current_input = args.bfile
         current_input_type = "bfile"
+        suffixes = (".bed", ".bim", ".fam")
     else:
         current_input = args.file
         current_input_type = "file"
+        suffixes = (".ped", ".map")
 
     # Creating the excluded files
     try:
@@ -127,6 +132,10 @@ def main():
             pass
         with open(os.path.join(dirname, "excluded_samples.txt"), "w") as o_f:
             pass
+        with open(os.path.join(dirname, "initial_files.txt"), "w") as o_file:
+            for s in suffixes:
+                print >>o_file, current_input + s
+
     except IOError:
         msg = "{}: cannot write summary".format(dirname)
         raise ProgramError(msg)
@@ -164,8 +173,7 @@ def main():
 
         # Executing the function
         print "\nRunning {} {}".format(number, script_name)
-        print ("   - Using {} as prefix for input "
-               "files".format(current_input))
+        print "   - Using {} as prefix for input files".format(current_input)
         print "   - Results will be in [ {} ]".format(output_prefix)
         current_input, current_input_type, summary, desc = function_to_use(
             current_input,
@@ -196,20 +204,18 @@ def main():
     )
 
     # We create the automatic report
-    project_name = "Dummy Project"
-    logo_path = os.path.join(os.environ["HOME"], "Pictures",
-                             "statgen_logo.png")
     report_name = os.path.join(dirname, "automatic_report.tex")
     auto_report.create_report(
         dirname,
         report_name,
-        project_name=project_name,
-        logo_path=logo_path,
+        project_name=args.report_number,
         steps=steps,
         descriptions=descriptions,
         summaries=latex_summaries,
         background=dummy_background,
         summary_fn=os.path.join(dirname, "results_summary.txt"),
+        report_author=args.report_author,
+        initial_files=os.path.join(dirname, "initial_files.txt"),
     )
 
 
@@ -2948,6 +2954,10 @@ group.add_argument("--file", type=str, metavar="FILE",
                    help=("The input file prefix (will find the plink "
                          "files by appending the prefix to the "
                          ".ped and .fam files)."))
+
+# The options
+group = parser.add_argument_group("Report Options")
+report_options(group)
 
 group = parser.add_argument_group("Configuration File")
 group.add_argument("--conf", type=str, metavar="FILE", required=True,

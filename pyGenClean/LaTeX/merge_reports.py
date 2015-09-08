@@ -19,6 +19,7 @@ import os
 import re
 import sys
 import time
+import shutil
 import argparse
 from glob import glob
 
@@ -51,11 +52,15 @@ def main(argString=None):
     # First, we want to merge the required files
     merge_required_files(qc_dir, args.out_dir)
 
+    # Then, we want to copy the initial_files file
+    copy_initial_files(os.path.join(qc_dir[0], "initial_files.txt"),
+                       args.out_dir)
+
     # Getting the steps summary file (TeX)
     summary_files = get_summary_files(qc_dir)
 
     # Generating the report
-    generate_report(args.out_dir, summary_files)
+    generate_report(args.out_dir, summary_files, args)
 
 
 def order_qc_dir(dirnames):
@@ -97,6 +102,19 @@ def merge_required_files(dirnames, out_dir):
                 i_fn = os.path.join(dn, fn)
                 with open(i_fn, "r") as i_file:
                     o_file.write(i_file.read())
+
+
+def copy_initial_files(filename, out_dir):
+    """Copy the initial_files file to the final directory.
+
+    :param filename: the name of the file.
+    :param out_dir: the name of the output directory
+
+    :type dirname: string
+    :type out_dir: string
+
+    """
+    shutil.copy(filename, out_dir)
 
 
 def get_summary_files(dirnames):
@@ -149,12 +167,16 @@ def get_summary_files(dirnames):
     return [os.path.abspath(fn) for fn in final_summary_files]
 
 
-def generate_report(out_dir, latex_summaries):
+def generate_report(out_dir, latex_summaries, options):
     """Generates the report.
 
     :param out_dir: the output directory.
+    :param latex_summaries: the list of LaTeX summaries.
+    :param options: the list of options.
 
     :type out_dir: string
+    :type latex_summaries: list
+    :type options: argparse.Namespace
 
     """
     # A dummy background section content
@@ -173,19 +195,17 @@ def generate_report(out_dir, latex_summaries):
     )
 
     # We create the automatic report
-    project_name = "Dummy Project"
-    logo_path = os.path.join(os.environ["HOME"], "Pictures",
-                             "statgen_logo.png")
-    report_name = os.path.join(out_dir, "merged_report.tex")
+    report_name = os.path.join(out_dir, "merged_reports.tex")
     auto_report.create_report(
         out_dir,
         report_name,
-        project_name=project_name,
-        logo_path=logo_path,
+        project_name=options.report_number,
         steps_filename=os.path.join(out_dir, "steps_summary.tex"),
         summaries=latex_summaries,
         background=dummy_background,
         summary_fn=os.path.join(out_dir, "results_summary.txt"),
+        report_author=options.report_author,
+        initial_files=os.path.join(out_dir, "initial_files.txt"),
     )
 
 
@@ -254,6 +274,24 @@ def parseArgs(argString=None):  # pragma: no cover
     return args
 
 
+def add_custom_options(parser):
+    """Adds custom options to a parser.
+
+    :param parser: the parser to which to add options.
+
+    :type parser: argparse.ArgumentParser
+
+    """
+    parser.add_argument("--report-author", type=str, metavar="AUTHOR",
+                        default="pyGenClean",
+                        help="The current project number. "
+                             "[default: %(default)s]")
+    parser.add_argument("--report-number", type=str, metavar="NUMBER",
+                        default="Simple Project",
+                        help="The current project auhtor. "
+                             "[default: %(default)s]")
+
+
 class ProgramError(Exception):
     """An :py:class:`Exception` raised in case of a problem.
 
@@ -285,11 +323,11 @@ parser = argparse.ArgumentParser(description=desc)
 group = parser.add_argument_group("Input")
 group.add_argument("--qc-dir", nargs="+", required=True, metavar="DIR",
                    help="A list of directory containing pyGenClean runs.")
+
 # The options
 group = parser.add_argument_group("Report Options")
-group.add_argument("--pfilter", type=float, metavar="FLOAT", default=1e-7,
-                   help=("The significance threshold used for the plate "
-                         "effect. [default: %(default).1e]"))
+add_custom_options(group)
+
 # The OUTPUT files
 group = parser.add_argument_group("Output Directory")
 group.add_argument("--out-dir", type=str, metavar="FILE",

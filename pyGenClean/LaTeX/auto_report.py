@@ -40,19 +40,20 @@ def create_report(outdirname, report_filename, **kwargs):
     else:
         assert "steps_filename" in kwargs
         assert "descriptions" not in kwargs
-    assert "logo_path" in kwargs
     assert "summaries" in kwargs
     assert "background" in kwargs
     assert "project_name" in kwargs
     assert "summary_fn" in kwargs
+    assert "report_author" in kwargs
+    assert "initial_files" in kwargs
 
     # Getting the required information
     project_name = kwargs["project_name"]
-    logo_path = kwargs["logo_path"]
     prog_version = ".".join(pygenclean_version)
     summaries = kwargs["summaries"]
     background_section = latex.wrap_lines(kwargs["background"])
     summary_fn = kwargs["summary_fn"]
+    report_author = kwargs["report_author"]
 
     # Writing the method steps to a separate file (for access later)
     steps_filename = None
@@ -74,6 +75,11 @@ def create_report(outdirname, report_filename, **kwargs):
         if os.path.isfile(full_path):
             rel_path = os.path.relpath(full_path, outdirname)
             result_summaries.append(rel_path)
+
+    # Reading the initial_files file
+    initial_files = None
+    with open(kwargs["initial_files"], "r") as i_file:
+        initial_files = i_file.read().splitlines()
 
     # Adding the bibliography content
     biblio_entry = latex.bib_entry(
@@ -109,21 +115,11 @@ def create_report(outdirname, report_filename, **kwargs):
     try:
         with open(report_filename, "w") as i_file:
             # Rendering the template
-            # The report information
-            #   - project_name: the name of the project
-            #   - logo_path: the path to the logo
-            #   - background_content: the content of the 'background'
-            #   - methods_content: the content of the 'methods'
-            #   - results_content: the content of the 'results'
-            #   - conclusions_content: the content of the 'conclusions'
-            #   - bibliography_content: the content of the 'bibliography'
             print >>i_file, main_template.render(
                 project_name=project_name,
                 month=today.strftime("%B"),
                 day=today.day,
                 year=today.year,
-                logo_dir=os.path.abspath(os.path.dirname(logo_path)) + "/",
-                logo_path=os.path.basename(logo_path),
                 background_content=background_section,
                 result_summaries=result_summaries,
                 conclusions_content="",
@@ -134,6 +130,8 @@ def create_report(outdirname, report_filename, **kwargs):
                     summary_fn,
                     latex.jinja2_env.get_template("summary_table.tex"),
                 ),
+                report_author=report_author,
+                initial_files=initial_files,
             )
 
     except IOError:
@@ -188,6 +186,8 @@ def _create_summary_table(fn, template):
                 tmp = line[4:].rstrip("\r\n").split("\t")
                 if data["header"].endswith("/subset"):
                     tmp[0] = r"\path{" + tmp[0] + "}"
+                elif data["header"].endswith("/flag_hw"):
+                    tmp[0] = latex.format_numbers(tmp[0])
                 else:
                     tmp = map(latex.sanitize_tex, tmp)
                     if tmp[0].startswith("x"):
@@ -215,6 +215,9 @@ def _create_summary_table(fn, template):
 
             # Skipping to next line
             line = i_file.readline()
+
+    # We add the last entry
+    table_data.append(data)
 
     # Rendering
     return template.render(table_data=table_data)

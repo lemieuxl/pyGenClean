@@ -124,7 +124,13 @@
 \section{Methods}
 Plink was used for the data cleanup procedure. The automated script
 \texttt{pyGenClean} version \VAR{ pygenclean_version }~\cite{pyGenClean} was
-used to launch the analysis.\\
+used to launch the analysis. The following files were used as input.
+
+\begin{itemize}
+\BLOCK{ for fn in initial_files }
+\item \path{\VAR{ fn }}
+\BLOCK{ endfor }
+\end{itemize}
 
 Briefly, the clean up procedure was as follow:
 \begin{enumerate}
