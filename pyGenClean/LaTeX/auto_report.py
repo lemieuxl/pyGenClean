@@ -18,9 +18,9 @@
 import os
 from datetime import datetime
 
-import pyGenClean.LaTeX.utils as latex
-from pyGenClean.pipeline_error import ProgramError
-from pyGenClean import __version__ as pygenclean_version
+from . import utils as latex
+from ..pipeline_error import ProgramError
+from .. import __version__ as pygenclean_version
 
 
 def create_report(outdirname, report_filename, **kwargs):

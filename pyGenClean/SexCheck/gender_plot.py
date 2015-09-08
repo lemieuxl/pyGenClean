@@ -121,7 +121,7 @@ def encode_chr(chromosome):
 
     .. testsetup::
 
-        from SexCheck.gender_plot import encode_chr
+        from pyGenClean.SexCheck.gender_plot import encode_chr
 
     .. doctest::
 
@@ -176,7 +176,7 @@ def encode_gender(gender):
 
     .. testsetup::
 
-        from SexCheck.gender_plot import encode_gender
+        from pyGenClean.SexCheck.gender_plot import encode_gender
 
     .. doctest::
 

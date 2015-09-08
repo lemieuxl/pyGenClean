@@ -5,17 +5,17 @@ This module provides useful functions and scripts for efficient interactions
 with PLINK's output files. For example, the majority of PLINK's output files are
 spaced delimited, and are formated in such a way that it is "beautiful" to the
 human eye, but is a bit harder to parse using a script compared to tabulated
-files. The :py:func:`PlinkUtils.createRowFromPlinkSpacedOutput` function helps
-producing an array of all the fields for each line.
+files. The :py:func:`pyGenClean.PlinkUtils.createRowFromPlinkSpacedOutput`
+function helps producing an array of all the fields for each line.
 
 Comparing BIM files
 -------------------
 
 Another example is the fact that when PLINK removes a certain amount of markers
 from the data file, it just gives the number of excluded markers, but not a
-list. The :py:mod:`PlinkUtils.compare_bim` module creates a list of markers that
-were removed from the original dataset when compared with the new one. Here is
-the usage of the standalone script:
+list. The :py:mod:`pyGenClean.PlinkUtils.compare_bim` module creates a list of
+markers that were removed from the original dataset when compared with the new
+one. Here is the usage of the standalone script:
 
 .. code-block:: console
 
@@ -37,10 +37,10 @@ the usage of the standalone script:
 Subsetting a dataset
 --------------------
 
-A useful standalone script is the :py:mod:`PlinkUtils.subset_data` module. It
-helps in subsetting a dataset by keeping or removing a set of samples, and at
-the same time extracting or excluding a set of markers. The following standalone
-script is available for the user:
+A useful standalone script is the :py:mod:`pyGenClean.PlinkUtils.subset_data`
+module. It helps in subsetting a dataset by keeping or removing a set of
+samples, and at the same time extracting or excluding a set of markers. The
+following standalone script is available for the user:
 
 .. code-block:: console
 
@@ -82,23 +82,24 @@ The Algorithm
 -------------
 
 For more information about the actual algorithms and source codes (the
-:py:mod:`PlinkUtils`, :py:mod:`PlinkUtils.compare_bim` and
-:py:mod:`PlinkUtils.subset_data` modules), refer to the following sections.
+:py:mod:`pyGenClean.PlinkUtils`, :py:mod:`pyGenClean.PlinkUtils.compare_bim`
+and :py:mod:`pyGenClean.PlinkUtils.subset_data` modules), refer to the
+following sections.
 
-PlinkUtils
-..........
+pyGenClean.PlinkUtils
+.....................
 
-.. automodule:: PlinkUtils
+.. automodule:: pyGenClean.PlinkUtils
     :members:
 
-PlinkUtils.compare_bim
-......................
+pyGenClean.PlinkUtils.compare_bim
+.................................
 
-.. automodule:: PlinkUtils.compare_bim
+.. automodule:: pyGenClean.PlinkUtils.compare_bim
     :members:
 
-PlinkUtils.subset_data
-......................
+pyGenClean.PlinkUtils.subset_data
+.................................
 
-.. automodule:: PlinkUtils.subset_data
+.. automodule:: pyGenClean.PlinkUtils.subset_data
     :members:

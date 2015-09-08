@@ -244,7 +244,7 @@ the output prefix shown is the one by default [*i.e* ``ethnicity``]):
         populations).
     *   ``ethnicity.population_file_outliers``: a population file containing the
         outliers (to help creating a new MDS plot using
-        :py:mod:`PlinkUtils.plot_MDS_standalone`).
+        :py:mod:`pyGenClean.PlinkUtils.plot_MDS_standalone`).
 
 .. _ethnicity_plots_label:
 
@@ -315,8 +315,8 @@ Modifying The Outlier Plot
 ..........................
 
 If you want to manually modify the above figures, have a look at the
-:py:mod:`PlinkUtils.plot_MDS_standalone` module. Here is the usage of this
-script:
+:py:mod:`pyGenClean.PlinkUtils.plot_MDS_standalone` module. Here is the usage
+of this script:
 
 .. code-block:: console
 
@@ -471,24 +471,25 @@ The Algorithm
 --------------
 
 For more information about the actual algorithms and source codes (the
-:py:mod:`Ethnicity.check_ethnicity`, the :py:mod:`Ethnicity.find_outliers` and
-the :mod:`PlinkUtils.plot_MDS_standalone` modules), refer to the following
-sections.
+:py:mod:`pyGenClean.Ethnicity.check_ethnicity`, the
+:py:mod:`pyGenClean.Ethnicity.find_outliers` and the
+:mod:`pyGenClean.PlinkUtils.plot_MDS_standalone` modules), refer to the
+following sections.
 
-Ethnicity.check_ethnicity
-.........................
+pyGenClean.Ethnicity.check_ethnicity
+....................................
 
-.. automodule:: Ethnicity.check_ethnicity
+.. automodule:: pyGenClean.Ethnicity.check_ethnicity
     :members:
 
-Ethnicity.find_outliers
-.......................
+pyGenClean.Ethnicity.find_outliers
+..................................
 
-.. automodule:: Ethnicity.find_outliers
+.. automodule:: pyGenClean.Ethnicity.find_outliers
     :members:
 
-PlinkUtils.plot_MDS_standalone
-..............................
+pyGenClean.PlinkUtils.plot_MDS_standalone
+.........................................
 
-.. automodule:: PlinkUtils.plot_MDS_standalone
+.. automodule:: pyGenClean.PlinkUtils.plot_MDS_standalone
     :members:

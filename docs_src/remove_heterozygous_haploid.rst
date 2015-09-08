@@ -51,11 +51,11 @@ The Algorithm
 -------------
 
 For more information about the actual algorithms and source codes (the
-:py:mod:`HeteroHap.remove_heterozygous_haploid` module), refer to the following
-sections.
+:py:mod:`pyGenClean.HeteroHap.remove_heterozygous_haploid` module), refer to
+the following sections.
 
-HeteroHap.remove_heterozygous_haploid
-.....................................
+pyGenClean.HeteroHap.remove_heterozygous_haploid
+................................................
 
-.. automodule:: HeteroHap.remove_heterozygous_haploid
+.. automodule:: pyGenClean.HeteroHap.remove_heterozygous_haploid
     :members:

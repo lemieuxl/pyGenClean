@@ -47,7 +47,7 @@ def createRowFromPlinkSpacedOutput(line):
 
     .. testsetup::
 
-        from PlinkUtils import createRowFromPlinkSpacedOutput
+        from pyGenClean.PlinkUtils import createRowFromPlinkSpacedOutput
 
     .. doctest::
 

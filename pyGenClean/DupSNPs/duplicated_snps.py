@@ -27,7 +27,7 @@ from collections import defaultdict
 
 import numpy as npy
 
-from PlinkUtils import createRowFromPlinkSpacedOutput
+from ..PlinkUtils import createRowFromPlinkSpacedOutput
 
 
 def main(argString=None):
@@ -1099,7 +1099,7 @@ def flipGenotype(genotype):
 
     .. testsetup::
 
-        from DupSNPs.duplicated_snps import flipGenotype
+        from pyGenClean.DupSNPs.duplicated_snps import flipGenotype
 
     .. doctest::
 

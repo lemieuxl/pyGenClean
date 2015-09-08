@@ -117,7 +117,7 @@ def is_heterozygous(genotype):
 
     .. testsetup::
 
-        from NoCallHetero.heterozygosity_plot import is_heterozygous
+        from pyGenClean.NoCallHetero.heterozygosity_plot import is_heterozygous
 
     .. doctest::
 

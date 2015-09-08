@@ -23,8 +23,8 @@ import shutil
 import argparse
 import subprocess
 
-from PlinkUtils import createRowFromPlinkSpacedOutput
-from pyGenClean.DupSNPs.duplicated_snps import flipGenotype
+from ..PlinkUtils import createRowFromPlinkSpacedOutput
+from ..DupSNPs.duplicated_snps import flipGenotype
 
 
 def main(argString=None):

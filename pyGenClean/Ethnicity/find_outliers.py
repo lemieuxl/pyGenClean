@@ -21,7 +21,7 @@ import argparse
 
 import numpy as npy
 
-from PlinkUtils import createRowFromPlinkSpacedOutput as create_row
+from ..PlinkUtils import createRowFromPlinkSpacedOutput as create_row
 
 
 def main(argString=None):
@@ -399,7 +399,7 @@ def read_mds_file(file_name, c1, c2, pops):
               population.
 
     The ``mds`` file is the result of Plink (as produced by the
-    :py:mod:`Ethnicity.check_ethnicity` module).
+    :py:mod:`pyGenClean.Ethnicity.check_ethnicity` module).
 
     """
     mds = []
@@ -536,7 +536,8 @@ def parseArgs(argString=None):  # pragma: no cover
     ===================== ====== ==============================================
     ``--mds``             string The MDS file from Plink.
     ``--population-file`` string A population file from
-                                 :py:mod:`Ethnicity.check_ethnicity` module.
+                                 :py:mod:`pyGenClean.Ethnicity.check_ethnicity`
+                                 module.
     ``--format``          string The output file format (png, ps, or pdf.
     ``--out``             string The prefix of the output files.
     ``--outliers-of``     string Finds the outliers of this population.

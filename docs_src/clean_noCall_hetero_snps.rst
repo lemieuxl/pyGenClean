@@ -112,18 +112,18 @@ The Algorithm
 -------------
 
 For more information about the actual algorithms and source codes (the
-:py:mod:`NoCallHetero.clean_noCall_hetero_snps` and
-:py:mod:`NoCallHetero.heterozygosity_plot` modules), refer to the following
-sections.
+:py:mod:`pyGenClean.NoCallHetero.clean_noCall_hetero_snps` and
+:py:mod:`pyGenClean.NoCallHetero.heterozygosity_plot` modules), refer to the
+following sections.
 
-NoCallHetero.clean_noCall_hetero_snps
-.....................................
+pyGenClean.NoCallHetero.clean_noCall_hetero_snps
+................................................
 
-.. automodule:: NoCallHetero.clean_noCall_hetero_snps
+.. automodule:: pyGenClean.NoCallHetero.clean_noCall_hetero_snps
     :members:
 
-NoCallHetero.heterozygosity_plot
-................................
+pyGenClean.NoCallHetero.heterozygosity_plot
+...........................................
 
-.. automodule:: NoCallHetero.heterozygosity_plot
+.. automodule:: pyGenClean.NoCallHetero.heterozygosity_plot
     :members:

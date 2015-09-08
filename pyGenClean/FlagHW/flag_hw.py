@@ -20,8 +20,8 @@ import sys
 import argparse
 import subprocess
 
-from PlinkUtils import createRowFromPlinkSpacedOutput
-import PlinkUtils.compare_bim as CompareBIM
+from ..PlinkUtils import compare_bim as CompareBIM
+from ..PlinkUtils import createRowFromPlinkSpacedOutput
 
 
 class Dummy(object):

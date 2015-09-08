@@ -15,7 +15,7 @@
 
 
 try:
-    from pyGenClean.version import pygenclean_version as __version__
+    from .version import pygenclean_version as __version__
 except:
     __version__ = None
 

@@ -20,7 +20,7 @@ import sys
 import argparse
 import subprocess
 
-import PlinkUtils.compare_bim as CompareBIM
+from ..PlinkUtils import compare_bim as CompareBIM
 
 
 def main(argString=None):
@@ -63,7 +63,8 @@ def compareBIM(args):
     :type args: argparse.Namespace
 
     Creates a *Dummy* object to mimic an :py:class:`argparse.Namespace` class
-    containing the options for the :py:mod:`PlinkUtils.compare_bim` module.
+    containing the options for the :py:mod:`pyGenClean.PlinkUtils.compare_bim`
+    module.
 
     """
     # Creating the CompareBIM options

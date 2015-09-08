@@ -51,10 +51,11 @@ The Algorithm
 -------------
 
 For more information about the actual algorithms and source codes (the
-:py:mod:`FlagMAF.flag_maf_zero` module), refer to the following sections.
+:py:mod:`pyGenClean.FlagMAF.flag_maf_zero` module), refer to the following
+sections.
 
-FlagMAF.flag_maf_zero
-.....................
+pyGenClean.FlagMAF.flag_maf_zero
+................................
 
-.. automodule:: FlagMAF.flag_maf_zero
+.. automodule:: pyGenClean.FlagMAF.flag_maf_zero
     :members:

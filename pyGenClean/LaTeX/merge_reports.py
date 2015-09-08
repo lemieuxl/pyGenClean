@@ -23,7 +23,7 @@ import shutil
 import argparse
 from glob import glob
 
-import pyGenClean.LaTeX.auto_report as auto_report
+from . import auto_report
 
 
 def main(argString=None):

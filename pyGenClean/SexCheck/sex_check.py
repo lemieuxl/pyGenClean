@@ -22,10 +22,10 @@ import subprocess
 
 import numpy as npy
 
-from PlinkUtils import createRowFromPlinkSpacedOutput
+from .import gender_plot
+from . import baf_lrr_plot
 
-import pyGenClean.SexCheck.gender_plot as gender_plot
-import pyGenClean.SexCheck.baf_lrr_plot as baf_lrr_plot
+from ..PlinkUtils import createRowFromPlinkSpacedOutput
 
 
 def main(argString=None):
@@ -132,7 +132,7 @@ def createGenderPlot(bfile, intensities, problematic_samples, format,
     :type out_prefix: string
 
     Creates the gender plot of the samples using the
-    :py:mod:`SexCheck.gender_plot` module.
+    :py:mod:`pyGenClean.SexCheck.gender_plot` module.
 
     """
     gender_plot_options = ["--bfile", bfile, "--intensities", intensities,
@@ -159,7 +159,8 @@ def createLrrBafPlot(raw_dir, problematic_samples, format, out_prefix):
     :type out_prefix: string
 
     Creates the LRR (Log R Ratio) and BAF (B Allele Frequency) of the
-    problematic samples using the :py:mod:`SexCheck.baf_lrr_plot` module.
+    problematic samples using the :py:mod:`pyGenClean.SexCheck.baf_lrr_plot`
+    module.
 
     """
     # First, we create an output directory

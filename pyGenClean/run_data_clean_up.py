@@ -27,32 +27,30 @@ import ConfigParser
 from glob import glob
 from collections import namedtuple, Counter
 
-import pyGenClean
-import pyGenClean.FlagHW.flag_hw as flag_hw
-import pyGenClean.LaTeX.utils as latex_template
-import pyGenClean.SexCheck.sex_check as sex_check
-from pyGenClean.pipeline_error import ProgramError
-import pyGenClean.LaTeX.auto_report as auto_report
-import pyGenClean.PlateBias.plate_bias as plate_bias
-import pyGenClean.FlagMAF.flag_maf_zero as flag_maf_zero
-import pyGenClean.DupSNPs.duplicated_snps as duplicated_snps
-import pyGenClean.Ethnicity.check_ethnicity as check_ethnicity
-import pyGenClean.Misc.compare_gold_standard as compare_gold_standard
-import pyGenClean.DupSamples.duplicated_samples as duplicated_samples
-import pyGenClean.MarkerMissingness.snp_missingness as snp_missingness
-import pyGenClean.SampleMissingness.sample_missingness as sample_missingness
-import pyGenClean.NoCallHetero.clean_noCall_hetero_snps as noCall_hetero_snps
-import pyGenClean.RelatedSamples.find_related_samples as find_related_samples
-from pyGenClean.LaTeX.merge_reports import add_custom_options as report_options
-import pyGenClean.HeteroHap.remove_heterozygous_haploid \
-                                                as remove_heterozygous_haploid
+from . import __version__ as prog_version
 
-import PlinkUtils.subset_data as subset_data
-from PlinkUtils import createRowFromPlinkSpacedOutput
+from .pipeline_error import ProgramError
 
+from .FlagHW import flag_hw
+from .SexCheck import sex_check
+from .PlateBias import plate_bias
+from .FlagMAF import flag_maf_zero
+from .DupSNPs import duplicated_snps
+from .Ethnicity import check_ethnicity
+from .Misc import compare_gold_standard
+from .DupSamples import duplicated_samples
+from .MarkerMissingness import snp_missingness
+from .RelatedSamples import find_related_samples
+from .SampleMissingness import sample_missingness
+from .HeteroHap import remove_heterozygous_haploid
+from .NoCallHetero import clean_noCall_hetero_snps as noCall_hetero_snps
 
-# Getting the version
-prog_version = pyGenClean.__version__
+from .LaTeX import auto_report
+from .LaTeX import utils as latex_template
+from .LaTeX.merge_reports import add_custom_options as report_options
+
+from .PlinkUtils import subset_data
+from .PlinkUtils import createRowFromPlinkSpacedOutput
 
 
 def main():
@@ -246,10 +244,10 @@ def run_duplicated_samples(in_prefix, in_type, out_prefix, base_dir, options):
               prefix for the next script) and the type of the output files
               (``tfile``).
 
-    This function calls the :py:mod:`DupSamples.duplicated_samples` module. The
-    required file type for this module is ``tfile``, hence the need to use the
-    :py:func:`check_input_files` to check if the file input file type is the
-    good one, or to create it if needed.
+    This function calls the :py:mod:`pyGenClean.DupSamples.duplicated_samples`
+    module. The required file type for this module is ``tfile``, hence the need
+    to use the :py:func:`check_input_files` to check if the file input file
+    type is the good one, or to create it if needed.
 
     """
     # Creating the output directory
@@ -454,14 +452,14 @@ def run_duplicated_snps(in_prefix, in_type, out_prefix, base_dir, options):
               prefix for the next script) and the type of the output files
               (``tfile``).
 
-    This function calls the :py:mod:`DupSNPs.duplicated_snps` module. The
-    required file type for this module is ``tfile``, hence the need to use the
-    :py:func:`check_input_files` to check if the file input file type is the
-    good one, or to create it if needed.
+    This function calls the :py:mod:`pyGenClean.DupSNPs.duplicated_snps`
+    module. The required file type for this module is ``tfile``, hence the need
+    to use the :py:func:`check_input_files` to check if the file input file
+    type is the good one, or to create it if needed.
 
     .. note::
         This function creates a ``map`` file, needed for the
-        :py:mod:`DupSNPs.duplicated_snps` module.
+        :py:mod:`pyGenClean.DupSNPs.duplicated_snps` module.
 
     """
     # Creating the output directory
@@ -659,10 +657,11 @@ def run_noCall_hetero_snps(in_prefix, in_type, out_prefix, base_dir, options):
               prefix for the next script) and the type of the output files
               (``tfile``).
 
-    This function calls the :py:mod:`NoCallHetero.clean_noCall_hetero_snps`
-    module. The required file type for this module is ``tfile``, hence the need
-    to use the :py:func:`check_input_files` to check if the file input file
-    type is the good one, or to create it if needed.
+    This function calls the
+    :py:mod:`pyGenClean.NoCallHetero.clean_noCall_hetero_snps` module. The
+    required file type for this module is ``tfile``, hence the need to use the
+    :py:func:`check_input_files` to check if the file input file type is the
+    good one, or to create it if needed.
 
     """
     # Creating the output directory
@@ -768,10 +767,11 @@ def run_sample_missingness(in_prefix, in_type, out_prefix, base_dir, options):
               prefix for the next script) and the type of the output files
               (``bfile``).
 
-    This function calls the :py:mod:`SampleMissingness.sample_missingness`
-    module. The required file type for this module is either a ``bfile`` or a
-    ``tfile``, hence the need to use the :py:func:`check_input_files` to check
-    if the file input file type is the good one, or to create it if needed.
+    This function calls the
+    :py:mod:`pyGenClean.SampleMissingness.sample_missingness` module. The
+    required file type for this module is either a ``bfile`` or a ``tfile``,
+    hence the need to use the :py:func:`check_input_files` to check if the file
+    input file type is the good one, or to create it if needed.
 
     """
     # Creating the output directory
@@ -878,10 +878,11 @@ def run_snp_missingness(in_prefix, in_type, out_prefix, base_dir, options):
               prefix for the next script) and the type of the output files
               (``bfile``).
 
-    This function calls the :py:mod:`MarkerMissingness.snp_missingness` module.
-    The required file type for this module is ``bfile``, hence the need to use
-    the :py:func:`check_input_files` to check if the file input file type is
-    the good one, or to create it if needed.
+    This function calls the
+    :py:mod:`pyGenClean.MarkerMissingness.snp_missingness` module. The required
+    file type for this module is ``bfile``, hence the need to use the
+    :py:func:`check_input_files` to check if the file input file type is the
+    good one, or to create it if needed.
 
     """
     # Creating the output directory
@@ -986,14 +987,15 @@ def run_sex_check(in_prefix, in_type, out_prefix, base_dir, options):
               prefix for the next script) and the type of the output files
               (``bfile``).
 
-    This function calls the :py:mod:`SexCheck.sex_check` module. The required
-    file type for this module is ``bfile``, hence the need to use the
+    This function calls the :py:mod:`pyGenClean.SexCheck.sex_check` module. The
+    required file type for this module is ``bfile``, hence the need to use the
     :py:func:`check_input_files` to check if the file input file type is the
     good one, or to create it if needed.
 
     .. note::
-        The :py:mod:`SexCheck.sex_check` module doesn't return usable output
-        files. Hence, this function returns the input file prefix and its type.
+        The :py:mod:`pyGenClean.SexCheck.sex_check` module doesn't return
+        usable output files. Hence, this function returns the input file prefix
+        and its type.
 
     """
     # Creating the output directory
@@ -1330,13 +1332,13 @@ def run_plate_bias(in_prefix, in_type, out_prefix, base_dir, options):
               prefix for the next script) and the type of the output files
               (``bfile``).
 
-    This function calls the :py:mod:`PlateBias.plate_bias` module. The required
-    file type for this module is ``bfile``, hence the need to use the
-    :py:func:`check_input_files` to check if the file input file type is the
-    good one, or to create it if needed.
+    This function calls the :py:mod:`pyGenClean.PlateBias.plate_bias` module.
+    The required file type for this module is ``bfile``, hence the need to use
+    the :py:func:`check_input_files` to check if the file input file type is
+    the good one, or to create it if needed.
 
     .. note::
-        The :py:mod:`PlateBias.plate_bias` module doesn't return usable output
+        The :py:mod:`pyGenClean.PlateBias.plate_bias` module doesn't return usable output
         files. Hence, this function returns the input file prefix and its type.
 
     """
@@ -1511,10 +1513,11 @@ def run_remove_heterozygous_haploid(in_prefix, in_type, out_prefix, base_dir,
               prefix for the next script) and the type of the output files
               (``bfile``).
 
-    This function calls the :py:mod:`HeteroHap.remove_heterozygous_haploid`
-    module. The required file type for this module is ``bfile``, hence the need
-    to use the :py:func:`check_input_files` to check if the file input file
-    type is the good one, or to create it if needed.
+    This function calls the
+    :py:mod:`pyGenClean.HeteroHap.remove_heterozygous_haploid` module. The
+    required file type for this module is ``bfile``, hence the need to use the
+    :py:func:`check_input_files` to check if the file input file type is the
+    good one, or to create it if needed.
 
     """
     # Creating the output directory
@@ -1599,15 +1602,16 @@ def run_find_related_samples(in_prefix, in_type, out_prefix, base_dir,
               prefix for the next script) and the type of the output files
               (``bfile``).
 
-    This function calls the :py:mod:`RelatedSamples.find_related_samples`
-    module. The required file type for this module is ``bfile``, hence the need
-    to use the :py:func:`check_input_files` to check if the file input file
-    type is the good one, or to create it if needed.
+    This function calls the
+    :py:mod:`pyGenClean.RelatedSamples.find_related_samples` module. The
+    required file type for this module is ``bfile``, hence the need to use the
+    :py:func:`check_input_files` to check if the file input file type is the
+    good one, or to create it if needed.
 
     .. note::
-        The :py:mod:`RelatedSamples.find_related_samples` module doesn't return
-        usable output files. Hence, this function returns the input file prefix
-        and its type.
+        The :py:mod:`pyGenClean.RelatedSamples.find_related_samples` module
+        doesn't return usable output files. Hence, this function returns the
+        input file prefix and its type.
 
     """
     # Creating the output directory
@@ -1783,15 +1787,15 @@ def run_check_ethnicity(in_prefix, in_type, out_prefix, base_dir, options):
               prefix for the next script) and the type of the output files
               (``bfile``).
 
-    This function calls the :py:mod:`Ethnicity.check_ethnicity` module. The
-    required file type for this module is ``bfile``, hence the need to use the
-    :py:func:`check_input_files` to check if the file input file type is the
-    good one, or to create it if needed.
+    This function calls the :py:mod:`pyGenClean.Ethnicity.check_ethnicity`
+    module. The required file type for this module is ``bfile``, hence the need
+    to use the :py:func:`check_input_files` to check if the file input file
+    type is the good one, or to create it if needed.
 
     .. note::
-        The :py:mod:`Ethnicity.check_ethnicity` module doesn't return usable
-        output files. Hence, this function returns the input file prefix and
-        its type.
+        The :py:mod:`pyGenClean.Ethnicity.check_ethnicity` module doesn't
+        return usable output files. Hence, this function returns the input file
+        prefix and its type.
 
     """
     # Creating the output directory
@@ -1944,14 +1948,15 @@ def run_flag_maf_zero(in_prefix, in_type, out_prefix, base_dir, options):
               prefix for the next script) and the type of the output files
               (``bfile``).
 
-    This function calls the :py:mod:`FlagMAF.flag_maf_zero` module. The
-    required file type for this module is ``bfile``, hence the need to use the
-    :py:func:`check_input_files` to check if the file input file type is the
-    good one, or to create it if needed.
+    This function calls the :py:mod:`pyGenClean.FlagMAF.flag_maf_zero` module.
+    The required file type for this module is ``bfile``, hence the need to use
+    the :py:func:`check_input_files` to check if the file input file type is
+    the good one, or to create it if needed.
 
     .. note::
-        The :py:mod:`FlagMAF.flag_maf_zero` module doesn't return usable output
-        files. Hence, this function returns the input file prefix and its type.
+        The :py:mod:`pyGenClean.FlagMAF.flag_maf_zero` module doesn't return
+        usable output files. Hence, this function returns the input file prefix
+        and its type.
 
     """
     # Creating the output directory
@@ -2035,14 +2040,15 @@ def run_flag_hw(in_prefix, in_type, out_prefix, base_dir, options):
               prefix for the next script) and the type of the output files
               (``bfile``).
 
-    This function calls the :py:mod:`FlagHW.flag_hw` module. The required file
-    type for this module is ``bfile``, hence the need to use the
+    This function calls the :py:mod:`pyGenClean.FlagHW.flag_hw` module. The
+    required file type for this module is ``bfile``, hence the need to use the
     :py:func:`check_input_files` to check if the file input file type is the
     good one, or to create it if needed.
 
     .. note::
-        The :py:mod:`FlagHW.flag_hw` module doesn't return usable output files.
-        Hence, this function returns the input file prefix and its type.
+        The :py:mod:`pyGenClean.FlagHW.flag_hw` module doesn't return usable
+        output files. Hence, this function returns the input file prefix and
+        its type.
 
     """
     # Creating the output directory
@@ -2164,15 +2170,15 @@ def run_compare_gold_standard(in_prefix, in_type, out_prefix, base_dir,
               prefix for the next script) and the type of the output files
               (``bfile``).
 
-    This function calls the :py:mod:`Misc.compare_gold_standard` module. The
-    required file type for this module is ``bfile``, hence the need to use the
-    :py:func:`check_input_files` to check if the file input file type is the
-    good one, or to create it if needed.
+    This function calls the :py:mod:`pyGenClean.Misc.compare_gold_standard`
+    module. The required file type for this module is ``bfile``, hence the need
+    to use the :py:func:`check_input_files` to check if the file input file
+    type is the good one, or to create it if needed.
 
     .. note::
-        The :py:mod:`Misc.compare_gold_standard` module doesn't return usable
-        output files. Hence, this function returns the input file prefix and
-        its type.
+        The :py:mod:`pyGenClean.Misc.compare_gold_standard` module doesn't
+        return usable output files. Hence, this function returns the input file
+        prefix and its type.
 
     """
     # Creating the output directory
@@ -2231,8 +2237,9 @@ def run_subset_data(in_prefix, in_type, out_prefix, base_dir, options):
               prefix for the next script) and the type of the output files
               (``bfile``).
 
-    This function calls the :py:mod:`PlinkUtils.subset_data` module. The
-    required file type for this module is ``bfile``, hence the need to use the
+    This function calls the
+    :py:mod:`pyGenClean.pyGenClean.PlinkUtils.subset_data` module. The required
+    file type for this module is ``bfile``, hence the need to use the
     :py:func:`check_input_files` to check if the file input file type is the
     good one, or to create it if needed.
 
