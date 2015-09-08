@@ -22,8 +22,8 @@
  bookmarks=true,bookmarksnumbered=false,bookmarksopen=false,
  breaklinks=false,pdfborder={0 0 0},backref=false,colorlinks=true]
  {hyperref}
-\hypersetup{pdftitle={Automatic Sequencing Report},
- pdfauthor={Louis-Philippe Lemieux Perreault},
+\hypersetup{pdftitle={\VAR{ project_name }},
+ pdfauthor={\VAR{ report_author }},
  linkcolor={link_blue},citecolor={link_blue},urlcolor={link_blue}}
 
 \makeatletter
@@ -67,7 +67,7 @@
 % Fancy header
 \pagestyle{fancy}
 \fancyhf{}
-\fancyfoot[RO,LE]{{\footnotesize Automatic QC Report}}
+\fancyfoot[RO,LE]{{\footnotesize \texttt{pyGenClean} version \VAR{ pygenclean_version }}}
 \fancyfoot[LO,RE]{{\footnotesize\ProjectName}}
 \fancyfoot[CO,CE]{{\footnotesize\thepage}}
 \renewcommand{\headrulewidth}{0pt}
@@ -105,7 +105,7 @@
 % The title page
 \title{Genetic Data Clean Up}
 \subtitle{\ProjectName}
-\author{\begingroup\graphicspath{{\VAR{ logo_dir }}}\includegraphics[width=0.3\textwidth]{\VAR{ logo_path }}\endgroup}
+\author{\VAR{ report_author }}
 \date{\VAR{ month } \engordnumber{\VAR{ day }}, \VAR{ year }}
 \maketitle
 
