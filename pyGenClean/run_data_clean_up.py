@@ -101,6 +101,7 @@ def main():
     logger.info("Data Clean Up version {}".format(__version__))
 
     # Reading the configuration file
+    logger.info("Reading configuration file [ {} ]".format(args.conf))
     order, conf = read_config_file(args.conf)
 
     # Executing the data clean up
@@ -135,8 +136,11 @@ def main():
         raise ProgramError(msg)
 
     # Counting the number of markers and samples in the datafile
+    logger.info("Counting initial number of samples and markers")
     nb_markers, nb_samples = count_markers_samples(current_input,
                                                    current_input_type)
+    logger.info("  - {:,d} samples".format(nb_samples))
+    logger.info("  - {:,d} markers".format(nb_markers))
 
     # Creating the result summary file containing the initial numbers
     try:
@@ -184,8 +188,11 @@ def main():
         descriptions.append(desc)
 
     # Counting the final number of samples and markers
+    logger.info("Counting final number of samples and markers")
     nb_markers, nb_samples = count_markers_samples(current_input,
                                                    current_input_type)
+    logger.info("  - {:,d} samples".format(nb_samples))
+    logger.info("  - {:,d} markers".format(nb_markers))
 
     # Getting the final suffixes
     suffixes = None
@@ -204,6 +211,7 @@ def main():
                 print >>o_file, current_input + s
 
     # We create the automatic report
+    logger.info("Generating automatic report")
     report_name = os.path.join(dirname, "automatic_report.tex")
     auto_report.create_report(
         dirname,
