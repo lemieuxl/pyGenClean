@@ -18,7 +18,7 @@
 import os
 import re
 import sys
-import logger
+import logging
 import argparse
 
 import numpy as np

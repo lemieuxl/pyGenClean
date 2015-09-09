@@ -18,7 +18,7 @@
 import os
 import sys
 import glob
-import logger
+import logging
 import argparse
 import subprocess
 
