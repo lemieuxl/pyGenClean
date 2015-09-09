@@ -51,7 +51,7 @@ def main(argString=None):
 
     logger.info("Options used:")
     for key, value in vars(args).iteritems():
-        logger.info("  --{} {}".format(key, value))
+        logger.info("  --{} {}".format(key.replace("_", "-"), value))
 
     # Run plink
     logger.info("Running Plink to check the plate bias")
