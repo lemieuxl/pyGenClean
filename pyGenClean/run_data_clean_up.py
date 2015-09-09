@@ -2675,6 +2675,11 @@ def check_input_files(prefix, the_type, required_type):
         if os.path.isfile(prefix + ".log"):
             # There is a log file... we need to copy it
             shutil.copyfile(prefix + ".log", prefix + ".olog")
+        logger.info("Converting {} from {} to {}".format(
+            prefix,
+            the_type,
+            required_type,
+        ))
         run_command(plink_command)
 
         # Everything is now fine
@@ -2699,6 +2704,11 @@ def check_input_files(prefix, the_type, required_type):
         if os.path.isfile(prefix + ".log"):
             # There is a log file... we need to copy it
             shutil.copyfile(prefix + ".log", prefix + ".olog")
+        logger.info("Converting {} from {} to {}".format(
+            prefix,
+            the_type,
+            required_type,
+        ))
         run_command(plink_command)
 
         # Everything is now fine
@@ -2723,6 +2733,11 @@ def check_input_files(prefix, the_type, required_type):
         if os.path.isfile(prefix + ".log"):
             # There is a log file... we need to copy it
             shutil.copyfile(prefix + ".log", prefix + ".olog")
+        logger.info("Converting {} from {} to {}".format(
+            prefix,
+            the_type,
+            required_type,
+        ))
         run_command(plink_command)
 
         # Everything is now fine
