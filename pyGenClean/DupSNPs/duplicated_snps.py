@@ -351,7 +351,7 @@ def createAndCleanTPED(tped, tfam, snps, prefix, chosenSNPs, completion,
         if chosenOne not in set(indexesToKeep):
             # The chosen SNP is not a good SNP, so we go to next SNP
             logger.warning("  - {} chosen but not good enough".format(
-                [chosenOne, 1],
+                snpInfo[chosenOne, 1],
             ))
             continue
 
