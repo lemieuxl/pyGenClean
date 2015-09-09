@@ -22,7 +22,7 @@ import argparse
 import subprocess
 
 
-logger = logging.getLogger("heterozygous_haploid")
+logger = logging.getLogger("remove_heterozygous_haploid")
 
 
 def main(argString=None):

@@ -28,7 +28,7 @@ from ..PlinkUtils import createRowFromPlinkSpacedOutput
 from ..DupSNPs.duplicated_snps import flipGenotype
 
 
-logger = logging.getLogger("gold_standard")
+logger = logging.getLogger("compare_gold_standard")
 
 
 def main(argString=None):
