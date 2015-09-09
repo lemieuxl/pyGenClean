@@ -14,6 +14,9 @@
 # pyGenClean.  If not, see <http://www.gnu.org/licenses/>.
 
 
+import logging
+
+
 try:
     from .version import pygenclean_version as __version__
 except:
@@ -27,3 +30,27 @@ __license__ = "GPL"
 __maintainer__ = "Louis-Philippe Lemieux Perreault"
 __email__ = "louis-philippe.lemieux.perreault@statgen.org"
 __status__ = "Development"
+
+
+# Configuring logging
+logging.basicConfig(
+    level=logging.INFO,
+    format="[%(asctime)s %(name)s %(levelname)s] %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+)
+
+
+def add_file_handler_to_root(log_fn):
+    """Adds a file handler to the root looging.
+
+    :param log_fn: the name of the log file.
+
+    :type log_fn: str
+
+    """
+    file_handler = logging.FileHandler(log_fn, mode="w")
+    file_handler.setFormatter(logging.Formatter(
+        fmt="[%(asctime)s %(name)s %(levelname)s] %(message)s",
+        datefmt="%Y-%m-%d %H:%M:%S",
+    ))
+    logging.root.addHandler(file_handler)

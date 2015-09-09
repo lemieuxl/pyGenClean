@@ -18,9 +18,13 @@
 import os
 import sys
 import gzip
+import logging
 import argparse
 
 import numpy as npy
+
+
+logger = logging.getLogger("heterozygosity_plot")
 
 
 def main(argString=None):
@@ -405,9 +409,10 @@ def safe_main():
     try:
         main()
     except KeyboardInterrupt:
-        print >>sys.stderr, "Cancelled by user"
+        logger.info("Cancelled by user")
         sys.exit(0)
     except ProgramError as e:
+        logger.error(e.message)
         parser.error(e.message)
 
 

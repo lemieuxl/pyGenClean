@@ -20,6 +20,7 @@ import sys
 import math
 import shutil
 import random
+import logging
 import StringIO
 import argparse
 import subprocess
@@ -28,6 +29,9 @@ from collections import defaultdict
 import numpy as npy
 
 from ..PlinkUtils import createRowFromPlinkSpacedOutput
+
+
+logger = logging.getLogger("duplicated_snps")
 
 
 def main(argString=None):
@@ -74,31 +78,31 @@ def main(argString=None):
     args = parseArgs(argString)
     checkArgs(args)
 
-    print "   - Options used:"
+    logger.info("Options used:")
     for key, value in vars(args).iteritems():
-        print "      --{} {}".format(key, value)
+        logger.info("  --{} {}".format(key.replace("_", "-"), value))
 
     # Reading the map file
-    print "   - Reading MAP file"
+    logger.info("Reading MAP file")
     mapF = readMAP(args.tfile + ".map", args.out)
 
     # Reading the tfam file
-    print "   - Reading TFAM file"
+    logger.info("Reading TFAM file")
     tfam = readTFAM(args.tfile + ".tfam")
 
     # Find unique snps
-    print "   - Finding unique SNPs"
+    logger.info("Finding unique SNPs")
     uniqueSNPs = findUniques(mapF)
 
     # Process the TPED file
-    print "   - Reading TPED file"
+    logger.info("Reading TPED file")
     tped, duplicatedSNPs = processTPED(uniqueSNPs, mapF,
                                        args.tfile + ".tped",
                                        args.tfile + ".tfam", args.out)
 
     if len(tped) == 0:
-        print "   - There are no duplicated SNPs"
-        print "      - Creating final TFAM"
+        logger.info("There are no duplicated SNPs")
+        logger.info("  - Creating final TFAM")
         # Copying the files
         # The TFAM
         try:
@@ -110,7 +114,7 @@ def main(argString=None):
             raise ProgramError(msg)
 
         # The TPED
-        print "      - Creating final TPED"
+        logger.info("  - Creating final TPED")
         try:
             shutil.copy(args.out + ".unique_snps.tped",
                         args.out + ".final.tped")
@@ -121,38 +125,38 @@ def main(argString=None):
 
     else:
         # We print the TPED and TFAM for the duplicated SNPs
-        print "   - Printing duplicated SNPs TPED and TFAM files"
+        logger.info("Printing duplicated SNPs TPED and TFAM files")
         printDuplicatedTPEDandTFAM(tped, args.tfile + ".tfam", args.out)
 
         # Computing the frequency of the duplicated SNPs
-        print "   - Computing duplicated SNPs' frequencies"
+        logger.info("Computing duplicated SNPs' frequencies")
         dupSNPsFreq = computeFrequency(args.out + ".duplicated_snps",
                                        args.out)
 
         # Compute statistics
-        print "   - Computing concordance and completion of duplicated SNPs"
+        logger.info("Computing concordance and completion of duplicated SNPs")
         completion, concordance = computeStatistics(tped, tfam, duplicatedSNPs)
 
         # Print the statistics
-        print "   - Printing duplicated SNPs summary file and finding errors"
-        print "     within duplicates"
+        logger.info("Printing duplicated SNPs summary file and finding errors "
+                    "within duplicates")
         snpsToComplete = printProblems(completion, concordance, tped,
                                        duplicatedSNPs, dupSNPsFreq, args.out,
                                        args.frequency_difference)
 
         # Print the concordance file
-        print "   - Printing concordance file"
+        logger.info("Printing concordance file")
         printConcordance(concordance, args.out, tped, duplicatedSNPs)
 
         # Choose the best SNP
-        print "   - Choosing best SNP for each duplicates"
+        logger.info("Choosing best SNP for each duplicates")
         chosenSNPs, comp, conc = chooseBestSnps(tped, duplicatedSNPs,
                                                 completion, concordance,
                                                 args.out)
 
         # Complete the SNPs
-        print ("   - Completing chosen duplicates (removing discordant\n"
-               "     genotypes)")
+        logger.info("Completing chosen duplicates (removing discordant "
+                    "genotypes)")
         newTPED, snpToRemove = createAndCleanTPED(
             tped,
             tfam,
@@ -168,7 +172,7 @@ def main(argString=None):
         )
 
         # Creates the final tped
-        print "   - Writing final TPED and TFAM file"
+        logger.info("Writing final TPED and TFAM file")
         createFinalTPEDandTFAM(newTPED, args.out + ".unique_snps",
                                args.out, snpToRemove)
 
@@ -346,10 +350,9 @@ def createAndCleanTPED(tped, tfam, snps, prefix, chosenSNPs, completion,
         chosenOne = chosenSNPs[snpID]
         if chosenOne not in set(indexesToKeep):
             # The chosen SNP is not a good SNP, so we go to next SNP
-            print "      - %s chosen but not good enough" % snpInfo[
-                chosenOne,
-                1,
-            ]
+            logger.warning("  - {} chosen but not good enough".format(
+                [chosenOne, 1],
+            ))
             continue
 
         # Now cycling through the genotypes
@@ -1292,8 +1295,7 @@ def readMAP(fileName, prefix):
     marker_names = npy.array([i[1] for i in mapF])
     nb_with_same_name = len(marker_names) - len(npy.unique(marker_names))
     if nb_with_same_name > 0:
-        print ("      - {} markers with same "
-               "name".format(nb_with_same_name))
+        logger.info("  - {} markers with same name".format(nb_with_same_name))
         u, indices = npy.unique(marker_names, return_index=True)
         duplicated_indices = npy.setdiff1d(npy.arange(len(marker_names)),
                                            indices)
@@ -1463,9 +1465,10 @@ def safe_main():
     try:
         main()
     except KeyboardInterrupt:
-        print >>sys.stderr, "Cancelled by user"
+        logger.info("Cancelled by user")
         sys.exit(0)
     except ProgramError as e:
+        logger.error(e.message)
         parser.error(e.message)
 
 

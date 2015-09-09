@@ -17,6 +17,7 @@
 
 import os
 import sys
+import logging
 import argparse
 import subprocess
 
@@ -27,6 +28,9 @@ from . import find_outliers
 from . import plot_eigenvalues as PlotEigenvalues
 from ..DupSNPs.duplicated_snps import flipGenotype
 from ..RelatedSamples import find_related_samples as Relatedness
+
+
+logger = logging.getLogger("check_ethnicity")
 
 
 class Dummy(object):
@@ -79,68 +83,68 @@ def main(argString=None):
     args = parseArgs(argString)
     checkArgs(args)
 
-    print "   - Options used:"
+    logger.info("Options used:")
     for key, value in vars(args).iteritems():
-        print "      --{} {}".format(key, value)
+        logger.info("  --{} {}".format(key, value))
 
     # Find overlap with the reference file
-    print "   - Finding overlapping SNPs between reference and source panels"
+    logger.info("Finding overlapping SNPs between reference and source panels")
     referencePrefixes = [args.ceu_bfile, args.yri_bfile, args.jpt_chb_bfile]
     popNames = ["CEU", "YRI", "JPT-CHB"]
     findOverlappingSNPsWithReference(args.bfile, referencePrefixes, args.out)
 
     # Extract the required SNPs using Plink
-    print "   - Extracting overlapping SNPs from the reference panels"
+    logger.info("Extracting overlapping SNPs from the reference panels")
     extractSNPs(args.out + ".ref_snp_to_extract", referencePrefixes, popNames,
                 args.out + ".reference_panel", args.sge, args)
-    print "   - Extracting overlapping SNPs from the source panel"
+    logger.info("Extracting overlapping SNPs from the source panel")
     extractSNPs(args.out + ".source_snp_to_extract", [args.bfile], ["ALL"],
                 args.out + ".source_panel", False, args)
 
     # Combining the reference panel
-    print "   - Combining the reference panels"
+    logger.info("Combining the reference panels")
     combinePlinkBinaryFiles(
         [args.out + ".reference_panel." + i for i in popNames],
         args.out + ".reference_panel.ALL",
     )
 
     # Renaming the reference file, so that the SNP names are the same
-    print "   - Renaming reference panel's SNPs to match source panel"
+    logger.info("Renaming reference panel's SNPs to match source panel")
     renameSNPs(args.out + ".reference_panel.ALL", args.out + ".update_names",
                args.out + ".reference_panel.ALL.rename")
 
     # Computing the frequency
-    print "   - Computing reference panel frequencies"
+    logger.info("Computing reference panel frequencies")
     computeFrequency(args.out + ".reference_panel.ALL.rename",
                      args.out + ".reference_panel.ALL.rename.frequency")
-    print "   - Computing source panel frequencies"
+    logger.info("Computing source panel frequencies")
     computeFrequency(args.out + ".source_panel.ALL",
                      args.out + ".source_panel.ALL.frequency")
 
     # Finding the SNPs to flip and flip them in the reference panel
-    print "   - Finding SNPs to flip or to exclude from reference panel"
+    logger.info("Finding SNPs to flip or to exclude from reference panel")
     findFlippedSNPs(args.out + ".reference_panel.ALL.rename.frequency.frq",
                     args.out + ".source_panel.ALL.frequency.frq",
                     args.out)
 
     # Excluding SNPs
-    print "   - Excluding SNPs from reference panel"
+    logger.info("Excluding SNPs from reference panel")
     excludeSNPs(args.out + ".reference_panel.ALL.rename",
                 args.out + ".reference_panel.ALL.rename.cleaned",
                 args.out + ".snp_to_remove")
-    print "   - Excluding SNPs from source panel"
+    logger.info("Excluding SNPs from source panel")
     excludeSNPs(args.out + ".source_panel.ALL",
                 args.out + ".source_panel.ALL.cleaned",
                 args.out + ".snp_to_remove")
 
     # Flipping the SNP that need to be flip in the reference
-    print "   - Flipping SNPs in reference panel"
+    logger.info("Flipping SNPs in reference panel")
     flipSNPs(args.out + ".reference_panel.ALL.rename.cleaned",
              args.out + ".reference_panel.ALL.rename.cleaned.flipped",
              args.out + ".snp_to_flip_in_reference")
 
     # Combining the reference panel
-    print "   - Combining reference and source panels"
+    logger.info("Combining reference and source panels")
     combinePlinkBinaryFiles(
         [args.out + ".reference_panel.ALL.rename.cleaned.flipped",
          args.out + ".source_panel.ALL.cleaned"],
@@ -148,40 +152,40 @@ def main(argString=None):
     )
 
     # Runing the relatedness step
-    print "   - Creating the genome file using Plink"
+    logger.info("Creating the genome file using Plink")
     newBfile = runRelatedness(args.out + ".final_dataset_for_genome", args.out,
                               args)
 
     # Creating the MDS file
-    print "   - Creating the MDS file using Plink"
+    logger.info("Creating the MDS file using Plink")
     createMDSFile(args.nb_components, newBfile,
                   args.out + ".mds", args.out + ".ibs.genome.genome")
 
     # Creating the population files
-    print "   - Creating a population file"
+    logger.info("Creating a population file")
     famFiles = [args.out + ".reference_panel." + i + ".fam" for i in popNames]
     famFiles.append(args.out + ".source_panel.ALL.fam")
     labels = popNames + ["SOURCE"]
     createPopulationFile(famFiles, labels, args.out + ".population_file")
 
     # Plot the MDS value
-    print "   - Creating the MDS plot"
+    logger.info("Creating the MDS plot")
     plotMDS(args.out + ".mds.mds", args.out + ".mds",
             args.out + ".population_file", args)
 
     # Finding the outliers
-    print "   - Finding the outliers"
+    logger.info("Finding the outliers")
     find_the_outliers(args.out + ".mds.mds", args.out + ".population_file",
                       args.outliers_of, args.multiplier, args.out)
 
     # De we need to create a scree plot?
     if args.create_scree_plot:
         # Computing the eigenvalues using smartpca
-        print "   - Computing eigenvalues"
+        logger.info("Computing eigenvalues")
         compute_eigenvalues(args.out + ".ibs.pruned_data",
                             args.out + ".smartpca")
 
-        print "   - Creating scree plot"
+        logger.info("Creating scree plot")
         create_scree_plot(args.out + ".smartpca.evec.txt",
                           args.out + ".smartpca.scree_plot.png",
                           args.scree_plot_title)
@@ -1168,9 +1172,10 @@ def safe_main():
     try:
         main()
     except KeyboardInterrupt:
-        print >>sys.stderr, "Cancelled by user"
+        logger.info("Cancelled by user")
         sys.exit(0)
     except ProgramError as e:
+        logger.error(e.message)
         parser.error(e.message)
 
 

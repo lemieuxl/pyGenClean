@@ -20,10 +20,14 @@ import re
 import sys
 import time
 import shutil
+import logging
 import argparse
 from glob import glob
 
 from . import auto_report
+
+
+logger = logging.getLogger("merge_reports")
 
 
 def main(argString=None):
@@ -38,9 +42,9 @@ def main(argString=None):
     args = parseArgs(argString)
     checkArgs(args)
 
-    print "   - Options used:"
+    logger.info("Options used:")
     for key, value in vars(args).iteritems():
-        print "      --{} {}".format(key, value)
+        logger.info("  --{} {}".format(key.replace("_", "-"), value))
 
     # Checking if the output directory exists, creating it otherwise
     if not os.path.isdir(args.out_dir):
@@ -386,9 +390,10 @@ def safe_main():
     try:
         main()
     except KeyboardInterrupt:
-        print >>sys.stderr, "Cancelled by user"
+        logger.info("Cancelled by user")
         sys.exit(0)
     except ProgramError as e:
+        logger.error(e.message)
         parser.error(e.message)
 
 

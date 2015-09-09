@@ -19,11 +19,15 @@ import os
 import sys
 import shutil
 import random
+import logging
 import argparse
 import StringIO
 from collections import defaultdict
 
 import numpy as npy
+
+
+logger = logging.getLogger("duplicated_samples")
 
 
 def main(argString=None):
@@ -71,29 +75,29 @@ def main(argString=None):
     args = parseArgs(argString)
     checkArgs(args)
 
-    print "   - Options used:"
+    logger.info("Options used:")
     for key, value in vars(args).iteritems():
-        print "      --{} {}".format(key, value)
+        logger.info("  --{} {}".format(key.replace("_", "-"), value))
 
     # Reading the tfam file
-    print "   - Reading TFAM"
+    logger.info("Reading TFAM")
     tfam = readTFAM(args.tfile + ".tfam")
 
     # Find duplicated samples
-    print "   - Finding duplicated samples"
+    logger.info("Finding duplicated samples")
     uniqueSamples, duplicatedSamples = findDuplicates(tfam)
 
     # Prints the unique tfam
-    print "   - Creating TFAM for unique samples"
+    logger.info("Creating TFAM for unique samples")
     printUniqueTFAM(tfam, uniqueSamples, args.out)
 
     # Process the TPED file
-    print "   - Reading TPED (and creating TPED for unique samples)"
+    logger.info("Reading TPED (and creating TPED for unique samples)")
     tped, tpedSamples = processTPED(uniqueSamples, duplicatedSamples,
                                     args.tfile + ".tped", args.out)
 
     if len(duplicatedSamples) == 0:
-        print "   - There are no duplicates in {}.tfam".format(args.tfile)
+        logger.info("There are no duplicates in {}.tfam".format(args.tfile))
         # There are no duplicated samples
         try:
             shutil.copy(args.out + ".unique_samples.tfam",
@@ -113,29 +117,29 @@ def main(argString=None):
     else:
         # We continue
         # Compute statistics
-        print ("   - Computing the completion and concordance of duplicated\n"
-               "     samples")
+        logger.info("Computing the completion and concordance of duplicated "
+                    "samples")
         completion, concordance = computeStatistics(tped, tfam, tpedSamples,
                                                     duplicatedSamples,
                                                     args.out)
 
         # Print the statistics
-        print "   - Printing the statistics"
+        logger.info("Printing the statistics")
         completion_percentage = printStatistics(completion, concordance,
                                                 tpedSamples, duplicatedSamples,
                                                 args.out)
 
         # Print the concordance file
-        print "   - Printing the concordance file"
+        logger.info("Printing the concordance file")
         concordance_percentage = printConcordance(concordance, args.out)
 
         # Print the duplicated TFAM and TPED
-        print "   - Creating TPED and TFAM for duplicated samples"
+        logger.info("Creating TPED and TFAM for duplicated samples")
         printDuplicatedTPEDandTFAM(tped, tfam, tpedSamples, duplicatedSamples,
                                    args.out)
 
         # Choose the best duplicates
-        print "   - Choosing the best duplicates"
+        logger.info("Choosing the best duplicates")
         chosenSamples, comp, conc = chooseBestDuplicates(
             tped,
             tpedSamples,
@@ -146,8 +150,8 @@ def main(argString=None):
         )
 
         # Clean the genotype of the chosen samples
-        print ("   - Cleaning and creating unique TPED and TFAM from\n"
-               "     duplicated samples")
+        logger.info("Cleaning and creating unique TPED and TFAM from "
+                    "duplicated samples")
         newTPED, newTFAM = createAndCleanTPED(
             tped,
             tfam,
@@ -162,7 +166,7 @@ def main(argString=None):
         )
 
         # Add the chosen TPED and TFAM
-        print "   - Creating final TPED and TFAM file"
+        logger.info("Creating final TPED and TFAM file")
         addToTPEDandTFAM(newTPED, newTFAM, args.out,
                          args.out + ".unique_samples")
 
@@ -1190,9 +1194,10 @@ def safe_main():
     try:
         main()
     except KeyboardInterrupt:
-        print >>sys.stderr, "Cancelled by user"
+        logger.info("Cancelled by user")
         sys.exit(0)
     except ProgramError as e:
+        logger.error(e.message)
         parser.error(e.message)
 
 

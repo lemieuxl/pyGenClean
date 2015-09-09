@@ -18,7 +18,9 @@
 import os
 import re
 import sys
+import time
 import shutil
+import logging
 import datetime
 import argparse
 import itertools
@@ -27,7 +29,7 @@ import ConfigParser
 from glob import glob
 from collections import namedtuple, Counter
 
-from . import __version__ as prog_version
+from . import __version__, add_file_handler_to_root
 
 from .pipeline_error import ProgramError
 
@@ -51,6 +53,10 @@ from .LaTeX.merge_reports import add_custom_options as report_options
 
 from .PlinkUtils import subset_data
 from .PlinkUtils import createRowFromPlinkSpacedOutput
+
+
+# Configuring logging
+logger = logging.getLogger("pyGenClean")
 
 
 def main():
@@ -78,34 +84,24 @@ def main():
     args = parse_args()
     check_args(args)
 
-    print "Data Clean Up version {}".format(prog_version)
-
-    # Reading the configuration file
-    order, conf = read_config_file(args.conf)
-
     # The directory name
     dirname = "data_clean_up."
     dirname += datetime.datetime.today().strftime("%Y-%m-%d_%H.%M.%S")
-    if os.path.isdir(dirname):
-        answer = "N"
-        if not args.overwrite:
-            # The directory already exists...
-            print >>sys.stderr, ("WARNING: {}: directory already "
-                                 "exists".format(dirname))
-            print >>sys.stderr, "Overwrite [Y/N]? ",
-            answer = raw_input()
-        if args.overwrite or answer.upper() == "Y":
-            # Delete everything with the directory
-            shutil.rmtree(dirname)
-        elif answer.upper() == "N":
-            print >>sys.stderr, "STOPING NOW"
-            sys.exit(0)
-        else:
-            msg = "{}: not a valid answer (Y or N)".format(answer)
-            raise ProgramError(msg)
+    while os.path.isdir(dirname):
+        time.sleep(1)
+        dirname = "data_clean_up."
+        dirname += datetime.datetime.today().strftime("%Y-%m-%d_%H.%M.%S")
 
     # Creating the output directory
     os.mkdir(dirname)
+
+    # Configuring the root logger
+    add_file_handler_to_root(os.path.join(dirname, "pyGenClean.log"))
+
+    logger.info("Data Clean Up version {}".format(__version__))
+
+    # Reading the configuration file
+    order, conf = read_config_file(args.conf)
 
     # Executing the data clean up
     current_input = None
@@ -170,9 +166,10 @@ def main():
         function_to_use = available_functions[script_name]
 
         # Executing the function
-        print "\nRunning {} {}".format(number, script_name)
-        print "   - Using {} as prefix for input files".format(current_input)
-        print "   - Results will be in [ {} ]".format(output_prefix)
+        logger.info("Running {} {}".format(number, script_name))
+        logger.info("  - Using {} as prefix for input "
+                    "files".format(current_input))
+        logger.info("  - Results will be in [ {} ]".format(output_prefix))
         current_input, current_input_type, summary, desc = function_to_use(
             current_input,
             current_input_type,
@@ -2957,10 +2954,10 @@ def parse_args():
 
 
 # The parser object
-desc = """Runs the data clean up (version {}).""".format(prog_version)
+desc = """Runs the data clean up (version {}).""".format(__version__)
 parser = argparse.ArgumentParser(description=desc)
 parser.add_argument("-v", "--version", action="version",
-                    version="%(prog)s {}".format(prog_version))
+                    version="%(prog)s {}".format(__version__))
 
 group = parser.add_argument_group("Input File")
 group.add_argument("--bfile", type=str, metavar="FILE",
@@ -3030,9 +3027,10 @@ def safe_main():
     try:
         main()
     except KeyboardInterrupt:
-        print >>sys.stderr, "Cancelled by user"
+        logger.info("Cancelled by user")
         sys.exit(0)
     except ProgramError as e:
+        logger.error(e.message)
         parser.error(e.message)
 
 

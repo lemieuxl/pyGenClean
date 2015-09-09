@@ -17,11 +17,15 @@
 
 import os
 import sys
+import logging
 import argparse
 
 
 desc = """Compare BIM file"""
 parser = argparse.ArgumentParser(description=desc)
+
+
+logger = logging.getLogger("compare_bim")
 
 
 def main():
@@ -223,9 +227,10 @@ def safe_main():
     try:
         main()
     except KeyboardInterrupt:
-        print >>sys.stderr, "Cancelled by user"
+        logger.info("Cancelled by user")
         sys.exit(0)
     except ProgramError as e:
+        logger.error(e.message)
         parser.error(e.message)
 
 

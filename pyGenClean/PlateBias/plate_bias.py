@@ -18,10 +18,14 @@
 import os
 import sys
 import glob
+import logger
 import argparse
 import subprocess
 
 from ..PlinkUtils import createRowFromPlinkSpacedOutput
+
+
+logger = logging.getLogger("plate_bias")
 
 
 def main(argString=None):
@@ -45,20 +49,20 @@ def main(argString=None):
     args = parseArgs(argString)
     checkArgs(args)
 
-    print "   - Options used:"
+    logger.info("Options used:")
     for key, value in vars(args).iteritems():
-        print "      --{} {}".format(key, value)
+        logger.info("  --{} {}".format(key, value))
 
     # Run plink
-    print "   - Running Plink to check the plate bias"
+    logger.info("Running Plink to check the plate bias")
     executePlateBiasAnalysis(args)
 
     # Extract significant SNPs
-    print "   - Extracting significant SNPs"
+    logger.info("Extracting significant SNPs")
     extractSignificantSNPs(args.out)
 
     # Remove significant SNPs using plink
-    print "   - Computing frequency of significant SNPs"
+    logger.info("Computing frequency of significant SNPs")
     computeFrequencyOfSignificantSNPs(args)
 
 
@@ -286,9 +290,10 @@ def safe_main():
     try:
         main()
     except KeyboardInterrupt:
-        print >>sys.stderr, "Cancelled by user"
+        logger.info("Cancelled by user")
         sys.exit(0)
     except ProgramError as e:
+        logger.error(e.message)
         parser.error(e.message)
 
 

@@ -17,11 +17,15 @@
 
 import os
 import sys
+import logging
 import argparse
 import subprocess
 
 from ..PlinkUtils import compare_bim as CompareBIM
 from ..PlinkUtils import createRowFromPlinkSpacedOutput
+
+
+logger = logging.getLogger("flag_hw")
 
 
 class Dummy(object):
@@ -54,47 +58,50 @@ def main(argString=None):
     args = parseArgs(argString)
     checkArgs(args)
 
-    print "   - Options used:"
+    logger.info("Options used:")
     for key, value in vars(args).iteritems():
-        print "      --{} {}".format(key, value)
+        logger.info("  --{} {}".format(key.replace("_", "-"), value))
 
     # Compute the number of markers
-    print "   - Counting the number of markers"
+    logger.info("Counting the number of markers")
     nbMarkers = computeNumberOfMarkers(args.bfile + ".bim")
 
     if nbMarkers <= 0:
-        print "      - There are no markers"
-        print "        Stopping now"
+        logger.info("  - There are no markers: STOPPING NOW!")
     else:
-        print "      - There are {} markers".format(nbMarkers)
+        logger.info("  - There are {} markers".format(nbMarkers))
 
         customThreshold = str(0.05 / nbMarkers)
 
         # Run the plink command
-        print ("   - Computing the HW equilibrium for "
-               "{}".format(customThreshold))
+        logger.info("Computing the HW equilibrium for {}".format(
+            customThreshold,
+        ))
         computeHWE(args.bfile, customThreshold,
                    args.out + ".threshold_" + customThreshold)
-        print "   - Computing the HW equilibrium for {}".format(args.hwe)
+        logger.info("Computing the HW equilibrium for {}".format(args.hwe))
         computeHWE(args.bfile, args.hwe, args.out + ".threshold_" + args.hwe)
 
         # Compare the BIM files
-        print ("   - Creating the flagged SNP list for "
-               "{}".format(customThreshold))
+        logger.info("Creating the flagged SNP list for {}".format(
+            customThreshold,
+        ))
         custom_snps = compareBIMfiles(
             args.bfile + ".bim",
             args.out + ".threshold_" + customThreshold + ".bim",
             args.out + ".snp_flag_threshold_" + customThreshold,
         )
-        print "   - Creating the flagged SNP list for {}".format(args.hwe)
+        logger.info("Creating the flagged SNP list for {}".format(args.hwe))
         hwe_snps = compareBIMfiles(
             args.bfile + ".bim",
             args.out + ".threshold_" + args.hwe + ".bim",
             args.out + ".snp_flag_threshold_" + args.hwe,
         )
 
-        print ("   - Creating the in between SNP list ([{}, "
-               "{}[)".format(args.hwe, customThreshold))
+        logger.info("Creating the in between SNP list ([{}, {}[)".format(
+            args.hwe,
+            customThreshold,
+        ))
         file_name = args.out + ".snp_flag_threshold_between_{}-{}".format(
             args.hwe,
             customThreshold,
@@ -323,9 +330,10 @@ def safe_main():
     try:
         main()
     except KeyboardInterrupt:
-        print >>sys.stderr, "Cancelled by user"
+        logger.info("Cancelled by user")
         sys.exit(0)
     except ProgramError as e:
+        logger.error(e.message)
         parser.error(e.message)
 
 

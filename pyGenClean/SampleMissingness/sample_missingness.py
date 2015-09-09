@@ -17,8 +17,12 @@
 
 import os
 import sys
+import logging
 import argparse
 import subprocess
+
+
+logger = logging.getLogger("sample_missingness")
 
 
 def main(argString=None):
@@ -38,12 +42,12 @@ def main(argString=None):
     args = parseArgs(argString)
     checkArgs(args)
 
-    print "   - Options used:"
+    logger.info("Options used:")
     for key, value in vars(args).iteritems():
-        print "      --{} {}".format(key.replace("_", "-"), value)
+        logger.info("  --{} {}".format(key.replace("_", "-"), value))
 
     # Running Plink
-    print "   - Running Plink"
+    logger.info("Running Plink")
     runPlink(args)
 
 
@@ -198,9 +202,10 @@ def safe_main():
     try:
         main()
     except KeyboardInterrupt:
-        print >>sys.stderr, "Cancelled by user"
+        logger.info("Cancelled by user")
         sys.exit(0)
     except ProgramError as e:
+        logger.error(e.message)
         parser.error(e.message)
 
 

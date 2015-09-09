@@ -18,11 +18,15 @@
 import os
 import re
 import sys
+import logger
 import argparse
 
 import numpy as np
 
 import matplotlib as mpl
+
+
+logger = logging.getLogger("plot_eigenvalues")
 
 
 def main(argString=None):
@@ -258,9 +262,10 @@ def safe_main():
     try:
         main()
     except KeyboardInterrupt:
-        print >>sys.stderr, "Cancelled by user"
+        logger.info("Cancelled by user")
         sys.exit(0)
     except ProgramError as e:
+        logger.error(e.message)
         parser.error(e.message)
 
 

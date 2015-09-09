@@ -17,8 +17,12 @@
 
 import os
 import sys
+import logging
 import argparse
 import subprocess
+
+
+logger = logging.getLogger("heterozygous_haploid")
 
 
 def main(argString=None):
@@ -33,12 +37,12 @@ def main(argString=None):
     args = parseArgs(argString)
     checkArgs(args)
 
-    print "   - Options used:"
+    logger.info("Options used:")
     for key, value in vars(args).iteritems():
-        print "      --{} {}".format(key, value)
+        logger.info("  --{} {}".format(key.replace("_", "-"), value))
 
     # Run plink
-    print "   - Running Plink to set heterozygous haploid as missing"
+    logger.info("Running Plink to set heterozygous haploid as missing")
     runPlink(args)
 
 
@@ -164,9 +168,10 @@ def safe_main():
     try:
         main()
     except KeyboardInterrupt:
-        print >>sys.stderr, "Cancelled by user"
+        logger.info("Cancelled by user")
         sys.exit(0)
     except ProgramError as e:
+        logger.error(e.message)
         parser.error(e.message)
 
 
