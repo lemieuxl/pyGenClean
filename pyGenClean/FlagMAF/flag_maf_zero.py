@@ -17,10 +17,14 @@
 
 import os
 import sys
+import logging
 import argparse
 import subprocess
 
 from ..PlinkUtils import createRowFromPlinkSpacedOutput
+
+
+logger = logging.getLogger("flag_maf_zero")
 
 
 def main(argString=None):
@@ -42,16 +46,16 @@ def main(argString=None):
     args = parseArgs(argString)
     checkArgs(args)
 
-    print "   - Options used:"
+    logger.info("Options used:")
     for key, value in vars(args).iteritems():
-        print "      --{} {}".format(key, value)
+        logger.info("  --{} {}".format(key.replace("_", "-"), value))
 
     # Compute frequency using plink
-    print "   - Computing the frequencies using Plink"
+    logger.info("Computing the frequencies using Plink")
     computeFrequency(args)
 
     # Read the freqency file
-    print "   - Flagging SNPs with MAF = 0"
+    logger.info("Flagging SNPs with MAF = 0")
     findSnpWithMaf0(args.out + ".frq", args.out)
 
 
@@ -106,9 +110,11 @@ def findSnpWithMaf0(freqFileName, prefix):
 
     # Creating the output files
     if len(maf_0_set) == 0:
-        print "      - There are no markers with MAF 0"
+        logger.info("  - There are no markers with MAF 0")
     else:
-        print "      - There are {} markers with MAF 0".format(len(maf_0_set))
+        logger.info("  - There are {} markers with MAF 0".format(
+            len(maf_0_set),
+        ))
     outputFile = None
     try:
         with open(prefix + ".list", "w") as output_file:
@@ -119,7 +125,7 @@ def findSnpWithMaf0(freqFileName, prefix):
         raise ProgramError(msg)
 
     if len(na_set) > 0:
-        print "      - There are {} markers with NA MAF".format(len(na_set))
+        logger.info("  - There are {} markers with NA MAF".format(len(na_set)))
         try:
             with open(prefix + ".na_list", "w") as output_file:
                 for marker_name in na_set:
@@ -250,9 +256,10 @@ def safe_main():
     try:
         main()
     except KeyboardInterrupt:
-        print >>sys.stderr, "Cancelled by user"
+        logger.info("Cancelled by user")
         sys.exit(0)
     except ProgramError as e:
+        logger.error(e.message)
         parser.error(e.message)
 
 

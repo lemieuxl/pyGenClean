@@ -19,7 +19,11 @@ import os
 import sys
 import gzip
 import random
+import logging
 import argparse
+
+
+logger = logging.getLogger("merge_related_samples")
 
 
 def main(argString=None):
@@ -268,9 +272,10 @@ def safe_main():
     try:
         main()
     except KeyboardInterrupt:
-        print >>sys.stderr, "Cancelled by user"
+        logger.info("Cancelled by user")
         sys.exit(0)
     except ProgramError as e:
+        logger.error(e.message)
         parser.error(e.message)
 
 

@@ -19,6 +19,7 @@ import os
 import sys
 import glob
 import gzip
+import logging
 import argparse
 import subprocess
 from collections import defaultdict
@@ -27,6 +28,9 @@ import numpy as npy
 
 from ..PlinkUtils import createRowFromPlinkSpacedOutput
 from ..RelatedSamples import merge_related_samples
+
+
+logger = logging.getLogger("find_related_samples")
 
 
 def main(argString=None):
@@ -58,28 +62,27 @@ def main(argString=None):
     args = parseArgs(argString)
     checkArgs(args)
 
-    print "   - Options used:"
+    logger.info("Options used:")
     for key, value in vars(args).iteritems():
-        print "      --{} {}".format(key, value)
+        logger.info("  --{} {}".format(key.replace("_", "-"), value))
 
     # Run plink
-    print "   - Running Plink to extract SNPs according to LD"
+    logger.info("Running Plink to extract SNPs according to LD")
     snpsToExtract = selectSNPsAccordingToLD(args)
 
     # Check there is enough SNP in the output file
-    print "   - Checking if there are enough extracted SNP"
+    logger.info("Checking if there are enough extracted SNP")
     if not checkNumberOfSNP(snpsToExtract, args.min_nb_snp):
         # There are not enough markers
-        print "      - There are not enough SNPs"
-        print "        Stopping now"
+        logger.info("There are not enough SNPs: STOPPING NOW!")
 
     else:
         # Extract the SNPs
-        print "   - Extracting the SNPs using Plink"
+        logger.info("Extracting the SNPs using Plink")
         newBfile = extractSNPs(snpsToExtract, args)
 
         # Run the genome command from plink
-        print "   - Creating the genome file using Plink"
+        logger.info("Creating the genome file using Plink")
         genomeFileName = runGenome(newBfile, args)
 
         if args.genome_only:
@@ -87,16 +90,16 @@ def main(argString=None):
             return newBfile
 
         # Extract related individuals
-        print "   - Finding related individuals from genome file"
+        logger.info("Finding related individuals from genome file")
         related_data = extractRelatedIndividuals(genomeFileName, args.out,
                                                  args.ibs2_ratio)
         # Are there related samples?
         if related_data is None:
-            print "   - There are no related samples in the dataset"
+            logger.info("There are no related samples in the dataset")
 
         else:
             # Plot the related data
-            print "   - Plotting related individuals"
+            logger.info("Plotting related individuals")
             plot_related_data(related_data["IBS2_RATIO"], related_data["Z1"],
                               related_data["CODE"], r"$Z_1$",
                               args.out + ".related_individuals_z1.png", args)
@@ -935,9 +938,10 @@ def safe_main():
     try:
         main()
     except KeyboardInterrupt:
-        print >>sys.stderr, "Cancelled by user"
+        logger.info("Cancelled by user")
         sys.exit(0)
     except ProgramError as e:
+        logger.error(e.message)
         parser.error(e.message)
 
 

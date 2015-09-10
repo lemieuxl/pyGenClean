@@ -17,11 +17,15 @@
 
 import os
 import sys
+import logging
 import argparse
 
 import numpy as npy
 
 from ..PlinkUtils import createRowFromPlinkSpacedOutput as create_row
+
+
+logger = logging.getLogger("find_outliers")
 
 
 def main(argString=None):
@@ -49,27 +53,29 @@ def main(argString=None):
     args = parseArgs(argString)
     checkArgs(args)
 
-    print "   - Options used:"
+    logger.info("Options used:")
     for key, value in vars(args).iteritems():
-        print "      --{} {}".format(key, value)
+        logger.info("  --{} {}".format(key.replace("_", "-"), value))
 
     # Reads the population file
-    print "   - Reading population file"
+    logger.info("Reading population file")
     populations = read_population_file(args.population_file)
 
     # Reads the MDS file
-    print "   - Reading MDS file"
+    logger.info("Reading MDS file")
     mds = read_mds_file(args.mds, args.xaxis, args.yaxis, populations)
 
     # Finds the population centers
-    print "   - Finding reference population centers"
+    logger.info("Finding reference population centers")
     centers, center_info = find_ref_centers(mds)
 
     # Computes three clusters using KMeans and the reference cluster centers
-    print "   - Finding outliers"
+    logger.info("Finding outliers")
     outliers = find_outliers(mds, centers, center_info, args.outliers_of, args)
-    print ("   - There are {} outliers for the {} "
-           "population".format(len(outliers), args.outliers_of))
+    logger.info("  - There are {} outliers for the {} population".format(
+        len(outliers),
+        args.outliers_of,
+    ))
 
     # Printing the outlier file
     try:
@@ -236,10 +242,10 @@ def find_outliers(mds, centers, center_info, ref_pop, options):
             (distances > options.multiplier * sigma).flatten(),
             subset_mds != ref_pop_name[label],
         )
-        print "      - {} outliers for the {} cluster".format(
+        logger.info("  - {} outliers for the {} cluster".format(
             npy.sum(outliers),
             ref_pop_name[label],
-        )
+        ))
 
         # Saving the outliers
         if ref_pop_name[label] != options.outliers_of:
@@ -644,9 +650,10 @@ def safe_main():
     try:
         main()
     except KeyboardInterrupt:
-        print >>sys.stderr, "Cancelled by user"
+        logger.info("Cancelled by user")
         sys.exit(0)
     except ProgramError as e:
+        logger.error(e.message)
         parser.error(e.message)
 
 

@@ -18,9 +18,13 @@
 import os
 import sys
 import shutil
+import logging
 import argparse
 
 import numpy as npy
+
+
+logger = logging.getLogger("noCall_hetero_snps")
 
 
 def main(argString=None):
@@ -41,12 +45,12 @@ def main(argString=None):
     args = parseArgs(argString)
     checkArgs(args)
 
-    print "   - Options used:"
+    logger.info("Options used:")
     for key, value in vars(args).iteritems():
-        print "      --{} {}".format(key.replace("_", "-"), value)
+        logger.info("  --{} {}".format(key.replace("_", "-"), value))
 
     # Process the TPED and TFAM file
-    print "   - Processing the TPED and TFAM file"
+    logger.info("Processing the TPED and TFAM file")
     processTPEDandTFAM(args.tfile + ".tped", args.tfile + ".tfam", args.out)
 
 
@@ -244,9 +248,10 @@ def safe_main():
     try:
         main()
     except KeyboardInterrupt:
-        print >>sys.stderr, "Cancelled by user"
+        logger.info("Cancelled by user")
         sys.exit(0)
     except ProgramError as e:
+        logger.error(e.message)
         parser.error(e.message)
 
 

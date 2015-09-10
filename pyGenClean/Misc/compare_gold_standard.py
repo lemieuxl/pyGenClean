@@ -20,6 +20,7 @@ import os
 import sys
 import gzip
 import shutil
+import logging
 import argparse
 import subprocess
 
@@ -27,38 +28,41 @@ from ..PlinkUtils import createRowFromPlinkSpacedOutput
 from ..DupSNPs.duplicated_snps import flipGenotype
 
 
+logger = logging.getLogger("compare_gold_standard")
+
+
 def main(argString=None):
     # Getting and checking the options
     args = parseArgs(argString)
     checkArgs(args)
 
-    print "   - Options used:"
+    logger.info("Options used:")
     for key, value in vars(args).iteritems():
-        print "      --{} {}".format(key, value)
+        logger.info("  --{} {}".format(key.replace("_", "-"), value))
 
     # Reading the same sample file
-    print "   - Reading the same samples file"
+    logger.info("Reading the same samples file")
     same_samples = read_same_samples_file(args.same_samples, args.out)
     required_samples = set([i[0] for i in same_samples] +
                            [i[1] for i in same_samples])
-    print ("      - Found a total of {} unique "
-           "samples".format(len(required_samples)))
+    logger.info("  - Found a total of {} unique "
+                "samples".format(len(required_samples)))
 
     # Check the fam files
-    print "   - Checking in fam files for required samples"
+    logger.info("Checking in fam files for required samples")
     if not check_fam_for_samples(required_samples, args.bfile + ".fam",
                                  args.gold_bfile + ".fam"):
-        print "      - Didn't find all required samples... STOP"
+        logger.info("  - Didn't find all required samples... STOP")
         sys.exit(0)
 
     # Find overlap markers with the gold standard file
-    print "   - Finding overlapping SNPs with gold standard"
+    logger.info("Finding overlapping SNPs with gold standard")
     findOverlappingSNPsWithGoldStandard(args.bfile, args.gold_bfile, args.out,
                                         args.use_marker_names)
 
     # Extract the required SNPs using Plink
-    print ("   - Extracting overlapping SNPs from the gold standard and the "
-           "source panel")
+    logger.info("Extracting overlapping SNPs from the gold standard and the "
+                "source panel")
     extractSNPs([args.gold_bfile, args.bfile],
                 [args.out + ".gold_snp_to_extract",
                  args.out + ".source_snp_to_extract"],
@@ -68,7 +72,7 @@ def main(argString=None):
     gold_input_prefix = args.out + ".gold_standard"
     # Renaiming the reference file, so that the SNP names are the same
     if not args.use_marker_names:
-        print "   - Renaiming gold standard's SNPs to match source panel"
+        logger.info("Renaming gold standard's SNPs to match source panel")
         renameSNPs(args.out + ".gold_standard", args.out + ".update_names",
                    args.out + ".gold_standard.rename")
         gold_input_prefix = args.out + ".gold_standard.rename"
@@ -76,42 +80,42 @@ def main(argString=None):
     # Finding the SNPs to flip and flip them in the gold standard
     if not args.do_not_flip:
         # Computing the frequency
-        print "   - Computing gold standard frequencies"
+        logger.info("Computing gold standard frequencies")
         computeFrequency(gold_input_prefix,
                          gold_input_prefix + ".frequency")
 
         source_alleles = None
         if args.source_manifest is not None:
-            print "   - Reading the source manifest"
+            logger.info("Reading the source manifest")
             source_alleles = read_source_manifest(args.source_manifest)
         else:
-            print "   - Reading the allele file"
+            logger.info("Reading the allele file")
             source_alleles = read_source_alleles(args.source_alleles)
 
-        print "   - Finding SNPs to flip or to exclude from gold standard"
+        logger.info("Finding SNPs to flip or to exclude from gold standard")
         findFlippedSNPs(gold_input_prefix + ".frequency.frq", source_alleles,
                         args.out)
 
         # Excluding SNPs
-        print "   - Excluding SNPs and samples from the gold standard"
+        logger.info("Excluding SNPs and samples from the gold standard")
         exclude_SNPs_samples(gold_input_prefix,
                              gold_input_prefix + ".cleaned",
                              args.out + ".snp_to_remove",
                              args.out + ".gold_samples2keep")
-        print "   - Excluding SNPs and samples from source panel"
+        logger.info("Excluding SNPs and samples from source panel")
         exclude_SNPs_samples(args.out + ".source_panel",
                              args.out + ".source_panel.cleaned",
                              args.out + ".snp_to_remove",
                              args.out + ".source_panel_samples2keep")
 
         # Flipping the SNP that need to be flip in the gold standard
-        print "   - Flipping SNPs in gold standard"
+        logger.info("Flipping SNPs in gold standard")
         flipSNPs(gold_input_prefix + ".cleaned",
                  gold_input_prefix + ".cleaned.flipped",
                  args.out + ".snp_to_flip_in_reference")
 
         # Splitting the files, and running the duplicated samples script
-        print "   - Computing statistics"
+        logger.info("Computing statistics")
         compute_statistics(args.out + ".duplicated_samples",
                            gold_input_prefix + ".cleaned.flipped",
                            args.out + ".source_panel.cleaned", same_samples,
@@ -119,17 +123,17 @@ def main(argString=None):
     else:
         # We do not need to flip...
         # Splitting the files, and running the duplicated samples script
-        print "   - Keeping samples from the gold standard"
+        logger.info("Keeping samples from the gold standard")
         exclude_SNPs_samples(gold_input_prefix,
                              gold_input_prefix + ".cleaned",
                              keepSample=args.out + ".gold_samples2keep")
-        print "   - Keeping samples from source panel"
+        logger.info("Keeping samples from source panel")
         exclude_SNPs_samples(
             args.out + ".source_panel",
             args.out + ".source_panel.cleaned",
             keepSample=args.out + ".source_panel_samples2keep",
         )
-        print "   - Computing statistics"
+        logger.info("Computing statistics")
         compute_statistics(args.out + ".duplicated_samples",
                            gold_input_prefix + ".cleaned",
                            args.out + ".source_panel.cleaned", same_samples,
@@ -255,7 +259,7 @@ def compute_statistics(out_dir, gold_prefix, source_prefix, same_samples,
     out_prefix = os.path.join(out_dir, "tmp")
 
     # Subsetting the files
-    print "      - Subsetting the files"
+    logger.info("  - Subsetting the files")
     for k, (gold_sample, source_sample) in enumerate(same_samples):
         # Preparing the files
         try:
@@ -415,10 +419,12 @@ def check_fam_for_samples(required_samples, source, gold):
                 gold_samples.add(sample)
 
     # Checking if we got everything
-    print "      - Found {} samples in source panel".format(
+    logger.info("  - Found {} samples in source panel".format(
         len(source_samples),
-    )
-    print "      - Found {} samples in gold standard".format(len(gold_samples))
+    ))
+    logger.info("  - Found {} samples in gold standard".format(
+        len(gold_samples),
+    ))
 
     if len(required_samples - (source_samples | gold_samples)) != 0:
         return False
@@ -655,9 +661,9 @@ def findOverlappingSNPsWithGoldStandard(prefix, gold_prefixe, out_prefix,
 
     # Removing duplicates from the list
     if not use_marker_names:
-        print ("      - There are {} duplicated markers "
-               "in {};".format(len(duplicates), prefix + ".bim"))
-        print "        removing them for simplicity..."
+        logger.info("  - There are {} duplicated markers "
+                    "in {};".format(len(duplicates), prefix + ".bim"))
+        logger.info("  - removing them for simplicity...")
         for snpID in duplicates:
             del sourceSnpToExtract[snpID]
 
@@ -1055,9 +1061,10 @@ def safe_main():
     try:
         main()
     except KeyboardInterrupt:
-        print >>sys.stderr, "Cancelled by user"
+        logger.info("Cancelled by user")
         sys.exit(0)
     except ProgramError as e:
+        logger.error(e.message)
         parser.error(e.message)
 
 
