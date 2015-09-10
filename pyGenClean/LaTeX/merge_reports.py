@@ -86,8 +86,10 @@ def order_qc_dir(dirnames):
 
     """
     return sorted(
-        dirnames,
-        key=lambda dn: time.strptime(dn[14:], "%Y-%m-%d_%H.%M.%S")
+        dirnames, key=lambda dn: time.strptime(
+            os.path.basename(dn)[14:],
+            "%Y-%m-%d_%H.%M.%S",
+        )
     )
 
 
@@ -269,8 +271,8 @@ def checkArgs(args):
             raise ProgramError("{}: no such directory".format(dn))
 
         # Checking that this is a directory created from pyGenClean
-        if not dn.startswith("data_clean_up."):
-            raise ProgramError("{}: no a pyGenClean directory".format(dn))
+        if not os.path.basename(dn).startswith("data_clean_up."):
+            raise ProgramError("{}: not a pyGenClean directory".format(dn))
 
         # Checking that each directory contains the required files
         for fn in ("excluded_markers.txt", "excluded_samples.txt",
