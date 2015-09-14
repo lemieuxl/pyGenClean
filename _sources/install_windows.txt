@@ -72,7 +72,7 @@ To install :py:mod:`pyGenClean`, only perform the following command:
 
 .. code-block:: console
 
-   $ conda install pyGenClean -c http://statgen.org/wp-content/uploads/Softwares/pyGenclean
+   $ conda install pyGenClean -c http://statgen.org/wp-content/uploads/Softwares/pyGenClean
 
 
 Updating pyGenClean
@@ -82,7 +82,7 @@ To update :py:mod:`pyGenClean`, perform the following command:
 
 .. code-block:: console
 
-   $ conda update pyGenClean -c http://statgen.org/wp-content/uploads/Softwares/pyGenclean
+   $ conda update pyGenClean -c http://statgen.org/wp-content/uploads/Softwares/pyGenClean
 
 
 Testing the Algorithm
