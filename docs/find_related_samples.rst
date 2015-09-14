@@ -157,7 +157,7 @@ related individuals.
 
 .. figure:: _static/images/find_related_samples/ibs_related_individuals_z1.png
     :align: center
-    :width: 100%
+    :width: 50%
     :alt: Z1 in function of IBS2 ratio
 
     Z1 in function of IBS2 ratio
@@ -171,7 +171,7 @@ pairs, where the location of the "clusters" is different.
 
 .. figure:: _static/images/find_related_samples/ibs_related_individuals_z2.png
     :align: center
-    :width: 100%
+    :width: 50%
     :alt: Z2 in function of IBS2 ratio
 
     Z2 in function of IBS2 ratio

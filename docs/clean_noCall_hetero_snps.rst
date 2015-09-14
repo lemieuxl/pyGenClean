@@ -94,7 +94,7 @@ heterozygosity rates.
 
 .. figure:: _static/images/heterozygosity/heterozygosity.png
     :align: center
-    :width: 100%
+    :width: 50%
     :alt: Heterozygosity rate histogram
 
     Heterozygosity rate histogram
@@ -103,7 +103,7 @@ heterozygosity rates.
 
 .. figure:: _static/images/heterozygosity/boxplot.png
     :align: center
-    :width: 100%
+    :width: 50%
     :alt: Heterozygosity rate box plot
 
     Heterozygosity rate box plot
