@@ -17,7 +17,6 @@ The following softwares and packages are required for :py:mod:`pyGenClean`:
 5.  ``scipy`` (version 0.11.0 or latest)
 6.  ``scikit-learn`` (version 0.12.1 or latest)
 7.  ``Jinja2`` (version 2.7.3 or latest)
-8.  ``drmaa`` (version 0.7.6 or latest)
 
 .. note::
 
@@ -196,9 +195,10 @@ For more information about this module, refer to Section
 
 If you want to compare your results with the expected ones, just download the
 files in the archive ``pyGenClean_expected_results.tar.bz2``, available through
-`http://www.statgen.org <http://www.statgen.org>`_. They were generated using
-Fedora 18 (64 bits) in about 20 minutes. You should at least compare the
-following files:
+`http://statgen.org/downloads/pygenclean/
+<http://statgen.org/downloads/pygenclean/>`_. They were generated using Fedora
+18 (64 bits) in about 20 minutes. You should at least compare the following
+files:
 
 *   ``1_check_ethnicity``
 

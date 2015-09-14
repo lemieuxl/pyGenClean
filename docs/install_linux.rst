@@ -17,7 +17,6 @@ The following softwares and packages are required for :py:mod:`pyGenClean`:
 5.  ``scipy`` (version 0.11.0 or latest)
 6.  ``scikit-learn`` (version 0.12.1 or latest)
 7.  ``Jinja2`` (version 2.7.3 or latest)
-8.  ``drmaa`` (version 0.7.6 or latest)
 
 
 .. note::
