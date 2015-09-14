@@ -1,11 +1,12 @@
 Linux Installation
 ******************
 
-The following steps will help you install *pyGenClean* on a Linux machine.
+The following steps will help you install :py:mod:`pyGenClean` on a Linux
+machine.
 
 
-Prerequisites
-=============
+Requirements
+============
 
 The following softwares and packages are required for :py:mod:`pyGenClean`:
 
@@ -264,13 +265,14 @@ interested in:
 
         *   ``sexcheck.list_problem_sex``
 
-The first image in the first directory (:ref:`test_ethnicity_before_linux_figure`)
-shows the MDS values for each sample before outlier detection. The second image
+The first image in the first directory
+(:ref:`test_ethnicity_before_linux_figure`) shows the MDS values for each
+sample before outlier detection. The second image
 (:ref:`test_ethnicity_outliers_linux_figure`) shows the outliers that should be
-removed for further analysis. Finally, the file ``ethnicity.outliers`` include a
-list of samples that should be removed for further analysis. **The total number
-of outliers for this test should be exactly 62**, but the figures might be
-mirrored for 32 bits systems. For more information about the results of this
+removed for further analysis. Finally, the file ``ethnicity.outliers`` include
+a list of samples that should be removed for further analysis. **The total
+number of outliers for this test should be exactly 63**, but the figures might
+be mirrored for 32 bits systems. For more information about the results of this
 module, refer to Section :ref:`ethnicity_module_label`.
 
 .. _test_ethnicity_before_linux_figure:
