@@ -12,7 +12,7 @@ analysis.
 ## Documentation##
 
 Documentation is available from
-[http://pgxcentre.github.io/pyGenClean/](http://pgxcentre.github.io/pyGenClean/).
+[http://lemieuxl.github.io/pyGenClean/](http://lemieuxl.github.io/pyGenClean/).
 
 
 
@@ -41,5 +41,5 @@ Windows 7 (64 bits, but with a 32 bits Python 2.7 installation) without known
 problems.
 
 For a step by step installation on both Linux and Windows operation systems, see
-`pyGenClean` documentation, located [here](http://www.statgen.org/).
+`pyGenClean` documentation, located [here](http://lemieuxl.github.io/pyGenClean/#installation).
 
