@@ -1,3 +1,6 @@
+[![PyPI version](https://badge.fury.io/py/pyGenClean.svg)](http://badge.fury.io/py/pyGenClean)
+
+
 # pyGenClean - Automated Data Clean Up #
 
 `pyGenClean` is an informatics tool to facilitate and standardize the genetic
