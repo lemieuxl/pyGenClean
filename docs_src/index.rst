@@ -14,58 +14,66 @@ Welcome to pyGenClean's documentation!
 Introduction
 ============
 
-Genetic association studies making use of high throughput genotyping arrays need
-to process large amounts of data in the order of millions of markers per
+Genetic association studies making use of high throughput genotyping arrays
+need to process large amounts of data in the order of millions of markers per
 experiment. The first step of any analysis with genotyping arrays is typically
 the conduct of a thorough data clean up and quality control to remove poor
 quality genotypes and generate metrics to inform and select individuals for
 downstream statistical analysis.
 
-*pyGenClean* is an informatics tool to facilitate and standardize the genetic
-data clean up pipeline with genotyping array data. In conjuction with a source
-batch-queuing system, the tool minimizes data manipulation errors, it
+:py:mod:`pyGenClean` is an informatics tool to facilitate and standardize the
+genetic data clean up pipeline with genotyping array data. In conjuction with a
+source batch-queuing system, the tool minimizes data manipulation errors, it
 accelerates the completion of the data clean up process and it provides
 informative graphics and metrics to guide decision making for statistical
 analysis.
 
-*pyGenClean* is a command tool working on both Linux and Windows operating
-systems. Its usage is shown below:
+:py:mod:`pyGenClean` is a command tool working on both Linux and Windows
+operating systems. Its usage is shown below:
 
 .. code-block:: console
 
-    $ run_pyGenClean --help
-    usage: run_pyGenClean [-h] [--bfile FILE] [--tfile FILE] [--file FILE] --conf
-                          FILE [--overwrite]
+   $ run_pyGenClean --help
+   usage: run_pyGenClean [-h] [-v] [--bfile FILE] [--tfile FILE] [--file FILE]
+                         [--report-author AUTHOR] [--report-number NUMBER]
+                         [--report-background BACKGROUND] --conf FILE
 
-    Runs the data clean up (version 1.4).
+   Runs the data clean up (version 1.7.0).
 
-    optional arguments:
-      -h, --help    show this help message and exit
+   optional arguments:
+     -h, --help            show this help message and exit
+     -v, --version         show program's version number and exit
 
-    Input File:
-      --bfile FILE  The input file prefix (will find the plink binary files by
-                    appending the prefix to the .bim, .bed and .fam files,
-                    respectively).
-      --tfile FILE  The input file prefix (will find the plink transposed files by
-                    appending the prefix to the .tped and .tfam files,
-                    respectively).
-      --file FILE   The input file prefix (will find the plink files by appending
-                    the prefix to the .ped and .fam files).
+   Input File:
+     --bfile FILE          The input file prefix (will find the plink binary
+                           files by appending the prefix to the .bim, .bed and
+                           .fam files, respectively).
+     --tfile FILE          The input file prefix (will find the plink transposed
+                           files by appending the prefix to the .tped and .tfam
+                           files, respectively).
+     --file FILE           The input file prefix (will find the plink files by
+                           appending the prefix to the .ped and .fam files).
 
-    Configuration File:
-      --conf FILE   The parameter file for the data clean up.
+   Report Options:
+     --report-author AUTHOR
+                           The current project number. [default: pyGenClean]
+     --report-number NUMBER
+                           The current project author. [default: Simple Project]
+     --report-background BACKGROUND
+                           Text of file containing the background section of the
+                           report.
 
-    General Options:
-      --overwrite   Overwrites output directories without asking the user.
-                    [DANGEROUS]
+   Configuration File:
+     --conf FILE           The parameter file for the data clean up.
+
 
 The tool consists of multiple standalone scripts that are linked together via a
 main script (``run_pyGenClean``) and a configuration file (the ``--conf``
 option), the latter facilitating user customization.
 
 The :ref:`proposed_protocol_figure` shows the proposed data cleanup pipeline.
-Each box represents a customizable standalone script with a quick description of
-its function. Optional manual checks for go-no-go decisions are indicated.
+Each box represents a customizable standalone script with a quick description
+of its function. Optional manual checks for go-no-go decisions are indicated.
 
 .. _proposed_protocol_figure:
 
@@ -80,8 +88,8 @@ its function. Optional manual checks for go-no-go decisions are indicated.
 Installation
 ============
 
-*pyGenClean* is a Python package that works on both Linux and Windows operating
-systems. It requires a set of Python dependencies and PLINK. Complete
+:py:mod:`pyGenClean` is a Python package that works on both Linux and Windows
+operating systems. It requires a set of Python dependencies and PLINK. Complete
 installation procedures are available for both Linux (32 and 64 bits) and
 Windows in the following sections.
 
@@ -95,8 +103,8 @@ Windows in the following sections.
 Input Files
 ===========
 
-To use *pyGenClean*, two sets of files are required: a set of genotype files and
-a configuration file.
+To use :py:mod:`pyGenClean`, two sets of files are required: a set of genotype
+files and a configuration file.
 
 Genotype Files
 --------------
@@ -104,15 +112,16 @@ Genotype Files
 The input files of the main program (``run_pyGenClean``) is one of the
 following:
 
-*   PLINK's pedfile format (use *pyGenClean*'s ``--file`` option) consist of two
-    files with the following extensions: ``PED`` and ``MAP``.
+*   PLINK's pedfile format (use :py:mod:`pyGenClean`'s ``--file`` option)
+    consist of two files with the following extensions: ``PED`` and ``MAP``.
 
-*   PLINK's transposed pedfile format (use *pyGenClean*'s ``--tfile`` option)
-    consist of two files with the following extensions: ``TPED`` and ``TFAM``.
+*   PLINK's transposed pedfile format (use :py:mod:`pyGenClean`'s ``--tfile``
+    option) consist of two files with the following extensions: ``TPED`` and
+    ``TFAM``.
 
-*   PLINK's binary pedfile format (use *pyGenClean*'s ``--bfile`` option)
-    consist of three files with the following extensions: ``BED``, ``BIM`` and
-    ``FAM``.
+*   PLINK's binary pedfile format (use :py:mod:`pyGenClean`'s ``--bfile``
+    option) consist of three files with the following extensions: ``BED``,
+    ``BIM`` and ``FAM``.
 
 For more information about these file formats, have a look at PLINK's website,
 in the *Basic usage/data formats* section
@@ -121,13 +130,13 @@ in the *Basic usage/data formats* section
 
 .. warning::
 
-    If the format used is the *transposed* one, the columns **must** be separated
-    using **tabulations**, but alleles of each markers need to be separated by a
-    single space.
+    If the format used is the *transposed* one, the columns **must** be
+    separated using **tabulations**, but alleles of each markers need to be
+    separated by a single space.
 
     To create this exact transposed pedfile format, you need to use the
     following PLINK's options:
-    
+
     *   ``--recode`` to recode the file.
     *   ``--transposed`` to create an output file in the transposed pedfile
         format.
@@ -136,18 +145,18 @@ in the *Basic usage/data formats* section
 Configuration File
 ------------------
 
-To customized *pyGenClean*, a basic configuration file is required. It tells
-which script to use in a specific order. It also sets the different options and
-input files, so that the analysis is easy to replicate or modify.
+To customized :py:mod:`pyGenClean`, a basic configuration file is required. It
+tells which script to use in a specific order. It also sets the different
+options and input files, so that the analysis is easy to replicate or modify.
 
 The configuration file consists of sections, led by a ``[section]`` header
 (contiguous integers which gives the order of the pipeline) and followed by
-customization of this particular part of the pipeline. Lines preceded by a ``#``
-are comments and are not read by *pyGenClean*.
+customization of this particular part of the pipeline. Lines preceded by a
+``#`` are comments and are not read by :py:mod:`pyGenClean`.
 
-The following example first removes samples with a missing rate of 10% and more,
-then removes markers with a missing rate of 2% and more. Finally, it removes the
-samples with a missing rate of 2% and more.
+The following example first removes samples with a missing rate of 10% and
+more, then removes markers with a missing rate of 2% and more. Finally, it
+removes the samples with a missing rate of 2% and more.
 
 .. code-block:: lighttpd
     :linenos:
@@ -156,21 +165,21 @@ samples with a missing rate of 2% and more.
     # Removes sample with a missing rate higher than 10%.
     script = sample_missingness
     mind = 0.1
-    
+
     [2]
     # Removes markers with a missing rate higher than 2%.
     script = snp_missingness
     geno = 0.02
-    
+
     [3]
     # Removes sample with a missing rate higher than 2%.
-    script = sample_missingness 
+    script = sample_missingness
     mind = 0.02
 
 For a more thorough example, complete configuration files are available for
-download at `http://www.statgen.org <http://www.statgen.org>`_ and are explained
-in the :ref:`config_files` section. For a list of available modules and
-standalone script, refer to the :ref:`list_of_scripts`.
+download at `http://www.statgen.org <http://www.statgen.org>`_ and are
+explained in the :ref:`config_files` section. For a list of available modules
+and standalone script, refer to the :ref:`list_of_scripts`.
 
 .. toctree::
     :maxdepth: 1
@@ -196,8 +205,8 @@ files (with all available parameters) are given.
 The algorithm
 =============
 
-All the functions used for this project are shown and explained in the following
-section:
+All the functions used for this project are shown and explained in the
+following section:
 
 .. toctree::
     :maxdepth: 1
