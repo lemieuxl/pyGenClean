@@ -260,7 +260,7 @@ and JPT-CHB in purple). The source population is represented as red crosses.
 
 .. figure:: _static/images/check_ethnicity/ethnicity_mds.png
     :align: center
-    :width: 100%
+    :width: 50%
     :alt: Initial MDS plot
 
     Initial MDS plot
@@ -275,7 +275,7 @@ panels.
 
 .. figure:: _static/images/check_ethnicity/ethnicity_before.png
     :align: center
-    :width: 100%
+    :width: 50%
     :alt: MDS plot before
 
     MDS plot before outlier detection
@@ -291,7 +291,7 @@ cluster, when only considering the three reference panels.
 
 .. figure:: _static/images/check_ethnicity/ethnicity_after.png
     :align: center
-    :width: 100%
+    :width: 50%
     :alt: MDS plot after
 
     MDS plot after outlier detection
@@ -306,7 +306,7 @@ population. Gray represents the outliers of the selected reference population.
 
 .. figure:: _static/images/check_ethnicity/ethnicity_outliers.png
     :align: center
-    :width: 100%
+    :width: 50%
     :alt: Ethnic outliers
 
     Ethnic outliers
@@ -418,7 +418,7 @@ producing the Figure :ref:`ethnicity_outliers_modified_figure`.
 
 .. figure:: _static/images/check_ethnicity/ethnicity_outliers_modified.png
     :align: center
-    :width: 100%
+    :width: 50%
     :alt: Ethnic outliers modified
 
     Ethnic outliers modified

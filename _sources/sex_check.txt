@@ -204,7 +204,7 @@ require further analysis.
 
 .. figure:: _static/images/sex_check/sexcheck.png
     :align: center
-    :width: 100%
+    :width: 50%
     :alt: Gender plot
 
     Gender plot
@@ -273,7 +273,7 @@ BAF values of each markers on both the X and Y chromosomes are shown in the
 
 .. figure:: _static/images/sex_check/lrr_baf_plot.png
     :align: center
-    :width: 100%
+    :width: 50%
     :alt: BAF and LRR plot
 
     BAF and LRR plot

@@ -165,7 +165,6 @@ For more information about the actual algorithms and source codes (the
 :py:mod:`pyGenClean.DupSNPs.duplicated_snps` module), refer to the following
 sections.
 
-
 pyGenClean.DupSNPs.duplicated_snps
 ..................................
 
