@@ -20,6 +20,8 @@ import sys
 import logging
 import argparse
 import subprocess
+from itertools import izip
+from collections import defaultdict
 
 from ..PlinkUtils import plot_MDS as PlotMDS
 from ..PlinkUtils import createRowFromPlinkSpacedOutput
@@ -51,17 +53,17 @@ def main(argString=None):
         the source panel (:py:func:`findOverlappingSNPsWithReference`).
     3.  Extract the required markers from all the data sets
         (:py:func:`extractSNPs`).
-    4.  Combines the three reference panels together
+    4.  Renames the reference panel's marker names to that they are the same as
+        the source panel (for all populations) (:py:func:`renameSNPs`).
+    5.  Combines the three reference panels together
         (:py:func:`combinePlinkBinaryFiles`).
-    5.  Renames the reference panel's marker names to that they are the same as
-        the source panel (:py:func:`renameSNPs`).
     6.  Compute the frequency of all the markers from the reference and the
         source panels (:py:func:`computeFrequency`).
     7.  Finds the markers to flip in the reference panel (when compared to the
         source panel) (:py:func:`findFlippedSNPs`).
     8.  Excludes the unflippable markers from the reference and the source
         panels (:py:func:`excludeSNPs`).
-    9.  Flips the markers that need flipping in ther reference panel
+    9.  Flips the markers that need flipping in their reference panel
         (:py:func:`flipSNPs`).
     10. Combines the reference and the source panels
         (:py:func:`combinePlinkBinaryFiles`).
@@ -87,108 +89,190 @@ def main(argString=None):
     for key, value in vars(args).iteritems():
         logger.info("  --{} {}".format(key.replace("_", "-"), value))
 
-    # Find overlap with the reference file
-    logger.info("Finding overlapping SNPs between reference and source panels")
-    referencePrefixes = [args.ceu_bfile, args.yri_bfile, args.jpt_chb_bfile]
+    newBfile = None
     popNames = ["CEU", "YRI", "JPT-CHB"]
-    findOverlappingSNPsWithReference(args.bfile, referencePrefixes, args.out)
+    referencePrefixes = [args.ceu_bfile, args.yri_bfile, args.jpt_chb_bfile]
+    if not args.skip_ref_pops:
+        # Find overlap with the reference file
+        logger.info("Finding overlapping SNPs between reference and "
+                    "source panels")
+        findOverlappingSNPsWithReference(
+            prefix=args.bfile,
+            referencePrefixes=referencePrefixes,
+            referencePopulations=popNames,
+            outPrefix=args.out,
+        )
 
-    # Extract the required SNPs using Plink
-    logger.info("Extracting overlapping SNPs from the reference panels")
-    extractSNPs(args.out + ".ref_snp_to_extract", referencePrefixes, popNames,
-                args.out + ".reference_panel", args.sge, args)
-    logger.info("Extracting overlapping SNPs from the source panel")
-    extractSNPs(args.out + ".source_snp_to_extract", [args.bfile], ["ALL"],
-                args.out + ".source_panel", False, args)
+        # Extract the required SNPs using Plink (reference panels)
+        logger.info("Extracting overlapping SNPs from the reference panels")
+        extractSNPs(
+            snpToExtractFileNames=[
+                args.out + ".{}_snp_to_extract".format(popName)
+                for popName in popNames
+            ],
+            referencePrefixes=referencePrefixes,
+            popNames=popNames,
+            outPrefix=args.out + ".reference_panel",
+            runSGE=args.sge,
+            options=args,
+        )
 
-    # Combining the reference panel
-    logger.info("Combining the reference panels")
-    combinePlinkBinaryFiles(
-        [args.out + ".reference_panel." + i for i in popNames],
-        args.out + ".reference_panel.ALL",
-    )
+        # Extract the required SNPs using Plink (source panel)
+        logger.info("Extracting overlapping SNPs from the source panel")
+        extractSNPs(
+            snpToExtractFileNames=[args.out + ".source_snp_to_extract"],
+            referencePrefixes=[args.bfile],
+            popNames=["ALL"],
+            outPrefix=args.out + ".source_panel",
+            runSGE=False,
+            options=args,
+        )
 
-    # Renaming the reference file, so that the SNP names are the same
-    logger.info("Renaming reference panel's SNPs to match source panel")
-    renameSNPs(args.out + ".reference_panel.ALL", args.out + ".update_names",
-               args.out + ".reference_panel.ALL.rename")
+        # Renaming the reference file, so that the SNP names are the same
+        for pop in popNames:
+            logger.info("Renaming reference panel's SNPs {} to match source "
+                        "panel".format(pop))
+            renameSNPs(
+                inPrefix=args.out + ".reference_panel.{}".format(pop),
+                updateFileName=args.out + ".{}_update_names".format(pop),
+                outPrefix=args.out + ".reference_panel.{}.rename".format(pop),
+            )
 
-    # Computing the frequency
-    logger.info("Computing reference panel frequencies")
-    computeFrequency(args.out + ".reference_panel.ALL.rename",
-                     args.out + ".reference_panel.ALL.rename.frequency")
-    logger.info("Computing source panel frequencies")
-    computeFrequency(args.out + ".source_panel.ALL",
-                     args.out + ".source_panel.ALL.frequency")
+        # Combining the reference panel
+        logger.info("Combining the reference panels")
+        combinePlinkBinaryFiles(
+            prefixes=[
+                args.out + ".reference_panel.{}.rename".format(pop)
+                for pop in popNames
+            ],
+            outPrefix=args.out + ".reference_panel.ALL.rename",
+        )
 
-    # Finding the SNPs to flip and flip them in the reference panel
-    logger.info("Finding SNPs to flip or to exclude from reference panel")
-    findFlippedSNPs(args.out + ".reference_panel.ALL.rename.frequency.frq",
-                    args.out + ".source_panel.ALL.frequency.frq",
-                    args.out)
+        # Computing the frequency (reference panel)
+        logger.info("Computing reference panel frequencies")
+        computeFrequency(
+            prefix=args.out + ".reference_panel.ALL.rename",
+            outPrefix=args.out + ".reference_panel.ALL.rename.frequency",
+        )
 
-    # Excluding SNPs
-    logger.info("Excluding SNPs from reference panel")
-    excludeSNPs(args.out + ".reference_panel.ALL.rename",
-                args.out + ".reference_panel.ALL.rename.cleaned",
-                args.out + ".snp_to_remove")
-    logger.info("Excluding SNPs from source panel")
-    excludeSNPs(args.out + ".source_panel.ALL",
-                args.out + ".source_panel.ALL.cleaned",
-                args.out + ".snp_to_remove")
+        # Computing the frequency (source panel)
+        logger.info("Computing source panel frequencies")
+        computeFrequency(
+            prefix=args.out + ".source_panel.ALL",
+            outPrefix=args.out + ".source_panel.ALL.frequency",
+        )
 
-    # Flipping the SNP that need to be flip in the reference
-    logger.info("Flipping SNPs in reference panel")
-    flipSNPs(args.out + ".reference_panel.ALL.rename.cleaned",
-             args.out + ".reference_panel.ALL.rename.cleaned.flipped",
-             args.out + ".snp_to_flip_in_reference")
+        # Finding the SNPs to flip and flip them in the reference panel
+        logger.info("Finding SNPs to flip or to exclude from reference panel")
+        findFlippedSNPs(
+            frqFile1=args.out + ".reference_panel.ALL.rename.frequency.frq",
+            frqFile2=args.out + ".source_panel.ALL.frequency.frq",
+            outPrefix=args.out,
+        )
 
-    # Combining the reference panel
-    logger.info("Combining reference and source panels")
-    combinePlinkBinaryFiles(
-        [args.out + ".reference_panel.ALL.rename.cleaned.flipped",
-         args.out + ".source_panel.ALL.cleaned"],
-        args.out + ".final_dataset_for_genome",
-    )
+        # Excluding SNPs (reference panel)
+        logger.info("Excluding SNPs from reference panel")
+        excludeSNPs(
+            inPrefix=args.out + ".reference_panel.ALL.rename",
+            outPrefix=args.out + ".reference_panel.ALL.rename.cleaned",
+            exclusionFileName=args.out + ".snp_to_remove",
+        )
 
-    # Runing the relatedness step
-    logger.info("Creating the genome file using Plink")
-    newBfile = runRelatedness(args.out + ".final_dataset_for_genome", args.out,
-                              args)
+        # Excluding SNPs (source panel)
+        logger.info("Excluding SNPs from source panel")
+        excludeSNPs(args.out + ".source_panel.ALL",
+                    args.out + ".source_panel.ALL.cleaned",
+                    args.out + ".snp_to_remove")
+
+        # Flipping the SNP that need to be flip in the reference
+        logger.info("Flipping SNPs in reference panel")
+        flipSNPs(
+            inPrefix=args.out + ".reference_panel.ALL.rename.cleaned",
+            outPrefix=args.out + ".reference_panel.ALL.rename.cleaned.flipped",
+            flipFileName=args.out + ".snp_to_flip_in_reference",
+        )
+
+        # Combining the reference panel
+        logger.info("Combining reference and source panels")
+        combinePlinkBinaryFiles(
+            prefixes=[args.out + ".reference_panel.ALL.rename.cleaned.flipped",
+                      args.out + ".source_panel.ALL.cleaned"],
+            outPrefix=args.out + ".final_dataset_for_genome",
+        )
+
+        # Runing the relatedness step
+        logger.info("Creating the genome file using Plink")
+        newBfile = runRelatedness(
+            inputPrefix=args.out + ".final_dataset_for_genome",
+            outPrefix=args.out,
+            options=args,
+        )
+
+    else:
+        # Just run relatedness on the dataset
+        newBfile = runRelatedness(
+            inputPrefix=args.bfile,
+            outPrefix=args.out,
+            options=args,
+        )
 
     # Creating the MDS file
     logger.info("Creating the MDS file using Plink")
-    createMDSFile(args.nb_components, newBfile,
-                  args.out + ".mds", args.out + ".ibs.genome.genome")
+    createMDSFile(
+        nb_components=args.nb_components,
+        inPrefix=newBfile,
+        outPrefix=args.out + ".mds",
+        genomeFileName=args.out + ".ibs.genome.genome",
+    )
 
-    # Creating the population files
-    logger.info("Creating a population file")
-    famFiles = [args.out + ".reference_panel." + i + ".fam" for i in popNames]
-    famFiles.append(args.out + ".source_panel.ALL.fam")
-    labels = popNames + ["SOURCE"]
-    createPopulationFile(famFiles, labels, args.out + ".population_file")
+    if not args.skip_ref_pops:
+        # Creating the population files
+        logger.info("Creating a population file")
+        famFiles = [
+            args.out + ".reference_panel." + i + ".fam" for i in popNames
+        ]
+        famFiles.append(args.out + ".source_panel.ALL.fam")
+        labels = popNames + ["SOURCE"]
+        createPopulationFile(
+            inputFiles=famFiles,
+            labels=labels,
+            outputFileName=args.out + ".population_file",
+        )
 
-    # Plot the MDS value
-    logger.info("Creating the MDS plot")
-    plotMDS(args.out + ".mds.mds", args.out + ".mds",
-            args.out + ".population_file", args)
+        # Plot the MDS value
+        logger.info("Creating the MDS plot")
+        plotMDS(
+            inputFileName=args.out + ".mds.mds",
+            outPrefix=args.out + ".mds",
+            populationFileName=args.out + ".population_file",
+            options=args,
+        )
 
-    # Finding the outliers
-    logger.info("Finding the outliers")
-    find_the_outliers(args.out + ".mds.mds", args.out + ".population_file",
-                      args.outliers_of, args.multiplier, args.out)
+        # Finding the outliers
+        logger.info("Finding the outliers")
+        find_the_outliers(
+            mds_file_name=args.out + ".mds.mds",
+            population_file_name=args.out + ".population_file",
+            ref_pop_name=args.outliers_of,
+            multiplier=args.multiplier,
+            out_prefix=args.out,
+        )
 
     # De we need to create a scree plot?
     if args.create_scree_plot:
         # Computing the eigenvalues using smartpca
         logger.info("Computing eigenvalues")
-        compute_eigenvalues(args.out + ".ibs.pruned_data",
-                            args.out + ".smartpca")
+        compute_eigenvalues(
+            in_prefix=args.out + ".ibs.pruned_data",
+            out_prefix=args.out + ".smartpca",
+        )
 
         logger.info("Creating scree plot")
-        create_scree_plot(args.out + ".smartpca.evec.txt",
-                          args.out + ".smartpca.scree_plot.png",
-                          args.scree_plot_title)
+        create_scree_plot(
+            in_filename=args.out + ".smartpca.evec.txt",
+            out_filename=args.out + ".smartpca.scree_plot.png",
+            plot_title=args.scree_plot_title,
+        )
 
 
 def create_scree_plot(in_filename, out_filename, plot_title):
@@ -405,7 +489,6 @@ def createMDSFile(nb_components, inPrefix, outPrefix, genomeFileName):
     plinkCommand = ["plink", "--noweb", "--bfile", inPrefix, "--read-genome",
                     genomeFileName, "--cluster", "--mds-plot",
                     str(nb_components), "--out", outPrefix]
-    print(plinkCommand)
     runCommand(plinkCommand)
 
 
@@ -699,15 +782,19 @@ def combinePlinkBinaryFiles(prefixes, outPrefix):
     runCommand(plinkCommand)
 
 
-def findOverlappingSNPsWithReference(prefix, referencePrefixes, outPrefix):
+def findOverlappingSNPsWithReference(prefix, referencePrefixes,
+                                     referencePopulations, outPrefix):
     """Find the overlapping SNPs in 4 different data sets.
 
     :param prefix: the prefix of all the files.
     :param referencePrefixes: the prefix of the reference population files.
+    :param referencePopulations: the name of the reference population (same
+                                 order as ``referencePrefixes``)
     :param outPrefix: the prefix of the output files.
 
     :type prefix: str
     :type referencePrefixes: list
+    :type referencePopulations: list
     :type outPrefix: str
 
     It starts by reading the ``bim`` file of the source data set
@@ -751,9 +838,10 @@ def findOverlappingSNPsWithReference(prefix, referencePrefixes, outPrefix):
     for snpID in duplicates:
         del sourceSnpToExtract[snpID]
 
-    # Reading each of the
-    refSnpToExtract = {}
-    for refPrefix in referencePrefixes:
+    # Reading each of the reference markers
+    refSnpToExtract = defaultdict(dict)
+    refSnp = defaultdict(set)
+    for refPop, refPrefix in izip(referencePopulations, referencePrefixes):
         try:
             with open(refPrefix + ".bim", "r") as inputFile:
                 for line in inputFile:
@@ -762,54 +850,82 @@ def findOverlappingSNPsWithReference(prefix, referencePrefixes, outPrefix):
                     position = row[3]
                     snpName = row[1]
 
-                    if (chromosome, position) in sourceSnpToExtract:
+                    key = (chromosome, position)
+                    if key in sourceSnpToExtract:
                         # We want this SNP
-                        refSnpToExtract[(chromosome, position)] = snpName
+                        refSnpToExtract[refPop][key] = snpName
+                        refSnp[refPop].add(key)
+                logger.info("  - {:,d} overlaps with {}".format(
+                    len(refSnp[refPop]),
+                    refPrefix,
+                ))
+
         except IOError:
             msg = "%(refPrefix)s.bim: no such file" % locals()
             raise ProgramError(msg)
 
-    # Printing the names of the SNPs to extract
-    refOutputFile = None
+    # Creating the intersect of the reference SNP
+    refSnpIntersect = refSnp[referencePopulations[0]]
+    for refPop in referencePopulations[1:]:
+        refSnpIntersect &= refSnp[refPop]
+    logger.info("  - {:,d} in common between reference "
+                "panels".format(len(refSnpIntersect)))
+
+    # Printing the names of the SNPs to extract in the reference
+    refOutputFiles = {}
     try:
-        refOutputFile = open(outPrefix + ".ref_snp_to_extract", "w")
+        for refPop in referencePopulations:
+            refOutputFiles[refPop] = open(
+                outPrefix + ".{}_snp_to_extract".format(refPop),
+                mode="w",
+            )
     except IOError:
-        msg = "%(outPrefix)s.refSnpToExtract: can't write file" % locals()
+        msg = "{}.POP_snp_to_extract: can't write file".format(outPrefix)
         raise ProgramError(msg)
 
     sourceOutputFile = None
     try:
         sourceOutputFile = open(outPrefix + ".source_snp_to_extract", "w")
     except IOError:
-        msg = "%(outPrefix)s.sourceSnpToExtract: can't write file" % locals()
+        msg = "{}.source_snp_to_extract: can't write file".format(outPrefix)
         raise ProgramError(msg)
 
-    changeNameOutputFile = None
+    changeNameOutputFiles = {}
     try:
-        changeNameOutputFile = open(outPrefix + ".update_names", "w")
+        for refPop in referencePopulations:
+            changeNameOutputFiles[refPop] = open(
+                outPrefix + ".{}_update_names".format(refPop),
+                mode="w",
+            )
     except IOError:
         msg = "%(outPrefix)s.updateNames: can't write file" % locals()
         raise ProgramError(msg)
 
-    # Writing the file
-    for snpID in refSnpToExtract.iterkeys():
+    # Writing the file containing the SNPs to extract in the source
+    for snpID in refSnpIntersect:
         print >>sourceOutputFile, sourceSnpToExtract[snpID]
-        print >>refOutputFile, refSnpToExtract[snpID]
-        print >>changeNameOutputFile, "\t".join([refSnpToExtract[snpID],
-                                                 sourceSnpToExtract[snpID]])
+        for refPop in referencePopulations:
+            print >>refOutputFiles[refPop], refSnpToExtract[refPop][snpID]
+            print >>changeNameOutputFiles[refPop], "\t".join([
+                refSnpToExtract[refPop][snpID],
+                sourceSnpToExtract[snpID],
+            ])
 
     # Closing the output file
-    refOutputFile.close()
     sourceOutputFile.close()
-    changeNameOutputFile.close()
+    for refOutputFile in refOutputFiles.itervalues():
+        refOutputFile.close()
+    for changeNameOutputFile in changeNameOutputFiles.itervalues():
+        changeNameOutputFile.close()
 
 
-def extractSNPs(snpToExtractFileName, referencePrefixes, popNames, outPrefix,
+def extractSNPs(snpToExtractFileNames, referencePrefixes, popNames, outPrefix,
                 runSGE, options):
     """Extract a list of SNPs using Plink.
 
-    :param snpToExtractFileName: the name of the file which contains the
-                                 markers to extract from the original data set.
+    :param snpToExtractFileNames: the name of the files which contains the
+                                  markers to extract from the original data
+                                  set.
     :param referencePrefixes: a list containing the three reference population
                               prefixes (the original data sets).
     :param popNames: a list containing the three reference population names.
@@ -817,9 +933,9 @@ def extractSNPs(snpToExtractFileName, referencePrefixes, popNames, outPrefix,
     :param runSGE: Whether using SGE or not.
     :param options: the options.
 
-    :type snpToExtractFileName: str
-    :type referencePrefixes: list of str
-    :type popNames: list of str
+    :type snpToExtractFileNames: list
+    :type referencePrefixes: list
+    :type popNames: list
     :type outPrefix: str
     :type runSGE: boolean
     :type options: argparse.Namespace
@@ -843,10 +959,11 @@ def extractSNPs(snpToExtractFileName, referencePrefixes, popNames, outPrefix,
         s = drmaa.Session()
         s.initialize()
 
-    for k, refPrefix in enumerate(referencePrefixes):
+    zipped = izip(popNames, referencePrefixes, snpToExtractFileNames)
+    for popName, refPrefix, snpToExtractFileName in zipped:
         plinkCommand = ["plink", "--noweb", "--bfile", refPrefix, "--extract",
                         snpToExtractFileName, "--make-bed", "--out",
-                        outPrefix + "." + popNames[k]]
+                        outPrefix + "." + popName]
 
         if runSGE:
             # We run using SGE
@@ -939,8 +1056,18 @@ def checkArgs(args):
 
     """
     # Check if we have the tped and the tfam files
-    for prefix in [args.bfile, args.ceu_bfile, args.yri_bfile,
-                   args.jpt_chb_bfile]:
+    prefixes_to_check = [args.bfile]
+    if not args.skip_ref_pops:
+        for pop in ("ceu", "yri", "jpt_chb"):
+            if vars(args)["{}_bfile".format(pop)] is None:
+                raise ProgramError("argument --{}-bfile is "
+                                   "required".format(pop.replace("_", "-")))
+        prefixes_to_check += [
+            args.ceu_bfile,
+            args.yri_bfile,
+            args.jpt_chb_bfile,
+        ]
+    for prefix in prefixes_to_check:
         if prefix is None:
             msg = "no input file"
             raise ProgramError(msg)
@@ -1006,6 +1133,8 @@ def parseArgs(argString=None):  # pragma: no cover
     =========================== ====== ========================================
     ``--bfile``                 string The input file prefix (Plink binary
                                        file).
+    ``--skip-ref-pops``         bool   Perform the MDS computation, but skip
+                                       the three reference panels.
     ``--ceu-bfile``             string The input file prefix for the CEU
                                        population (Plink binary file).
     ``--yri-bfile``             string The input file prefix for the YRI
@@ -1087,15 +1216,18 @@ group.add_argument("--bfile", type=str, metavar="FILE", required=True,
                    help=("The input file prefix (will find the plink binary "
                          "files by appending the prefix to the .bim, .bed and "
                          ".fam files, respectively."))
-group.add_argument("--ceu-bfile", type=str, metavar="FILE", required=True,
+group.add_argument("--skip-ref-pops", action="store_true",
+                   help=("Perform the MDS computation, but skip the three "
+                         "reference panels."))
+group.add_argument("--ceu-bfile", type=str, metavar="FILE",
                    help=("The input file prefix (will find the plink binary "
                          "files by appending the prefix to the .bim, .bed and "
                          ".fam files, respectively.) for the CEU population"))
-group.add_argument("--yri-bfile", type=str, metavar="FILE", required=True,
+group.add_argument("--yri-bfile", type=str, metavar="FILE",
                    help=("The input file prefix (will find the plink binary "
                          "files by appending the prefix to the .bim, .bed and "
                          ".fam files, respectively.) for the YRI population"))
-group.add_argument("--jpt-chb-bfile", type=str, metavar="FILE", required=True,
+group.add_argument("--jpt-chb-bfile", type=str, metavar="FILE",
                    help=("The input file prefix (will find the plink binary "
                          "files by appending the prefix to the .bim, .bed and "
                          ".fam files, respectively.) for the JPT-CHB "
