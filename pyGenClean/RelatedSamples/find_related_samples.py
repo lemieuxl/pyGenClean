@@ -632,7 +632,10 @@ def runGenomeSGE(bfile, freqFile, nbJob, outPrefix, options):
         raise ProgramError(msg)
 
     # Import the python drmaa library
-    import drmaa
+    try:
+        import drmaa
+    except ImportError:
+        raise ProgramError("drmaa is not install, install drmaa")
 
     # Initializing a session
     s = drmaa.Session()

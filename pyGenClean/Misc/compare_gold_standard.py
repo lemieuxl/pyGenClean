@@ -740,7 +740,10 @@ def extractSNPs(prefixes, snpToExtractFileNames, outPrefixes, runSGE):
             os.environ["DRMAA_LIBRARY_PATH"] = t
 
         # Import the python drmaa library
-        import drmaa
+        try:
+            import drmaa
+        except ImportError:
+            raise ProgramError("drmaa is not install, install drmaa")
 
         # Initializing a session
         s = drmaa.Session()
