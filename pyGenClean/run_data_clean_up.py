@@ -67,8 +67,7 @@ def main():
     1. Prints the version number.
     2. Reads the configuration file (:py:func:`read_config_file`).
     3. Creates a new directory with ``data_clean_up`` as prefix and the date
-       and time as suffix. In the improbable event that the directory already
-       exists, asks the user the permission to overwrite it.
+       and time as suffix.
     4. Check the input file type (``bfile``, ``tfile`` or ``file``).
     5. Creates an intermediate directory with the section as prefix and the
        script name as suffix (inside the previous directory).
@@ -2959,8 +2958,6 @@ def parse_args():
                                      Plink.
     ``--file``              String   The input file prefix from Plink.
     ``--conf``              String   The parameter file for the data clean up.
-    ``--overwrite``         Boolean  Overwrites output directories without
-                                     asking the user.
     ``--report-author``     String   The current project number.
     ``--report-number``     String   The current project author.
     ``--report-background`` String   Text of file containing the background
@@ -3003,11 +3000,6 @@ report_options(group)
 group = parser.add_argument_group("Configuration File")
 group.add_argument("--conf", type=str, metavar="FILE", required=True,
                    help="The parameter file for the data clean up.")
-
-group = parser.add_argument_group("General Options")
-group.add_argument("--overwrite", action="store_true",
-                   help=("Overwrites output directories without asking the "
-                         "user. [DANGEROUS]"))
 
 
 # The available modules
