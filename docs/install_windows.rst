@@ -23,6 +23,12 @@ The following softwares and packages are required for :py:mod:`pyGenClean`:
    All the requirements will be installed along with the main
    :py:mod:`pyGenClean` module.
 
+.. warning::
+
+   The `Plink` software needs to be in the `PATH` (or in the current working
+   directory). In other words, you should be able to type `plink` at the
+   command line.
+
 
 Installation
 ============

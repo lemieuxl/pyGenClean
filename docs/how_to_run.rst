@@ -1,7 +1,7 @@
 .. _how_ro_run:
 
 How to Run the Pipeline
-=======================
+***********************
 
 .. warning::
 

@@ -1,15 +1,16 @@
 .. _list_of_scripts:
 
 List of Modules and their Options
-=================================
+*********************************
 
 The following sections show a list the available scripts that can be used in the
 configuration file, along with their options for customization.
 
+
 .. _duplicated_samples_options:
 
 Duplicated Samples
-------------------
+==================
 
 The name to use in the configuration file is ``duplicated_samples`` and the
 :ref:`duplicated_samples_table` table shows its configuration.
@@ -42,8 +43,9 @@ The name to use in the configuration file is ``duplicated_samples`` and the
 
 The name of the standalone script is ``pyGenClean_duplicated_samples``.
 
+
 Duplicated Markers
-------------------
+==================
 
 The name to use in the configuration file is ``duplicated_snps`` and the
 :ref:`duplicated_markers_table` table shows its configuration.
@@ -78,16 +80,18 @@ The name to use in the configuration file is ``duplicated_snps`` and the
 
 The name of the standalone script is ``pyGenClean_duplicated_snps``.
 
+
 Clean No Call and Only Heterozygous Markers
--------------------------------------------
+===========================================
 
 The name to use in the configuration file is ``noCall_hetero_snps`` and there
 are no customization possible.
 
 The name of the standalone script is ``pyGenClean_clean_noCall_hetero_snps``.
 
+
 Sample Missingness
-------------------
+==================
 
 The name to use in the configuration file is ``sample_missingness`` and the
 :ref:`sample_missingness_table` table shows its configuration.
@@ -108,8 +112,9 @@ The name to use in the configuration file is ``sample_missingness`` and the
 
 The name of the standalone script is ``pyGenClean_sample_missingness``.
 
+
 Marker Missingness
-------------------
+==================
 
 The name to use in the configuration file is ``snp_missingness`` and the
 :ref:`snp_missingness_table` table shows its configuration.
@@ -130,8 +135,9 @@ The name to use in the configuration file is ``snp_missingness`` and the
 
 The name of the standalone script is ``pyGenClean_snp_missingness``.
 
+
 Sex Check
----------
+=========
 
 The name to use in the configuration file is ``sex_check`` and the
 :ref:`sex_check_table` table shows its configuration.
@@ -192,8 +198,9 @@ redo the BAF and LRR plot or the gender plot, you can use the
 ``pyGenClean_baf_lrr_plot`` and ``pyGenClean_gender_plot`` scripts,
 respectively.
 
+
 Plate Bias
-----------
+==========
 
 The name to use in the configuration file is ``plate_bias`` and the
 :ref:`plate_bias_table` table shows its configuration.
@@ -218,16 +225,18 @@ The name to use in the configuration file is ``plate_bias`` and the
 
 The name of the standalone script is ``pyGenClean_plate_bias``.
 
+
 Heterozygous Haploid
---------------------
+====================
 
 The name to use in the configuration file is ``remove_heterozygous_haploid`` and
 there are no customization possible.
 
 The name of the standalone script is ``pyGenClean_remove_heterozygous_haploid``.
 
+
 Related Samples
----------------
+===============
 
 The name to use in the configuration file is ``find_related_samples`` and the
 :ref:`find_related_samples_table` table shows its configuration.
@@ -293,8 +302,9 @@ The name of the standalone script is ``pyGenClean_find_related_samples``. Even
 though randomly choosing a subset of related samples is done automatically, you
 can use the ``pyGenClean_merge_related_samples`` to perform it again.
 
+
 Ethnicity
----------
+=========
 
 The name to use in the configuration file is ``check_ethnicity`` and the
 :ref:`check_ethnicity_table` table shows its configuration.
@@ -308,6 +318,10 @@ The name to use in the configuration file is ``check_ethnicity`` and the
     +-----------------------------+------------+-------------------------------+
     | Option                      | Type       | Description                   |
     +=============================+============+===============================+
+    | ``--skip-ref-pops``         |            | Perform the MDS computation,  |
+    |                             |            | but skip the three reference  |
+    |                             |            | panels.                       |
+    +-----------------------------+------------+-------------------------------+
     | ``--ceu-bfile``             | ``FILE``   | The input file prefix (will   |
     |                             |            | find the plink binary files   |
     |                             |            | by appending the prefix to    |
@@ -429,16 +443,18 @@ to redo the outlier detection using a different multiplier, have a look at the
 ``pyGenClean_find_outliers`` script. If you want to redo any MDS plot, have a
 look at the ``pyGenClean_plot_MDS`` script.
 
+
 Minor Allele Frequency of Zero
-------------------------------
+==============================
 
 The name to use in the configuration file is ``flag_maf_zero`` and there
 are no customization possible.
 
 The name of the standalone script is ``pyGenClean_flag_maf_zero``.
 
+
 Hardy Weinberg Equilibrium
---------------------------
+==========================
 
 The name to use in the configuration file is ``flag_hw`` and the
 :ref:`flag_hw_table` table shows its configuration.
@@ -458,8 +474,9 @@ The name to use in the configuration file is ``flag_hw`` and the
 
 The name of the standalone script is ``pyGenClean_flag_hw``.
 
+
 Subsetting the Data
--------------------
+===================
 
 The name to use in the configuration file is ``subset`` and the
 :ref:`subset_table` table shows its configuration.
@@ -488,8 +505,9 @@ The name to use in the configuration file is ``subset`` and the
 
 The name of the standalone script is ``pyGenClean_subset_data``.
 
+
 Comparison with a Gold Standard
--------------------------------
+===============================
 
 The name to use in the configuration file is ``compare_gold_standard`` and the
 :ref:`compare_gold_standard_table` table shows its configuration.

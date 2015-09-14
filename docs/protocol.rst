@@ -1,12 +1,13 @@
 .. _proposed_protocol_label:
 
 Proposed Protocol
-=================
+*****************
+
 
 .. _preprocessing_label:
 
 Preprocessing Steps
--------------------
+===================
 
 *   Remove SNPs without chromosomal and physical position (chromosome and
     position of 0).
@@ -39,7 +40,7 @@ Preprocessing Steps
 .. _dup_sample_module_label:
 
 Duplicated Samples Module
---------------------------
+=========================
 
 .. note::
    
@@ -85,7 +86,7 @@ removed from the data set with the subset module (see the
 .. _first_subset_label:
 
 First Subset Module (optional)
-------------------------------
+==============================
 
 .. note::
 
@@ -108,7 +109,7 @@ First Subset Module (optional)
 .. _dup_marker_module_label:
 
 Duplicated Markers Module
---------------------------
+==========================
 
 .. note::
 
@@ -154,7 +155,7 @@ concordance rate SNPs (see the :ref:`second_subset_label`).
 .. _second_subset_label:
 
 Second Subset Module (optional)
--------------------------------
+===============================
 
 .. note::
 
@@ -177,7 +178,7 @@ Second Subset Module (optional)
 .. _clean_noCall_hetero:
 
 Clean No Call and Only Heterozygous Markers Module
---------------------------------------------------
+==================================================
 
 .. note::
 
@@ -207,7 +208,7 @@ Clean No Call and Only Heterozygous Markers Module
 .. _sample_missingness_01:
 
 Sample Missingness Module  (mind 0.1)
--------------------------------------
+=====================================
 
 .. note::
 
@@ -230,7 +231,7 @@ Sample Missingness Module  (mind 0.1)
 .. _marker_missingness:
 
 Marker Missingness Module
--------------------------
+=========================
 
 .. note::
 
@@ -254,7 +255,7 @@ Marker Missingness Module
 .. _sample_missingness_02:
 
 Sample Missingness Module (mind 0.02)
--------------------------------------
+=====================================
 
 .. note::
 
@@ -278,7 +279,7 @@ Sample Missingness Module (mind 0.02)
 .. _sex_check:
 
 Sex Check Module
-----------------
+================
 
 .. note::
 
@@ -346,7 +347,7 @@ Keep individuals identified with gender problem until the :ref:`related_samples`
 .. _plate_bias:
 
 Plate Bias Module
------------------
+=================
 
 .. note::
 
@@ -392,7 +393,7 @@ Plate Bias Module
 .. _related_samples:
 
 Related Samples Module
-----------------------
+======================
 
 .. note::
 
@@ -467,10 +468,11 @@ Related Samples Module
     | cousins      |              |             |              |                                    |
     +--------------+--------------+-------------+--------------+------------------------------------+
 
+
 .. _ethnicity:
 
 Ethnicity Module
-----------------
+================
 
 .. note::
 
@@ -506,10 +508,11 @@ Ethnicity Module
     If necessary those samples could be removed at a later stage with the subset
     option.
 
+
 .. _third_subset_label:
 
 Third Subset Module
--------------------
+===================
 
 .. note::
 
@@ -537,10 +540,11 @@ be removed from the data set.
     than one time in the final ``samples_to_remove.txt`` file. This is not an
     issue for this step.
 
+
 .. _heterozygote_haploid:
 
 Heterozygote Haploid Module
----------------------------
+===========================
 
 .. note::
 
@@ -563,10 +567,11 @@ module.
 Number of heterozygous haploid genotypes set to missing are indicated in
 ``without_hh_genotypes.log`` file.
 
+
 .. _maf:
 
 Minor Allele Frequency of Zero Module
--------------------------------------
+=====================================
 
 .. note::
 
@@ -589,10 +594,11 @@ Minor Allele Frequency of Zero Module
 If necessary, use subset module to remove SNPs with minor allele frequency of 0,
 since they were only flagged using the :ref:`fourth_subset_label`.
 
+
 .. _fourth_subset_label:
 
 Fourth Subset Module (optional)
--------------------------------
+===============================
 
 .. note::
 
@@ -609,10 +615,11 @@ Fourth Subset Module (optional)
 
 2.  Examine ``subset.log`` to detect any problem at this step.
 
+
 .. _hwe:
 
 Hardy Weinberg Equilibrium Module
----------------------------------
+=================================
 
 .. note::
 
@@ -643,10 +650,11 @@ Hardy Weinberg Equilibrium Module
 The markers are only flagged using this module. If you want to remove those
 markers, have a look at the :ref:`fifth_subset_label`.
 
+
 .. _fifth_subset_label:
 
 Fifth Subset Module (optional)
-------------------------------
+==============================
 
 .. note::
 

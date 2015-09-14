@@ -1,7 +1,7 @@
 .. _config_files:
 
 Configuration Files
-===================
+*******************
 
 Two default configuration files are available to run the proposed protocol.
 Before using them, be sure to follow the :ref:`preprocessing_label` described in
@@ -11,10 +11,11 @@ Note that lines starting with a ``#`` are comments, and are not used by the
 pipeline. The default parameters were commented out, and could be uncommented to
 change their values.
 
+
 .. _first_conf_file:
 
 First Configuration File
-------------------------
+========================
 
 This file should be use with the original dataset as input. Only change the
 ``loop-assoc`` file name in the ``plate_bias`` section (``[8]``) and the
@@ -31,10 +32,11 @@ provide the intensities (``sex-chr-intensities``  and ``lrr-baf-raw-dir`` in the
     :linenos:
     :language: lighttpd
 
+
 .. _second_conf_file:
 
 Second Configuration File
--------------------------
+=========================
 
 This configuration file should be run after the :ref:`first_conf_file` and with
 the output of the second sample missingness section (``[6]`` in the
