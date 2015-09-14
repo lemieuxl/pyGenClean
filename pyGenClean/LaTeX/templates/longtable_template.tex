@@ -1,0 +1,46 @@
+
+\begin{center}
+
+\BLOCK{ if text_size is defined }
+\\VAR{ text_size }
+\BLOCK{ endif }
+
+\begin{longtable}{\VAR{ col_alignments }}
+
+\caption{\VAR{ table_caption }} \label{\VAR{ table_label }} \\
+
+\hline 
+\BLOCK{ for h_data in header_data }
+\multicolumn{\VAR{ h_data[1] }}{c}{\textbf{\VAR{ h_data[0] }}}
+\BLOCK{ if not loop.last } & \BLOCK{ else }\\\BLOCK{ endif }
+\BLOCK{ endfor }
+\hline 
+\endfirsthead
+
+\hline 
+\BLOCK{ for h_data in header_data }
+\multicolumn{\VAR{ h_data[1] }}{c}{\textbf{\VAR{ h_data[0] }}}
+\BLOCK{ if not loop.last } & \BLOCK{ else }\\\BLOCK{ endif }
+\BLOCK{ endfor }
+\hline 
+
+\endhead
+
+\hline
+\multicolumn{\VAR{ nb_col }}{r}{\textit{Continued on next page}}
+\endfoot
+
+\hline
+\endlastfoot
+
+
+\BLOCK{ for row in tabular_data }
+\BLOCK{ if highlighted is defined and highlighted[loop.index0] }\rowcolor{yellow}\BLOCK{ endif }
+\BLOCK{ for cell in row }
+\VAR{ cell }\BLOCK{ if not loop.last } & \BLOCK{ else }\\\VAR{ "\n" }\BLOCK{ endif }
+\BLOCK{ endfor }
+\BLOCK{ endfor }
+
+\end{longtable}
+\end{center}
+

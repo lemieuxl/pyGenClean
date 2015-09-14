@@ -1,31 +1,38 @@
 #!/usr/bin/env python2.7
-## This file is part of pyGenClean.
-## 
-## pyGenClean is free software: you can redistribute it and/or modify it under
-## the terms of the GNU General Public License as published by the Free Software
-## Foundation, either version 3 of the License, or (at your option) any later
-## version.
-## 
-## pyGenClean is distributed in the hope that it will be useful, but WITHOUT ANY
-## WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
-## A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
-## 
-## You should have received a copy of the GNU General Public License along with
-## pyGenClean.  If not, see <http://www.gnu.org/licenses/>.
+
+# This file is part of pyGenClean.
+#
+# pyGenClean is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later
+# version.
+#
+# pyGenClean is distributed in the hope that it will be useful, but WITHOUT ANY
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+# A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with
+# pyGenClean.  If not, see <http://www.gnu.org/licenses/>.
+
 
 import os
 import sys
+import logging
 import argparse
 import subprocess
 
-from PlinkUtils import createRowFromPlinkSpacedOutput
+from ..PlinkUtils import createRowFromPlinkSpacedOutput
+
+
+logger = logging.getLogger("flag_maf_zero")
+
 
 def main(argString=None):
     """The main function.
 
     :param argString: the options.
 
-    :type argString: list of strings
+    :type argString: list
 
     These are the steps:
 
@@ -39,16 +46,16 @@ def main(argString=None):
     args = parseArgs(argString)
     checkArgs(args)
 
-    print "   - Options used:"
+    logger.info("Options used:")
     for key, value in vars(args).iteritems():
-        print "      --{} {}".format(key, value)
+        logger.info("  --{} {}".format(key.replace("_", "-"), value))
 
     # Compute frequency using plink
-    print "   - Computing the frequencies using Plink"
+    logger.info("Computing the frequencies using Plink")
     computeFrequency(args)
 
     # Read the freqency file
-    print "   - Flagging SNPs with MAF = 0"
+    logger.info("Flagging SNPs with MAF = 0")
     findSnpWithMaf0(args.out + ".frq", args.out)
 
 
@@ -58,8 +65,8 @@ def findSnpWithMaf0(freqFileName, prefix):
     :param freqFileName: the name of the frequency file.
     :param prefix: the prefix of all the files.
 
-    :type freqFileName: string
-    :type prefix: string
+    :type freqFileName: str
+    :type prefix: str
 
     Reads a frequency file from Plink, and find markers with a minor allele
     frequency of zero.
@@ -75,8 +82,9 @@ def findSnpWithMaf0(freqFileName, prefix):
                 row = createRowFromPlinkSpacedOutput(line)
                 if i == 0:
                     # We have the header
-                    headerIndex = dict([(row[i], i) \
-                                            for i in xrange(len(row))])
+                    headerIndex = dict([
+                        (row[i], i) for i in xrange(len(row))
+                    ])
                     for columnName in ["SNP", "MAF"]:
                         if columnName not in headerIndex:
                             msg = "%(freqFileName)s: no column named " \
@@ -102,9 +110,11 @@ def findSnpWithMaf0(freqFileName, prefix):
 
     # Creating the output files
     if len(maf_0_set) == 0:
-        print "      - There are no markers with MAF 0"
+        logger.info("  - There are no markers with MAF 0")
     else:
-        print "      - There are {} markers with MAF 0".format(len(maf_0_set))
+        logger.info("  - There are {} markers with MAF 0".format(
+            len(maf_0_set),
+        ))
     outputFile = None
     try:
         with open(prefix + ".list", "w") as output_file:
@@ -115,7 +125,7 @@ def findSnpWithMaf0(freqFileName, prefix):
         raise ProgramError(msg)
 
     if len(na_set) > 0:
-        print "      - There are {} markers with NA MAF".format(len(na_set))
+        logger.info("  - There are {} markers with NA MAF".format(len(na_set)))
         try:
             with open(prefix + ".na_list", "w") as output_file:
                 for marker_name in na_set:
@@ -123,7 +133,6 @@ def findSnpWithMaf0(freqFileName, prefix):
         except IOError:
             msg = "{}.na_list: can't write file".format(prefix)
             raise ProgramError(msg)
-
 
 
 def computeFrequency(options):
@@ -171,16 +180,16 @@ def checkArgs(args):
     return True
 
 
-def parseArgs(argString=None): # pragma: no cover
+def parseArgs(argString=None):  # pragma: no cover
     """Parses the command line options and arguments.
 
     :param argString: the options.
 
-    :type argString: list of strings
+    :type argString: list
 
     :returns: A :py:class:`argparse.Namespace` object created by the
-              :py:mod:`argparse` module. It contains the values of the different
-              options.
+              :py:mod:`argparse` module. It contains the values of the
+              different options.
 
     =========== ====== ==========================================
       Options    Type                 Description
@@ -205,17 +214,17 @@ def parseArgs(argString=None): # pragma: no cover
 
 class ProgramError(Exception):
     """An :py:class:`Exception` raised in case of a problem.
-    
+
     :param msg: the message to print to the user before exiting.
 
-    :type msg: string
+    :type msg: str
 
     """
     def __init__(self, msg):
         """Construction of the :py:class:`ProgramError` class.
 
         :param msg: the message to print to the user
-        :type msg: string
+        :type msg: str
 
         """
         self.message = str(msg)
@@ -225,6 +234,7 @@ class ProgramError(Exception):
 
 
 # The parser object
+pretty_name = "MAF flagging"
 desc = """Flag SNPs with MAF of 0."""
 parser = argparse.ArgumentParser(description=desc)
 
@@ -240,11 +250,18 @@ group.add_argument("--out", type=str, metavar="FILE", default="flag_maf_0",
                    help=("The prefix of the output files. [default: "
                          "%(default)s]"))
 
-if __name__ == "__main__":
+
+def safe_main():
+    """A safe version of the main function (that catches ProgramError)."""
     try:
         main()
     except KeyboardInterrupt:
-        print >>sys.stderr, "Cancelled by user"
+        logger.info("Cancelled by user")
         sys.exit(0)
     except ProgramError as e:
+        logger.error(e.message)
         parser.error(e.message)
+
+
+if __name__ == "__main__":
+    safe_main()

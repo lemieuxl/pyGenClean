@@ -1,31 +1,38 @@
 #!/usr/bin/env python2.7
-## This file is part of pyGenClean.
-## 
-## pyGenClean is free software: you can redistribute it and/or modify it under
-## the terms of the GNU General Public License as published by the Free Software
-## Foundation, either version 3 of the License, or (at your option) any later
-## version.
-## 
-## pyGenClean is distributed in the hope that it will be useful, but WITHOUT ANY
-## WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
-## A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
-## 
-## You should have received a copy of the GNU General Public License along with
-## pyGenClean.  If not, see <http://www.gnu.org/licenses/>.
+
+# This file is part of pyGenClean.
+#
+# pyGenClean is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later
+# version.
+#
+# pyGenClean is distributed in the hope that it will be useful, but WITHOUT ANY
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+# A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with
+# pyGenClean.  If not, see <http://www.gnu.org/licenses/>.
+
 
 import os
 import sys
+import logging
 import argparse
 import subprocess
 
-import PlinkUtils.compare_bim as CompareBIM
+from ..PlinkUtils import compare_bim as CompareBIM
+
+
+logger = logging.getLogger("snp_missingness")
+
 
 def main(argString=None):
     """The main function of the module.
 
     :param argString: the options.
 
-    :type argString: list of strings
+    :type argString: list
 
     These are the steps:
 
@@ -39,16 +46,16 @@ def main(argString=None):
     args = parseArgs(argString)
     checkArgs(args)
 
-    print "   - Options used:"
+    logger.info("Options used:")
     for key, value in vars(args).iteritems():
-        print "      --{} {}".format(key, value)
+        logger.info("  --{} {}".format(key.replace("_", "-"), value))
 
     # Run plink
-    print "   - Running Plink"
+    logger.info("Running Plink")
     runPlink(args)
 
     # Comparing the bim
-    print "   - Comparing BIM files"
+    logger.info("Comparing BIM files")
     compareBIM(args)
 
 
@@ -60,7 +67,8 @@ def compareBIM(args):
     :type args: argparse.Namespace
 
     Creates a *Dummy* object to mimic an :py:class:`argparse.Namespace` class
-    containing the options for the :py:mod:`PlinkUtils.compare_bim` module.
+    containing the options for the :py:mod:`pyGenClean.PlinkUtils.compare_bim`
+    module.
 
     """
     # Creating the CompareBIM options
@@ -134,16 +142,16 @@ def checkArgs(args):
     return True
 
 
-def parseArgs(argString=None): # pragma: no cover
+def parseArgs(argString=None):  # pragma: no cover
     """Parses the command line options and arguments.
 
     :param argString: the options.
 
-    :type argString: list of strings
+    :type argString: list
 
     :returns: A :py:class:`argparse.Namespace` object created by the
-              :py:mod:`argparse` module. It contains the values of the different
-              options.
+              :py:mod:`argparse` module. It contains the values of the
+              different options.
 
     =========== ====== ==========================================
       Options    Type                Description
@@ -169,10 +177,10 @@ def parseArgs(argString=None): # pragma: no cover
 
 class ProgramError(Exception):
     """An :py:class:`Exception` raised in case of a problem.
-    
+
     :param msg: the message to print to the user before exiting.
 
-    :type msg: string
+    :type msg: str
 
     """
     def __init__(self, msg):
@@ -180,7 +188,7 @@ class ProgramError(Exception):
 
         :param msg: the message to print to the user
 
-        :type msg: string
+        :type msg: str
 
         """
         self.message = str(msg)
@@ -190,7 +198,8 @@ class ProgramError(Exception):
 
 
 # The parser object
-desc = """Computes sample missingness using Plink"""
+pretty_name = "Marker missingness"
+desc = """Computes marker missingness using Plink."""
 parser = argparse.ArgumentParser(description=desc)
 
 # The INPUT files
@@ -212,11 +221,18 @@ group.add_argument("--out", type=str, metavar="FILE",
                    help=("The prefix of the output files. [default: "
                          "%(default)s]"))
 
-if __name__ == "__main__":
+
+def safe_main():
+    """A safe version of the main function (that catches ProgramError)."""
     try:
         main()
     except KeyboardInterrupt:
-        print >>sys.stderr, "Cancelled by user"
+        logger.info("Cancelled by user")
         sys.exit(0)
     except ProgramError as e:
+        logger.error(e.message)
         parser.error(e.message)
+
+
+if __name__ == "__main__":
+    safe_main()

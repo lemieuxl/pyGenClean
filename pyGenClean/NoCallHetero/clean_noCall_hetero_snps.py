@@ -1,31 +1,38 @@
 #!/usr/bin/env python2.7
-## This file is part of pyGenClean.
-## 
-## pyGenClean is free software: you can redistribute it and/or modify it under
-## the terms of the GNU General Public License as published by the Free Software
-## Foundation, either version 3 of the License, or (at your option) any later
-## version.
-## 
-## pyGenClean is distributed in the hope that it will be useful, but WITHOUT ANY
-## WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
-## A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
-## 
-## You should have received a copy of the GNU General Public License along with
-## pyGenClean.  If not, see <http://www.gnu.org/licenses/>.
+
+# This file is part of pyGenClean.
+#
+# pyGenClean is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later
+# version.
+#
+# pyGenClean is distributed in the hope that it will be useful, but WITHOUT ANY
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+# A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with
+# pyGenClean.  If not, see <http://www.gnu.org/licenses/>.
+
 
 import os
 import sys
 import shutil
+import logging
 import argparse
 
 import numpy as npy
+
+
+logger = logging.getLogger("noCall_hetero_snps")
+
 
 def main(argString=None):
     """The main function of the module.
 
     :param argString: the options.
 
-    :type argString: list of strings
+    :type argString: list
 
     These are the steps:
 
@@ -38,12 +45,12 @@ def main(argString=None):
     args = parseArgs(argString)
     checkArgs(args)
 
-    print "   - Options used:"
+    logger.info("Options used:")
     for key, value in vars(args).iteritems():
-        print "      --{} {}".format(key, value)
+        logger.info("  --{} {}".format(key.replace("_", "-"), value))
 
     # Process the TPED and TFAM file
-    print "   - Processing the TPED and TFAM file"
+    logger.info("Processing the TPED and TFAM file")
     processTPEDandTFAM(args.tfile + ".tped", args.tfile + ".tfam", args.out)
 
 
@@ -54,9 +61,9 @@ def processTPEDandTFAM(tped, tfam, prefix):
     :param tfam: the name of the ``tfam`` file.
     :param prefix: the prefix of the output files.
 
-    :type tped: string
-    :type tfam: string
-    :type prefix: string
+    :type tped: str
+    :type tfam: str
+    :type prefix: str
 
     Copies the original ``tfam`` file into ``prefix.tfam``. Then, it reads the
     ``tped`` file and keeps in memory two sets containing the markers which are
@@ -67,8 +74,8 @@ def processTPEDandTFAM(tped, tfam, prefix):
     respectively.
 
     .. note::
-        All heterozygous markers located on the mitochondrial chromosome are not
-        remove.
+        All heterozygous markers located on the mitochondrial chromosome are
+        not remove.
 
     """
     # Copying the tfam file
@@ -113,7 +120,7 @@ def processTPEDandTFAM(tped, tfam, prefix):
             # If the SNP is good (neither in allFailed or allHetero), we keep
             # the SNP
             if (snpInfo[1] not in allFailed) and (snpInfo[1] not in allHetero):
-               print >>outputFile, "\t".join(row)
+                print >>outputFile, "\t".join(row)
 
     outputFile.close()
 
@@ -163,16 +170,16 @@ def checkArgs(args):
     return True
 
 
-def parseArgs(argString=None): # pragma: no cover
+def parseArgs(argString=None):  # pragma: no cover
     """Parses the command line options and arguments.
 
     :param argString: the options.
 
-    :type argString: list of strings
+    :type argString: list
 
     :returns: A :py:class:`argparse.Namespace` object created by the
-              :py:mod:`argparse` module. It contains the values of the different
-              options.
+              :py:mod:`argparse` module. It contains the values of the
+              different options.
 
     =========== ====== ====================================
       Options    Type              Description
@@ -197,10 +204,10 @@ def parseArgs(argString=None): # pragma: no cover
 
 class ProgramError(Exception):
     """An :py:class:`Exception` raised in case of a problem.
-    
+
     :param msg: the message to print to the user before exiting.
 
-    :type msg: string
+    :type msg: str
 
     """
     def __init__(self, msg):
@@ -208,7 +215,7 @@ class ProgramError(Exception):
 
         :param msg: the message to print to the user
 
-        :type msg: string
+        :type msg: str
 
         """
         self.message = str(msg)
@@ -218,6 +225,7 @@ class ProgramError(Exception):
 
 
 # The parser object
+pretty_name = "No calls and heterozygous only markers"
 desc = """Removes "no calls" only and heterozygous only markers."""
 parser = argparse.ArgumentParser(description=desc)
 
@@ -234,11 +242,18 @@ group.add_argument("--out", type=str, metavar="FILE",
                    help=("The prefix of the output files. [default: "
                          "%(default)s]"))
 
-if __name__ == "__main__":
+
+def safe_main():
+    """A safe version of the main function (that catches ProgramError)."""
     try:
         main()
     except KeyboardInterrupt:
-        print >>sys.stderr, "Cancelled by user"
+        logger.info("Cancelled by user")
         sys.exit(0)
     except ProgramError as e:
+        logger.error(e.message)
         parser.error(e.message)
+
+
+if __name__ == "__main__":
+    safe_main()

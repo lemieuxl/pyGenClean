@@ -1,5 +1,4 @@
-recursive-include docs *
-include COPYING
 include README.mkd
 include configuration_example_1_of_2.conf
 include configuration_example_2_of_2.conf
+include LICENSE.txt

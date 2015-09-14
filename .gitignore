@@ -1,6 +1,11 @@
 *.pyc
 *.swp
-scripts
+
 dist
+build
+conda_dist
+
+pyGenClean/version.py
 pyGenClean.egg-info
+
 _build

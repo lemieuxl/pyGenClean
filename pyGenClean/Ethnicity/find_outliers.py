@@ -1,25 +1,32 @@
 #!/usr/bin/env python2.7
-## This file is part of pyGenClean.
-## 
-## pyGenClean is free software: you can redistribute it and/or modify it under
-## the terms of the GNU General Public License as published by the Free Software
-## Foundation, either version 3 of the License, or (at your option) any later
-## version.
-## 
-## pyGenClean is distributed in the hope that it will be useful, but WITHOUT ANY
-## WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
-## A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
-## 
-## You should have received a copy of the GNU General Public License along with
-## pyGenClean.  If not, see <http://www.gnu.org/licenses/>.
+
+# This file is part of pyGenClean.
+#
+# pyGenClean is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later
+# version.
+#
+# pyGenClean is distributed in the hope that it will be useful, but WITHOUT ANY
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+# A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with
+# pyGenClean.  If not, see <http://www.gnu.org/licenses/>.
+
 
 import os
 import sys
+import logging
 import argparse
 
 import numpy as npy
 
-from PlinkUtils import createRowFromPlinkSpacedOutput as create_row
+from ..PlinkUtils import createRowFromPlinkSpacedOutput as create_row
+
+
+logger = logging.getLogger("find_outliers")
+
 
 def main(argString=None):
     """The main function.
@@ -46,27 +53,29 @@ def main(argString=None):
     args = parseArgs(argString)
     checkArgs(args)
 
-    print "   - Options used:"
+    logger.info("Options used:")
     for key, value in vars(args).iteritems():
-        print "      --{} {}".format(key, value)
+        logger.info("  --{} {}".format(key.replace("_", "-"), value))
 
     # Reads the population file
-    print "   - Reading population file"
+    logger.info("Reading population file")
     populations = read_population_file(args.population_file)
 
     # Reads the MDS file
-    print "   - Reading MDS file"
+    logger.info("Reading MDS file")
     mds = read_mds_file(args.mds, args.xaxis, args.yaxis, populations)
 
     # Finds the population centers
-    print "   - Finding reference population centers"
+    logger.info("Finding reference population centers")
     centers, center_info = find_ref_centers(mds)
 
     # Computes three clusters using KMeans and the reference cluster centers
-    print "   - Finding outliers"
+    logger.info("Finding outliers")
     outliers = find_outliers(mds, centers, center_info, args.outliers_of, args)
-    print ("   - There are {} outliers for the {} "
-           "population".format(len(outliers), args.outliers_of))
+    logger.info("  - There are {} outliers for the {} population".format(
+        len(outliers),
+        args.outliers_of,
+    ))
 
     # Printing the outlier file
     try:
@@ -85,7 +94,9 @@ def main(argString=None):
                     population = "OUTLIER"
                 print >>output_file, "\t".join(list(sample_id) + [population])
     except IOError:
-        msg = "{}: can't write file".format(args.out + ".population_file_outliers")
+        msg = "{}: can't write file".format(
+            args.out + ".population_file_outliers",
+        )
         raise ProgramError(msg)
 
 
@@ -102,7 +113,7 @@ def find_outliers(mds, centers, center_info, ref_pop, options):
     :type mds: numpy.recarray
     :type centers: numpy.array
     :type center_info: dict
-    :type ref_pop: string
+    :type ref_pop: str
     :type options: argparse.Namespace
 
     :returns: a :py:class:`set` of outliers from the ``ref_pop`` population.
@@ -117,8 +128,8 @@ def find_outliers(mds, centers, center_info, ref_pop, options):
       (``ref_pop``).
 
     A sample is an outlier of a given cluster :math:`C_j` if the distance
-    between this sample and the center of the cluster :math:`C_j` (:math:`O_j`) is
-    bigger than a constant times the cluster's standard deviation
+    between this sample and the center of the cluster :math:`C_j` (:math:`O_j`)
+    is bigger than a constant times the cluster's standard deviation
     :math:`\\sigma_j`.
 
     .. math::
@@ -132,8 +143,8 @@ def find_outliers(mds, centers, center_info, ref_pop, options):
         d(s_i, O_j) = \\sqrt{(x_{O_j} - x_{s_i})^2 + (y_{O_j} - y_{s_i})^2}
 
     Using a constant equals to one ensure we remove 100% of the outliers from
-    the cluster. Using a constant of 1.6 or 1.9 ensures we remove 99% and 95% of
-    outliers, respectively (an error rate of 1% and 5%, respectively).
+    the cluster. Using a constant of 1.6 or 1.9 ensures we remove 99% and 95%
+    of outliers, respectively (an error rate of 1% and 5%, respectively).
 
     """
     # Importing matplotlib for plotting purposes
@@ -227,10 +238,14 @@ def find_outliers(mds, centers, center_info, ref_pop, options):
         # Finding the outliers (that are not in the reference populations
         sigma = npy.sqrt(npy.true_divide(npy.sum(distances ** 2),
                                          len(distances) - 1))
-        outliers = npy.logical_and((distances > options.multiplier * sigma).flatten(),
-                                   subset_mds != ref_pop_name[label])
-        print "      - {} outliers for the {} cluster".format(npy.sum(outliers),
-                                                              ref_pop_name[label])
+        outliers = npy.logical_and(
+            (distances > options.multiplier * sigma).flatten(),
+            subset_mds != ref_pop_name[label],
+        )
+        logger.info("  - {} outliers for the {} cluster".format(
+            npy.sum(outliers),
+            ref_pop_name[label],
+        ))
 
         # Saving the outliers
         if ref_pop_name[label] != options.outliers_of:
@@ -241,15 +256,22 @@ def find_outliers(mds, centers, center_info, ref_pop, options):
 
             # Plotting all samples that are not part of the reference
             # populations
-            axe_outliers.plot(subset_mds["c1"][subset_mds["pop"] != ref_pop_name[label]],
-                              subset_mds["c2"][subset_mds["pop"] != ref_pop_name[label]],
-                              "o", mec="#555555", mfc="#555555", ms=2,
-                              clip_on=False)
+            axe_outliers.plot(
+                subset_mds["c1"][subset_mds["pop"] != ref_pop_name[label]],
+                subset_mds["c2"][subset_mds["pop"] != ref_pop_name[label]],
+                "o",
+                mec="#555555",
+                mfc="#555555",
+                ms=2,
+                clip_on=False,
+            )
         else:
             # This is the population we want, hence only the real outliers are
             # outliers (we don't include the reference population)
-            outlier_mds = subset_mds[npy.logical_and(subset_mds["pop"] != ref_pop_name[label],
-                                                     outliers)]
+            outlier_mds = subset_mds[
+                npy.logical_and(subset_mds["pop"] != ref_pop_name[label],
+                                outliers)
+            ]
 
             # Plotting the outliers
             plot_outliers, = axe_outliers.plot(outlier_mds["c1"],
@@ -258,17 +280,33 @@ def find_outliers(mds, centers, center_info, ref_pop, options):
                                                ms=2, clip_on=False)
 
             # Plotting the not outliers
-            plot_not_outliers, = axe_outliers.plot(subset_mds["c1"][npy.logical_and(~outliers, subset_mds["pop"] != ref_pop_name[label])],
-                                                   subset_mds["c2"][npy.logical_and(~outliers, subset_mds["pop"] != ref_pop_name[label])],
-                                                   "o", mec="#FFBB33",
-                                                   mfc="#FFBB33", ms=2,
-                                                   clip_on=False)
+            plot_not_outliers, = axe_outliers.plot(
+                subset_mds["c1"][npy.logical_and(
+                        ~outliers,
+                        subset_mds["pop"] != ref_pop_name[label]
+                )],
+                subset_mds["c2"][npy.logical_and(
+                    ~outliers,
+                    subset_mds["pop"] != ref_pop_name[label]
+                )],
+                "o",
+                mec="#FFBB33",
+                mfc="#FFBB33",
+                ms=2,
+                clip_on=False,
+            )
             outliers_set |= set([(i["fid"], i["iid"]) for i in outlier_mds])
 
         # Plotting the cluster (without outliers)
-        p, = axe_after.plot(subset_mds[~outliers]["c1"],
-                            subset_mds[~outliers]["c2"], "o", mec=colors[label],
-                            mfc=colors[label], ms=2, clip_on=False)
+        p, = axe_after.plot(
+            subset_mds[~outliers]["c1"],
+            subset_mds[~outliers]["c2"],
+            "o",
+            mec=colors[label],
+            mfc=colors[label],
+            ms=2,
+            clip_on=False,
+        )
         plots_after.append(p)
 
         # Plotting the cluster (only outliers)
@@ -277,23 +315,28 @@ def find_outliers(mds, centers, center_info, ref_pop, options):
                        mfc=outlier_colors[label], ms=2, clip_on=False)
 
         # Plotting only the reference populations
-        p, = axe_outliers.plot(subset_mds["c1"][subset_mds["pop"] == ref_pop_name[label]],
-                               subset_mds["c2"][subset_mds["pop"] == ref_pop_name[label]],
-                               "o", mec=colors[label], mfc=colors[label], ms=2,
-                               clip_on=False)
+        p, = axe_outliers.plot(
+            subset_mds["c1"][subset_mds["pop"] == ref_pop_name[label]],
+            subset_mds["c2"][subset_mds["pop"] == ref_pop_name[label]],
+            "o",
+            mec=colors[label],
+            mfc=colors[label],
+            ms=2,
+            clip_on=False,
+        )
         plots_outliers.append(p)
 
         # Plotting the cluster center (the real one)
-        axe_after.plot(centers[label][0], centers[label][1], "o", mec="#000000",
-                       mfc="#FFBB33", ms=6)
+        axe_after.plot(centers[label][0], centers[label][1], "o",
+                       mec="#000000", mfc="#FFBB33", ms=6)
 
     # The legends
-    axe_before.legend(plots_before, ref_pop_name, "best", numpoints=1,
+    axe_before.legend(plots_before, ref_pop_name, loc="best", numpoints=1,
                       fancybox=True, fontsize=8).get_frame().set_alpha(0.5)
-    axe_after.legend(plots_after, ref_pop_name, "best", numpoints=1,
+    axe_after.legend(plots_after, ref_pop_name, loc="best", numpoints=1,
                      fancybox=True, fontsize=8).get_frame().set_alpha(0.5)
     axe_outliers.legend(plots_outliers + [plot_not_outliers, plot_outliers],
-                        ref_pop_name + ["SOURCE", "OUTLIERS"], "best",
+                        ref_pop_name + ["SOURCE", "OUTLIERS"], loc="best",
                         numpoints=1, fancybox=True,
                         fontsize=8).get_frame().set_alpha(0.5)
 
@@ -325,8 +368,9 @@ def find_ref_centers(mds):
     computing the means.
 
     .. math::
-        \\textrm{Cluster}_\\textrm{pop} = \\left(\\frac{\\sum_{i=1}^n x_i}{n},
-                                                 \\frac{\\sum_{i=1}^n y_i}{n}\\right)
+        \\textrm{Cluster}_\\textrm{pop} = \\left(
+            \\frac{\\sum_{i=1}^n x_i}{n}, \\frac{\\sum_{i=1}^n y_i}{n}
+        \\right)
 
     """
     # Computing the centers of each of the reference clusters
@@ -350,9 +394,9 @@ def read_mds_file(file_name, c1, c2, pops):
     :param c2: the second component to read (y axis).
     :param pops: the population of each sample.
 
-    :type file_name: string
-    :type c1: string
-    :type c2: string
+    :type file_name: str
+    :type c1: str
+    :type c2: str
     :type pops: dict
 
     :returns: a :py:class:`numpy.recarray` (one sample per line) with the
@@ -361,7 +405,7 @@ def read_mds_file(file_name, c1, c2, pops):
               population.
 
     The ``mds`` file is the result of Plink (as produced by the
-    :py:mod:`Ethnicity.check_ethnicity` module).
+    :py:mod:`pyGenClean.Ethnicity.check_ethnicity` module).
 
     """
     mds = []
@@ -369,8 +413,10 @@ def read_mds_file(file_name, c1, c2, pops):
     max_iid = 0
     with open(file_name, 'rb') as input_file:
         # Getting and checking the header
-        header_index = dict([(col_name, i) for i, col_name in
-                                enumerate(create_row(input_file.readline()))])
+        header_index = dict([
+            (col_name, i) for i, col_name in
+            enumerate(create_row(input_file.readline()))
+        ])
         for col_name in {"FID", "IID", c1, c2}:
             if col_name not in header_index:
                 msg = "{}: no column named {}".format(file_name, col_name)
@@ -410,7 +456,7 @@ def read_population_file(file_name):
 
     :param file_name: the name of the population file.
 
-    :type file_name: string
+    :type file_name: str
 
     :returns: a :py:class:`dict` containing the population for each of the
               samples.
@@ -422,8 +468,8 @@ def read_population_file(file_name):
     3. The population of the file (one of ``CEU``, ``YRI``, ``JPT-CHB`` or
        ``SOURCE``).
 
-    The outliers are from the ``SOURCE`` population, when compared to one of the
-    three reference population (``CEU``, ``YRI`` or ``JPT-CHB``).
+    The outliers are from the ``SOURCE`` population, when compared to one of
+    the three reference population (``CEU``, ``YRI`` or ``JPT-CHB``).
 
     """
     pops = {}
@@ -480,31 +526,33 @@ def checkArgs(args):
     return True
 
 
-def parseArgs(argString=None): # pragma: no cover
+def parseArgs(argString=None):  # pragma: no cover
     """Parses the command line options and arguments.
 
     :param argString: the options.
 
-    :type argString: list of string
+    :type argString: list
 
     :returns: A :py:class:`argparse.Namespace` object created by the
-              :py:mod:`argparse` module. It contains the values of the different
-              options.
+              :py:mod:`argparse` module. It contains the values of the
+              different options.
 
-    ===================== ====== ===============================================
+    ===================== ====== ==============================================
             Options        Type                   Description
-    ===================== ====== ===============================================
+    ===================== ====== ==============================================
     ``--mds``             string The MDS file from Plink.
     ``--population-file`` string A population file from
-                                 :py:mod:`Ethnicity.check_ethnicity` module.
+                                 :py:mod:`pyGenClean.Ethnicity.check_ethnicity`
+                                 module.
     ``--format``          string The output file format (png, ps, or pdf.
     ``--out``             string The prefix of the output files.
     ``--outliers-of``     string Finds the outliers of this population.
     ``--multiplier``      float  To find the outliers, we look for more than
-                                 :math:`x` times the cluster standard deviation.
+                                 :math:`x` times the cluster standard
+                                 deviation.
     ``--xaxis``           string The component to use for the X axis.
     ``--yaxis``           string The component to use for the Y axis.
-    ===================== ====== ===============================================
+    ===================== ====== ==============================================
 
     .. note::
         No option check is done here (except for the one automatically done by
@@ -528,11 +576,12 @@ def add_custom_options(parser):
     :type parser: argparse.ArgumentParser
 
     """
-    parser.add_argument("--outliers-of", type=str, metavar="POP", default="CEU",
-                        choices=["CEU", "YRI", "JPT-CHB"],
+    parser.add_argument("--outliers-of", type=str, metavar="POP",
+                        default="CEU", choices=["CEU", "YRI", "JPT-CHB"],
                         help=("Finds the outliers of this population. "
                               "[default: %(default)s]"))
-    parser.add_argument("--multiplier", type=float, metavar="FLOAT", default=1.9,
+    parser.add_argument("--multiplier", type=float, metavar="FLOAT",
+                        default=1.9,
                         help=("To find the outliers, we look for more than "
                               "x times the cluster standard deviation. "
                               "[default: %(default).1f]"))
@@ -548,10 +597,10 @@ def add_custom_options(parser):
 
 class ProgramError(Exception):
     """An :py:class:`Exception` raised in case of a problem.
-    
+
     :param msg: the message to print to the user before exiting.
 
-    :type msg: string
+    :type msg: str
 
     """
     def __init__(self, msg):
@@ -559,7 +608,7 @@ class ProgramError(Exception):
 
         :param msg: the message to print to the user
 
-        :type msg: string
+        :type msg: str
 
         """
         self.message = str(msg)
@@ -576,29 +625,37 @@ parser = argparse.ArgumentParser(description=desc)
 group = parser.add_argument_group("Input File")
 group.add_argument("--mds", type=str, metavar="FILE", required=True,
                    help=("The MDS file from Plink"))
-group.add_argument("--population-file", type=str, metavar="FILE", required=True,
+group.add_argument("--population-file", type=str, metavar="FILE",
+                   required=True,
                    help=("A population file containing the following columns "
-                        "(without a header): FID, IID and POP. POP should be "
-                        "one of 'CEU', 'JPT-CHB', 'YRI' and SOURCE."))
+                         "(without a header): FID, IID and POP. POP should be "
+                         "one of 'CEU', 'JPT-CHB', 'YRI' and SOURCE."))
 # The options
 group = parser.add_argument_group("Options")
 add_custom_options(group)
 group.add_argument("--format", type=str, metavar="FORMAT", default="png",
-                    choices=["png", "ps", "pdf"],
-                    help=("The output file format (png, ps, or pdf "
-                          "formats are available). [default: %(default)s]"))
+                   choices=["png", "ps", "pdf"],
+                   help=("The output file format (png, ps, or pdf "
+                         "formats are available). [default: %(default)s]"))
 # The OUTPUT files
 group = parser.add_argument_group("Output File")
 group.add_argument("--out", type=str, metavar="FILE",
-                    default="ethnicity",
-                    help=("The prefix of the output files. [default: "
-                          "%(default)s]"))
+                   default="ethnicity",
+                   help=("The prefix of the output files. [default: "
+                         "%(default)s]"))
 
-if __name__ == "__main__":
+
+def safe_main():
+    """A safe version of the main function (that catches ProgramError)."""
     try:
         main()
     except KeyboardInterrupt:
-        print >>sys.stderr, "Cancelled by user"
+        logger.info("Cancelled by user")
         sys.exit(0)
     except ProgramError as e:
+        logger.error(e.message)
         parser.error(e.message)
+
+
+if __name__ == "__main__":
+    safe_main()

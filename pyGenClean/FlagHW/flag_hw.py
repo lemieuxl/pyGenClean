@@ -1,35 +1,43 @@
 #!/usr/bin/env python2.7
-## This file is part of pyGenClean.
-## 
-## pyGenClean is free software: you can redistribute it and/or modify it under
-## the terms of the GNU General Public License as published by the Free Software
-## Foundation, either version 3 of the License, or (at your option) any later
-## version.
-## 
-## pyGenClean is distributed in the hope that it will be useful, but WITHOUT ANY
-## WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
-## A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
-## 
-## You should have received a copy of the GNU General Public License along with
-## pyGenClean.  If not, see <http://www.gnu.org/licenses/>.
+
+# This file is part of pyGenClean.
+#
+# pyGenClean is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later
+# version.
+#
+# pyGenClean is distributed in the hope that it will be useful, but WITHOUT ANY
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+# A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with
+# pyGenClean.  If not, see <http://www.gnu.org/licenses/>.
+
 
 import os
 import sys
+import logging
 import argparse
 import subprocess
 
-from PlinkUtils import createRowFromPlinkSpacedOutput
-import PlinkUtils.compare_bim as CompareBIM
+from ..PlinkUtils import compare_bim as CompareBIM
+from ..PlinkUtils import createRowFromPlinkSpacedOutput
+
+
+logger = logging.getLogger("flag_hw")
+
 
 class Dummy(object):
     pass
+
 
 def main(argString=None):
     """The main function.
 
     :param argString: the options.
 
-    :type argString: list of strings
+    :type argString: list
 
     These are the steps performed by this module:
 
@@ -50,44 +58,54 @@ def main(argString=None):
     args = parseArgs(argString)
     checkArgs(args)
 
-    print "   - Options used:"
+    logger.info("Options used:")
     for key, value in vars(args).iteritems():
-        print "      --{} {}".format(key, value)
+        logger.info("  --{} {}".format(key.replace("_", "-"), value))
 
     # Compute the number of markers
-    print "   - Counting the number of markers"
+    logger.info("Counting the number of markers")
     nbMarkers = computeNumberOfMarkers(args.bfile + ".bim")
 
     if nbMarkers <= 0:
-        print "      - There are no markers"
-        print "        Stopping now"
+        logger.info("  - There are no markers: STOPPING NOW!")
     else:
-        print "      - There are {} markers".format(nbMarkers)
+        logger.info("  - There are {} markers".format(nbMarkers))
 
         customThreshold = str(0.05 / nbMarkers)
 
         # Run the plink command
-        print "   - Computing the HW equilibrium for {}".format(customThreshold)
+        logger.info("Computing the HW equilibrium for {}".format(
+            customThreshold,
+        ))
         computeHWE(args.bfile, customThreshold,
-                args.out + ".threshold_" + customThreshold)
-        print "   - Computing the HW equilibrium for {}".format(args.hwe)
+                   args.out + ".threshold_" + customThreshold)
+        logger.info("Computing the HW equilibrium for {}".format(args.hwe))
         computeHWE(args.bfile, args.hwe, args.out + ".threshold_" + args.hwe)
-        
-        # Compare the BIM files
-        print ("   - Creating the flagged SNP list for "
-               "{}".format(customThreshold))
-        custom_snps = compareBIMfiles(args.bfile + ".bim",
-                                      args.out + ".threshold_" + customThreshold + ".bim",
-                                      args.out + ".snp_flag_threshold_" + customThreshold)
-        print "   - Creating the flagged SNP list for {}".format(args.hwe)
-        hwe_snps = compareBIMfiles(args.bfile + ".bim",
-                                   args.out + ".threshold_" + args.hwe + ".bim",
-                                   args.out + ".snp_flag_threshold_" + args.hwe)
 
-        print ("   - Creating the in between SNP list ([{}, "
-               "{}[)".format(args.hwe, customThreshold))
-        file_name = args.out + ".snp_flag_threshold_between_{}-{}".format(args.hwe,
-                                                                          customThreshold)
+        # Compare the BIM files
+        logger.info("Creating the flagged SNP list for {}".format(
+            customThreshold,
+        ))
+        custom_snps = compareBIMfiles(
+            args.bfile + ".bim",
+            args.out + ".threshold_" + customThreshold + ".bim",
+            args.out + ".snp_flag_threshold_" + customThreshold,
+        )
+        logger.info("Creating the flagged SNP list for {}".format(args.hwe))
+        hwe_snps = compareBIMfiles(
+            args.bfile + ".bim",
+            args.out + ".threshold_" + args.hwe + ".bim",
+            args.out + ".snp_flag_threshold_" + args.hwe,
+        )
+
+        logger.info("Creating the in between SNP list ([{}, {}[)".format(
+            args.hwe,
+            customThreshold,
+        ))
+        file_name = args.out + ".snp_flag_threshold_between_{}-{}".format(
+            args.hwe,
+            customThreshold,
+        )
         try:
             with open(file_name, 'w') as output_file:
                 print >>output_file, "\n".join(hwe_snps - custom_snps)
@@ -105,9 +123,9 @@ def compareBIMfiles(beforeFileName, afterFileName, outputFileName):
                            differences between the ``before`` and the ``after``
                            files.
 
-    :type beforeFileName: string
-    :type afterFileName: string
-    :type outputFileName: string
+    :type beforeFileName: str
+    :type afterFileName: str
+    :type outputFileName: str
 
     :returns: the number of differences between the two files.
 
@@ -140,7 +158,7 @@ def computeNumberOfMarkers(inputFileName):
 
     :param inputFileName: the name of the ``bim`` file.
 
-    :type inputFileName: string
+    :type inputFileName: str
 
     :returns: the number of marker in the ``bim`` file.
 
@@ -159,9 +177,9 @@ def computeHWE(prefix, threshold, outPrefix):
     :param threshold: the Hardy Weinberg threshold.
     :param outPrefix: the prefix of the output file.
 
-    :type prefix: string
-    :type threshold: string
-    :type outPrefix: string
+    :type prefix: str
+    :type threshold: str
+    :type outPrefix: str
 
     Uses Plink to exclude markers that failed the Hardy-Weinberg test at a
     specified significance threshold.
@@ -177,7 +195,7 @@ def runCommand(command):
 
     :param command: the command to run.
 
-    :type command: list of strings
+    :type command: list
 
     Tries to run a command. If it fails, raise a :py:class:`ProgramError`. This
     function uses the :py:mod:`subprocess` module.
@@ -230,12 +248,12 @@ def checkArgs(args):
     return True
 
 
-def parseArgs(argString=None): # pragma: no cover
+def parseArgs(argString=None):  # pragma: no cover
     """Parses the command line options and arguments.
 
     :param argString: the options.
 
-    :type argString: list of strings
+    :type argString: list
 
     :returns: A :py:class:`argparse.Namespace` object created by
               the :py:mod:`argparse` module. It contains the values of the
@@ -265,17 +283,17 @@ def parseArgs(argString=None): # pragma: no cover
 
 class ProgramError(Exception):
     """An :py:class:`Exception` raised in case of a problem.
-    
+
     :param msg: the message to print to the user before exiting.
 
-    :type msg: string
+    :type msg: str
 
     """
     def __init__(self, msg):
         """Construction of the :py:class:`ProgramError` class.
 
         :param msg: the message to print to the user
-        :type msg: string
+        :type msg: str
 
         """
         self.message = str(msg)
@@ -285,6 +303,7 @@ class ProgramError(Exception):
 
 
 # The parser object
+pretty_name = "Hardy-Weinberg flagging"
 desc = """Flag SNPs with Hardy-Weinberg disequilibrium."""
 parser = argparse.ArgumentParser(description=desc)
 
@@ -297,19 +316,26 @@ group.add_argument("--bfile", type=str, metavar="FILE", required=True,
 # The options
 group = parser.add_argument_group("Options")
 group.add_argument("--hwe", type=str, metavar="FLOAT", default="1e-4",
-                    help=("The Hardy-Weinberg equilibrium threshold. "
-                          "[default: %(default)s]"))
+                   help=("The Hardy-Weinberg equilibrium threshold. "
+                         "[default: %(default)s]"))
 # The OUTPUT files
 group = parser.add_argument_group("Output File")
 group.add_argument("--out", type=str, metavar="FILE", default="flag_hw",
-                    help=("The prefix of the output files. [default: "
-                          "%(default)s]"))
+                   help=("The prefix of the output files. [default: "
+                         "%(default)s]"))
 
-if __name__ == "__main__":
+
+def safe_main():
+    """A safe version of the main function (that catches ProgramError)."""
     try:
         main()
     except KeyboardInterrupt:
-        print >>sys.stderr, "Cancelled by user"
+        logger.info("Cancelled by user")
         sys.exit(0)
     except ProgramError as e:
+        logger.error(e.message)
         parser.error(e.message)
+
+
+if __name__ == "__main__":
+    safe_main()

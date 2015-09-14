@@ -1,0 +1,52 @@
+
+\begin{longtable}{p{0.01\textwidth}p{0.59\textwidth}rrr}
+
+\caption{Summary information of the data cleanup procedure.}\label{final_summary} \\
+
+\hline
+ &
+ &
+ &
+ \multicolumn{1}{c}{\textbf{Markers}} &
+ \multicolumn{1}{c}{\textbf{Samples}} \\
+\hline
+\endfirsthead
+
+\hline
+ &
+ &
+ &
+ \multicolumn{1}{c}{\textbf{Markers}} &
+ \multicolumn{1}{c}{\textbf{Samples}} \\
+\hline
+\endhead
+
+\hline
+\endlastfoot
+
+\BLOCK{ for row_data in table_data }
+\BLOCK{ for data in row_data["data"] }
+\BLOCK{ if data["hline"] }
+\hline
+\BLOCK{ else }
+\BLOCK{ if data["multicol"] }
+\multicolumn{2}{p{0.6\textwidth}}{\VAR{ data["row_data"][0] }}\BLOCK{ if data["row_data"]|length > 1 } & \BLOCK{ else } \\ \BLOCK{ endif }
+\BLOCK{ else }
+ & - \VAR{ data["row_data"][0] }\BLOCK{ if data["row_data"]|length > 1 } & \BLOCK{ else } \\ \BLOCK{ endif }
+\BLOCK{ endif }
+\BLOCK{ for value in data["row_data"][1:] }
+\VAR{ value }\BLOCK{ if loop.last } \\ \BLOCK{ else } & \BLOCK{ endif }
+\BLOCK{ endfor }
+\BLOCK{ endif }
+
+\BLOCK{ endfor }
+\BLOCK{ endfor }
+
+\multicolumn{2}{p{0.6\textwidth}}{Final number of markers} &
+\VAR{ final_nb_markers } \\
+
+\multicolumn{2}{p{0.6\textwidth}}{Final number of samples} &
+\VAR{ final_nb_samples } \\
+
+\end{longtable}
+

@@ -1,42 +1,45 @@
 #!/usr/bin/env python2.7
-## This file is part of pyGenClean.
-## 
-## pyGenClean is free software: you can redistribute it and/or modify it under
-## the terms of the GNU General Public License as published by the Free Software
-## Foundation, either version 3 of the License, or (at your option) any later
-## version.
-## 
-## pyGenClean is distributed in the hope that it will be useful, but WITHOUT ANY
-## WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
-## A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
-## 
-## You should have received a copy of the GNU General Public License along with
-## pyGenClean.  If not, see <http://www.gnu.org/licenses/>.
+
+# This file is part of pyGenClean.
+#
+# pyGenClean is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later
+# version.
+#
+# pyGenClean is distributed in the hope that it will be useful, but WITHOUT ANY
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+# A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with
+# pyGenClean.  If not, see <http://www.gnu.org/licenses/>.
+
 
 import os
 import re
 import sys
+import logging
 import argparse
 
 import numpy as np
 
 import matplotlib as mpl
-mpl.use("Agg")
-import matplotlib.pyplot as plt
-plt.ioff()
+
+
+logger = logging.getLogger("plot_eigenvalues")
 
 
 def main(argString=None):
     """The main function.
-    
-    The purpose of this module is to plot Eigenvectors provided by the Eigensoft
-    software.
-    
+
+    The purpose of this module is to plot Eigenvectors provided by the
+    Eigensoft software.
+
     Here are the steps of this module:
-    
+
     1. Reads the Eigenvector (:py:func:`read_eigenvalues`).
     2. Plots the Scree Plot (:py:func:`create_scree_plot`).
-    
+
     """
     # Getting and checking the options
     args = parse_args(argString)
@@ -51,16 +54,21 @@ def main(argString=None):
 
 def create_scree_plot(data, o_filename, options):
     """Creates the scree plot.
-    
+
     :param data: the eigenvalues.
     :param o_filename: the name of the output files.
     :param options: the options.
-    
+
     :type data: numpy.ndarray
-    :type o_filename: string
+    :type o_filename: str
     :type options: argparse.Namespace
-    
+
     """
+    # Importing plt
+    mpl.use("Agg")
+    import matplotlib.pyplot as plt
+    plt.ioff()
+
     # Computing the cumulative sum
     cumul_data = np.cumsum(data)
 
@@ -120,19 +128,22 @@ def create_scree_plot(data, o_filename, options):
 
 def read_eigenvalues(i_filename):
     """Reads the eigenvalues from EIGENSOFT results.
-    
+
     :param i_filename: the name of the input file.
-    
-    :type i_filename: string
-    
+
+    :type i_filename: str
+
     :returns: a :py:class:`numpy.ndarray` array containing the eigenvalues.
-    
+
     """
     # The data is the first line of the result file (should begin with
     # "#eigvals"
     data = None
     with open(i_filename, "r") as i_file:
-        data = re.split(r"\s+", re.sub(r"(^\s+)|(\s+$)", "", i_file.readline()))
+        data = re.split(
+            r"\s+",
+            re.sub(r"(^\s+)|(\s+$)", "", i_file.readline()),
+        )
         if not data[0].startswith("#eigvals"):
             m = "{}: not a evec file".format(i_filename)
             raise ProgramError(m)
@@ -161,12 +172,13 @@ def check_args(args):
         raise ProgramError(m)
     return True
 
+
 def parse_args(argString=None):
     """Parses the command line options and arguments.
 
     :returns: A :py:class:`argparse.Namespace` object created by the
-              :py:mod:`argparse` module. It contains the values of the different
-              options.
+              :py:mod:`argparse` module. It contains the values of the
+              different options.
 
     =========   ======  ================================
      Options     Type             Description
@@ -206,10 +218,10 @@ def add_custom_options(parser):
 
 class ProgramError(Exception):
     """An :py:class:`Exception` raised in case of a problem.
-    
+
     :param msg: the message to print to the user before exiting.
 
-    :type msg: string
+    :type msg: str
 
     """
     def __init__(self, msg):
@@ -217,7 +229,7 @@ class ProgramError(Exception):
 
         :param msg: the message to print to the user.
 
-        :type msg: string
+        :type msg: str
 
         """
         self.message = str(msg)
@@ -244,12 +256,19 @@ group = parser.add_argument_group("Output Options")
 group.add_argument("--out", metavar="FILE", default="scree_plot.png", type=str,
                    help="The name of the output file [%(default)s]")
 
-# Calling the main, if necessary
-if __name__ == "__main__":
+
+def safe_main():
+    """A safe version of the main function (that catches ProgramError)."""
     try:
         main()
     except KeyboardInterrupt:
-        print >>sys.stderr, "Cancelled by user"
+        logger.info("Cancelled by user")
         sys.exit(0)
     except ProgramError as e:
+        logger.error(e.message)
         parser.error(e.message)
+
+
+# Calling the main, if necessary
+if __name__ == "__main__":
+    safe_main()
