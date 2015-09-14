@@ -1024,65 +1024,69 @@ def run_sex_check(in_prefix, in_type, out_prefix, base_dir, options):
 
     # Reading the hetero file on X
     hetero = {}
-    with open(script_prefix + ".chr23_recodeA.raw.hetero", "r") as i_file:
-        header = {
-            name: i for i, name in
-            enumerate(createRowFromPlinkSpacedOutput(i_file.readline()))
-        }
-        for required_col in ("PED", "ID", "HETERO"):
-            if required_col not in header:
-                msg = "{}: no column named {}".format(
-                    script_prefix + ".chr23_recodeA.raw.hetero",
-                    required_col,
-                )
-                raise ProgramError(msg)
+    if os.path.isfile(script_prefix + ".chr23_recodeA.raw.hetero"):
+        with open(script_prefix + ".chr23_recodeA.raw.hetero", "r") as i_file:
+            header = {
+                name: i for i, name in
+                enumerate(createRowFromPlinkSpacedOutput(i_file.readline()))
+            }
+            for required_col in ("PED", "ID", "HETERO"):
+                if required_col not in header:
+                    msg = "{}: no column named {}".format(
+                        script_prefix + ".chr23_recodeA.raw.hetero",
+                        required_col,
+                    )
+                    raise ProgramError(msg)
 
-        # Reading the data
-        for line in i_file:
-            row = line.rstrip("\r\n").split("\t")
-            famid = row[header["PED"]]
-            indid = row[header["ID"]]
+            # Reading the data
+            for line in i_file:
+                row = line.rstrip("\r\n").split("\t")
+                famid = row[header["PED"]]
+                indid = row[header["ID"]]
 
-            # Formatting the hetero value
-            het = None
-            try:
-                het = "{:.4f}".format(float(row[header["HETERO"]]))
-            except:
-                het = "N/A"
+                # Formatting the hetero value
+                het = None
+                try:
+                    het = "{:.4f}".format(float(row[header["HETERO"]]))
+                except:
+                    het = "N/A"
 
-            hetero[(famid, indid)] = het
+                hetero[(famid, indid)] = het
 
     # Reading the number of no call on Y
     nb_no_call = {}
-    with open(script_prefix + ".chr24_recodeA.raw.noCall", "r") as i_file:
-        header = {
-            name: i for i, name in
-            enumerate(createRowFromPlinkSpacedOutput(i_file.readline()))
-        }
-        for required_col in ("PED", "ID", "nbGeno", "nbNoCall"):
-            if required_col not in header:
-                msg = "{}: no column named {}".format(
-                    script_prefix + ".chr24_recodeA.raw.noCall",
-                    required_col,
-                )
-                raise ProgramError(msg)
+    if os.path.isfile(script_prefix + ".chr24_recodeA.raw.noCall"):
+        with open(script_prefix + ".chr24_recodeA.raw.noCall", "r") as i_file:
+            header = {
+                name: i for i, name in
+                enumerate(createRowFromPlinkSpacedOutput(i_file.readline()))
+            }
+            for required_col in ("PED", "ID", "nbGeno", "nbNoCall"):
+                if required_col not in header:
+                    msg = "{}: no column named {}".format(
+                        script_prefix + ".chr24_recodeA.raw.noCall",
+                        required_col,
+                    )
+                    raise ProgramError(msg)
 
-        # Reading the data
-        for line in i_file:
-            row = line.rstrip("\r\n").split("\t")
-            famid = row[header["PED"]]
-            indid = row[header["ID"]]
+            # Reading the data
+            for line in i_file:
+                row = line.rstrip("\r\n").split("\t")
+                famid = row[header["PED"]]
+                indid = row[header["ID"]]
 
-            # Getting the statistics
-            nb_geno = row[header["nbGeno"]]
-            nb_nocall = row[header["nbNoCall"]]
+                # Getting the statistics
+                nb_geno = row[header["nbGeno"]]
+                nb_nocall = row[header["nbNoCall"]]
 
-            percent = None
-            try:
-                percent = "{:.4f}".format(float(nb_nocall) / float(nb_geno))
-            except:
-                percent = "N/A"
-            nb_no_call[(famid, indid)] = percent
+                percent = None
+                try:
+                    percent = "{:.4f}".format(
+                        float(nb_nocall) / float(nb_geno),
+                    )
+                except:
+                    percent = "N/A"
+                nb_no_call[(famid, indid)] = percent
 
     # Reading the problem file to gather statistics. Note that dataset without
     # problem will only have the header line (and no data)
@@ -1122,7 +1126,7 @@ def run_sex_check(in_prefix, in_type, out_prefix, base_dir, options):
             if row[header["SNPSEX"]] == "0":
                 nb_no_genetic += 1
             else:
-                nb_discordand += 1
+                nb_discordant += 1
 
             table.append(row)
             table[-1].append(
