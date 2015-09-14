@@ -1,10 +1,15 @@
 #!/usr/bin/env python
 
-# How to build source distribution (might add --plat-name win32)
-# python setup.py sdist --format bztar
-# python setup.py sdist --format gztar
-# python setup.py sdist --format zip
-# python setup.py bdist --format msi
+# How to build source distribution
+#   - python setup.py sdist --format bztar
+#   - python setup.py sdist --format gztar
+#   - python setup.py sdist --format zip
+#   - python setup.py bdist --format msi
+
+# How to build for conda
+#   - python setup.py bdist_conda
+#   - conda convert -p all /PATH/TO/FILE -o conda_dist
+#   - cd conda_dist && conda index *
 
 
 import os
@@ -17,7 +22,16 @@ from setuptools import setup
 MAJOR = 1
 MINOR = 7
 MICRO = 0
-VERSION = "{}.{}".format(MAJOR, MINOR, MICRO)
+VERSION = "{0}.{1}.{2}".format(MAJOR, MINOR, MICRO)
+
+
+def check_python_version():
+    """Checks the python version, exists if != 2.7."""
+    python_major, python_minor = sys.version_info[:2]
+
+    if python_major != 2 or python_minor != 7:
+        sys.stderr.write("pyGenClean requires python 2.7")
+        sys.exit(1)
 
 
 def write_version_file(fn=None):
@@ -38,15 +52,11 @@ def write_version_file(fn=None):
 
 
 def setup_package():
+    # Checking the python version
+    check_python_version()
+
     # Saving the version into a file
     write_version_file()
-
-    # Check the Python version
-    major, minor, micro, s, tmp = sys.version_info
-    if major == 2 and minor < 7 or major < 2:
-        raise SystemExit("""pyGenClean requires Python 2.7 or later.""")
-    if major == 3:
-        raise SystemExit("""pyGenClean doesn't work on Python 3...""")
 
     setup(
         name="pyGenClean",
@@ -89,7 +99,7 @@ def setup_package():
         },
         install_requires=["matplotlib >= 1.2.0", "numpy >= 1.6.2",
                           "scipy >= 0.11.0", "scikit-learn >= 0.12.1",
-                          "drmaa >= 0.5", "jinja2 >= 2.7.3"],
+                          "drmaa >= 0.5", "Jinja2 >= 2.7.3"],
         packages=["pyGenClean", "pyGenClean.Ethnicity", "pyGenClean.PlateBias",
                   "pyGenClean.DupSamples", "pyGenClean.SexCheck",
                   "pyGenClean.MarkerMissingness", "pyGenClean.FlagMAF",
