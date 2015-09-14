@@ -331,12 +331,12 @@ def find_outliers(mds, centers, center_info, ref_pop, options):
                        mec="#000000", mfc="#FFBB33", ms=6)
 
     # The legends
-    axe_before.legend(plots_before, ref_pop_name, "best", numpoints=1,
+    axe_before.legend(plots_before, ref_pop_name, loc="best", numpoints=1,
                       fancybox=True, fontsize=8).get_frame().set_alpha(0.5)
-    axe_after.legend(plots_after, ref_pop_name, "best", numpoints=1,
+    axe_after.legend(plots_after, ref_pop_name, loc="best", numpoints=1,
                      fancybox=True, fontsize=8).get_frame().set_alpha(0.5)
     axe_outliers.legend(plots_outliers + [plot_not_outliers, plot_outliers],
-                        ref_pop_name + ["SOURCE", "OUTLIERS"], "best",
+                        ref_pop_name + ["SOURCE", "OUTLIERS"], loc="best",
                         numpoints=1, fancybox=True,
                         fontsize=8).get_frame().set_alpha(0.5)
 
