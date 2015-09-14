@@ -1,0 +1,440 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>pyGenClean.FlagHW.flag_hw &mdash; pyGenClean 1.7.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '1.7.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="pyGenClean 1.7.0 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body role="document">
+
+<div style="background-color: white; text-align: left; padding: 10px 10px 15px 15px">
+<a href="../../../index.html"><img src="../../../_static/logo.png" border="0" alt="py4sci"/></a>
+</div>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">pyGenClean 1.7.0 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for pyGenClean.FlagHW.flag_hw</h1><div class="highlight"><pre>
+<span class="c">#!/usr/bin/env python2.7</span>
+
+<span class="c"># This file is part of pyGenClean.</span>
+<span class="c">#</span>
+<span class="c"># pyGenClean is free software: you can redistribute it and/or modify it under</span>
+<span class="c"># the terms of the GNU General Public License as published by the Free Software</span>
+<span class="c"># Foundation, either version 3 of the License, or (at your option) any later</span>
+<span class="c"># version.</span>
+<span class="c">#</span>
+<span class="c"># pyGenClean is distributed in the hope that it will be useful, but WITHOUT ANY</span>
+<span class="c"># WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR</span>
+<span class="c"># A PARTICULAR PURPOSE.  See the GNU General Public License for more details.</span>
+<span class="c">#</span>
+<span class="c"># You should have received a copy of the GNU General Public License along with</span>
+<span class="c"># pyGenClean.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
+
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+
+<span class="kn">from</span> <span class="nn">..PlinkUtils</span> <span class="kn">import</span> <span class="n">compare_bim</span> <span class="k">as</span> <span class="n">CompareBIM</span>
+<span class="kn">from</span> <span class="nn">..PlinkUtils</span> <span class="kn">import</span> <span class="n">createRowFromPlinkSpacedOutput</span>
+
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&quot;flag_hw&quot;</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">Dummy</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../../flag_hw.html#pyGenClean.FlagHW.flag_hw.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">argString</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;The main function.</span>
+
+<span class="sd">    :param argString: the options.</span>
+
+<span class="sd">    :type argString: list</span>
+
+<span class="sd">    These are the steps performed by this module:</span>
+
+<span class="sd">    1. Prints the options of the module.</span>
+<span class="sd">    2. Computes the number of markers in the input file</span>
+<span class="sd">       (:py:func:`computeNumberOfMarkers`).</span>
+<span class="sd">    3. If there are no markers, the module stops.</span>
+<span class="sd">    4. Computes the Bonferroni therhold (:math:`0.05 / \\textrm{nbMarkers}`).</span>
+<span class="sd">    5. Runs Plink to find failed markers with the Bonferroni threshold.</span>
+<span class="sd">    6. Runs Plink to find failed markers with the default threshold.</span>
+<span class="sd">    7. Compares the ``bim`` files for the Bonferroni threshold.</span>
+<span class="sd">    8. Compares the ``bim`` files for the default threshold.</span>
+<span class="sd">    9. Computes the &quot;in between&quot; marker list, which is the markers from the</span>
+<span class="sd">       default threshold and the Bonferroni threshold.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c"># Getting and checking the options</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">parseArgs</span><span class="p">(</span><span class="n">argString</span><span class="p">)</span>
+    <span class="n">checkArgs</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Options used:&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">vars</span><span class="p">(</span><span class="n">args</span><span class="p">)</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;  --{} {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;_&quot;</span><span class="p">,</span> <span class="s">&quot;-&quot;</span><span class="p">),</span> <span class="n">value</span><span class="p">))</span>
+
+    <span class="c"># Compute the number of markers</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Counting the number of markers&quot;</span><span class="p">)</span>
+    <span class="n">nbMarkers</span> <span class="o">=</span> <span class="n">computeNumberOfMarkers</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">bfile</span> <span class="o">+</span> <span class="s">&quot;.bim&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">nbMarkers</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;  - There are no markers: STOPPING NOW!&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;  - There are {} markers&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">nbMarkers</span><span class="p">))</span>
+
+        <span class="n">customThreshold</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="mf">0.05</span> <span class="o">/</span> <span class="n">nbMarkers</span><span class="p">)</span>
+
+        <span class="c"># Run the plink command</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Computing the HW equilibrium for {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">customThreshold</span><span class="p">,</span>
+        <span class="p">))</span>
+        <span class="n">computeHWE</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">bfile</span><span class="p">,</span> <span class="n">customThreshold</span><span class="p">,</span>
+                   <span class="n">args</span><span class="o">.</span><span class="n">out</span> <span class="o">+</span> <span class="s">&quot;.threshold_&quot;</span> <span class="o">+</span> <span class="n">customThreshold</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Computing the HW equilibrium for {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">hwe</span><span class="p">))</span>
+        <span class="n">computeHWE</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">bfile</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">hwe</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">out</span> <span class="o">+</span> <span class="s">&quot;.threshold_&quot;</span> <span class="o">+</span> <span class="n">args</span><span class="o">.</span><span class="n">hwe</span><span class="p">)</span>
+
+        <span class="c"># Compare the BIM files</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Creating the flagged SNP list for {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">customThreshold</span><span class="p">,</span>
+        <span class="p">))</span>
+        <span class="n">custom_snps</span> <span class="o">=</span> <span class="n">compareBIMfiles</span><span class="p">(</span>
+            <span class="n">args</span><span class="o">.</span><span class="n">bfile</span> <span class="o">+</span> <span class="s">&quot;.bim&quot;</span><span class="p">,</span>
+            <span class="n">args</span><span class="o">.</span><span class="n">out</span> <span class="o">+</span> <span class="s">&quot;.threshold_&quot;</span> <span class="o">+</span> <span class="n">customThreshold</span> <span class="o">+</span> <span class="s">&quot;.bim&quot;</span><span class="p">,</span>
+            <span class="n">args</span><span class="o">.</span><span class="n">out</span> <span class="o">+</span> <span class="s">&quot;.snp_flag_threshold_&quot;</span> <span class="o">+</span> <span class="n">customThreshold</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Creating the flagged SNP list for {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">hwe</span><span class="p">))</span>
+        <span class="n">hwe_snps</span> <span class="o">=</span> <span class="n">compareBIMfiles</span><span class="p">(</span>
+            <span class="n">args</span><span class="o">.</span><span class="n">bfile</span> <span class="o">+</span> <span class="s">&quot;.bim&quot;</span><span class="p">,</span>
+            <span class="n">args</span><span class="o">.</span><span class="n">out</span> <span class="o">+</span> <span class="s">&quot;.threshold_&quot;</span> <span class="o">+</span> <span class="n">args</span><span class="o">.</span><span class="n">hwe</span> <span class="o">+</span> <span class="s">&quot;.bim&quot;</span><span class="p">,</span>
+            <span class="n">args</span><span class="o">.</span><span class="n">out</span> <span class="o">+</span> <span class="s">&quot;.snp_flag_threshold_&quot;</span> <span class="o">+</span> <span class="n">args</span><span class="o">.</span><span class="n">hwe</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Creating the in between SNP list ([{}, {}[)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">args</span><span class="o">.</span><span class="n">hwe</span><span class="p">,</span>
+            <span class="n">customThreshold</span><span class="p">,</span>
+        <span class="p">))</span>
+        <span class="n">file_name</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">out</span> <span class="o">+</span> <span class="s">&quot;.snp_flag_threshold_between_{}-{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">args</span><span class="o">.</span><span class="n">hwe</span><span class="p">,</span>
+            <span class="n">customThreshold</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="s">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">output_file</span><span class="p">:</span>
+                <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">output_file</span><span class="p">,</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">hwe_snps</span> <span class="o">-</span> <span class="n">custom_snps</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;{}: can&#39;t write file&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="compareBIMfiles"><a class="viewcode-back" href="../../../flag_hw.html#pyGenClean.FlagHW.flag_hw.compareBIMfiles">[docs]</a><span class="k">def</span> <span class="nf">compareBIMfiles</span><span class="p">(</span><span class="n">beforeFileName</span><span class="p">,</span> <span class="n">afterFileName</span><span class="p">,</span> <span class="n">outputFileName</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Compare two BIM files for differences.</span>
+
+<span class="sd">    :param beforeFileName: the name of the file before modification.</span>
+<span class="sd">    :param afterFileName: the name of the file after modification.</span>
+<span class="sd">    :param outputFileName: the name of the output file (containing the</span>
+<span class="sd">                           differences between the ``before`` and the ``after``</span>
+<span class="sd">                           files.</span>
+
+<span class="sd">    :type beforeFileName: str</span>
+<span class="sd">    :type afterFileName: str</span>
+<span class="sd">    :type outputFileName: str</span>
+
+<span class="sd">    :returns: the number of differences between the two files.</span>
+
+<span class="sd">    The ``bim`` files contain the list of markers in a given dataset. The</span>
+<span class="sd">    ``before`` file should have more markers than the ``after`` file. The</span>
+<span class="sd">    ``after`` file should be a subset of the markers in the ``before`` file.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c"># Creating the options</span>
+    <span class="n">options</span> <span class="o">=</span> <span class="n">Dummy</span><span class="p">()</span>
+    <span class="n">options</span><span class="o">.</span><span class="n">before</span> <span class="o">=</span> <span class="n">beforeFileName</span>
+    <span class="n">options</span><span class="o">.</span><span class="n">after</span> <span class="o">=</span> <span class="n">afterFileName</span>
+    <span class="n">options</span><span class="o">.</span><span class="n">out</span> <span class="o">=</span> <span class="n">outputFileName</span>
+
+    <span class="c"># Checking the options</span>
+    <span class="n">CompareBIM</span><span class="o">.</span><span class="n">checkArgs</span><span class="p">(</span><span class="n">options</span><span class="p">)</span>
+
+    <span class="c"># Reading the BIM files</span>
+    <span class="n">beforeBIM</span> <span class="o">=</span> <span class="n">CompareBIM</span><span class="o">.</span><span class="n">readBIM</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">before</span><span class="p">)</span>
+    <span class="n">afterBIM</span> <span class="o">=</span> <span class="n">CompareBIM</span><span class="o">.</span><span class="n">readBIM</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">after</span><span class="p">)</span>
+
+    <span class="c"># Finding the differences</span>
+    <span class="n">CompareBIM</span><span class="o">.</span><span class="n">compareSNPs</span><span class="p">(</span><span class="n">beforeBIM</span><span class="p">,</span> <span class="n">afterBIM</span><span class="p">,</span> <span class="n">options</span><span class="o">.</span><span class="n">out</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">beforeBIM</span> <span class="o">-</span> <span class="n">afterBIM</span>
+
+</div>
+<div class="viewcode-block" id="computeNumberOfMarkers"><a class="viewcode-back" href="../../../flag_hw.html#pyGenClean.FlagHW.flag_hw.computeNumberOfMarkers">[docs]</a><span class="k">def</span> <span class="nf">computeNumberOfMarkers</span><span class="p">(</span><span class="n">inputFileName</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Count the number of marker (line) in a BIM file.</span>
+
+<span class="sd">    :param inputFileName: the name of the ``bim`` file.</span>
+
+<span class="sd">    :type inputFileName: str</span>
+
+<span class="sd">    :returns: the number of marker in the ``bim`` file.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">nbLine</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">inputFileName</span><span class="p">,</span> <span class="s">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">inputFile</span><span class="p">:</span>
+        <span class="n">nbLine</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">inputFile</span><span class="o">.</span><span class="n">readlines</span><span class="p">())</span>
+
+    <span class="k">return</span> <span class="n">nbLine</span>
+
+</div>
+<div class="viewcode-block" id="computeHWE"><a class="viewcode-back" href="../../../flag_hw.html#pyGenClean.FlagHW.flag_hw.computeHWE">[docs]</a><span class="k">def</span> <span class="nf">computeHWE</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span> <span class="n">threshold</span><span class="p">,</span> <span class="n">outPrefix</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Compute the Hardy Weinberg test using Plink.</span>
+
+<span class="sd">    :param prefix: the prefix of all the files.</span>
+<span class="sd">    :param threshold: the Hardy Weinberg threshold.</span>
+<span class="sd">    :param outPrefix: the prefix of the output file.</span>
+
+<span class="sd">    :type prefix: str</span>
+<span class="sd">    :type threshold: str</span>
+<span class="sd">    :type outPrefix: str</span>
+
+<span class="sd">    Uses Plink to exclude markers that failed the Hardy-Weinberg test at a</span>
+<span class="sd">    specified significance threshold.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">plinkCommand</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;plink&quot;</span><span class="p">,</span> <span class="s">&quot;--noweb&quot;</span><span class="p">,</span> <span class="s">&quot;--bfile&quot;</span><span class="p">,</span> <span class="n">prefix</span><span class="p">,</span> <span class="s">&quot;--hwe&quot;</span><span class="p">,</span> <span class="n">threshold</span><span class="p">,</span>
+                    <span class="s">&quot;--make-bed&quot;</span><span class="p">,</span> <span class="s">&quot;--out&quot;</span><span class="p">,</span> <span class="n">outPrefix</span><span class="p">]</span>
+    <span class="n">runCommand</span><span class="p">(</span><span class="n">plinkCommand</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="runCommand"><a class="viewcode-back" href="../../../flag_hw.html#pyGenClean.FlagHW.flag_hw.runCommand">[docs]</a><span class="k">def</span> <span class="nf">runCommand</span><span class="p">(</span><span class="n">command</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Run a command.</span>
+
+<span class="sd">    :param command: the command to run.</span>
+
+<span class="sd">    :type command: list</span>
+
+<span class="sd">    Tries to run a command. If it fails, raise a :py:class:`ProgramError`. This</span>
+<span class="sd">    function uses the :py:mod:`subprocess` module.</span>
+
+<span class="sd">    .. warning::</span>
+<span class="sd">        The variable ``command`` should be a list of stings (no other type).</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">(</span><span class="n">command</span><span class="p">,</span>
+                                         <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">STDOUT</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;couldn&#39;t run command</span><span class="se">\n</span><span class="s">&quot;</span> <span class="o">+</span> <span class="s">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">command</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="checkArgs"><a class="viewcode-back" href="../../../flag_hw.html#pyGenClean.FlagHW.flag_hw.checkArgs">[docs]</a><span class="k">def</span> <span class="nf">checkArgs</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Checks the arguments and options.</span>
+
+<span class="sd">    :param args: a :py:class:`argparse.Namespace` object containing the options</span>
+<span class="sd">                 of the program.</span>
+
+<span class="sd">    :type args: :py:class:`argparse.Namespace`</span>
+
+<span class="sd">    :returns: ``True`` if everything was OK.</span>
+
+<span class="sd">    If there is a problem with an option, an exception is raised using the</span>
+<span class="sd">    :py:class:`ProgramError` class, a message is printed to the</span>
+<span class="sd">    :py:class:`sys.stderr` and the program exists with code 1.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c"># Check if we have the tped and the tfam files</span>
+    <span class="k">for</span> <span class="n">fileName</span> <span class="ow">in</span> <span class="p">[</span><span class="n">args</span><span class="o">.</span><span class="n">bfile</span> <span class="o">+</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&quot;.bed&quot;</span><span class="p">,</span> <span class="s">&quot;.bim&quot;</span><span class="p">,</span> <span class="s">&quot;.fam&quot;</span><span class="p">]]:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">fileName</span><span class="p">):</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%(fileName)s</span><span class="s">: no such file&quot;</span> <span class="o">%</span> <span class="nb">locals</span><span class="p">()</span>
+            <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="c"># Check the HW pvalue</span>
+    <span class="n">hwValue</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">hwe</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">hwValue</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">hwValue</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%(hwValue)s</span><span class="s">: not a valid HW value&quot;</span> <span class="o">%</span> <span class="nb">locals</span><span class="p">()</span>
+        <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">hwValue</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">hwValue</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s">: not a valid HW value&quot;</span> <span class="o">%</span> <span class="n">args</span><span class="o">.</span><span class="n">hwe</span>
+        <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="bp">True</span>
+
+</div>
+<div class="viewcode-block" id="parseArgs"><a class="viewcode-back" href="../../../flag_hw.html#pyGenClean.FlagHW.flag_hw.parseArgs">[docs]</a><span class="k">def</span> <span class="nf">parseArgs</span><span class="p">(</span><span class="n">argString</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>  <span class="c"># pragma: no cover</span>
+    <span class="sd">&quot;&quot;&quot;Parses the command line options and arguments.</span>
+
+<span class="sd">    :param argString: the options.</span>
+
+<span class="sd">    :type argString: list</span>
+
+<span class="sd">    :returns: A :py:class:`argparse.Namespace` object created by</span>
+<span class="sd">              the :py:mod:`argparse` module. It contains the values of the</span>
+<span class="sd">              different options.</span>
+
+<span class="sd">    =========== ====== ==========================================</span>
+<span class="sd">      Options    Type                     Description</span>
+<span class="sd">    =========== ====== ==========================================</span>
+<span class="sd">    ``--bfile`` string The input file prefix (binary Plink file).</span>
+<span class="sd">    ``--hwe``   float  The Hardy-Weinberg equilibrium threshold.</span>
+<span class="sd">    ``--out``   string The prefix of the output files.</span>
+<span class="sd">    =========== ====== ==========================================</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">        No option check is done here (except for the one automatically done by</span>
+<span class="sd">        argparse). Those need to be done elsewhere (see :py:func:`checkArgs`).</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">if</span> <span class="n">argString</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">(</span><span class="n">argString</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">args</span>
+
+</div>
+<div class="viewcode-block" id="ProgramError"><a class="viewcode-back" href="../../../flag_hw.html#pyGenClean.FlagHW.flag_hw.ProgramError">[docs]</a><span class="k">class</span> <span class="nc">ProgramError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;An :py:class:`Exception` raised in case of a problem.</span>
+
+<span class="sd">    :param msg: the message to print to the user before exiting.</span>
+
+<span class="sd">    :type msg: str</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Construction of the :py:class:`ProgramError` class.</span>
+
+<span class="sd">        :param msg: the message to print to the user</span>
+<span class="sd">        :type msg: str</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span>
+
+
+<span class="c"># The parser object</span></div>
+<span class="n">pretty_name</span> <span class="o">=</span> <span class="s">&quot;Hardy-Weinberg flagging&quot;</span>
+<span class="n">desc</span> <span class="o">=</span> <span class="s">&quot;&quot;&quot;Flag SNPs with Hardy-Weinberg disequilibrium.&quot;&quot;&quot;</span>
+<span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="n">desc</span><span class="p">)</span>
+
+<span class="c"># The INPUT files</span>
+<span class="n">group</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s">&quot;Input File&quot;</span><span class="p">)</span>
+<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;--bfile&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s">&quot;FILE&quot;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+                   <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s">&quot;The input file prefix (will find the plink binary &quot;</span>
+                         <span class="s">&quot;files by appending the prefix to the .bim, .bed and &quot;</span>
+                         <span class="s">&quot;.fam files, respectively.&quot;</span><span class="p">))</span>
+<span class="c"># The options</span>
+<span class="n">group</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s">&quot;Options&quot;</span><span class="p">)</span>
+<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;--hwe&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s">&quot;FLOAT&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s">&quot;1e-4&quot;</span><span class="p">,</span>
+                   <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s">&quot;The Hardy-Weinberg equilibrium threshold. &quot;</span>
+                         <span class="s">&quot;[default: </span><span class="si">%(default)s</span><span class="s">]&quot;</span><span class="p">))</span>
+<span class="c"># The OUTPUT files</span>
+<span class="n">group</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s">&quot;Output File&quot;</span><span class="p">)</span>
+<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;--out&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s">&quot;FILE&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s">&quot;flag_hw&quot;</span><span class="p">,</span>
+                   <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s">&quot;The prefix of the output files. [default: &quot;</span>
+                         <span class="s">&quot;</span><span class="si">%(default)s</span><span class="s">]&quot;</span><span class="p">))</span>
+
+
+<div class="viewcode-block" id="safe_main"><a class="viewcode-back" href="../../../flag_hw.html#pyGenClean.FlagHW.flag_hw.safe_main">[docs]</a><span class="k">def</span> <span class="nf">safe_main</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;A safe version of the main function (that catches ProgramError).&quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">main</span><span class="p">()</span>
+    <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Cancelled by user&quot;</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">ProgramError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">message</span><span class="p">)</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">message</span><span class="p">)</span>
+
+</div>
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">safe_main</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">pyGenClean 1.7.0 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2012, Louis-Philippe Lemieux Perreault.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+    </div>
+  </body>
+</html>

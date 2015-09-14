@@ -1,0 +1,854 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>List of Modules and their Options &mdash; pyGenClean 1.7.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.7.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="pyGenClean 1.7.0 documentation" href="index.html" />
+    <link rel="next" title="Proposed Protocol" href="protocol.html" />
+    <link rel="prev" title="Windows Installation" href="install_windows.html" /> 
+  </head>
+  <body role="document">
+
+<div style="background-color: white; text-align: left; padding: 10px 10px 15px 15px">
+<a href="index.html"><img src="_static/logo.png" border="0" alt="py4sci"/></a>
+</div>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="protocol.html" title="Proposed Protocol"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="install_windows.html" title="Windows Installation"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">pyGenClean 1.7.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">List of Modules and their Options</a><ul>
+<li><a class="reference internal" href="#duplicated-samples">Duplicated Samples</a></li>
+<li><a class="reference internal" href="#duplicated-markers">Duplicated Markers</a></li>
+<li><a class="reference internal" href="#clean-no-call-and-only-heterozygous-markers">Clean No Call and Only Heterozygous Markers</a></li>
+<li><a class="reference internal" href="#sample-missingness">Sample Missingness</a></li>
+<li><a class="reference internal" href="#marker-missingness">Marker Missingness</a></li>
+<li><a class="reference internal" href="#sex-check">Sex Check</a></li>
+<li><a class="reference internal" href="#plate-bias">Plate Bias</a></li>
+<li><a class="reference internal" href="#heterozygous-haploid">Heterozygous Haploid</a></li>
+<li><a class="reference internal" href="#related-samples">Related Samples</a></li>
+<li><a class="reference internal" href="#ethnicity">Ethnicity</a></li>
+<li><a class="reference internal" href="#minor-allele-frequency-of-zero">Minor Allele Frequency of Zero</a></li>
+<li><a class="reference internal" href="#hardy-weinberg-equilibrium">Hardy Weinberg Equilibrium</a></li>
+<li><a class="reference internal" href="#subsetting-the-data">Subsetting the Data</a></li>
+<li><a class="reference internal" href="#comparison-with-a-gold-standard">Comparison with a Gold Standard</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="install_windows.html"
+                        title="previous chapter">Windows Installation</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="protocol.html"
+                        title="next chapter">Proposed Protocol</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/list_of_options.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="list-of-modules-and-their-options">
+<span id="list-of-scripts"></span><h1>List of Modules and their Options<a class="headerlink" href="#list-of-modules-and-their-options" title="Permalink to this headline">¶</a></h1>
+<p>The following sections show a list the available scripts that can be used in the
+configuration file, along with their options for customization.</p>
+<div class="section" id="duplicated-samples">
+<span id="duplicated-samples-options"></span><h2>Duplicated Samples<a class="headerlink" href="#duplicated-samples" title="Permalink to this headline">¶</a></h2>
+<p>The name to use in the configuration file is <code class="docutils literal"><span class="pre">duplicated_samples</span></code> and the
+<a class="reference internal" href="#duplicated-samples-table"><span>List of options for the duplicated_samples script.</span></a> table shows its configuration.</p>
+<table border="1" class="docutils" id="id1">
+<span id="duplicated-samples-table"></span><caption><span class="caption-text">List of options for the <strong>duplicated_samples</strong> script.</span><a class="headerlink" href="#id1" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col width="50%" />
+<col width="15%" />
+<col width="35%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Option</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--sample-completion-threshold</span></code></td>
+<td><code class="docutils literal"><span class="pre">FLOAT</span></code></td>
+<td>The completion
+threshold to consider a
+replicate when choosing
+the best replicates and
+for creating the
+composite samples.
+[default: 0.9]</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--sample-concordance-threshold</span></code></td>
+<td><code class="docutils literal"><span class="pre">FLOAT</span></code></td>
+<td>The concordance
+threshold to consider a
+replicate when choosing
+the best replicates and
+for creating the
+composite samples.
+[default: 0.97]</td>
+</tr>
+</tbody>
+</table>
+<p>The name of the standalone script is <code class="docutils literal"><span class="pre">pyGenClean_duplicated_samples</span></code>.</p>
+</div>
+<div class="section" id="duplicated-markers">
+<h2>Duplicated Markers<a class="headerlink" href="#duplicated-markers" title="Permalink to this headline">¶</a></h2>
+<p>The name to use in the configuration file is <code class="docutils literal"><span class="pre">duplicated_snps</span></code> and the
+<a class="reference internal" href="#duplicated-markers-table"><span>List of options for the duplicated_snps script.</span></a> table shows its configuration.</p>
+<table border="1" class="docutils" id="id2">
+<span id="duplicated-markers-table"></span><caption><span class="caption-text">List of options for the <strong>duplicated_snps</strong> script.</span><a class="headerlink" href="#id2" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col width="47%" />
+<col width="16%" />
+<col width="37%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Option</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--snp-completion-threshold</span></code></td>
+<td><code class="docutils literal"><span class="pre">FLOAT</span></code></td>
+<td>The completion threshold
+to consider a replicate
+when choosing the best
+replicates and for
+composite creation.
+[default: 0.9]</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--snp-concordance-threshold</span></code></td>
+<td><code class="docutils literal"><span class="pre">FLOAT</span></code></td>
+<td>The concordance
+threshold to consider a
+replicate when choosing
+the best replicates and
+for composite creation.
+[default: 0.98]</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--frequency_difference</span></code></td>
+<td><code class="docutils literal"><span class="pre">FLOAT</span></code></td>
+<td>The maximum difference
+in frequency between
+duplicated markers
+[default: 0.05]</td>
+</tr>
+</tbody>
+</table>
+<p>The name of the standalone script is <code class="docutils literal"><span class="pre">pyGenClean_duplicated_snps</span></code>.</p>
+</div>
+<div class="section" id="clean-no-call-and-only-heterozygous-markers">
+<h2>Clean No Call and Only Heterozygous Markers<a class="headerlink" href="#clean-no-call-and-only-heterozygous-markers" title="Permalink to this headline">¶</a></h2>
+<p>The name to use in the configuration file is <code class="docutils literal"><span class="pre">noCall_hetero_snps</span></code> and there
+are no customization possible.</p>
+<p>The name of the standalone script is <code class="docutils literal"><span class="pre">pyGenClean_clean_noCall_hetero_snps</span></code>.</p>
+</div>
+<div class="section" id="sample-missingness">
+<h2>Sample Missingness<a class="headerlink" href="#sample-missingness" title="Permalink to this headline">¶</a></h2>
+<p>The name to use in the configuration file is <code class="docutils literal"><span class="pre">sample_missingness</span></code> and the
+<a class="reference internal" href="#sample-missingness-table"><span>List of options for the sample_missingness script.</span></a> table shows its configuration.</p>
+<table border="1" class="docutils" id="id3">
+<span id="sample-missingness-table"></span><caption><span class="caption-text">List of options for the <strong>sample_missingness</strong> script.</span><a class="headerlink" href="#id3" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col width="17%" />
+<col width="15%" />
+<col width="68%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Option</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--mind</span></code></td>
+<td><code class="docutils literal"><span class="pre">FLOAT</span></code></td>
+<td>The missingness threshold (remove samples with
+more than x percent missing genotypes).
+[Default: 0.100]</td>
+</tr>
+</tbody>
+</table>
+<p>The name of the standalone script is <code class="docutils literal"><span class="pre">pyGenClean_sample_missingness</span></code>.</p>
+</div>
+<div class="section" id="marker-missingness">
+<h2>Marker Missingness<a class="headerlink" href="#marker-missingness" title="Permalink to this headline">¶</a></h2>
+<p>The name to use in the configuration file is <code class="docutils literal"><span class="pre">snp_missingness</span></code> and the
+<a class="reference internal" href="#snp-missingness-table"><span>List of options for the snp_missingness script.</span></a> table shows its configuration.</p>
+<table border="1" class="docutils" id="id4">
+<span id="snp-missingness-table"></span><caption><span class="caption-text">List of options for the <strong>snp_missingness</strong> script.</span><a class="headerlink" href="#id4" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col width="18%" />
+<col width="16%" />
+<col width="66%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Option</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--geno</span></code></td>
+<td><code class="docutils literal"><span class="pre">FLOAT</span></code></td>
+<td>The missingness threshold (remove SNPs with
+more than x percent missing genotypes).
+[Default: 0.020]</td>
+</tr>
+</tbody>
+</table>
+<p>The name of the standalone script is <code class="docutils literal"><span class="pre">pyGenClean_snp_missingness</span></code>.</p>
+</div>
+<div class="section" id="sex-check">
+<h2>Sex Check<a class="headerlink" href="#sex-check" title="Permalink to this headline">¶</a></h2>
+<p>The name to use in the configuration file is <code class="docutils literal"><span class="pre">sex_check</span></code> and the
+<a class="reference internal" href="#sex-check-table"><span>List of options for the sex_check script.</span></a> table shows its configuration.</p>
+<table border="1" class="docutils" id="id5">
+<span id="sex-check-table"></span><caption><span class="caption-text">List of options for the <strong>sex_check</strong> script.</span><a class="headerlink" href="#id5" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col width="38%" />
+<col width="17%" />
+<col width="46%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Option</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--femaleF</span></code></td>
+<td><code class="docutils literal"><span class="pre">FLOAT</span></code></td>
+<td>The female F threshold.
+[default: &lt; 0.300000]</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--maleF</span></code></td>
+<td><code class="docutils literal"><span class="pre">FLOAT</span></code></td>
+<td>The male F threshold.
+[default: &gt; 0.700000]</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--nbChr23</span></code></td>
+<td><code class="docutils literal"><span class="pre">INT</span></code></td>
+<td>The minimum number of markers
+on chromosome 23 before
+computing Plink&#8217;s sex check
+[default: 50]</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--gender-plot</span></code></td>
+<td>&nbsp;</td>
+<td>Create the gender plot
+(summarized chr Y intensities
+in function of summarized chr X
+intensities) for problematic
+samples. Not used by default.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--sex-chr-intensities</span></code></td>
+<td><code class="docutils literal"><span class="pre">FILE</span></code></td>
+<td>A file containing alleles
+intensities for each of the
+markers located on the X and Y
+chromosome for the gender plot.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--gender-plot-format</span></code></td>
+<td><code class="docutils literal"><span class="pre">STRING</span></code></td>
+<td>The output file format for the
+gender plot (png, ps, or pdf
+formats are available).
+[default: png]</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--lrr-baf</span></code></td>
+<td>&nbsp;</td>
+<td>Create the LRR and BAF plot for
+problematic samples. Not used
+by default.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--lrr-baf-raw-dir</span></code></td>
+<td><code class="docutils literal"><span class="pre">DIR</span></code></td>
+<td>Directory or list of
+directories containing
+information about every samples
+(BAF and LRR).</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--lrr-baf-format</span></code></td>
+<td><code class="docutils literal"><span class="pre">STRING</span></code></td>
+<td>The output file format for the
+LRR and BAF plot (png, ps or
+pdf formats are available).
+[default: png]</td>
+</tr>
+</tbody>
+</table>
+<p>The name of the standalone script is <code class="docutils literal"><span class="pre">pyGenClean_sex_check</span></code>. If you want to
+redo the BAF and LRR plot or the gender plot, you can use the
+<code class="docutils literal"><span class="pre">pyGenClean_baf_lrr_plot</span></code> and <code class="docutils literal"><span class="pre">pyGenClean_gender_plot</span></code> scripts,
+respectively.</p>
+</div>
+<div class="section" id="plate-bias">
+<h2>Plate Bias<a class="headerlink" href="#plate-bias" title="Permalink to this headline">¶</a></h2>
+<p>The name to use in the configuration file is <code class="docutils literal"><span class="pre">plate_bias</span></code> and the
+<a class="reference internal" href="#plate-bias-table"><span>List of options for the plate_bias script.</span></a> table shows its configuration.</p>
+<table border="1" class="docutils" id="id6">
+<span id="plate-bias-table"></span><caption><span class="caption-text">List of options for the <strong>plate_bias</strong> script.</span><a class="headerlink" href="#id6" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col width="26%" />
+<col width="16%" />
+<col width="59%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Option</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--loop-assoc</span></code></td>
+<td><code class="docutils literal"><span class="pre">FILE</span></code></td>
+<td>The file containing the plate
+organization of each samples. Must
+contains three column (with no header):
+famID, indID and plateName.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--pfilter</span></code></td>
+<td><code class="docutils literal"><span class="pre">FLOAT</span></code></td>
+<td>The significance threshold used for the
+plate effect. [default: 1.0e-07]</td>
+</tr>
+</tbody>
+</table>
+<p>The name of the standalone script is <code class="docutils literal"><span class="pre">pyGenClean_plate_bias</span></code>.</p>
+</div>
+<div class="section" id="heterozygous-haploid">
+<h2>Heterozygous Haploid<a class="headerlink" href="#heterozygous-haploid" title="Permalink to this headline">¶</a></h2>
+<p>The name to use in the configuration file is <code class="docutils literal"><span class="pre">remove_heterozygous_haploid</span></code> and
+there are no customization possible.</p>
+<p>The name of the standalone script is <code class="docutils literal"><span class="pre">pyGenClean_remove_heterozygous_haploid</span></code>.</p>
+</div>
+<div class="section" id="related-samples">
+<h2>Related Samples<a class="headerlink" href="#related-samples" title="Permalink to this headline">¶</a></h2>
+<p>The name to use in the configuration file is <code class="docutils literal"><span class="pre">find_related_samples</span></code> and the
+<a class="reference internal" href="#find-related-samples-table"><span>List of options for the find_related_samples script.</span></a> table shows its configuration.</p>
+<table border="1" class="docutils" id="id7">
+<span id="find-related-samples-table"></span><caption><span class="caption-text">List of options for the <strong>find_related_samples</strong> script.</span><a class="headerlink" href="#id7" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col width="40%" />
+<col width="17%" />
+<col width="43%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Option</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--genome-only</span></code></td>
+<td>&nbsp;</td>
+<td>Only create the genome file.
+Not selected by default.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--min-nb-snp</span></code></td>
+<td><code class="docutils literal"><span class="pre">INT</span></code></td>
+<td>The minimum number of markers
+needed to compute IBS values.
+[Default: 10000]</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--indep-pairwise</span></code></td>
+<td><code class="docutils literal"><span class="pre">INT</span></code>
+<code class="docutils literal"><span class="pre">INT</span></code>
+<code class="docutils literal"><span class="pre">FLOAT</span></code></td>
+<td>Three numbers: window size,
+window shift and the r2
+threshold. [default: [&#8216;50&#8217;,
+&#8216;5&#8217;, &#8216;0.1&#8217;]]</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--maf</span></code></td>
+<td><code class="docutils literal"><span class="pre">FLOAT</span></code></td>
+<td>Restrict to SNPs with MAF &gt;=
+threshold. [default: 0.05]</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--ibs2-ratio</span></code></td>
+<td><code class="docutils literal"><span class="pre">FLOAT</span></code></td>
+<td>The initial IBS2* ratio (the
+minimum value to show in the
+plot. [default: 0.8]</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--sge</span></code></td>
+<td>&nbsp;</td>
+<td>Use SGE for parallelization.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--sge-walltime</span></code></td>
+<td><code class="docutils literal"><span class="pre">STRING</span></code></td>
+<td>The time limit (for clusters).
+Do not use if you are not
+required to specify a walltime
+for your jobs on your cluster
+(e.g. <code class="docutils literal"><span class="pre">-lwalltime=1:0:0</span></code> on
+the cluster). Allow enough
+time for proper job
+completion.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--sge-nodes</span></code></td>
+<td><code class="docutils literal"><span class="pre">INT</span></code>
+<code class="docutils literal"><span class="pre">INT</span></code></td>
+<td>The number of nodes and the
+number of processor per nodes
+to use (e.g. <code class="docutils literal"><span class="pre">qsub</span>
+<span class="pre">-lnodes=X:ppn=Y</span></code> on the
+cluster, where X is the number
+of nodes and Y is the number
+of processor to use. Do not
+use if you are not required to
+specify the number of nodes
+for your jobs on the cluster.
+Allow enough ressources for
+proper job completion.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--line-per-file-for-sge</span></code></td>
+<td><code class="docutils literal"><span class="pre">INT</span></code></td>
+<td>The number of line per file
+for SGE task array.
+[default: 100]</td>
+</tr>
+</tbody>
+</table>
+<p>The name of the standalone script is <code class="docutils literal"><span class="pre">pyGenClean_find_related_samples</span></code>. Even
+though randomly choosing a subset of related samples is done automatically, you
+can use the <code class="docutils literal"><span class="pre">pyGenClean_merge_related_samples</span></code> to perform it again.</p>
+</div>
+<div class="section" id="ethnicity">
+<h2>Ethnicity<a class="headerlink" href="#ethnicity" title="Permalink to this headline">¶</a></h2>
+<p>The name to use in the configuration file is <code class="docutils literal"><span class="pre">check_ethnicity</span></code> and the
+<a class="reference internal" href="#check-ethnicity-table"><span>List of options for the check_ethnicity script.</span></a> table shows its configuration.</p>
+<table border="1" class="docutils" id="id8">
+<span id="check-ethnicity-table"></span><caption><span class="caption-text">List of options for the <strong>check_ethnicity</strong> script.</span><a class="headerlink" href="#id8" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col width="40%" />
+<col width="17%" />
+<col width="43%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Option</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--skip-ref-pops</span></code></td>
+<td>&nbsp;</td>
+<td>Perform the MDS computation,
+but skip the three reference
+panels.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--ceu-bfile</span></code></td>
+<td><code class="docutils literal"><span class="pre">FILE</span></code></td>
+<td>The input file prefix (will
+find the plink binary files
+by appending the prefix to
+the .bim, .bed and .fam
+files, respectively.) for the
+CEU population.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--yri-bfile</span></code></td>
+<td><code class="docutils literal"><span class="pre">FILE</span></code></td>
+<td>The input file prefix (will
+find the plink binary files
+by appending the prefix to
+the .bim, .bed and .fam
+files, respectively.) for the
+CEU population.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--jpt-chb-bfile</span></code></td>
+<td><code class="docutils literal"><span class="pre">FILE</span></code></td>
+<td>The input file prefix (will
+find the plink binary files
+by appending the prefix to
+the .bim, .bed and .fam
+files, respectively.) for the
+JPT-CHB population.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--min-nb-snp</span></code></td>
+<td><code class="docutils literal"><span class="pre">FILE</span></code></td>
+<td>The minimum number of markers
+needed to compute IBS values.
+[Default: 8000]</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--indep-pairwise</span></code></td>
+<td><code class="docutils literal"><span class="pre">INT</span></code>
+<code class="docutils literal"><span class="pre">INT</span></code>
+<code class="docutils literal"><span class="pre">FLOAT</span></code></td>
+<td>Three numbers: window size,
+window shift and the r2
+threshold. [default: [&#8216;50&#8217;,
+&#8216;5&#8217;, &#8216;0.1&#8217;]]</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--maf</span></code></td>
+<td><code class="docutils literal"><span class="pre">INT</span></code></td>
+<td>Restrict to SNPs with MAF &gt;=
+threshold. [default: 0.05]</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--sge</span></code></td>
+<td>&nbsp;</td>
+<td>Use SGE for parallelization.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--sge-walltime</span></code></td>
+<td><code class="docutils literal"><span class="pre">STRING</span></code></td>
+<td>The time limit (for clusters).
+Do not use if you are not
+required to specify a walltime
+for your jobs on your cluster
+(e.g. <code class="docutils literal"><span class="pre">-lwalltime=1:0:0</span></code> on
+the cluster). Allow enough
+time for proper job
+completion.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--sge-nodes</span></code></td>
+<td><code class="docutils literal"><span class="pre">INT</span></code>
+<code class="docutils literal"><span class="pre">INT</span></code></td>
+<td>The number of nodes and the
+number of processor per nodes
+to use (e.g. <code class="docutils literal"><span class="pre">qsub</span>
+<span class="pre">-lnodes=X:ppn=Y</span></code> on the
+cluster, where X is the number
+of nodes and Y is the number
+of processor to use. Do not
+use if you are not required to
+specify the number of nodes
+for your jobs on the cluster.
+Allow enough ressources for
+proper job completion.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--ibs-sge-walltime</span></code></td>
+<td><code class="docutils literal"><span class="pre">STRING</span></code></td>
+<td>The time limit (for clusters)
+for the IBS jobs. Do not use
+if you are not required to
+specify a walltime for your
+jobs on your cluster (e.g.
+<code class="docutils literal"><span class="pre">-lwalltime=1:0:0</span></code> on the
+cluster). Allow enough time
+for proper job completion.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--ibs-sge-nodes</span></code></td>
+<td><code class="docutils literal"><span class="pre">INT</span></code>
+<code class="docutils literal"><span class="pre">INT</span></code></td>
+<td>The number of nodes and the
+number of processor per nodes
+to use for the IBS jobs (e.g.
+<code class="docutils literal"><span class="pre">qsub</span>
+<span class="pre">-lnodes=X:ppn=Y</span></code> on the
+cluster, where X is the number
+of nodes and Y is the number
+of processor to use. Do not
+use if you are not required to
+specify the number of nodes
+for your jobs on the cluster.
+Allow enough ressources for
+proper job completion.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--line-per-file-for-sge</span></code></td>
+<td><code class="docutils literal"><span class="pre">INT</span></code></td>
+<td>The number of line per file
+for SGE task array.
+[default: 100]</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--nb-components</span></code></td>
+<td><code class="docutils literal"><span class="pre">INT</span></code></td>
+<td>The number of component to
+compute. [default: 10]</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--outliers-of</span></code></td>
+<td><code class="docutils literal"><span class="pre">STRING</span></code></td>
+<td>Finds the outliers of this
+population. [default: CEU]</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--multiplier</span></code></td>
+<td><code class="docutils literal"><span class="pre">FLOAT</span></code></td>
+<td>To find the outliers, we look
+for more than x times the
+cluster standard deviation.
+[default: 1.9]</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--xaxis</span></code></td>
+<td><code class="docutils literal"><span class="pre">STRING</span></code></td>
+<td>The component to use for the
+X axis. [default: C1]</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--yaxis</span></code></td>
+<td><code class="docutils literal"><span class="pre">STRING</span></code></td>
+<td>The component to use for the
+Y axis. [default: C2]</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--format</span></code></td>
+<td><code class="docutils literal"><span class="pre">STRING</span></code></td>
+<td>The output file format (png,
+ps, pdf, or X11 formats are
+available). [default: png]</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--title</span></code></td>
+<td><code class="docutils literal"><span class="pre">STRING</span></code></td>
+<td>The title of the MDS plot.
+[default: C2 in function of
+C1 - MDS]</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--xlabel</span></code></td>
+<td><code class="docutils literal"><span class="pre">STRING</span></code></td>
+<td>The label of the X axis.
+[default: C1]</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--ylabel</span></code></td>
+<td><code class="docutils literal"><span class="pre">STRING</span></code></td>
+<td>The label of the Y axis.
+[default: C2]</td>
+</tr>
+</tbody>
+</table>
+<p>The name of the standalone script is <code class="docutils literal"><span class="pre">pyGenClean_check_ethnicity</span></code>. If you want
+to redo the outlier detection using a different multiplier, have a look at the
+<code class="docutils literal"><span class="pre">pyGenClean_find_outliers</span></code> script. If you want to redo any MDS plot, have a
+look at the <code class="docutils literal"><span class="pre">pyGenClean_plot_MDS</span></code> script.</p>
+</div>
+<div class="section" id="minor-allele-frequency-of-zero">
+<h2>Minor Allele Frequency of Zero<a class="headerlink" href="#minor-allele-frequency-of-zero" title="Permalink to this headline">¶</a></h2>
+<p>The name to use in the configuration file is <code class="docutils literal"><span class="pre">flag_maf_zero</span></code> and there
+are no customization possible.</p>
+<p>The name of the standalone script is <code class="docutils literal"><span class="pre">pyGenClean_flag_maf_zero</span></code>.</p>
+</div>
+<div class="section" id="hardy-weinberg-equilibrium">
+<h2>Hardy Weinberg Equilibrium<a class="headerlink" href="#hardy-weinberg-equilibrium" title="Permalink to this headline">¶</a></h2>
+<p>The name to use in the configuration file is <code class="docutils literal"><span class="pre">flag_hw</span></code> and the
+<a class="reference internal" href="#flag-hw-table"><span>List of options for the flag_hw script.</span></a> table shows its configuration.</p>
+<table border="1" class="docutils" id="id9">
+<span id="flag-hw-table"></span><caption><span class="caption-text">List of options for the <strong>flag_hw</strong> script.</span><a class="headerlink" href="#id9" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col width="17%" />
+<col width="17%" />
+<col width="66%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Option</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--hwe</span></code></td>
+<td><code class="docutils literal"><span class="pre">FLOAT</span></code></td>
+<td>The Hardy-Weinberg equilibrium threshold.
+[default: 1e-4]</td>
+</tr>
+</tbody>
+</table>
+<p>The name of the standalone script is <code class="docutils literal"><span class="pre">pyGenClean_flag_hw</span></code>.</p>
+</div>
+<div class="section" id="subsetting-the-data">
+<h2>Subsetting the Data<a class="headerlink" href="#subsetting-the-data" title="Permalink to this headline">¶</a></h2>
+<p>The name to use in the configuration file is <code class="docutils literal"><span class="pre">subset</span></code> and the
+<a class="reference internal" href="#subset-table"><span>List of options for the subset script.</span></a> table shows its configuration.</p>
+<table border="1" class="docutils" id="id10">
+<span id="subset-table"></span><caption><span class="caption-text">List of options for the <strong>subset</strong> script.</span><a class="headerlink" href="#id10" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col width="22%" />
+<col width="14%" />
+<col width="64%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Option</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--exclude</span></code></td>
+<td><code class="docutils literal"><span class="pre">FILE</span></code></td>
+<td>A file containing SNPs to exclude from the
+data set.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--extract</span></code></td>
+<td><code class="docutils literal"><span class="pre">FILE</span></code></td>
+<td>A file containing SNPs to extract from the
+data set.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--remove</span></code></td>
+<td><code class="docutils literal"><span class="pre">FILE</span></code></td>
+<td>A file containing samples (FID and IID) to
+remove from the data set.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--keep</span></code></td>
+<td><code class="docutils literal"><span class="pre">FILE</span></code></td>
+<td>A file containing samples (FID and IID) to
+keep from the data set.</td>
+</tr>
+</tbody>
+</table>
+<p>The name of the standalone script is <code class="docutils literal"><span class="pre">pyGenClean_subset_data</span></code>.</p>
+</div>
+<div class="section" id="comparison-with-a-gold-standard">
+<h2>Comparison with a Gold Standard<a class="headerlink" href="#comparison-with-a-gold-standard" title="Permalink to this headline">¶</a></h2>
+<p>The name to use in the configuration file is <code class="docutils literal"><span class="pre">compare_gold_standard</span></code> and the
+<a class="reference internal" href="#compare-gold-standard-table"><span>List of options for the compare_gold_standard script.</span></a> table shows its configuration.</p>
+<table border="1" class="docutils" id="id11">
+<span id="compare-gold-standard-table"></span><caption><span class="caption-text">List of options for the <strong>compare_gold_standard</strong> script.</span><a class="headerlink" href="#id11" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col width="33%" />
+<col width="14%" />
+<col width="53%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Option</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--gold-bfile</span></code></td>
+<td><code class="docutils literal"><span class="pre">FILE</span></code></td>
+<td>The input file prefix (will find the
+plink binary files by appending the
+prefix to the .bim, .bed and .fam
+files, respectively.) for the Gold
+Standard .</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--same-samples</span></code></td>
+<td><code class="docutils literal"><span class="pre">FILE</span></code></td>
+<td>A file containing samples which are
+present in both the gold standard
+and the source panel. One line by
+identity and tab separated. For each
+row, first sample is Gold Standard,
+second is source panel.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--source-manifest</span></code></td>
+<td><code class="docutils literal"><span class="pre">FILE</span></code></td>
+<td>The illumina marker manifest.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--source-alleles</span></code></td>
+<td><code class="docutils literal"><span class="pre">FILE</span></code></td>
+<td>A file containing the source alleles
+(TOP). Two columns (separated by
+tabulation, one with the marker
+name, the other with the alleles
+(separated by space). No header.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--sge</span></code></td>
+<td>&nbsp;</td>
+<td>Use SGE for parallelization.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--do-not-flip</span></code></td>
+<td>&nbsp;</td>
+<td>Do not flip SNPs. WARNING: only use
+this option only if the Gold
+Standard was generated using the
+same chip (hence, flipping is
+unnecessary).</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--use-marker-names</span></code></td>
+<td>&nbsp;</td>
+<td>Use marker names instead of (chr,
+position). WARNING: only use this
+options only if the Gold Standard
+was generated using the same chip
+(hence, they have the same marker
+names).</td>
+</tr>
+</tbody>
+</table>
+<p>The name of the standalone script is <code class="docutils literal"><span class="pre">pyGenClean_compare_gold_standard</span></code>.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="protocol.html" title="Proposed Protocol"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="install_windows.html" title="Windows Installation"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">pyGenClean 1.7.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2012, Louis-Philippe Lemieux Perreault.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+    </div>
+  </body>
+</html>

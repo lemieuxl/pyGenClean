@@ -1,0 +1,779 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Duplicated Samples Module &mdash; pyGenClean 1.7.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.7.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="pyGenClean 1.7.0 documentation" href="index.html" />
+    <link rel="next" title="Duplicated Markers Module" href="duplicated_markers.html" />
+    <link rel="prev" title="The Data Clean Up Module" href="data_clean_up_module.html" /> 
+  </head>
+  <body role="document">
+
+<div style="background-color: white; text-align: left; padding: 10px 10px 15px 15px">
+<a href="index.html"><img src="_static/logo.png" border="0" alt="py4sci"/></a>
+</div>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="duplicated_markers.html" title="Duplicated Markers Module"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="data_clean_up_module.html" title="The Data Clean Up Module"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">pyGenClean 1.7.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Duplicated Samples Module</a><ul>
+<li><a class="reference internal" href="#input-files">Input Files</a></li>
+<li><a class="reference internal" href="#procedure">Procedure</a></li>
+<li><a class="reference internal" href="#output-files">Output Files</a></li>
+<li><a class="reference internal" href="#the-algorithm">The Algorithm</a><ul>
+<li><a class="reference internal" href="#module-pyGenClean.DupSamples.duplicated_samples">pyGenClean.DupSamples.duplicated_samples</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="data_clean_up_module.html"
+                        title="previous chapter">The Data Clean Up Module</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="duplicated_markers.html"
+                        title="next chapter">Duplicated Markers Module</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/duplicated_samples.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="duplicated-samples-module">
+<h1>Duplicated Samples Module<a class="headerlink" href="#duplicated-samples-module" title="Permalink to this headline">¶</a></h1>
+<p>The usage of the standalone module is shown below:</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> pyGenClean_duplicated_samples --help
+<span class="go">usage: pyGenClean_duplicated_samples [-h] --tfile FILE</span>
+<span class="go">                                     [--sample-completion-threshold FLOAT]</span>
+<span class="go">                                     [--sample-concordance-threshold FLOAT]</span>
+<span class="go">                                     [--out FILE]</span>
+
+<span class="go">Extract and work with duplicated samples.</span>
+
+<span class="go">optional arguments:</span>
+<span class="go">  -h, --help            show this help message and exit</span>
+
+<span class="go">Input File:</span>
+<span class="go">  --tfile FILE          The input file prefix (will find the tped and tfam</span>
+<span class="go">                        file by appending the prefix to .tped and .tfam,</span>
+<span class="go">                        respectively.) The duplicated samples should have the</span>
+<span class="go">                        same identification numbers (both family and</span>
+<span class="go">                        individual ids.)</span>
+
+<span class="go">Options:</span>
+<span class="go">  --sample-completion-threshold FLOAT</span>
+<span class="go">                        The completion threshold to consider a replicate when</span>
+<span class="go">                        choosing the best replicates and for creating the</span>
+<span class="go">                        composite samples. [default: 0.9]</span>
+<span class="go">  --sample-concordance-threshold FLOAT</span>
+<span class="go">                        The concordance threshold to consider a replicate when</span>
+<span class="go">                        choosing the best replicates and for creating the</span>
+<span class="go">                        composite samples. [default: 0.97]</span>
+
+<span class="go">Output File:</span>
+<span class="go">  --out FILE            The prefix of the output files. [default: dup_samples]</span>
+</pre></div>
+</div>
+<div class="section" id="input-files">
+<h2>Input Files<a class="headerlink" href="#input-files" title="Permalink to this headline">¶</a></h2>
+<p>This module uses PLINK&#8217;s transposed pedfile format (<code class="docutils literal"><span class="pre">tped</span></code> and <code class="docutils literal"><span class="pre">tfam</span></code>
+files). For this step to work, the duplicated samples must have the same
+identification (family and sample ID). One should keep a file containing the
+original identifications before modifying the dataset accordingly.</p>
+</div>
+<div class="section" id="procedure">
+<h2>Procedure<a class="headerlink" href="#procedure" title="Permalink to this headline">¶</a></h2>
+<p>Here are the steps performed by the module:</p>
+<ol class="arabic simple">
+<li>Reads the <code class="docutils literal"><span class="pre">tfam</span></code> file to find duplicated samples.</li>
+<li>Separates the duplicated samples from the unique samples.</li>
+<li>Writes the unique samples into a file.</li>
+<li>Reads the <code class="docutils literal"><span class="pre">tped</span></code> file and write the pedigree file for the unique samples.
+Saves in memory the pedigree for the duplicated samples. Updates the indexes
+of the duplicated samples.</li>
+<li>If there are no duplicated samples, simply create the final file. Stop here.</li>
+<li>Computes the completion (for each of the duplicated samples) and the
+concordance of each sample pairs.</li>
+<li>Prints statistics (concordance and completion).</li>
+<li>Prints the concordance matrix for each duplicated samples.</li>
+<li>Prints the <code class="docutils literal"><span class="pre">tped</span></code> and the <code class="docutils literal"><span class="pre">tfam</span></code> file for the duplicated samples.</li>
+<li>Chooses the best of each duplicates (to keep and to complete) according to
+completion and concordance.</li>
+<li>Creates a unique <code class="docutils literal"><span class="pre">tped</span></code> and <code class="docutils literal"><span class="pre">tfam</span></code> from the duplicated samples by
+completing the best chosen one with the other samples.</li>
+<li>Creates the final dataset.</li>
+</ol>
+</div>
+<div class="section" id="output-files">
+<h2>Output Files<a class="headerlink" href="#output-files" title="Permalink to this headline">¶</a></h2>
+<p>The output files of each of the steps described above are as follow (note that
+the output prefix shown is the one by default [<em>i.e.</em> dup_samples]):</p>
+<ol class="arabic simple">
+<li>No output file is created.</li>
+<li>No output file is created.</li>
+<li>Only one of the two PLINK&#8217;s transposed pedfiles is created:<ul>
+<li><code class="docutils literal"><span class="pre">dup_samples.unique_samples.tfam</span></code>: the <code class="docutils literal"><span class="pre">tfam</span></code> file containing only
+the unique samples from the original dataset.</li>
+</ul>
+</li>
+<li>The second of the two PLINK&#8217;s transposed pedfiles is created (see previous
+step):<ul>
+<li><code class="docutils literal"><span class="pre">dup_samples.unique_samples.tped</span></code>: the <code class="docutils literal"><span class="pre">tped</span></code> file containing only
+the unique samples from the original dataset.</li>
+</ul>
+</li>
+<li>If there are not duplicated samples, the final PLINK&#8217;s transposed pedfiles
+are created (if not, continue tu next step):<ul>
+<li><code class="docutils literal"><span class="pre">dup_samples.final</span></code>: the <code class="docutils literal"><span class="pre">tfam</span></code> and <code class="docutils literal"><span class="pre">tped</span></code> final files.</li>
+</ul>
+</li>
+<li>One result file is created:<ul>
+<li><code class="docutils literal"><span class="pre">dup_samples.diff</span></code>: a file containing the differences in the genotypes
+for each pair of duplicated samples. Each line contains the following
+information: <code class="docutils literal"><span class="pre">name</span></code> the name of the marker, <code class="docutils literal"><span class="pre">famID</span></code> the family ID,
+<code class="docutils literal"><span class="pre">indID</span></code> the individual ID, <code class="docutils literal"><span class="pre">dupIndex_1</span></code> the index of the first
+duplicated sample in the original dataset (since the identification of
+each duplicated samples are the same), <code class="docutils literal"><span class="pre">dupIndex_2</span></code> the index of the
+second duplicated sample in the original dataset, <code class="docutils literal"><span class="pre">genotype_1</span></code> and
+<code class="docutils literal"><span class="pre">genotype_2</span></code>, the genotype of the first and second duplicated samples
+for the current marker, respectively.</li>
+</ul>
+</li>
+<li>One result file is created:<ul>
+<li><code class="docutils literal"><span class="pre">dup_samples.summary</span></code>: the completion and summarized concordance of
+each duplicated sample pair. The first two columns (<code class="docutils literal"><span class="pre">origIndex</span></code> and
+<code class="docutils literal"><span class="pre">dupIndex</span></code> are the indexes of the duplicated sample in the original
+and duplicated transposed pedfiles, respectively.</li>
+</ul>
+</li>
+<li>One result file is created<ul>
+<li><code class="docutils literal"><span class="pre">dup_samples.concordance</span></code>: the pairwise concordance of each duplicated
+samples.</li>
+</ul>
+</li>
+<li>One set of PLINK&#8217;s transposed pedfiles:<ul>
+<li><code class="docutils literal"><span class="pre">dup_samples.duplicated_samples</span></code>: the dataset containing the
+duplicated samples from the original dataset.</li>
+</ul>
+</li>
+<li>Two output files are created:<ul>
+<li><code class="docutils literal"><span class="pre">dup_samples.chosen_samples.info</span></code>: a list of samples that were chosen
+for completion according to their completion and summarized concordance
+with their duplicates. Again, their indexes in the original and
+duplicated transposed pedfiles are saved (the two first columns).</li>
+<li><code class="docutils literal"><span class="pre">dup_samples.excluded_samples.info</span></code>: a list of samples that were not
+chosen for completion according to their completion and summarized
+concordance with their duplicates.</li>
+</ul>
+</li>
+<li>Multiple output files are created, along with on set of PLINK&#8217;s transposed
+pedfiles:<ul>
+<li><code class="docutils literal"><span class="pre">dup_samples.zeroed_out</span></code>: the list of genotypes that were zeroed out
+during completion of the chosen duplicated samples.</li>
+<li><code class="docutils literal"><span class="pre">dup_samples.not_good_enough</span></code>: the list of samples that were not good
+enough (according to completion and concordance) to create the composite
+sample (the chosen duplicated samples).</li>
+</ul>
+</li>
+<li>Two sets of PLINK&#8217;s transposed pedfiles are created:<ul>
+<li><code class="docutils literal"><span class="pre">dup_samples.chosen_samples</span></code>: a transposed pedfiles containing the
+completed chosen samples.</li>
+<li><code class="docutils literal"><span class="pre">dup_samples.final</span></code>: the final dataset.</li>
+</ul>
+</li>
+</ol>
+</div>
+<div class="section" id="the-algorithm">
+<h2>The Algorithm<a class="headerlink" href="#the-algorithm" title="Permalink to this headline">¶</a></h2>
+<p>For more information about the actual algorithms and source codes (the
+<a class="reference internal" href="#module-pyGenClean.DupSamples.duplicated_samples" title="pyGenClean.DupSamples.duplicated_samples"><code class="xref py py-mod docutils literal"><span class="pre">pyGenClean.DupSamples.duplicated_samples</span></code></a> module), refer to the
+following sections.</p>
+<div class="section" id="module-pyGenClean.DupSamples.duplicated_samples">
+<span id="pygenclean-dupsamples-duplicated-samples"></span><h3>pyGenClean.DupSamples.duplicated_samples<a class="headerlink" href="#module-pyGenClean.DupSamples.duplicated_samples" title="Permalink to this headline">¶</a></h3>
+<dl class="exception">
+<dt id="pyGenClean.DupSamples.duplicated_samples.ProgramError">
+<em class="property">exception </em><code class="descclassname">pyGenClean.DupSamples.duplicated_samples.</code><code class="descname">ProgramError</code><span class="sig-paren">(</span><em>msg</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/DupSamples/duplicated_samples.html#ProgramError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.DupSamples.duplicated_samples.ProgramError" title="Permalink to this definition">¶</a></dt>
+<dd><p>An <code class="xref py py-class docutils literal"><span class="pre">Exception</span></code> raised in case of a problem.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>msg</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the message to print to the user before exiting.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.DupSamples.duplicated_samples.addToTPEDandTFAM">
+<code class="descclassname">pyGenClean.DupSamples.duplicated_samples.</code><code class="descname">addToTPEDandTFAM</code><span class="sig-paren">(</span><em>tped</em>, <em>tfam</em>, <em>prefix</em>, <em>toAddPrefix</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/DupSamples/duplicated_samples.html#addToTPEDandTFAM"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.DupSamples.duplicated_samples.addToTPEDandTFAM" title="Permalink to this definition">¶</a></dt>
+<dd><p>Append a tfile to another, creating a new one.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>tped</strong> (<code class="xref py py-class docutils literal"><span class="pre">numpy.array</span></code>) &#8211; the <code class="docutils literal"><span class="pre">tped</span></code> that will be appended to the other one.</li>
+<li><strong>tfam</strong> (<code class="xref py py-class docutils literal"><span class="pre">numpy.array</span></code>) &#8211; the <code class="docutils literal"><span class="pre">tfam</span></code> that will be appended to the other one.</li>
+<li><strong>prefix</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the prefix of all the files.</li>
+<li><strong>toAddPrefix</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the prefix of the final file.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Here are the steps of this function:</p>
+<ol class="arabic simple">
+<li>Writes the <code class="docutils literal"><span class="pre">tped</span></code> into <code class="docutils literal"><span class="pre">prefix.chosen_samples.tped</span></code>.</li>
+<li>Writes the <code class="docutils literal"><span class="pre">tfam</span></code> into <code class="docutils literal"><span class="pre">prefix.chosen_samples.tfam</span></code>.</li>
+<li>Copies the previous <code class="docutils literal"><span class="pre">tfam</span></code> (<code class="docutils literal"><span class="pre">toAddPrefix.tfam</span></code>) into the final
+<code class="docutils literal"><span class="pre">tfam</span></code> (<code class="docutils literal"><span class="pre">prefix.final.tfam</span></code>).</li>
+<li>Append the <code class="docutils literal"><span class="pre">tfam</span></code> to the final <code class="docutils literal"><span class="pre">tfam</span></code> (<code class="docutils literal"><span class="pre">prefix.final.tfam</span></code>).</li>
+<li>Reads the previous <code class="docutils literal"><span class="pre">tped</span></code> (<code class="docutils literal"><span class="pre">toAddPrefix.tped</span></code>) and append the new
+<code class="docutils literal"><span class="pre">tped</span></code> to it, writing the final one (<code class="docutils literal"><span class="pre">prefix.final.tped</span></code>).</li>
+</ol>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">The <code class="docutils literal"><span class="pre">tped</span></code> and <code class="docutils literal"><span class="pre">tfam</span></code> variables need to contain at least one
+sample.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.DupSamples.duplicated_samples.checkArgs">
+<code class="descclassname">pyGenClean.DupSamples.duplicated_samples.</code><code class="descname">checkArgs</code><span class="sig-paren">(</span><em>args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/DupSamples/duplicated_samples.html#checkArgs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.DupSamples.duplicated_samples.checkArgs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks the arguments and options.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>args</strong> (<a class="reference external" href="http://docs.python.org/library/argparse.html#argparse.Namespace" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">argparse.Namespace</span></code></a>) &#8211; a <a class="reference external" href="http://docs.python.org/library/argparse.html#argparse.Namespace" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">argparse.Namespace</span></code></a> object containing the options
+of the program.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><code class="docutils literal"><span class="pre">True</span></code> if everything was OK.</td>
+</tr>
+</tbody>
+</table>
+<p>If there is a problem with an option, an exception is raised using the
+<a class="reference internal" href="#pyGenClean.DupSamples.duplicated_samples.ProgramError" title="pyGenClean.DupSamples.duplicated_samples.ProgramError"><code class="xref py py-class docutils literal"><span class="pre">ProgramError</span></code></a> class, a message is printed to the
+<code class="xref py py-class docutils literal"><span class="pre">sys.stderr</span></code> and the program exists with code 1.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.DupSamples.duplicated_samples.chooseBestDuplicates">
+<code class="descclassname">pyGenClean.DupSamples.duplicated_samples.</code><code class="descname">chooseBestDuplicates</code><span class="sig-paren">(</span><em>tped</em>, <em>samples</em>, <em>oldSamples</em>, <em>completion</em>, <em>concordance_all</em>, <em>prefix</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/DupSamples/duplicated_samples.html#chooseBestDuplicates"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.DupSamples.duplicated_samples.chooseBestDuplicates" title="Permalink to this definition">¶</a></dt>
+<dd><p>Choose the best duplicates according to the completion rate.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>tped</strong> (<code class="xref py py-class docutils literal"><span class="pre">numpy.array</span></code>) &#8211; the <code class="docutils literal"><span class="pre">tped</span></code> containing the duplicated samples.</li>
+<li><strong>samples</strong> (<a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) &#8211; the updated position of the samples in the tped containing
+only duplicated samples.</li>
+<li><strong>oldSamples</strong> (<a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) &#8211; the original duplicated sample positions.</li>
+<li><strong>completion</strong> (<code class="xref py py-class docutils literal"><span class="pre">numpy.array</span></code>) &#8211; the completion of each of the duplicated samples.</li>
+<li><strong>concordance_all</strong> (<a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) &#8211; the concordance of every duplicated samples.</li>
+<li><strong>prefix</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the prefix of all the files.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">a tuple where the first element is a list of the chosen samples&#8217;
+indexes, the second on is the completion and the last one is the
+concordance (a map).</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>These are the steps to find the best duplicated sample:</p>
+<ol class="arabic simple">
+<li>Sort the list of concordances.</li>
+<li>Sort the list of completions.</li>
+<li>Choose the best of the concordance and put in a set.</li>
+<li>Choose the best of the completion and put it in a set.</li>
+<li>Compute the intersection of the two sets. If there is one sample or
+more, then randomly choose one sample.</li>
+<li>If the intersection doesn&#8217;t contain at least one sample, redo steps 3
+and 4, but increase the number of chosen best by one. Redo step 5 and 6
+(if required).</li>
+</ol>
+<p>The chosen samples are written in <code class="docutils literal"><span class="pre">prefix.chosen_samples.info</span></code>. The rest
+are written in <code class="docutils literal"><span class="pre">prefix.excluded_samples.info</span></code>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.DupSamples.duplicated_samples.computeStatistics">
+<code class="descclassname">pyGenClean.DupSamples.duplicated_samples.</code><code class="descname">computeStatistics</code><span class="sig-paren">(</span><em>tped</em>, <em>tfam</em>, <em>samples</em>, <em>oldSamples</em>, <em>prefix</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/DupSamples/duplicated_samples.html#computeStatistics"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.DupSamples.duplicated_samples.computeStatistics" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the completion and concordance of each samples.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>tped</strong> (<code class="xref py py-class docutils literal"><span class="pre">numpy.array</span></code>) &#8211; the <code class="docutils literal"><span class="pre">tped</span></code> containing duplicated samples.</li>
+<li><strong>tfam</strong> (<code class="xref py py-class docutils literal"><span class="pre">numpy.array</span></code>) &#8211; the <code class="docutils literal"><span class="pre">tfam</span></code> containing duplicated samples.</li>
+<li><strong>samples</strong> (<a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) &#8211; the updated position of the samples in the tped containing
+only duplicated samples.</li>
+<li><strong>oldSamples</strong> (<a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) &#8211; the original duplicated sample positions.</li>
+<li><strong>prefix</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the prefix of all the files.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">a tuple containing the completion (<code class="xref py py-class docutils literal"><span class="pre">numpy.array</span></code>) as
+first element, and the concordance (<a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">dict</span></code></a>) as last
+element.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Reads the <code class="docutils literal"><span class="pre">tped</span></code> file and compute the completion for each duplicated
+samples and the pairwise concordance between duplicated samples.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The completion and concordance computation excludes a markers if it&#8217;s
+on chromosome 24 and if the sample is a female.</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">A missing genotype is encoded by <code class="docutils literal"><span class="pre">0</span></code>.</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">No percentage is computed here, only the numbers. Percentages are
+computing in other functions: <a class="reference internal" href="#pyGenClean.DupSamples.duplicated_samples.printStatistics" title="pyGenClean.DupSamples.duplicated_samples.printStatistics"><code class="xref py py-func docutils literal"><span class="pre">printStatistics()</span></code></a>, for
+completion, and <a class="reference internal" href="#pyGenClean.DupSamples.duplicated_samples.printConcordance" title="pyGenClean.DupSamples.duplicated_samples.printConcordance"><code class="xref py py-func docutils literal"><span class="pre">printConcordance()</span></code></a>, for concordance.</p>
+</div>
+<p><strong>Completion</strong></p>
+<p>Computes the completion of none zero values (where all genotypes of at
+least one duplicated sample are no call [<em>i.e.</em> <code class="docutils literal"><span class="pre">0</span></code>]). The completion of
+sample <span class="math">\(i\)</span> (<em>i.e.</em> <span class="math">\(Comp_i\)</span>) is the number of genotypes
+that have a call divided by the total number of genotypes (the set
+<span class="math">\(G_i\)</span>):</p>
+<div class="math">
+\[Comp_i = \frac{||g \in G_i\textrm{ where }g \neq 0||}{||G_i||}\]</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">We consider a genotype as being missing if the sample is a male and if
+a marker on chromosome 23 or 24 is heterozygous.</p>
+</div>
+<p><strong>Concordance</strong></p>
+<p>Computes the pairwise concordance between duplicated samples. For each
+marker, if both genotypes are not missing, we add one to the total number
+of compared markers. If both genotypes are the same, we add one to the
+number of concordant calls. We write the observed genotype difference in
+the file <code class="docutils literal"><span class="pre">prefix.diff</span></code>. The concordance between sample <span class="math">\(i\)</span> and
+<span class="math">\(j\)</span> (<em>i.e.</em> <span class="math">\(Concordance_{i,j}\)</span>) is the number of genotypes
+that are equal divided by the total number of genotypes (excluding the no
+calls):</p>
+<div class="math">
+\[Concordance_{i,j} = \frac{
+    ||g \in G_i \cup G_j \textrm{ where } g_i = g_j \neq 0||
+}{
+    ||g \in G_i \cup G_j \textrm{ where } g \neq 0||
+}\]</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.DupSamples.duplicated_samples.createAndCleanTPED">
+<code class="descclassname">pyGenClean.DupSamples.duplicated_samples.</code><code class="descname">createAndCleanTPED</code><span class="sig-paren">(</span><em>tped</em>, <em>tfam</em>, <em>samples</em>, <em>oldSamples</em>, <em>chosenSamples</em>, <em>prefix</em>, <em>completion</em>, <em>completionT</em>, <em>concordance</em>, <em>concordanceT</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/DupSamples/duplicated_samples.html#createAndCleanTPED"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.DupSamples.duplicated_samples.createAndCleanTPED" title="Permalink to this definition">¶</a></dt>
+<dd><p>Complete a TPED for duplicate samples.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>tped</strong> (<code class="xref py py-class docutils literal"><span class="pre">numpy.array</span></code>) &#8211; the <code class="docutils literal"><span class="pre">tped</span></code> containing the duplicated samples.</li>
+<li><strong>tfam</strong> (<code class="xref py py-class docutils literal"><span class="pre">numpy.array</span></code>) &#8211; the <code class="docutils literal"><span class="pre">tfam</span></code> containing the duplicated samples.</li>
+<li><strong>samples</strong> (<a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) &#8211; the updated position of the samples in the <code class="docutils literal"><span class="pre">tped</span></code>
+containing only duplicated samples.</li>
+<li><strong>oldSamples</strong> (<a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) &#8211; the original duplicated sample positions.</li>
+<li><strong>chosenSamples</strong> (<a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) &#8211; the position of the chosen samples.</li>
+<li><strong>prefix</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the prefix of all the files.</li>
+<li><strong>completion</strong> (<code class="xref py py-class docutils literal"><span class="pre">numpy.array</span></code>) &#8211; the completion of each of the duplicated samples.</li>
+<li><strong>completionT</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; the completion threshold.</li>
+<li><strong>concordance</strong> (<a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) &#8211; the pairwise concordance of each of the duplicated
+samples.</li>
+<li><strong>concordanceT</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; the concordance threshold.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Using a <code class="docutils literal"><span class="pre">tped</span></code> containing duplicated samples, it creates a <code class="docutils literal"><span class="pre">tped</span></code>
+containing unique samples by completing a chosen sample with the other
+replicates.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">A chosen sample is not completed using bad replicates (those that
+don&#8217;t have a concordance or a completion higher than a certain
+threshold). The bad replicates are written in the file
+<code class="docutils literal"><span class="pre">prefix.not_good_enough</span></code>.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.DupSamples.duplicated_samples.findDuplicates">
+<code class="descclassname">pyGenClean.DupSamples.duplicated_samples.</code><code class="descname">findDuplicates</code><span class="sig-paren">(</span><em>tfam</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/DupSamples/duplicated_samples.html#findDuplicates"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.DupSamples.duplicated_samples.findDuplicates" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds the duplicates in a TFAM.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>tfam</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; representation of a <code class="docutils literal"><span class="pre">tfam</span></code> file.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">two <a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">dict</span></code></a>, containing unique and duplicated samples
+position.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.DupSamples.duplicated_samples.main">
+<code class="descclassname">pyGenClean.DupSamples.duplicated_samples.</code><code class="descname">main</code><span class="sig-paren">(</span><em>argString=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/DupSamples/duplicated_samples.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.DupSamples.duplicated_samples.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check for duplicated samples in a tfam/tped file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>argString</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; the options</td>
+</tr>
+</tbody>
+</table>
+<p>Here are the steps for the duplicated samples step.</p>
+<ol class="arabic simple">
+<li>Prints the options.</li>
+<li>Reads the <code class="docutils literal"><span class="pre">tfam</span></code> file (<a class="reference internal" href="#pyGenClean.DupSamples.duplicated_samples.readTFAM" title="pyGenClean.DupSamples.duplicated_samples.readTFAM"><code class="xref py py-func docutils literal"><span class="pre">readTFAM()</span></code></a>).</li>
+<li>Separate the duplicated samples from the unique samples
+(<a class="reference internal" href="#pyGenClean.DupSamples.duplicated_samples.findDuplicates" title="pyGenClean.DupSamples.duplicated_samples.findDuplicates"><code class="xref py py-func docutils literal"><span class="pre">findDuplicates()</span></code></a>).</li>
+<li>Writes the unique samples into a file named
+<code class="docutils literal"><span class="pre">prefix.unique_samples.tfam</span></code> (<a class="reference internal" href="#pyGenClean.DupSamples.duplicated_samples.printUniqueTFAM" title="pyGenClean.DupSamples.duplicated_samples.printUniqueTFAM"><code class="xref py py-func docutils literal"><span class="pre">printUniqueTFAM()</span></code></a>).</li>
+<li>Reads the <code class="docutils literal"><span class="pre">tped</span></code> file and write into <code class="docutils literal"><span class="pre">prefix.unique_samples.tped</span></code>
+the pedigree file for the unique samples (<a class="reference internal" href="#pyGenClean.DupSamples.duplicated_samples.processTPED" title="pyGenClean.DupSamples.duplicated_samples.processTPED"><code class="xref py py-func docutils literal"><span class="pre">processTPED()</span></code></a>).
+Saves in memory the pedigree for the duplicated samples. Updates the
+indexes of the duplicated samples.</li>
+<li>If there are no duplicated samples, simply copies the files
+<code class="docutils literal"><span class="pre">prefix.unique_samples</span></code> (<code class="docutils literal"><span class="pre">tped</span></code> and <code class="docutils literal"><span class="pre">tfam</span></code>) to
+<code class="docutils literal"><span class="pre">prefix.final.tfam</span></code> and <code class="docutils literal"><span class="pre">prefix..final.tped</span></code>, respectively.</li>
+<li>Computes the completion (for each of the duplicated samples) and the
+concordance of each sample pairs (<a class="reference internal" href="#pyGenClean.DupSamples.duplicated_samples.computeStatistics" title="pyGenClean.DupSamples.duplicated_samples.computeStatistics"><code class="xref py py-func docutils literal"><span class="pre">computeStatistics()</span></code></a>).</li>
+<li>Prints statistics (concordance and completion)
+(<a class="reference internal" href="#pyGenClean.DupSamples.duplicated_samples.printStatistics" title="pyGenClean.DupSamples.duplicated_samples.printStatistics"><code class="xref py py-func docutils literal"><span class="pre">printStatistics()</span></code></a>).</li>
+<li>We print the concordance matrix for each duplicated samples
+(<a class="reference internal" href="#pyGenClean.DupSamples.duplicated_samples.printConcordance" title="pyGenClean.DupSamples.duplicated_samples.printConcordance"><code class="xref py py-func docutils literal"><span class="pre">printConcordance()</span></code></a>).</li>
+<li>We print the <code class="docutils literal"><span class="pre">tped</span></code> and the <code class="docutils literal"><span class="pre">tfam</span></code> file for the duplicated samples
+(<code class="docutils literal"><span class="pre">prefix.duplicated_samples</span></code>)
+(<a class="reference internal" href="#pyGenClean.DupSamples.duplicated_samples.printDuplicatedTPEDandTFAM" title="pyGenClean.DupSamples.duplicated_samples.printDuplicatedTPEDandTFAM"><code class="xref py py-func docutils literal"><span class="pre">printDuplicatedTPEDandTFAM()</span></code></a>).</li>
+<li>Choose the best of each duplicates (to keep and to complete) according
+to completion and concordance (<a class="reference internal" href="#pyGenClean.DupSamples.duplicated_samples.chooseBestDuplicates" title="pyGenClean.DupSamples.duplicated_samples.chooseBestDuplicates"><code class="xref py py-func docutils literal"><span class="pre">chooseBestDuplicates()</span></code></a>).</li>
+<li>Creates a unique <code class="docutils literal"><span class="pre">tped</span></code> and <code class="docutils literal"><span class="pre">tfam</span></code> from the duplicated samples by
+completing the best chosen one with the other samples
+(<a class="reference internal" href="#pyGenClean.DupSamples.duplicated_samples.createAndCleanTPED" title="pyGenClean.DupSamples.duplicated_samples.createAndCleanTPED"><code class="xref py py-func docutils literal"><span class="pre">createAndCleanTPED()</span></code></a>).</li>
+<li>Merge the two tfiles together (<code class="docutils literal"><span class="pre">prefix.unique_samples</span></code> and
+<code class="docutils literal"><span class="pre">prefix.chosen_samples</span></code>) to create the final dataset
+(<code class="docutils literal"><span class="pre">prefix.final</span></code>) (<a class="reference internal" href="#pyGenClean.DupSamples.duplicated_samples.addToTPEDandTFAM" title="pyGenClean.DupSamples.duplicated_samples.addToTPEDandTFAM"><code class="xref py py-func docutils literal"><span class="pre">addToTPEDandTFAM()</span></code></a>).</li>
+</ol>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.DupSamples.duplicated_samples.parseArgs">
+<code class="descclassname">pyGenClean.DupSamples.duplicated_samples.</code><code class="descname">parseArgs</code><span class="sig-paren">(</span><em>argString=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/DupSamples/duplicated_samples.html#parseArgs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.DupSamples.duplicated_samples.parseArgs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parses the command line options and arguments.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>argString</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; the options</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A <a class="reference external" href="http://docs.python.org/library/argparse.html#argparse.Namespace" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">argparse.Namespace</span></code></a> object created by
+the <a class="reference external" href="http://docs.python.org/library/argparse.html#module-argparse" title="(in Python v2.7)"><code class="xref py py-mod docutils literal"><span class="pre">argparse</span></code></a> module. It contains the values of the
+different options.</td>
+</tr>
+</tbody>
+</table>
+<table border="1" class="docutils">
+<colgroup>
+<col width="47%" />
+<col width="8%" />
+<col width="45%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Options</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--tfile</span></code></td>
+<td>string</td>
+<td>The input file prefix (of type
+<code class="docutils literal"><span class="pre">tfile</span></code>).</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--sample-completion-threshold</span></code></td>
+<td>float</td>
+<td>The completion threshold.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--sample-concordance-threshold</span></code></td>
+<td>float</td>
+<td>The concordance threshold.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--out</span></code></td>
+<td>string</td>
+<td>The prefix of the output files.</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">No option check is done here (except for the one automatically done by
+argparse). Those need to be done elsewhere (see <a class="reference internal" href="#pyGenClean.DupSamples.duplicated_samples.checkArgs" title="pyGenClean.DupSamples.duplicated_samples.checkArgs"><code class="xref py py-func docutils literal"><span class="pre">checkArgs()</span></code></a>).</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.DupSamples.duplicated_samples.printConcordance">
+<code class="descclassname">pyGenClean.DupSamples.duplicated_samples.</code><code class="descname">printConcordance</code><span class="sig-paren">(</span><em>concordance</em>, <em>prefix</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/DupSamples/duplicated_samples.html#printConcordance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.DupSamples.duplicated_samples.printConcordance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print the concordance.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>concordance</strong> (<a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) &#8211; the concordance of each sample.</li>
+<li><strong>prefix</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the prefix of all the files.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">the concordance percentage (dict)</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>The concordance is the number of genotypes that are equal when comparing a
+duplicated samples with another one, divided by the total number of
+genotypes (excluding genotypes that are no call [<em>i.e.</em> <code class="docutils literal"><span class="pre">0</span></code>]). If a
+duplicated sample has 100% of no calls, the concordance will be zero.</p>
+<p>The file <code class="docutils literal"><span class="pre">prefix.concordance</span></code> will contain <span class="math">\(N \times N\)</span> matrices
+for each set of duplicated samples.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.DupSamples.duplicated_samples.printDuplicatedTPEDandTFAM">
+<code class="descclassname">pyGenClean.DupSamples.duplicated_samples.</code><code class="descname">printDuplicatedTPEDandTFAM</code><span class="sig-paren">(</span><em>tped</em>, <em>tfam</em>, <em>samples</em>, <em>oldSamples</em>, <em>prefix</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/DupSamples/duplicated_samples.html#printDuplicatedTPEDandTFAM"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.DupSamples.duplicated_samples.printDuplicatedTPEDandTFAM" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print the TPED and TFAM of the duplicated samples.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>tped</strong> (<code class="xref py py-class docutils literal"><span class="pre">numpy.array</span></code>) &#8211; the <code class="docutils literal"><span class="pre">tped</span></code> containing duplicated samples.</li>
+<li><strong>tfam</strong> (<code class="xref py py-class docutils literal"><span class="pre">numpy.array</span></code>) &#8211; the <code class="docutils literal"><span class="pre">tfam</span></code> containing duplicated samples.</li>
+<li><strong>samples</strong> (<a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) &#8211; the updated position of the samples in the tped containing
+only duplicated samples.</li>
+<li><strong>oldSamples</strong> (<a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) &#8211; the original duplicated sample positions.</li>
+<li><strong>prefix</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the prefix of all the files.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>The <code class="docutils literal"><span class="pre">tped</span></code> and <code class="docutils literal"><span class="pre">tfam</span></code> files are written in
+<code class="docutils literal"><span class="pre">prefix.duplicated_samples.tped</span></code> and <code class="docutils literal"><span class="pre">prefix.duplicated_samples.tfam</span></code>,
+respectively.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.DupSamples.duplicated_samples.printStatistics">
+<code class="descclassname">pyGenClean.DupSamples.duplicated_samples.</code><code class="descname">printStatistics</code><span class="sig-paren">(</span><em>completion</em>, <em>concordance</em>, <em>tpedSamples</em>, <em>oldSamples</em>, <em>prefix</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/DupSamples/duplicated_samples.html#printStatistics"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.DupSamples.duplicated_samples.printStatistics" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print the statistics in a file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>completion</strong> (<code class="xref py py-class docutils literal"><span class="pre">numpy.array</span></code>) &#8211; the completion of each duplicated samples.</li>
+<li><strong>concordance</strong> (<a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) &#8211; the concordance of each duplicated samples.</li>
+<li><strong>tpedSamples</strong> (<a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) &#8211; the updated position of the samples in the tped
+containing only duplicated samples.</li>
+<li><strong>oldSamples</strong> (<a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) &#8211; the original duplicated sample positions.</li>
+<li><strong>prefix</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the prefix of all the files.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">the completion for each duplicated samples, as a
+<code class="xref py py-class docutils literal"><span class="pre">numpy.array</span></code>.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Prints the statistics (completion of each samples and pairwise concordance
+between duplicated samples) in a file (<code class="docutils literal"><span class="pre">prefix.summary</span></code>).</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.DupSamples.duplicated_samples.printUniqueTFAM">
+<code class="descclassname">pyGenClean.DupSamples.duplicated_samples.</code><code class="descname">printUniqueTFAM</code><span class="sig-paren">(</span><em>tfam</em>, <em>samples</em>, <em>prefix</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/DupSamples/duplicated_samples.html#printUniqueTFAM"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.DupSamples.duplicated_samples.printUniqueTFAM" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prints a new TFAM with only unique samples.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>tfam</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; a representation of a TFAM file.</li>
+<li><strong>samples</strong> (<a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) &#8211; the position of the samples</li>
+<li><strong>prefix</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the prefix of the output file name</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.DupSamples.duplicated_samples.processTPED">
+<code class="descclassname">pyGenClean.DupSamples.duplicated_samples.</code><code class="descname">processTPED</code><span class="sig-paren">(</span><em>uniqueSamples</em>, <em>duplicatedSamples</em>, <em>fileName</em>, <em>prefix</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/DupSamples/duplicated_samples.html#processTPED"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.DupSamples.duplicated_samples.processTPED" title="Permalink to this definition">¶</a></dt>
+<dd><p>Process the TPED file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>uniqueSamples</strong> (<a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) &#8211; the position of unique samples.</li>
+<li><strong>duplicatedSamples</strong> (<a class="reference external" href="http://docs.python.org/library/collections.html#collections.defaultdict" title="(in Python v2.7)"><em>collections.defaultdict</em></a>) &#8211; the position of duplicated samples.</li>
+<li><strong>fileName</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the name of the file.</li>
+<li><strong>prefix</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the prefix of all the files.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">a tuple containing the <code class="docutils literal"><span class="pre">tped</span></code> (<code class="xref py py-class docutils literal"><span class="pre">numpy.array</span></code>) as
+first element, and the updated positions of the duplicated
+samples (<a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">dict</span></code></a>)</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Reads the entire <code class="docutils literal"><span class="pre">tped</span></code> and prints another one containing only unique
+samples (<code class="docutils literal"><span class="pre">prefix.unique_samples.tped</span></code>). It then creates a
+<code class="xref py py-class docutils literal"><span class="pre">numpy.array</span></code> containing the duplicated samples.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.DupSamples.duplicated_samples.readTFAM">
+<code class="descclassname">pyGenClean.DupSamples.duplicated_samples.</code><code class="descname">readTFAM</code><span class="sig-paren">(</span><em>fileName</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/DupSamples/duplicated_samples.html#readTFAM"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.DupSamples.duplicated_samples.readTFAM" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads the TFAM file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>fileName</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the name of the <code class="docutils literal"><span class="pre">tfam</span></code> file.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">a list of tuples, representing the <code class="docutils literal"><span class="pre">tfam</span></code> file.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.DupSamples.duplicated_samples.safe_main">
+<code class="descclassname">pyGenClean.DupSamples.duplicated_samples.</code><code class="descname">safe_main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/DupSamples/duplicated_samples.html#safe_main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.DupSamples.duplicated_samples.safe_main" title="Permalink to this definition">¶</a></dt>
+<dd><p>A safe version of the main function (that catches ProgramError).</p>
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="duplicated_markers.html" title="Duplicated Markers Module"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="data_clean_up_module.html" title="The Data Clean Up Module"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">pyGenClean 1.7.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2012, Louis-Philippe Lemieux Perreault.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+    </div>
+  </body>
+</html>

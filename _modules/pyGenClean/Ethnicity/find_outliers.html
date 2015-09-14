@@ -1,0 +1,760 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>pyGenClean.Ethnicity.find_outliers &mdash; pyGenClean 1.7.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '1.7.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="pyGenClean 1.7.0 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body role="document">
+
+<div style="background-color: white; text-align: left; padding: 10px 10px 15px 15px">
+<a href="../../../index.html"><img src="../../../_static/logo.png" border="0" alt="py4sci"/></a>
+</div>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">pyGenClean 1.7.0 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for pyGenClean.Ethnicity.find_outliers</h1><div class="highlight"><pre>
+<span class="c">#!/usr/bin/env python2.7</span>
+
+<span class="c"># This file is part of pyGenClean.</span>
+<span class="c">#</span>
+<span class="c"># pyGenClean is free software: you can redistribute it and/or modify it under</span>
+<span class="c"># the terms of the GNU General Public License as published by the Free Software</span>
+<span class="c"># Foundation, either version 3 of the License, or (at your option) any later</span>
+<span class="c"># version.</span>
+<span class="c">#</span>
+<span class="c"># pyGenClean is distributed in the hope that it will be useful, but WITHOUT ANY</span>
+<span class="c"># WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR</span>
+<span class="c"># A PARTICULAR PURPOSE.  See the GNU General Public License for more details.</span>
+<span class="c">#</span>
+<span class="c"># You should have received a copy of the GNU General Public License along with</span>
+<span class="c"># pyGenClean.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
+
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">argparse</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">npy</span>
+
+<span class="kn">from</span> <span class="nn">..PlinkUtils</span> <span class="kn">import</span> <span class="n">createRowFromPlinkSpacedOutput</span> <span class="k">as</span> <span class="n">create_row</span>
+
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&quot;find_outliers&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../../check_ethnicity.html#pyGenClean.Ethnicity.find_outliers.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">argString</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;The main function.</span>
+
+<span class="sd">    :param argString: the options.</span>
+
+<span class="sd">    :type argString: list of strings</span>
+
+<span class="sd">    These are the steps of the modules:</span>
+
+<span class="sd">    1. Prints the options.</span>
+<span class="sd">    2. Reads the population file (:py:func:`read_population_file`).</span>
+<span class="sd">    3. Reads the ``mds`` file (:py:func:`read_mds_file`).</span>
+<span class="sd">    4. Computes the three reference population clusters&#39; centers</span>
+<span class="sd">       (:py:func:`find_ref_centers`).</span>
+<span class="sd">    5. Computes three clusters according to the reference population clusters&#39;</span>
+<span class="sd">       centers, and finds the outliers of a given reference population</span>
+<span class="sd">       (:py:func:`find_outliers`). This steps also produce three different</span>
+<span class="sd">       plots.</span>
+<span class="sd">    6. Writes outliers in a file (``prefix.outliers``).</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c"># Getting and checking the options</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">parseArgs</span><span class="p">(</span><span class="n">argString</span><span class="p">)</span>
+    <span class="n">checkArgs</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Options used:&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">vars</span><span class="p">(</span><span class="n">args</span><span class="p">)</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;  --{} {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;_&quot;</span><span class="p">,</span> <span class="s">&quot;-&quot;</span><span class="p">),</span> <span class="n">value</span><span class="p">))</span>
+
+    <span class="c"># Reads the population file</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Reading population file&quot;</span><span class="p">)</span>
+    <span class="n">populations</span> <span class="o">=</span> <span class="n">read_population_file</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">population_file</span><span class="p">)</span>
+
+    <span class="c"># Reads the MDS file</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Reading MDS file&quot;</span><span class="p">)</span>
+    <span class="n">mds</span> <span class="o">=</span> <span class="n">read_mds_file</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">mds</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">xaxis</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">yaxis</span><span class="p">,</span> <span class="n">populations</span><span class="p">)</span>
+
+    <span class="c"># Finds the population centers</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Finding reference population centers&quot;</span><span class="p">)</span>
+    <span class="n">centers</span><span class="p">,</span> <span class="n">center_info</span> <span class="o">=</span> <span class="n">find_ref_centers</span><span class="p">(</span><span class="n">mds</span><span class="p">)</span>
+
+    <span class="c"># Computes three clusters using KMeans and the reference cluster centers</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Finding outliers&quot;</span><span class="p">)</span>
+    <span class="n">outliers</span> <span class="o">=</span> <span class="n">find_outliers</span><span class="p">(</span><span class="n">mds</span><span class="p">,</span> <span class="n">centers</span><span class="p">,</span> <span class="n">center_info</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">outliers_of</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;  - There are {} outliers for the {} population&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+        <span class="nb">len</span><span class="p">(</span><span class="n">outliers</span><span class="p">),</span>
+        <span class="n">args</span><span class="o">.</span><span class="n">outliers_of</span><span class="p">,</span>
+    <span class="p">))</span>
+
+    <span class="c"># Printing the outlier file</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">out</span> <span class="o">+</span> <span class="s">&quot;.outliers&quot;</span><span class="p">,</span> <span class="s">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">output_file</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">sample_id</span> <span class="ow">in</span> <span class="n">outliers</span><span class="p">:</span>
+                <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">output_file</span><span class="p">,</span> <span class="s">&quot;</span><span class="se">\t</span><span class="s">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">sample_id</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;{}: can&#39;t write file&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">out</span> <span class="o">+</span> <span class="s">&quot;.outliers&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="c"># Printing the outlier population file</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">out</span> <span class="o">+</span> <span class="s">&quot;.population_file_outliers&quot;</span><span class="p">,</span> <span class="s">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">output_file</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">sample_id</span><span class="p">,</span> <span class="n">population</span> <span class="ow">in</span> <span class="n">populations</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">sample_id</span> <span class="ow">in</span> <span class="n">outliers</span><span class="p">:</span>
+                    <span class="n">population</span> <span class="o">=</span> <span class="s">&quot;OUTLIER&quot;</span>
+                <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">output_file</span><span class="p">,</span> <span class="s">&quot;</span><span class="se">\t</span><span class="s">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">sample_id</span><span class="p">)</span> <span class="o">+</span> <span class="p">[</span><span class="n">population</span><span class="p">])</span>
+    <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;{}: can&#39;t write file&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">args</span><span class="o">.</span><span class="n">out</span> <span class="o">+</span> <span class="s">&quot;.population_file_outliers&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="find_outliers"><a class="viewcode-back" href="../../../check_ethnicity.html#pyGenClean.Ethnicity.find_outliers.find_outliers">[docs]</a><span class="k">def</span> <span class="nf">find_outliers</span><span class="p">(</span><span class="n">mds</span><span class="p">,</span> <span class="n">centers</span><span class="p">,</span> <span class="n">center_info</span><span class="p">,</span> <span class="n">ref_pop</span><span class="p">,</span> <span class="n">options</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Finds the outliers for a given population.</span>
+
+<span class="sd">    :param mds: the ``mds`` information about each samples.</span>
+<span class="sd">    :param centers: the centers of the three reference population clusters.</span>
+<span class="sd">    :param center_info: the label of the three reference population clusters.</span>
+<span class="sd">    :param ref_pop: the reference population for which we need the outliers</span>
+<span class="sd">                    from.</span>
+<span class="sd">    :param options: the options</span>
+
+<span class="sd">    :type mds: numpy.recarray</span>
+<span class="sd">    :type centers: numpy.array</span>
+<span class="sd">    :type center_info: dict</span>
+<span class="sd">    :type ref_pop: str</span>
+<span class="sd">    :type options: argparse.Namespace</span>
+
+<span class="sd">    :returns: a :py:class:`set` of outliers from the ``ref_pop`` population.</span>
+
+<span class="sd">    Perform a ``KMeans`` classification using the three centers from the three</span>
+<span class="sd">    reference population cluster.</span>
+
+<span class="sd">    Samples are outliers of the required reference population (``ref_pop``) if:</span>
+
+<span class="sd">    * the sample is part of another reference population cluster;</span>
+<span class="sd">    * the sample is an outlier of the desired reference population</span>
+<span class="sd">      (``ref_pop``).</span>
+
+<span class="sd">    A sample is an outlier of a given cluster :math:`C_j` if the distance</span>
+<span class="sd">    between this sample and the center of the cluster :math:`C_j` (:math:`O_j`)</span>
+<span class="sd">    is bigger than a constant times the cluster&#39;s standard deviation</span>
+<span class="sd">    :math:`\\sigma_j`.</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        \\sigma_j = \\sqrt{\\frac{\\sum{d(s_i,O_j)^2}}{||C_j|| - 1}}</span>
+
+<span class="sd">    where :math:`||C_j||` is the number of samples in the cluster :math:`C_j`,</span>
+<span class="sd">    and :math:`d(s_i,O_j)` is the distance between the sample :math:`s_i` and</span>
+<span class="sd">    the center :math:`O_j` of the cluster :math:`C_j`.</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        d(s_i, O_j) = \\sqrt{(x_{O_j} - x_{s_i})^2 + (y_{O_j} - y_{s_i})^2}</span>
+
+<span class="sd">    Using a constant equals to one ensure we remove 100% of the outliers from</span>
+<span class="sd">    the cluster. Using a constant of 1.6 or 1.9 ensures we remove 99% and 95%</span>
+<span class="sd">    of outliers, respectively (an error rate of 1% and 5%, respectively).</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c"># Importing matplotlib for plotting purposes</span>
+    <span class="kn">import</span> <span class="nn">matplotlib</span> <span class="kn">as</span> <span class="nn">mpl</span>
+    <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">format</span> <span class="o">!=</span> <span class="s">&quot;X11&quot;</span> <span class="ow">and</span> <span class="n">mpl</span><span class="o">.</span><span class="n">get_backend</span><span class="p">()</span> <span class="o">!=</span> <span class="s">&quot;agg&quot;</span><span class="p">:</span>
+        <span class="n">mpl</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s">&quot;Agg&quot;</span><span class="p">)</span>
+    <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+    <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">format</span> <span class="o">!=</span> <span class="s">&quot;X11&quot;</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ioff</span><span class="p">()</span>
+    <span class="kn">import</span> <span class="nn">matplotlib.mlab</span> <span class="kn">as</span> <span class="nn">mlab</span>
+
+    <span class="kn">from</span> <span class="nn">sklearn.cluster</span> <span class="kn">import</span> <span class="n">KMeans</span>
+    <span class="kn">from</span> <span class="nn">sklearn.metrics.pairwise</span> <span class="kn">import</span> <span class="n">euclidean_distances</span>
+
+    <span class="c"># Formatting the data</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">npy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">mds</span><span class="p">[</span><span class="s">&quot;c1&quot;</span><span class="p">],</span> <span class="n">mds</span><span class="p">[</span><span class="s">&quot;c2&quot;</span><span class="p">]))</span>
+
+    <span class="c"># Configuring and running the KMeans</span>
+    <span class="n">k_means</span> <span class="o">=</span> <span class="n">KMeans</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="n">centers</span><span class="p">,</span> <span class="n">n_clusters</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">n_init</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">k_means</span><span class="o">.</span><span class="n">fit_predict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="c"># Creating the figure and axes</span>
+    <span class="n">fig_before</span><span class="p">,</span> <span class="n">axe_before</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">fig_after</span><span class="p">,</span> <span class="n">axe_after</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">fig_outliers</span><span class="p">,</span> <span class="n">axe_outliers</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="c"># Setting the axe</span>
+    <span class="n">axe_before</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_ticks_position</span><span class="p">(</span><span class="s">&quot;bottom&quot;</span><span class="p">)</span>
+    <span class="n">axe_before</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">set_ticks_position</span><span class="p">(</span><span class="s">&quot;left&quot;</span><span class="p">)</span>
+    <span class="n">axe_before</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s">&quot;top&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+    <span class="n">axe_before</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s">&quot;right&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+    <span class="n">axe_before</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s">&quot;bottom&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_position</span><span class="p">((</span><span class="s">&quot;outward&quot;</span><span class="p">,</span> <span class="mi">9</span><span class="p">))</span>
+    <span class="n">axe_before</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s">&quot;left&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_position</span><span class="p">((</span><span class="s">&quot;outward&quot;</span><span class="p">,</span> <span class="mi">9</span><span class="p">))</span>
+    <span class="n">axe_after</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_ticks_position</span><span class="p">(</span><span class="s">&quot;bottom&quot;</span><span class="p">)</span>
+    <span class="n">axe_after</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">set_ticks_position</span><span class="p">(</span><span class="s">&quot;left&quot;</span><span class="p">)</span>
+    <span class="n">axe_after</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s">&quot;top&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+    <span class="n">axe_after</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s">&quot;right&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+    <span class="n">axe_after</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s">&quot;bottom&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_position</span><span class="p">((</span><span class="s">&quot;outward&quot;</span><span class="p">,</span> <span class="mi">9</span><span class="p">))</span>
+    <span class="n">axe_after</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s">&quot;left&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_position</span><span class="p">((</span><span class="s">&quot;outward&quot;</span><span class="p">,</span> <span class="mi">9</span><span class="p">))</span>
+    <span class="n">axe_outliers</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_ticks_position</span><span class="p">(</span><span class="s">&quot;bottom&quot;</span><span class="p">)</span>
+    <span class="n">axe_outliers</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">set_ticks_position</span><span class="p">(</span><span class="s">&quot;left&quot;</span><span class="p">)</span>
+    <span class="n">axe_outliers</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s">&quot;top&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+    <span class="n">axe_outliers</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s">&quot;right&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+    <span class="n">axe_outliers</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s">&quot;bottom&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_position</span><span class="p">((</span><span class="s">&quot;outward&quot;</span><span class="p">,</span> <span class="mi">9</span><span class="p">))</span>
+    <span class="n">axe_outliers</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s">&quot;left&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_position</span><span class="p">((</span><span class="s">&quot;outward&quot;</span><span class="p">,</span> <span class="mi">9</span><span class="p">))</span>
+
+    <span class="c"># Setting the title and labels</span>
+    <span class="n">axe_before</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s">&quot;Before finding outliers&quot;</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="s">&quot;bold&quot;</span><span class="p">)</span>
+    <span class="n">axe_before</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">xaxis</span><span class="p">)</span>
+    <span class="n">axe_before</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">yaxis</span><span class="p">)</span>
+    <span class="n">axe_after</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s">&quot;After finding outliers</span><span class="se">\n</span><span class="s">($&gt; {} &quot;</span>
+                        <span class="s">&quot;</span><span class="se">\\</span><span class="s">sigma$)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">multiplier</span><span class="p">),</span> <span class="n">weight</span><span class="o">=</span><span class="s">&quot;bold&quot;</span><span class="p">)</span>
+    <span class="n">axe_after</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">xaxis</span><span class="p">)</span>
+    <span class="n">axe_after</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">yaxis</span><span class="p">)</span>
+    <span class="n">axe_outliers</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s">&quot;Outliers&quot;</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="s">&quot;bold&quot;</span><span class="p">)</span>
+    <span class="n">axe_outliers</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">xaxis</span><span class="p">)</span>
+    <span class="n">axe_outliers</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">yaxis</span><span class="p">)</span>
+
+    <span class="c"># The population name</span>
+    <span class="n">ref_pop_name</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;CEU&quot;</span><span class="p">,</span> <span class="s">&quot;YRI&quot;</span><span class="p">,</span> <span class="s">&quot;JPT-CHB&quot;</span><span class="p">]</span>
+
+    <span class="c"># The colors</span>
+    <span class="n">colors</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;#CC0000&quot;</span><span class="p">,</span> <span class="s">&quot;#669900&quot;</span><span class="p">,</span> <span class="s">&quot;#0099CC&quot;</span><span class="p">]</span>
+    <span class="n">outlier_colors</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;#FFCACA&quot;</span><span class="p">,</span> <span class="s">&quot;#E2F0B6&quot;</span><span class="p">,</span> <span class="s">&quot;#C5EAF8&quot;</span><span class="p">]</span>
+
+    <span class="c"># Plotting each of the clusters with the initial center</span>
+    <span class="n">plots_before</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">plots_after</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">plots_outliers</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">plot_outliers</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">plot_not_outliers</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">outliers_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+        <span class="c"># Subsetting the data</span>
+        <span class="n">subset_mds</span> <span class="o">=</span> <span class="n">mds</span><span class="p">[</span><span class="n">k_means</span><span class="o">.</span><span class="n">labels_</span> <span class="o">==</span> <span class="n">label</span><span class="p">]</span>
+        <span class="n">subset_data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">k_means</span><span class="o">.</span><span class="n">labels_</span> <span class="o">==</span> <span class="n">label</span><span class="p">]</span>
+
+        <span class="c"># Plotting the cluster</span>
+        <span class="n">p</span><span class="p">,</span> <span class="o">=</span> <span class="n">axe_before</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">subset_mds</span><span class="p">[</span><span class="s">&quot;c1&quot;</span><span class="p">],</span> <span class="n">subset_mds</span><span class="p">[</span><span class="s">&quot;c2&quot;</span><span class="p">],</span> <span class="s">&quot;o&quot;</span><span class="p">,</span>
+                             <span class="n">mec</span><span class="o">=</span><span class="n">colors</span><span class="p">[</span><span class="n">label</span><span class="p">],</span> <span class="n">mfc</span><span class="o">=</span><span class="n">colors</span><span class="p">[</span><span class="n">label</span><span class="p">],</span> <span class="n">ms</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+                             <span class="n">clip_on</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+        <span class="n">plots_before</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+
+        <span class="c"># Plotting the cluster center (the real one)</span>
+        <span class="n">axe_before</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">centers</span><span class="p">[</span><span class="n">label</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">centers</span><span class="p">[</span><span class="n">label</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="s">&quot;o&quot;</span><span class="p">,</span>
+                        <span class="n">mec</span><span class="o">=</span><span class="s">&quot;#000000&quot;</span><span class="p">,</span> <span class="n">mfc</span><span class="o">=</span><span class="s">&quot;#FFBB33&quot;</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">clip_on</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+
+        <span class="c"># Computing the distances</span>
+        <span class="n">distances</span> <span class="o">=</span> <span class="n">euclidean_distances</span><span class="p">(</span><span class="n">subset_data</span><span class="p">,</span> <span class="n">centers</span><span class="p">[</span><span class="n">label</span><span class="p">])</span>
+
+        <span class="c"># Finding the outliers (that are not in the reference populations</span>
+        <span class="n">sigma</span> <span class="o">=</span> <span class="n">npy</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">npy</span><span class="o">.</span><span class="n">true_divide</span><span class="p">(</span><span class="n">npy</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">distances</span> <span class="o">**</span> <span class="mi">2</span><span class="p">),</span>
+                                         <span class="nb">len</span><span class="p">(</span><span class="n">distances</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="n">outliers</span> <span class="o">=</span> <span class="n">npy</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span>
+            <span class="p">(</span><span class="n">distances</span> <span class="o">&gt;</span> <span class="n">options</span><span class="o">.</span><span class="n">multiplier</span> <span class="o">*</span> <span class="n">sigma</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span>
+            <span class="n">subset_mds</span> <span class="o">!=</span> <span class="n">ref_pop_name</span><span class="p">[</span><span class="n">label</span><span class="p">],</span>
+        <span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;  - {} outliers for the {} cluster&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">npy</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">outliers</span><span class="p">),</span>
+            <span class="n">ref_pop_name</span><span class="p">[</span><span class="n">label</span><span class="p">],</span>
+        <span class="p">))</span>
+
+        <span class="c"># Saving the outliers</span>
+        <span class="k">if</span> <span class="n">ref_pop_name</span><span class="p">[</span><span class="n">label</span><span class="p">]</span> <span class="o">!=</span> <span class="n">options</span><span class="o">.</span><span class="n">outliers_of</span><span class="p">:</span>
+            <span class="c"># This is not the population we want, hence everybody is an outlier</span>
+            <span class="c"># (we don&#39;t include the reference population).</span>
+            <span class="n">outlier_mds</span> <span class="o">=</span> <span class="n">subset_mds</span><span class="p">[</span><span class="n">subset_mds</span><span class="p">[</span><span class="s">&quot;pop&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="n">ref_pop_name</span><span class="p">[</span><span class="n">label</span><span class="p">]]</span>
+            <span class="n">outliers_set</span> <span class="o">|=</span> <span class="nb">set</span><span class="p">([(</span><span class="n">i</span><span class="p">[</span><span class="s">&quot;fid&quot;</span><span class="p">],</span> <span class="n">i</span><span class="p">[</span><span class="s">&quot;iid&quot;</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">outlier_mds</span><span class="p">])</span>
+
+            <span class="c"># Plotting all samples that are not part of the reference</span>
+            <span class="c"># populations</span>
+            <span class="n">axe_outliers</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+                <span class="n">subset_mds</span><span class="p">[</span><span class="s">&quot;c1&quot;</span><span class="p">][</span><span class="n">subset_mds</span><span class="p">[</span><span class="s">&quot;pop&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="n">ref_pop_name</span><span class="p">[</span><span class="n">label</span><span class="p">]],</span>
+                <span class="n">subset_mds</span><span class="p">[</span><span class="s">&quot;c2&quot;</span><span class="p">][</span><span class="n">subset_mds</span><span class="p">[</span><span class="s">&quot;pop&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="n">ref_pop_name</span><span class="p">[</span><span class="n">label</span><span class="p">]],</span>
+                <span class="s">&quot;o&quot;</span><span class="p">,</span>
+                <span class="n">mec</span><span class="o">=</span><span class="s">&quot;#555555&quot;</span><span class="p">,</span>
+                <span class="n">mfc</span><span class="o">=</span><span class="s">&quot;#555555&quot;</span><span class="p">,</span>
+                <span class="n">ms</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+                <span class="n">clip_on</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c"># This is the population we want, hence only the real outliers are</span>
+            <span class="c"># outliers (we don&#39;t include the reference population)</span>
+            <span class="n">outlier_mds</span> <span class="o">=</span> <span class="n">subset_mds</span><span class="p">[</span>
+                <span class="n">npy</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">subset_mds</span><span class="p">[</span><span class="s">&quot;pop&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="n">ref_pop_name</span><span class="p">[</span><span class="n">label</span><span class="p">],</span>
+                                <span class="n">outliers</span><span class="p">)</span>
+            <span class="p">]</span>
+
+            <span class="c"># Plotting the outliers</span>
+            <span class="n">plot_outliers</span><span class="p">,</span> <span class="o">=</span> <span class="n">axe_outliers</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">outlier_mds</span><span class="p">[</span><span class="s">&quot;c1&quot;</span><span class="p">],</span>
+                                               <span class="n">outlier_mds</span><span class="p">[</span><span class="s">&quot;c2&quot;</span><span class="p">],</span> <span class="s">&quot;o&quot;</span><span class="p">,</span>
+                                               <span class="n">mec</span><span class="o">=</span><span class="s">&quot;#555555&quot;</span><span class="p">,</span> <span class="n">mfc</span><span class="o">=</span><span class="s">&quot;#555555&quot;</span><span class="p">,</span>
+                                               <span class="n">ms</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">clip_on</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+
+            <span class="c"># Plotting the not outliers</span>
+            <span class="n">plot_not_outliers</span><span class="p">,</span> <span class="o">=</span> <span class="n">axe_outliers</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+                <span class="n">subset_mds</span><span class="p">[</span><span class="s">&quot;c1&quot;</span><span class="p">][</span><span class="n">npy</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span>
+                        <span class="o">~</span><span class="n">outliers</span><span class="p">,</span>
+                        <span class="n">subset_mds</span><span class="p">[</span><span class="s">&quot;pop&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="n">ref_pop_name</span><span class="p">[</span><span class="n">label</span><span class="p">]</span>
+                <span class="p">)],</span>
+                <span class="n">subset_mds</span><span class="p">[</span><span class="s">&quot;c2&quot;</span><span class="p">][</span><span class="n">npy</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span>
+                    <span class="o">~</span><span class="n">outliers</span><span class="p">,</span>
+                    <span class="n">subset_mds</span><span class="p">[</span><span class="s">&quot;pop&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="n">ref_pop_name</span><span class="p">[</span><span class="n">label</span><span class="p">]</span>
+                <span class="p">)],</span>
+                <span class="s">&quot;o&quot;</span><span class="p">,</span>
+                <span class="n">mec</span><span class="o">=</span><span class="s">&quot;#FFBB33&quot;</span><span class="p">,</span>
+                <span class="n">mfc</span><span class="o">=</span><span class="s">&quot;#FFBB33&quot;</span><span class="p">,</span>
+                <span class="n">ms</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+                <span class="n">clip_on</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">outliers_set</span> <span class="o">|=</span> <span class="nb">set</span><span class="p">([(</span><span class="n">i</span><span class="p">[</span><span class="s">&quot;fid&quot;</span><span class="p">],</span> <span class="n">i</span><span class="p">[</span><span class="s">&quot;iid&quot;</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">outlier_mds</span><span class="p">])</span>
+
+        <span class="c"># Plotting the cluster (without outliers)</span>
+        <span class="n">p</span><span class="p">,</span> <span class="o">=</span> <span class="n">axe_after</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+            <span class="n">subset_mds</span><span class="p">[</span><span class="o">~</span><span class="n">outliers</span><span class="p">][</span><span class="s">&quot;c1&quot;</span><span class="p">],</span>
+            <span class="n">subset_mds</span><span class="p">[</span><span class="o">~</span><span class="n">outliers</span><span class="p">][</span><span class="s">&quot;c2&quot;</span><span class="p">],</span>
+            <span class="s">&quot;o&quot;</span><span class="p">,</span>
+            <span class="n">mec</span><span class="o">=</span><span class="n">colors</span><span class="p">[</span><span class="n">label</span><span class="p">],</span>
+            <span class="n">mfc</span><span class="o">=</span><span class="n">colors</span><span class="p">[</span><span class="n">label</span><span class="p">],</span>
+            <span class="n">ms</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+            <span class="n">clip_on</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">plots_after</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+
+        <span class="c"># Plotting the cluster (only outliers)</span>
+        <span class="n">axe_after</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">subset_mds</span><span class="p">[</span><span class="n">outliers</span><span class="p">][</span><span class="s">&quot;c1&quot;</span><span class="p">],</span> <span class="n">subset_mds</span><span class="p">[</span><span class="n">outliers</span><span class="p">][</span><span class="s">&quot;c2&quot;</span><span class="p">],</span>
+                       <span class="s">&quot;o&quot;</span><span class="p">,</span> <span class="n">mec</span><span class="o">=</span><span class="n">outlier_colors</span><span class="p">[</span><span class="n">label</span><span class="p">],</span>
+                       <span class="n">mfc</span><span class="o">=</span><span class="n">outlier_colors</span><span class="p">[</span><span class="n">label</span><span class="p">],</span> <span class="n">ms</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">clip_on</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+
+        <span class="c"># Plotting only the reference populations</span>
+        <span class="n">p</span><span class="p">,</span> <span class="o">=</span> <span class="n">axe_outliers</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+            <span class="n">subset_mds</span><span class="p">[</span><span class="s">&quot;c1&quot;</span><span class="p">][</span><span class="n">subset_mds</span><span class="p">[</span><span class="s">&quot;pop&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">ref_pop_name</span><span class="p">[</span><span class="n">label</span><span class="p">]],</span>
+            <span class="n">subset_mds</span><span class="p">[</span><span class="s">&quot;c2&quot;</span><span class="p">][</span><span class="n">subset_mds</span><span class="p">[</span><span class="s">&quot;pop&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">ref_pop_name</span><span class="p">[</span><span class="n">label</span><span class="p">]],</span>
+            <span class="s">&quot;o&quot;</span><span class="p">,</span>
+            <span class="n">mec</span><span class="o">=</span><span class="n">colors</span><span class="p">[</span><span class="n">label</span><span class="p">],</span>
+            <span class="n">mfc</span><span class="o">=</span><span class="n">colors</span><span class="p">[</span><span class="n">label</span><span class="p">],</span>
+            <span class="n">ms</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+            <span class="n">clip_on</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">plots_outliers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+
+        <span class="c"># Plotting the cluster center (the real one)</span>
+        <span class="n">axe_after</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">centers</span><span class="p">[</span><span class="n">label</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">centers</span><span class="p">[</span><span class="n">label</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="s">&quot;o&quot;</span><span class="p">,</span>
+                       <span class="n">mec</span><span class="o">=</span><span class="s">&quot;#000000&quot;</span><span class="p">,</span> <span class="n">mfc</span><span class="o">=</span><span class="s">&quot;#FFBB33&quot;</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
+
+    <span class="c"># The legends</span>
+    <span class="n">axe_before</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">plots_before</span><span class="p">,</span> <span class="n">ref_pop_name</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="s">&quot;best&quot;</span><span class="p">,</span> <span class="n">numpoints</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                      <span class="n">fancybox</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span><span class="o">.</span><span class="n">get_frame</span><span class="p">()</span><span class="o">.</span><span class="n">set_alpha</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+    <span class="n">axe_after</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">plots_after</span><span class="p">,</span> <span class="n">ref_pop_name</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="s">&quot;best&quot;</span><span class="p">,</span> <span class="n">numpoints</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                     <span class="n">fancybox</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span><span class="o">.</span><span class="n">get_frame</span><span class="p">()</span><span class="o">.</span><span class="n">set_alpha</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+    <span class="n">axe_outliers</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">plots_outliers</span> <span class="o">+</span> <span class="p">[</span><span class="n">plot_not_outliers</span><span class="p">,</span> <span class="n">plot_outliers</span><span class="p">],</span>
+                        <span class="n">ref_pop_name</span> <span class="o">+</span> <span class="p">[</span><span class="s">&quot;SOURCE&quot;</span><span class="p">,</span> <span class="s">&quot;OUTLIERS&quot;</span><span class="p">],</span> <span class="n">loc</span><span class="o">=</span><span class="s">&quot;best&quot;</span><span class="p">,</span>
+                        <span class="n">numpoints</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">fancybox</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+                        <span class="n">fontsize</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span><span class="o">.</span><span class="n">get_frame</span><span class="p">()</span><span class="o">.</span><span class="n">set_alpha</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+
+    <span class="c"># Saving the figure</span>
+    <span class="n">fig_before</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s">&quot;{}.before.{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">out</span><span class="p">,</span> <span class="n">options</span><span class="o">.</span><span class="n">format</span><span class="p">),</span>
+                       <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+    <span class="n">fig_after</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s">&quot;{}.after.{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">out</span><span class="p">,</span> <span class="n">options</span><span class="o">.</span><span class="n">format</span><span class="p">),</span>
+                      <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+    <span class="n">fig_outliers</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s">&quot;{}.outliers.{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">out</span><span class="p">,</span> <span class="n">options</span><span class="o">.</span><span class="n">format</span><span class="p">),</span>
+                         <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">outliers_set</span>
+
+</div>
+<div class="viewcode-block" id="find_ref_centers"><a class="viewcode-back" href="../../../check_ethnicity.html#pyGenClean.Ethnicity.find_outliers.find_ref_centers">[docs]</a><span class="k">def</span> <span class="nf">find_ref_centers</span><span class="p">(</span><span class="n">mds</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Finds the center of the three reference clusters.</span>
+
+<span class="sd">    :param mds: the ``mds`` information about each samples.</span>
+
+<span class="sd">    :type mds: numpy.recarray</span>
+
+<span class="sd">    :returns: a tuple with a :py:class:`numpy.array` containing the centers of</span>
+<span class="sd">              the three reference population cluster as first element, and a</span>
+<span class="sd">              :py:class:`dict` containing the label of each of the three</span>
+<span class="sd">              reference population clusters.</span>
+
+<span class="sd">    First, we extract the ``mds`` values of each of the three reference</span>
+<span class="sd">    populations. The, we compute the center of each of those clusters by</span>
+<span class="sd">    computing the means.</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        \\textrm{Cluster}_\\textrm{pop} = \\left(</span>
+<span class="sd">            \\frac{\\sum_{i=1}^n x_i}{n}, \\frac{\\sum_{i=1}^n y_i}{n}</span>
+<span class="sd">        \\right)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c"># Computing the centers of each of the reference clusters</span>
+    <span class="n">ceu_mds</span> <span class="o">=</span> <span class="n">mds</span><span class="p">[</span><span class="n">mds</span><span class="p">[</span><span class="s">&quot;pop&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;CEU&quot;</span><span class="p">]</span>
+    <span class="n">yri_mds</span> <span class="o">=</span> <span class="n">mds</span><span class="p">[</span><span class="n">mds</span><span class="p">[</span><span class="s">&quot;pop&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;YRI&quot;</span><span class="p">]</span>
+    <span class="n">asn_mds</span> <span class="o">=</span> <span class="n">mds</span><span class="p">[</span><span class="n">mds</span><span class="p">[</span><span class="s">&quot;pop&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;JPT-CHB&quot;</span><span class="p">]</span>
+
+    <span class="c"># Computing the centers</span>
+    <span class="n">centers</span> <span class="o">=</span> <span class="p">[[</span><span class="n">npy</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">ceu_mds</span><span class="p">[</span><span class="s">&quot;c1&quot;</span><span class="p">]),</span> <span class="n">npy</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">ceu_mds</span><span class="p">[</span><span class="s">&quot;c2&quot;</span><span class="p">])],</span>
+               <span class="p">[</span><span class="n">npy</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">yri_mds</span><span class="p">[</span><span class="s">&quot;c1&quot;</span><span class="p">]),</span> <span class="n">npy</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">yri_mds</span><span class="p">[</span><span class="s">&quot;c2&quot;</span><span class="p">])],</span>
+               <span class="p">[</span><span class="n">npy</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">asn_mds</span><span class="p">[</span><span class="s">&quot;c1&quot;</span><span class="p">]),</span> <span class="n">npy</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">asn_mds</span><span class="p">[</span><span class="s">&quot;c2&quot;</span><span class="p">])]]</span>
+
+    <span class="k">return</span> <span class="n">npy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">centers</span><span class="p">),</span> <span class="p">{</span><span class="s">&quot;CEU&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;YRI&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s">&quot;JPT-CHB&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">}</span>
+
+</div>
+<div class="viewcode-block" id="read_mds_file"><a class="viewcode-back" href="../../../check_ethnicity.html#pyGenClean.Ethnicity.find_outliers.read_mds_file">[docs]</a><span class="k">def</span> <span class="nf">read_mds_file</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">,</span> <span class="n">pops</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Reads a MDS file.</span>
+
+<span class="sd">    :param file_name: the name of the ``mds`` file.</span>
+<span class="sd">    :param c1: the first component to read (x axis).</span>
+<span class="sd">    :param c2: the second component to read (y axis).</span>
+<span class="sd">    :param pops: the population of each sample.</span>
+
+<span class="sd">    :type file_name: str</span>
+<span class="sd">    :type c1: str</span>
+<span class="sd">    :type c2: str</span>
+<span class="sd">    :type pops: dict</span>
+
+<span class="sd">    :returns: a :py:class:`numpy.recarray` (one sample per line) with the</span>
+<span class="sd">              information about the family ID, the individual ID, the first</span>
+<span class="sd">              component to extract, the second component to extract and the</span>
+<span class="sd">              population.</span>
+
+<span class="sd">    The ``mds`` file is the result of Plink (as produced by the</span>
+<span class="sd">    :py:mod:`pyGenClean.Ethnicity.check_ethnicity` module).</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">mds</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">max_fid</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">max_iid</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="s">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">input_file</span><span class="p">:</span>
+        <span class="c"># Getting and checking the header</span>
+        <span class="n">header_index</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">([</span>
+            <span class="p">(</span><span class="n">col_name</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">col_name</span> <span class="ow">in</span>
+            <span class="nb">enumerate</span><span class="p">(</span><span class="n">create_row</span><span class="p">(</span><span class="n">input_file</span><span class="o">.</span><span class="n">readline</span><span class="p">()))</span>
+        <span class="p">])</span>
+        <span class="k">for</span> <span class="n">col_name</span> <span class="ow">in</span> <span class="p">{</span><span class="s">&quot;FID&quot;</span><span class="p">,</span> <span class="s">&quot;IID&quot;</span><span class="p">,</span> <span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">}:</span>
+            <span class="k">if</span> <span class="n">col_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">header_index</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;{}: no column named {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="n">col_name</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">map</span><span class="p">(</span><span class="n">create_row</span><span class="p">,</span> <span class="n">input_file</span><span class="p">):</span>
+            <span class="c"># Getting the sample ID</span>
+            <span class="n">sample_id</span> <span class="o">=</span> <span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">header_index</span><span class="p">[</span><span class="s">&quot;FID&quot;</span><span class="p">]],</span> <span class="n">row</span><span class="p">[</span><span class="n">header_index</span><span class="p">[</span><span class="s">&quot;IID&quot;</span><span class="p">]])</span>
+
+            <span class="c"># Checking we have a population for this sample</span>
+            <span class="k">if</span> <span class="n">sample_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">pops</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;{} {}: not in population file&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">sample_id</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                                                             <span class="n">sample_id</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+            <span class="c"># Saving the data</span>
+            <span class="n">mds</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">sample_id</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">sample_id</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">row</span><span class="p">[</span><span class="n">header_index</span><span class="p">[</span><span class="n">c1</span><span class="p">]],</span>
+                        <span class="n">row</span><span class="p">[</span><span class="n">header_index</span><span class="p">[</span><span class="n">c2</span><span class="p">]],</span> <span class="n">pops</span><span class="p">[</span><span class="n">sample_id</span><span class="p">]))</span>
+
+            <span class="c"># Cheking to find the max FID</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sample_id</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&gt;</span> <span class="n">max_fid</span><span class="p">:</span>
+                <span class="n">max_fid</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">sample_id</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sample_id</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">&gt;</span> <span class="n">max_iid</span><span class="p">:</span>
+                <span class="n">max_iid</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">sample_id</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="c"># Creating the numpy array</span>
+    <span class="n">mds</span> <span class="o">=</span> <span class="n">npy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">mds</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="p">[(</span><span class="s">&quot;fid&quot;</span><span class="p">,</span> <span class="s">&quot;a{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">max_fid</span><span class="p">)),</span>
+                                <span class="p">(</span><span class="s">&quot;iid&quot;</span><span class="p">,</span> <span class="s">&quot;a{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">max_iid</span><span class="p">)),</span>
+                                <span class="p">(</span><span class="s">&quot;c1&quot;</span><span class="p">,</span> <span class="nb">float</span><span class="p">),</span> <span class="p">(</span><span class="s">&quot;c2&quot;</span><span class="p">,</span> <span class="nb">float</span><span class="p">),</span>
+                                <span class="p">(</span><span class="s">&quot;pop&quot;</span><span class="p">,</span> <span class="s">&quot;a7&quot;</span><span class="p">)])</span>
+
+    <span class="k">return</span> <span class="n">mds</span>
+
+</div>
+<div class="viewcode-block" id="read_population_file"><a class="viewcode-back" href="../../../check_ethnicity.html#pyGenClean.Ethnicity.find_outliers.read_population_file">[docs]</a><span class="k">def</span> <span class="nf">read_population_file</span><span class="p">(</span><span class="n">file_name</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Reads the population file.</span>
+
+<span class="sd">    :param file_name: the name of the population file.</span>
+
+<span class="sd">    :type file_name: str</span>
+
+<span class="sd">    :returns: a :py:class:`dict` containing the population for each of the</span>
+<span class="sd">              samples.</span>
+
+<span class="sd">    The population file should contain three columns:</span>
+
+<span class="sd">    1. The family ID.</span>
+<span class="sd">    2. The individual ID.</span>
+<span class="sd">    3. The population of the file (one of ``CEU``, ``YRI``, ``JPT-CHB`` or</span>
+<span class="sd">       ``SOURCE``).</span>
+
+<span class="sd">    The outliers are from the ``SOURCE`` population, when compared to one of</span>
+<span class="sd">    the three reference population (``CEU``, ``YRI`` or ``JPT-CHB``).</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">pops</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">required_pops</span> <span class="o">=</span> <span class="p">{</span><span class="s">&quot;CEU&quot;</span><span class="p">,</span> <span class="s">&quot;YRI&quot;</span><span class="p">,</span> <span class="s">&quot;JPT-CHB&quot;</span><span class="p">,</span> <span class="s">&quot;SOURCE&quot;</span><span class="p">}</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="s">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">input_file</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">input_file</span><span class="p">:</span>
+            <span class="n">row</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\r\n</span><span class="s">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\t</span><span class="s">&quot;</span><span class="p">)</span>
+
+            <span class="c"># The data</span>
+            <span class="n">sample_id</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">row</span><span class="p">[:</span><span class="mi">2</span><span class="p">])</span>
+            <span class="n">pop</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+            <span class="c"># Checking the pop</span>
+            <span class="k">if</span> <span class="n">pop</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">required_pops</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&quot;{}: sample {}: unknown population &quot;</span>
+                       <span class="s">&quot;{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">sample_id</span><span class="p">),</span> <span class="n">pop</span><span class="p">))</span>
+                <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+            <span class="c"># Saving the population file</span>
+            <span class="n">pops</span><span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">row</span><span class="p">[:</span><span class="mi">2</span><span class="p">])]</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">pops</span>
+
+</div>
+<div class="viewcode-block" id="checkArgs"><a class="viewcode-back" href="../../../check_ethnicity.html#pyGenClean.Ethnicity.find_outliers.checkArgs">[docs]</a><span class="k">def</span> <span class="nf">checkArgs</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Checks the arguments and options.</span>
+
+<span class="sd">    :param args: a :py:class:`argparse.Namespace` object containing the options</span>
+<span class="sd">                 of the program.</span>
+
+<span class="sd">    :type args: argparse.Namespace</span>
+
+<span class="sd">    :returns: ``True`` if everything was OK.</span>
+
+<span class="sd">    If there is a problem with an option, an exception is raised using the</span>
+<span class="sd">    :py:class:`ProgramError` class, a message is printed to the</span>
+<span class="sd">    :class:`sys.stderr` and the program exists with code 1.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c"># Checking the input files</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">mds</span><span class="p">):</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;{}: no such file&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">mds</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">population_file</span><span class="p">):</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;{}: no such file&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">population_file</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="c"># Checking the chosen components</span>
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">xaxis</span> <span class="o">==</span> <span class="n">args</span><span class="o">.</span><span class="n">yaxis</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;xaxis must be different than yaxis&quot;</span>
+        <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="bp">True</span>
+
+</div>
+<div class="viewcode-block" id="parseArgs"><a class="viewcode-back" href="../../../check_ethnicity.html#pyGenClean.Ethnicity.find_outliers.parseArgs">[docs]</a><span class="k">def</span> <span class="nf">parseArgs</span><span class="p">(</span><span class="n">argString</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>  <span class="c"># pragma: no cover</span>
+    <span class="sd">&quot;&quot;&quot;Parses the command line options and arguments.</span>
+
+<span class="sd">    :param argString: the options.</span>
+
+<span class="sd">    :type argString: list</span>
+
+<span class="sd">    :returns: A :py:class:`argparse.Namespace` object created by the</span>
+<span class="sd">              :py:mod:`argparse` module. It contains the values of the</span>
+<span class="sd">              different options.</span>
+
+<span class="sd">    ===================== ====== ==============================================</span>
+<span class="sd">            Options        Type                   Description</span>
+<span class="sd">    ===================== ====== ==============================================</span>
+<span class="sd">    ``--mds``             string The MDS file from Plink.</span>
+<span class="sd">    ``--population-file`` string A population file from</span>
+<span class="sd">                                 :py:mod:`pyGenClean.Ethnicity.check_ethnicity`</span>
+<span class="sd">                                 module.</span>
+<span class="sd">    ``--format``          string The output file format (png, ps, or pdf.</span>
+<span class="sd">    ``--out``             string The prefix of the output files.</span>
+<span class="sd">    ``--outliers-of``     string Finds the outliers of this population.</span>
+<span class="sd">    ``--multiplier``      float  To find the outliers, we look for more than</span>
+<span class="sd">                                 :math:`x` times the cluster standard</span>
+<span class="sd">                                 deviation.</span>
+<span class="sd">    ``--xaxis``           string The component to use for the X axis.</span>
+<span class="sd">    ``--yaxis``           string The component to use for the Y axis.</span>
+<span class="sd">    ===================== ====== ==============================================</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">        No option check is done here (except for the one automatically done by</span>
+<span class="sd">        argparse). Those need to be done elsewhere (see :py:func:`checkArgs`).</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">if</span> <span class="n">argString</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">(</span><span class="n">argString</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">args</span>
+
+</div>
+<div class="viewcode-block" id="add_custom_options"><a class="viewcode-back" href="../../../check_ethnicity.html#pyGenClean.Ethnicity.find_outliers.add_custom_options">[docs]</a><span class="k">def</span> <span class="nf">add_custom_options</span><span class="p">(</span><span class="n">parser</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Adds custom options to a parser.</span>
+
+<span class="sd">    :param parser: the parser to which to add options.</span>
+
+<span class="sd">    :type parser: argparse.ArgumentParser</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;--outliers-of&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s">&quot;POP&quot;</span><span class="p">,</span>
+                        <span class="n">default</span><span class="o">=</span><span class="s">&quot;CEU&quot;</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;CEU&quot;</span><span class="p">,</span> <span class="s">&quot;YRI&quot;</span><span class="p">,</span> <span class="s">&quot;JPT-CHB&quot;</span><span class="p">],</span>
+                        <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s">&quot;Finds the outliers of this population. &quot;</span>
+                              <span class="s">&quot;[default: </span><span class="si">%(default)s</span><span class="s">]&quot;</span><span class="p">))</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;--multiplier&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s">&quot;FLOAT&quot;</span><span class="p">,</span>
+                        <span class="n">default</span><span class="o">=</span><span class="mf">1.9</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s">&quot;To find the outliers, we look for more than &quot;</span>
+                              <span class="s">&quot;x times the cluster standard deviation. &quot;</span>
+                              <span class="s">&quot;[default: </span><span class="si">%(default).1f</span><span class="s">]&quot;</span><span class="p">))</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;--xaxis&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s">&quot;COMPONENT&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s">&quot;C1&quot;</span><span class="p">,</span>
+                        <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;C{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">11</span><span class="p">)],</span>
+                        <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s">&quot;The component to use for the X axis. &quot;</span>
+                              <span class="s">&quot;[default: </span><span class="si">%(default)s</span><span class="s">]&quot;</span><span class="p">))</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;--yaxis&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s">&quot;COMPONENT&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s">&quot;C2&quot;</span><span class="p">,</span>
+                        <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;C{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">11</span><span class="p">)],</span>
+                        <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s">&quot;The component to use for the Y axis. &quot;</span>
+                              <span class="s">&quot;[default: </span><span class="si">%(default)s</span><span class="s">]&quot;</span><span class="p">))</span>
+
+</div>
+<div class="viewcode-block" id="ProgramError"><a class="viewcode-back" href="../../../check_ethnicity.html#pyGenClean.Ethnicity.find_outliers.ProgramError">[docs]</a><span class="k">class</span> <span class="nc">ProgramError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;An :py:class:`Exception` raised in case of a problem.</span>
+
+<span class="sd">    :param msg: the message to print to the user before exiting.</span>
+
+<span class="sd">    :type msg: str</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Construction of the :py:class:`ProgramError` class.</span>
+
+<span class="sd">        :param msg: the message to print to the user</span>
+
+<span class="sd">        :type msg: str</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span>
+
+<span class="c"># The parser object</span></div>
+<span class="n">desc</span> <span class="o">=</span> <span class="s">&quot;&quot;&quot;Finds outliers in SOURCE from CEU samples.&quot;&quot;&quot;</span>
+<span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="n">desc</span><span class="p">)</span>
+
+
+<span class="c"># The INPUT files</span>
+<span class="n">group</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s">&quot;Input File&quot;</span><span class="p">)</span>
+<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;--mds&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s">&quot;FILE&quot;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+                   <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s">&quot;The MDS file from Plink&quot;</span><span class="p">))</span>
+<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;--population-file&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s">&quot;FILE&quot;</span><span class="p">,</span>
+                   <span class="n">required</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+                   <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s">&quot;A population file containing the following columns &quot;</span>
+                         <span class="s">&quot;(without a header): FID, IID and POP. POP should be &quot;</span>
+                         <span class="s">&quot;one of &#39;CEU&#39;, &#39;JPT-CHB&#39;, &#39;YRI&#39; and SOURCE.&quot;</span><span class="p">))</span>
+<span class="c"># The options</span>
+<span class="n">group</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s">&quot;Options&quot;</span><span class="p">)</span>
+<span class="n">add_custom_options</span><span class="p">(</span><span class="n">group</span><span class="p">)</span>
+<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;--format&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s">&quot;FORMAT&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s">&quot;png&quot;</span><span class="p">,</span>
+                   <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;png&quot;</span><span class="p">,</span> <span class="s">&quot;ps&quot;</span><span class="p">,</span> <span class="s">&quot;pdf&quot;</span><span class="p">],</span>
+                   <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s">&quot;The output file format (png, ps, or pdf &quot;</span>
+                         <span class="s">&quot;formats are available). [default: </span><span class="si">%(default)s</span><span class="s">]&quot;</span><span class="p">))</span>
+<span class="c"># The OUTPUT files</span>
+<span class="n">group</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s">&quot;Output File&quot;</span><span class="p">)</span>
+<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;--out&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s">&quot;FILE&quot;</span><span class="p">,</span>
+                   <span class="n">default</span><span class="o">=</span><span class="s">&quot;ethnicity&quot;</span><span class="p">,</span>
+                   <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s">&quot;The prefix of the output files. [default: &quot;</span>
+                         <span class="s">&quot;</span><span class="si">%(default)s</span><span class="s">]&quot;</span><span class="p">))</span>
+
+
+<div class="viewcode-block" id="safe_main"><a class="viewcode-back" href="../../../check_ethnicity.html#pyGenClean.Ethnicity.find_outliers.safe_main">[docs]</a><span class="k">def</span> <span class="nf">safe_main</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;A safe version of the main function (that catches ProgramError).&quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">main</span><span class="p">()</span>
+    <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Cancelled by user&quot;</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">ProgramError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">message</span><span class="p">)</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">message</span><span class="p">)</span>
+
+</div>
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">safe_main</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">pyGenClean 1.7.0 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2012, Louis-Philippe Lemieux Perreault.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+    </div>
+  </body>
+</html>

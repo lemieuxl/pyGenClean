@@ -1,0 +1,872 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>The Data Clean Up Module &mdash; pyGenClean 1.7.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.7.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="pyGenClean 1.7.0 documentation" href="index.html" />
+    <link rel="next" title="Duplicated Samples Module" href="duplicated_samples.html" />
+    <link rel="prev" title="How to Run the Pipeline" href="how_to_run.html" /> 
+  </head>
+  <body role="document">
+
+<div style="background-color: white; text-align: left; padding: 10px 10px 15px 15px">
+<a href="index.html"><img src="_static/logo.png" border="0" alt="py4sci"/></a>
+</div>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="duplicated_samples.html" title="Duplicated Samples Module"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="how_to_run.html" title="How to Run the Pipeline"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">pyGenClean 1.7.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="how_to_run.html"
+                        title="previous chapter">How to Run the Pipeline</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="duplicated_samples.html"
+                        title="next chapter">Duplicated Samples Module</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/data_clean_up_module.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-pyGenClean.run_data_clean_up">
+<span id="the-data-clean-up-module"></span><h1>The Data Clean Up Module<a class="headerlink" href="#module-pyGenClean.run_data_clean_up" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="pyGenClean.run_data_clean_up.all_files_exist">
+<code class="descclassname">pyGenClean.run_data_clean_up.</code><code class="descname">all_files_exist</code><span class="sig-paren">(</span><em>file_list</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/run_data_clean_up.html#all_files_exist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.run_data_clean_up.all_files_exist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if all files exist.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>file_list</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; the names of files to check.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><code class="docutils literal"><span class="pre">True</span></code> if all files exist, <code class="docutils literal"><span class="pre">False</span></code> otherwise.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.run_data_clean_up.check_args">
+<code class="descclassname">pyGenClean.run_data_clean_up.</code><code class="descname">check_args</code><span class="sig-paren">(</span><em>args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/run_data_clean_up.html#check_args"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.run_data_clean_up.check_args" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks the arguments and options.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>args</strong> (<a class="reference external" href="http://docs.python.org/library/argparse.html#argparse.Namespace" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">argparse.Namespace</span></code></a>) &#8211; an object containing the options and arguments of the program.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><code class="docutils literal"><span class="pre">True</span></code> if everything was OK.</td>
+</tr>
+</tbody>
+</table>
+<p>If there is a problem with an option, an exception is raised using the
+<code class="xref py py-class docutils literal"><span class="pre">ProgramError</span></code> class, a message is printed to the
+<code class="xref py py-class docutils literal"><span class="pre">sys.stderr</span></code> and the program exits with error code 1.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.run_data_clean_up.check_input_files">
+<code class="descclassname">pyGenClean.run_data_clean_up.</code><code class="descname">check_input_files</code><span class="sig-paren">(</span><em>prefix</em>, <em>the_type</em>, <em>required_type</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/run_data_clean_up.html#check_input_files"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.run_data_clean_up.check_input_files" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check that the file is of a certain file type.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>prefix</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the prefix of the input files.</li>
+<li><strong>the_type</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the type of the input files (bfile, tfile or file).</li>
+<li><strong>required_type</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the required type of the input files (bfile, tfile or
+file).</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><code class="docutils literal"><span class="pre">True</span></code> if everything is OK.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Checks if the files are of the required type, according to their current
+type. The available types are <code class="docutils literal"><span class="pre">bfile</span></code> (binary), <code class="docutils literal"><span class="pre">tfile</span></code> (transposed)
+and <code class="docutils literal"><span class="pre">file</span></code> (normal).</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.run_data_clean_up.count_markers_samples">
+<code class="descclassname">pyGenClean.run_data_clean_up.</code><code class="descname">count_markers_samples</code><span class="sig-paren">(</span><em>prefix</em>, <em>file_type</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/run_data_clean_up.html#count_markers_samples"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.run_data_clean_up.count_markers_samples" title="Permalink to this definition">¶</a></dt>
+<dd><p>Counts the number of markers and samples in plink file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>prefix</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the prefix of the files.</li>
+<li><strong>file_type</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the file type.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">the number of markers and samples (in a tuple).</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.run_data_clean_up.main">
+<code class="descclassname">pyGenClean.run_data_clean_up.</code><code class="descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/run_data_clean_up.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.run_data_clean_up.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>The main function.</p>
+<p>These are the steps performed for the data clean up:</p>
+<ol class="arabic simple">
+<li>Prints the version number.</li>
+<li>Reads the configuration file (<a class="reference internal" href="#pyGenClean.run_data_clean_up.read_config_file" title="pyGenClean.run_data_clean_up.read_config_file"><code class="xref py py-func docutils literal"><span class="pre">read_config_file()</span></code></a>).</li>
+<li>Creates a new directory with <code class="docutils literal"><span class="pre">data_clean_up</span></code> as prefix and the date
+and time as suffix.</li>
+<li>Check the input file type (<code class="docutils literal"><span class="pre">bfile</span></code>, <code class="docutils literal"><span class="pre">tfile</span></code> or <code class="docutils literal"><span class="pre">file</span></code>).</li>
+<li>Creates an intermediate directory with the section as prefix and the
+script name as suffix (inside the previous directory).</li>
+<li>Runs the required script in order (according to the configuration file
+section).</li>
+</ol>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The main function is not responsible to check if the required files
+exist. This should be done in the <code class="docutils literal"><span class="pre">run</span></code> functions.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.run_data_clean_up.parse_args">
+<code class="descclassname">pyGenClean.run_data_clean_up.</code><code class="descname">parse_args</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/run_data_clean_up.html#parse_args"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.run_data_clean_up.parse_args" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parses the command line options and arguments.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A <a class="reference external" href="http://docs.python.org/library/argparse.html#argparse.Namespace" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">argparse.Namespace</span></code></a> object created by the
+<a class="reference external" href="http://docs.python.org/library/argparse.html#module-argparse" title="(in Python v2.7)"><code class="xref py py-mod docutils literal"><span class="pre">argparse</span></code></a> module. It contains the values of the
+different options.</td>
+</tr>
+</tbody>
+</table>
+<table border="1" class="docutils">
+<colgroup>
+<col width="32%" />
+<col width="10%" />
+<col width="58%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Options</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--bfile</span></code></td>
+<td>String</td>
+<td>The input binary file prefix from Plink.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--tfile</span></code></td>
+<td>String</td>
+<td>The input transposed file prefix from
+Plink.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--file</span></code></td>
+<td>String</td>
+<td>The input file prefix from Plink.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--conf</span></code></td>
+<td>String</td>
+<td>The parameter file for the data clean up.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--report-author</span></code></td>
+<td>String</td>
+<td>The current project number.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--report-number</span></code></td>
+<td>String</td>
+<td>The current project author.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--report-background</span></code></td>
+<td>String</td>
+<td>Text of file containing the background
+section of the report.</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">No option check is done here (except for the one automatically done by
+<a class="reference external" href="http://docs.python.org/library/argparse.html#module-argparse" title="(in Python v2.7)"><code class="xref py py-mod docutils literal"><span class="pre">argparse</span></code></a>). Those need to be done elsewhere (see
+<code class="xref py py-func docutils literal"><span class="pre">checkArgs()</span></code>).</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.run_data_clean_up.read_config_file">
+<code class="descclassname">pyGenClean.run_data_clean_up.</code><code class="descname">read_config_file</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/run_data_clean_up.html#read_config_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.run_data_clean_up.read_config_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads the configuration file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filename</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the name of the file containing the configuration.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A tuple where the first element is a list of sections, and the
+second element is a map containing the configuration (options and
+values).</td>
+</tr>
+</tbody>
+</table>
+<p>The structure of the configuration file is important. Here is an example of
+a configuration file:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="c"># Computes statistics on duplicated samples</span>
+<span class="n">script</span> <span class="o">=</span> <span class="n">duplicated_samples</span>
+
+<span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="c"># Removes samples according to missingness</span>
+<span class="n">script</span> <span class="o">=</span> <span class="n">sample_missingness</span>
+
+<span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="c"># Removes markers according to missingness</span>
+<span class="n">script</span> <span class="o">=</span> <span class="n">snp_missingness</span>
+
+<span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="c"># Removes samples according to missingness (98%)</span>
+<span class="n">script</span> <span class="o">=</span> <span class="n">sample_missingness</span>
+<span class="n">mind</span> <span class="o">=</span> <span class="mf">0.02</span>
+
+<span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="c"># Performs a sex check</span>
+<span class="n">script</span> <span class="o">=</span> <span class="n">sex_check</span>
+
+<span class="p">[</span><span class="mi">6</span><span class="p">]</span> <span class="c"># Flags markers with MAF=0</span>
+<span class="n">script</span> <span class="o">=</span> <span class="n">flag_maf_zero</span>
+
+<span class="p">[</span><span class="mi">7</span><span class="p">]</span> <span class="c"># Flags markers according to Hardy Weinberg</span>
+<span class="n">script</span> <span class="o">=</span> <span class="n">flag_hw</span>
+
+<span class="p">[</span><span class="mi">8</span><span class="p">]</span> <span class="c"># Subset the dataset (excludes markers and remove samples)</span>
+<span class="n">script</span> <span class="o">=</span> <span class="n">subset</span>
+<span class="n">exclude</span> <span class="o">=</span> <span class="o">.../</span><span class="n">filename</span>
+<span class="n">rempove</span> <span class="o">=</span> <span class="o">.../</span><span class="n">filename</span>
+</pre></div>
+</div>
+<p>Sections are in square brackets and must be <code class="docutils literal"><span class="pre">integer</span></code>. The section number
+represent the step at which the script will be run (<em>i.e.</em> from the
+smallest number to the biggest). The sections must be continuous.</p>
+<p>Each section contains the script names (<code class="docutils literal"><span class="pre">script</span></code> variable) and options of
+the script (all other variables) (<em>e.g.</em> section 4 runs the
+<code class="docutils literal"><span class="pre">sample_missingness</span></code> script (<a class="reference internal" href="#pyGenClean.run_data_clean_up.run_sample_missingness" title="pyGenClean.run_data_clean_up.run_sample_missingness"><code class="xref py py-func docutils literal"><span class="pre">run_sample_missingness()</span></code></a>) with
+option <code class="docutils literal"><span class="pre">mind</span></code> sets to 0.02).</p>
+<p>Here is a list of the available scripts:</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">duplicated_samples</span></code> (<a class="reference internal" href="#pyGenClean.run_data_clean_up.run_duplicated_samples" title="pyGenClean.run_data_clean_up.run_duplicated_samples"><code class="xref py py-func docutils literal"><span class="pre">run_duplicated_samples()</span></code></a>)</li>
+<li><code class="docutils literal"><span class="pre">duplicated_snps</span></code> (<a class="reference internal" href="#pyGenClean.run_data_clean_up.run_duplicated_snps" title="pyGenClean.run_data_clean_up.run_duplicated_snps"><code class="xref py py-func docutils literal"><span class="pre">run_duplicated_snps()</span></code></a>)</li>
+<li><code class="docutils literal"><span class="pre">noCall_hetero_snps</span></code> (<a class="reference internal" href="#pyGenClean.run_data_clean_up.run_noCall_hetero_snps" title="pyGenClean.run_data_clean_up.run_noCall_hetero_snps"><code class="xref py py-func docutils literal"><span class="pre">run_noCall_hetero_snps()</span></code></a>)</li>
+<li><code class="docutils literal"><span class="pre">sample_missingness</span></code> (<a class="reference internal" href="#pyGenClean.run_data_clean_up.run_sample_missingness" title="pyGenClean.run_data_clean_up.run_sample_missingness"><code class="xref py py-func docutils literal"><span class="pre">run_sample_missingness()</span></code></a>)</li>
+<li><code class="docutils literal"><span class="pre">snp_missingness</span></code> (<a class="reference internal" href="#pyGenClean.run_data_clean_up.run_snp_missingness" title="pyGenClean.run_data_clean_up.run_snp_missingness"><code class="xref py py-func docutils literal"><span class="pre">run_snp_missingness()</span></code></a>)</li>
+<li><code class="docutils literal"><span class="pre">sex_check</span></code> (<a class="reference internal" href="#pyGenClean.run_data_clean_up.run_sex_check" title="pyGenClean.run_data_clean_up.run_sex_check"><code class="xref py py-func docutils literal"><span class="pre">run_sex_check()</span></code></a>)</li>
+<li><code class="docutils literal"><span class="pre">plate_bias</span></code> (<a class="reference internal" href="#pyGenClean.run_data_clean_up.run_plate_bias" title="pyGenClean.run_data_clean_up.run_plate_bias"><code class="xref py py-func docutils literal"><span class="pre">run_plate_bias()</span></code></a>)</li>
+<li><code class="docutils literal"><span class="pre">remove_heterozygous_haploid</span></code>
+(<a class="reference internal" href="#pyGenClean.run_data_clean_up.run_remove_heterozygous_haploid" title="pyGenClean.run_data_clean_up.run_remove_heterozygous_haploid"><code class="xref py py-func docutils literal"><span class="pre">run_remove_heterozygous_haploid()</span></code></a>)</li>
+<li><code class="docutils literal"><span class="pre">find_related_samples</span></code> (<a class="reference internal" href="#pyGenClean.run_data_clean_up.run_find_related_samples" title="pyGenClean.run_data_clean_up.run_find_related_samples"><code class="xref py py-func docutils literal"><span class="pre">run_find_related_samples()</span></code></a>)</li>
+<li><code class="docutils literal"><span class="pre">check_ethnicity</span></code> (<a class="reference internal" href="#pyGenClean.run_data_clean_up.run_check_ethnicity" title="pyGenClean.run_data_clean_up.run_check_ethnicity"><code class="xref py py-func docutils literal"><span class="pre">run_check_ethnicity()</span></code></a>)</li>
+<li><code class="docutils literal"><span class="pre">flag_maf_zero</span></code> (<a class="reference internal" href="#pyGenClean.run_data_clean_up.run_flag_maf_zero" title="pyGenClean.run_data_clean_up.run_flag_maf_zero"><code class="xref py py-func docutils literal"><span class="pre">run_flag_maf_zero()</span></code></a>)</li>
+<li><code class="docutils literal"><span class="pre">flag_hw</span></code> (<a class="reference internal" href="#pyGenClean.run_data_clean_up.run_flag_hw" title="pyGenClean.run_data_clean_up.run_flag_hw"><code class="xref py py-func docutils literal"><span class="pre">run_flag_hw()</span></code></a>)</li>
+<li><code class="docutils literal"><span class="pre">subset</span></code> (<a class="reference internal" href="#pyGenClean.run_data_clean_up.run_subset_data" title="pyGenClean.run_data_clean_up.run_subset_data"><code class="xref py py-func docutils literal"><span class="pre">run_subset_data()</span></code></a>)</li>
+<li><code class="docutils literal"><span class="pre">compare_gold_standard</span></code> (<a class="reference internal" href="#pyGenClean.run_data_clean_up.run_compare_gold_standard" title="pyGenClean.run_data_clean_up.run_compare_gold_standard"><code class="xref py py-func docutils literal"><span class="pre">run_compare_gold_standard()</span></code></a>)</li>
+</ul>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.run_data_clean_up.run_check_ethnicity">
+<code class="descclassname">pyGenClean.run_data_clean_up.</code><code class="descname">run_check_ethnicity</code><span class="sig-paren">(</span><em>in_prefix</em>, <em>in_type</em>, <em>out_prefix</em>, <em>base_dir</em>, <em>options</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/run_data_clean_up.html#run_check_ethnicity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.run_data_clean_up.run_check_ethnicity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs step10 (check ethnicity).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>in_prefix</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the prefix of the input files.</li>
+<li><strong>in_type</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the type of the input files.</li>
+<li><strong>out_prefix</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the output prefix.</li>
+<li><strong>base_dir</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the output directory.</li>
+<li><strong>options</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; the options needed.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">a tuple containing the prefix of the output files (the input
+prefix for the next script) and the type of the output files
+(<code class="docutils literal"><span class="pre">bfile</span></code>).</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>This function calls the <a class="reference internal" href="check_ethnicity.html#module-pyGenClean.Ethnicity.check_ethnicity" title="pyGenClean.Ethnicity.check_ethnicity"><code class="xref py py-mod docutils literal"><span class="pre">pyGenClean.Ethnicity.check_ethnicity</span></code></a>
+module. The required file type for this module is <code class="docutils literal"><span class="pre">bfile</span></code>, hence the need
+to use the <a class="reference internal" href="#pyGenClean.run_data_clean_up.check_input_files" title="pyGenClean.run_data_clean_up.check_input_files"><code class="xref py py-func docutils literal"><span class="pre">check_input_files()</span></code></a> to check if the file input file
+type is the good one, or to create it if needed.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The <a class="reference internal" href="check_ethnicity.html#module-pyGenClean.Ethnicity.check_ethnicity" title="pyGenClean.Ethnicity.check_ethnicity"><code class="xref py py-mod docutils literal"><span class="pre">pyGenClean.Ethnicity.check_ethnicity</span></code></a> module doesn&#8217;t
+return usable output files. Hence, this function returns the input file
+prefix and its type.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.run_data_clean_up.run_command">
+<code class="descclassname">pyGenClean.run_data_clean_up.</code><code class="descname">run_command</code><span class="sig-paren">(</span><em>command</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/run_data_clean_up.html#run_command"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.run_data_clean_up.run_command" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run a command using subprocesses.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>command</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; the command to run.</td>
+</tr>
+</tbody>
+</table>
+<p>Tries to run a command. If it fails, raise a <code class="xref py py-class docutils literal"><span class="pre">ProgramError</span></code>.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">The variable <code class="docutils literal"><span class="pre">command</span></code> should be a list of strings (no other type).</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.run_data_clean_up.run_compare_gold_standard">
+<code class="descclassname">pyGenClean.run_data_clean_up.</code><code class="descname">run_compare_gold_standard</code><span class="sig-paren">(</span><em>in_prefix</em>, <em>in_type</em>, <em>out_prefix</em>, <em>base_dir</em>, <em>options</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/run_data_clean_up.html#run_compare_gold_standard"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.run_data_clean_up.run_compare_gold_standard" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compares with a gold standard data set (compare_gold_standard.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>in_prefix</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the prefix of the input files.</li>
+<li><strong>in_type</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the type of the input files.</li>
+<li><strong>out_prefix</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the output prefix.</li>
+<li><strong>base_dir</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the output directory.</li>
+<li><strong>options</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; the options needed.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">a tuple containing the prefix of the output files (the input
+prefix for the next script) and the type of the output files
+(<code class="docutils literal"><span class="pre">bfile</span></code>).</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>This function calls the <a class="reference internal" href="compare_gold_standard.html#module-pyGenClean.Misc.compare_gold_standard" title="pyGenClean.Misc.compare_gold_standard"><code class="xref py py-mod docutils literal"><span class="pre">pyGenClean.Misc.compare_gold_standard</span></code></a>
+module. The required file type for this module is <code class="docutils literal"><span class="pre">bfile</span></code>, hence the need
+to use the <a class="reference internal" href="#pyGenClean.run_data_clean_up.check_input_files" title="pyGenClean.run_data_clean_up.check_input_files"><code class="xref py py-func docutils literal"><span class="pre">check_input_files()</span></code></a> to check if the file input file
+type is the good one, or to create it if needed.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The <a class="reference internal" href="compare_gold_standard.html#module-pyGenClean.Misc.compare_gold_standard" title="pyGenClean.Misc.compare_gold_standard"><code class="xref py py-mod docutils literal"><span class="pre">pyGenClean.Misc.compare_gold_standard</span></code></a> module doesn&#8217;t
+return usable output files. Hence, this function returns the input file
+prefix and its type.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.run_data_clean_up.run_duplicated_samples">
+<code class="descclassname">pyGenClean.run_data_clean_up.</code><code class="descname">run_duplicated_samples</code><span class="sig-paren">(</span><em>in_prefix</em>, <em>in_type</em>, <em>out_prefix</em>, <em>base_dir</em>, <em>options</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/run_data_clean_up.html#run_duplicated_samples"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.run_data_clean_up.run_duplicated_samples" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs step1 (duplicated samples).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>in_prefix</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the prefix of the input files.</li>
+<li><strong>in_type</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the type of the input files.</li>
+<li><strong>out_prefix</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the output prefix.</li>
+<li><strong>base_dir</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the output directory.</li>
+<li><strong>options</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; the options needed.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">a tuple containing the prefix of the output files (the input
+prefix for the next script) and the type of the output files
+(<code class="docutils literal"><span class="pre">tfile</span></code>).</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>This function calls the <a class="reference internal" href="duplicated_samples.html#module-pyGenClean.DupSamples.duplicated_samples" title="pyGenClean.DupSamples.duplicated_samples"><code class="xref py py-mod docutils literal"><span class="pre">pyGenClean.DupSamples.duplicated_samples</span></code></a>
+module. The required file type for this module is <code class="docutils literal"><span class="pre">tfile</span></code>, hence the need
+to use the <a class="reference internal" href="#pyGenClean.run_data_clean_up.check_input_files" title="pyGenClean.run_data_clean_up.check_input_files"><code class="xref py py-func docutils literal"><span class="pre">check_input_files()</span></code></a> to check if the file input file
+type is the good one, or to create it if needed.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.run_data_clean_up.run_duplicated_snps">
+<code class="descclassname">pyGenClean.run_data_clean_up.</code><code class="descname">run_duplicated_snps</code><span class="sig-paren">(</span><em>in_prefix</em>, <em>in_type</em>, <em>out_prefix</em>, <em>base_dir</em>, <em>options</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/run_data_clean_up.html#run_duplicated_snps"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.run_data_clean_up.run_duplicated_snps" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs step2 (duplicated snps).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>in_prefix</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the prefix of the input files.</li>
+<li><strong>in_type</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the type of the input files.</li>
+<li><strong>out_prefix</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the output prefix.</li>
+<li><strong>base_dir</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the output directory.</li>
+<li><strong>options</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; the options needed.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">a tuple containing the prefix of the output files (the input
+prefix for the next script) and the type of the output files
+(<code class="docutils literal"><span class="pre">tfile</span></code>).</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>This function calls the <a class="reference internal" href="duplicated_markers.html#module-pyGenClean.DupSNPs.duplicated_snps" title="pyGenClean.DupSNPs.duplicated_snps"><code class="xref py py-mod docutils literal"><span class="pre">pyGenClean.DupSNPs.duplicated_snps</span></code></a>
+module. The required file type for this module is <code class="docutils literal"><span class="pre">tfile</span></code>, hence the need
+to use the <a class="reference internal" href="#pyGenClean.run_data_clean_up.check_input_files" title="pyGenClean.run_data_clean_up.check_input_files"><code class="xref py py-func docutils literal"><span class="pre">check_input_files()</span></code></a> to check if the file input file
+type is the good one, or to create it if needed.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This function creates a <code class="docutils literal"><span class="pre">map</span></code> file, needed for the
+<a class="reference internal" href="duplicated_markers.html#module-pyGenClean.DupSNPs.duplicated_snps" title="pyGenClean.DupSNPs.duplicated_snps"><code class="xref py py-mod docutils literal"><span class="pre">pyGenClean.DupSNPs.duplicated_snps</span></code></a> module.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.run_data_clean_up.run_find_related_samples">
+<code class="descclassname">pyGenClean.run_data_clean_up.</code><code class="descname">run_find_related_samples</code><span class="sig-paren">(</span><em>in_prefix</em>, <em>in_type</em>, <em>out_prefix</em>, <em>base_dir</em>, <em>options</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/run_data_clean_up.html#run_find_related_samples"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.run_data_clean_up.run_find_related_samples" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs step9 (find related samples).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>in_prefix</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the prefix of the input files.</li>
+<li><strong>in_type</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the type of the input files.</li>
+<li><strong>out_prefix</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the output prefix.</li>
+<li><strong>base_dir</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the output directory.</li>
+<li><strong>options</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; the options needed.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">a tuple containing the prefix of the output files (the input
+prefix for the next script) and the type of the output files
+(<code class="docutils literal"><span class="pre">bfile</span></code>).</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>This function calls the
+<a class="reference internal" href="find_related_samples.html#module-pyGenClean.RelatedSamples.find_related_samples" title="pyGenClean.RelatedSamples.find_related_samples"><code class="xref py py-mod docutils literal"><span class="pre">pyGenClean.RelatedSamples.find_related_samples</span></code></a> module. The
+required file type for this module is <code class="docutils literal"><span class="pre">bfile</span></code>, hence the need to use the
+<a class="reference internal" href="#pyGenClean.run_data_clean_up.check_input_files" title="pyGenClean.run_data_clean_up.check_input_files"><code class="xref py py-func docutils literal"><span class="pre">check_input_files()</span></code></a> to check if the file input file type is the
+good one, or to create it if needed.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The <a class="reference internal" href="find_related_samples.html#module-pyGenClean.RelatedSamples.find_related_samples" title="pyGenClean.RelatedSamples.find_related_samples"><code class="xref py py-mod docutils literal"><span class="pre">pyGenClean.RelatedSamples.find_related_samples</span></code></a> module
+doesn&#8217;t return usable output files. Hence, this function returns the
+input file prefix and its type.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.run_data_clean_up.run_flag_hw">
+<code class="descclassname">pyGenClean.run_data_clean_up.</code><code class="descname">run_flag_hw</code><span class="sig-paren">(</span><em>in_prefix</em>, <em>in_type</em>, <em>out_prefix</em>, <em>base_dir</em>, <em>options</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/run_data_clean_up.html#run_flag_hw"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.run_data_clean_up.run_flag_hw" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs step12 (flag HW).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>in_prefix</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the prefix of the input files.</li>
+<li><strong>in_type</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the type of the input files.</li>
+<li><strong>out_prefix</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the output prefix.</li>
+<li><strong>base_dir</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the output directory.</li>
+<li><strong>options</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; the options needed.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">a tuple containing the prefix of the output files (the input
+prefix for the next script) and the type of the output files
+(<code class="docutils literal"><span class="pre">bfile</span></code>).</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>This function calls the <a class="reference internal" href="flag_hw.html#module-pyGenClean.FlagHW.flag_hw" title="pyGenClean.FlagHW.flag_hw"><code class="xref py py-mod docutils literal"><span class="pre">pyGenClean.FlagHW.flag_hw</span></code></a> module. The
+required file type for this module is <code class="docutils literal"><span class="pre">bfile</span></code>, hence the need to use the
+<a class="reference internal" href="#pyGenClean.run_data_clean_up.check_input_files" title="pyGenClean.run_data_clean_up.check_input_files"><code class="xref py py-func docutils literal"><span class="pre">check_input_files()</span></code></a> to check if the file input file type is the
+good one, or to create it if needed.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The <a class="reference internal" href="flag_hw.html#module-pyGenClean.FlagHW.flag_hw" title="pyGenClean.FlagHW.flag_hw"><code class="xref py py-mod docutils literal"><span class="pre">pyGenClean.FlagHW.flag_hw</span></code></a> module doesn&#8217;t return usable
+output files. Hence, this function returns the input file prefix and
+its type.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.run_data_clean_up.run_flag_maf_zero">
+<code class="descclassname">pyGenClean.run_data_clean_up.</code><code class="descname">run_flag_maf_zero</code><span class="sig-paren">(</span><em>in_prefix</em>, <em>in_type</em>, <em>out_prefix</em>, <em>base_dir</em>, <em>options</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/run_data_clean_up.html#run_flag_maf_zero"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.run_data_clean_up.run_flag_maf_zero" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs step11 (flag MAF zero).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>in_prefix</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the prefix of the input files.</li>
+<li><strong>in_type</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the type of the input files.</li>
+<li><strong>out_prefix</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the output prefix.</li>
+<li><strong>base_dir</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the output directory.</li>
+<li><strong>options</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; the options needed.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">a tuple containing the prefix of the output files (the input
+prefix for the next script) and the type of the output files
+(<code class="docutils literal"><span class="pre">bfile</span></code>).</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>This function calls the <a class="reference internal" href="flag_maf_zero.html#module-pyGenClean.FlagMAF.flag_maf_zero" title="pyGenClean.FlagMAF.flag_maf_zero"><code class="xref py py-mod docutils literal"><span class="pre">pyGenClean.FlagMAF.flag_maf_zero</span></code></a> module.
+The required file type for this module is <code class="docutils literal"><span class="pre">bfile</span></code>, hence the need to use
+the <a class="reference internal" href="#pyGenClean.run_data_clean_up.check_input_files" title="pyGenClean.run_data_clean_up.check_input_files"><code class="xref py py-func docutils literal"><span class="pre">check_input_files()</span></code></a> to check if the file input file type is
+the good one, or to create it if needed.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The <a class="reference internal" href="flag_maf_zero.html#module-pyGenClean.FlagMAF.flag_maf_zero" title="pyGenClean.FlagMAF.flag_maf_zero"><code class="xref py py-mod docutils literal"><span class="pre">pyGenClean.FlagMAF.flag_maf_zero</span></code></a> module doesn&#8217;t return
+usable output files. Hence, this function returns the input file prefix
+and its type.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.run_data_clean_up.run_noCall_hetero_snps">
+<code class="descclassname">pyGenClean.run_data_clean_up.</code><code class="descname">run_noCall_hetero_snps</code><span class="sig-paren">(</span><em>in_prefix</em>, <em>in_type</em>, <em>out_prefix</em>, <em>base_dir</em>, <em>options</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/run_data_clean_up.html#run_noCall_hetero_snps"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.run_data_clean_up.run_noCall_hetero_snps" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs step 3 (clean no call and hetero).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>in_prefix</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the prefix of the input files.</li>
+<li><strong>in_type</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the type of the input files.</li>
+<li><strong>out_prefix</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the output prefix.</li>
+<li><strong>base_dir</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the output directory.</li>
+<li><strong>options</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; the options needed.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">a tuple containing the prefix of the output files (the input
+prefix for the next script) and the type of the output files
+(<code class="docutils literal"><span class="pre">tfile</span></code>).</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>This function calls the
+<a class="reference internal" href="clean_noCall_hetero_snps.html#module-pyGenClean.NoCallHetero.clean_noCall_hetero_snps" title="pyGenClean.NoCallHetero.clean_noCall_hetero_snps"><code class="xref py py-mod docutils literal"><span class="pre">pyGenClean.NoCallHetero.clean_noCall_hetero_snps</span></code></a> module. The
+required file type for this module is <code class="docutils literal"><span class="pre">tfile</span></code>, hence the need to use the
+<a class="reference internal" href="#pyGenClean.run_data_clean_up.check_input_files" title="pyGenClean.run_data_clean_up.check_input_files"><code class="xref py py-func docutils literal"><span class="pre">check_input_files()</span></code></a> to check if the file input file type is the
+good one, or to create it if needed.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.run_data_clean_up.run_plate_bias">
+<code class="descclassname">pyGenClean.run_data_clean_up.</code><code class="descname">run_plate_bias</code><span class="sig-paren">(</span><em>in_prefix</em>, <em>in_type</em>, <em>out_prefix</em>, <em>base_dir</em>, <em>options</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/run_data_clean_up.html#run_plate_bias"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.run_data_clean_up.run_plate_bias" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs step7 (plate bias).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>in_prefix</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the prefix of the input files.</li>
+<li><strong>in_type</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the type of the input files.</li>
+<li><strong>out_prefix</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the output prefix.</li>
+<li><strong>base_dir</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the output directory.</li>
+<li><strong>options</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; the options needed.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">a tuple containing the prefix of the output files (the input
+prefix for the next script) and the type of the output files
+(<code class="docutils literal"><span class="pre">bfile</span></code>).</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>This function calls the <a class="reference internal" href="plate_bias.html#module-pyGenClean.PlateBias.plate_bias" title="pyGenClean.PlateBias.plate_bias"><code class="xref py py-mod docutils literal"><span class="pre">pyGenClean.PlateBias.plate_bias</span></code></a> module.
+The required file type for this module is <code class="docutils literal"><span class="pre">bfile</span></code>, hence the need to use
+the <a class="reference internal" href="#pyGenClean.run_data_clean_up.check_input_files" title="pyGenClean.run_data_clean_up.check_input_files"><code class="xref py py-func docutils literal"><span class="pre">check_input_files()</span></code></a> to check if the file input file type is
+the good one, or to create it if needed.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The <a class="reference internal" href="plate_bias.html#module-pyGenClean.PlateBias.plate_bias" title="pyGenClean.PlateBias.plate_bias"><code class="xref py py-mod docutils literal"><span class="pre">pyGenClean.PlateBias.plate_bias</span></code></a> module doesn&#8217;t return
+usable output files. Hence, this function returns the input file prefix
+and its type.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.run_data_clean_up.run_remove_heterozygous_haploid">
+<code class="descclassname">pyGenClean.run_data_clean_up.</code><code class="descname">run_remove_heterozygous_haploid</code><span class="sig-paren">(</span><em>in_prefix</em>, <em>in_type</em>, <em>out_prefix</em>, <em>base_dir</em>, <em>options</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/run_data_clean_up.html#run_remove_heterozygous_haploid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.run_data_clean_up.run_remove_heterozygous_haploid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs step8 (remove heterozygous haploid).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>in_prefix</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the prefix of the input files.</li>
+<li><strong>in_type</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the type of the input files.</li>
+<li><strong>out_prefix</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the output prefix.</li>
+<li><strong>base_dir</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the output directory.</li>
+<li><strong>options</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; the options needed.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">a tuple containing the prefix of the output files (the input
+prefix for the next script) and the type of the output files
+(<code class="docutils literal"><span class="pre">bfile</span></code>).</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>This function calls the
+<a class="reference internal" href="remove_heterozygous_haploid.html#module-pyGenClean.HeteroHap.remove_heterozygous_haploid" title="pyGenClean.HeteroHap.remove_heterozygous_haploid"><code class="xref py py-mod docutils literal"><span class="pre">pyGenClean.HeteroHap.remove_heterozygous_haploid</span></code></a> module. The
+required file type for this module is <code class="docutils literal"><span class="pre">bfile</span></code>, hence the need to use the
+<a class="reference internal" href="#pyGenClean.run_data_clean_up.check_input_files" title="pyGenClean.run_data_clean_up.check_input_files"><code class="xref py py-func docutils literal"><span class="pre">check_input_files()</span></code></a> to check if the file input file type is the
+good one, or to create it if needed.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.run_data_clean_up.run_sample_missingness">
+<code class="descclassname">pyGenClean.run_data_clean_up.</code><code class="descname">run_sample_missingness</code><span class="sig-paren">(</span><em>in_prefix</em>, <em>in_type</em>, <em>out_prefix</em>, <em>base_dir</em>, <em>options</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/run_data_clean_up.html#run_sample_missingness"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.run_data_clean_up.run_sample_missingness" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs step4 (clean mind).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>in_prefix</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the prefix of the input files.</li>
+<li><strong>in_type</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the type of the input files.</li>
+<li><strong>out_prefix</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the output prefix.</li>
+<li><strong>base_dir</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the output directory.</li>
+<li><strong>options</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; the options needed.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">a tuple containing the prefix of the output files (the input
+prefix for the next script) and the type of the output files
+(<code class="docutils literal"><span class="pre">bfile</span></code>).</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>This function calls the
+<a class="reference internal" href="sample_missingness.html#module-pyGenClean.SampleMissingness.sample_missingness" title="pyGenClean.SampleMissingness.sample_missingness"><code class="xref py py-mod docutils literal"><span class="pre">pyGenClean.SampleMissingness.sample_missingness</span></code></a> module. The
+required file type for this module is either a <code class="docutils literal"><span class="pre">bfile</span></code> or a <code class="docutils literal"><span class="pre">tfile</span></code>,
+hence the need to use the <a class="reference internal" href="#pyGenClean.run_data_clean_up.check_input_files" title="pyGenClean.run_data_clean_up.check_input_files"><code class="xref py py-func docutils literal"><span class="pre">check_input_files()</span></code></a> to check if the file
+input file type is the good one, or to create it if needed.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.run_data_clean_up.run_sex_check">
+<code class="descclassname">pyGenClean.run_data_clean_up.</code><code class="descname">run_sex_check</code><span class="sig-paren">(</span><em>in_prefix</em>, <em>in_type</em>, <em>out_prefix</em>, <em>base_dir</em>, <em>options</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/run_data_clean_up.html#run_sex_check"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.run_data_clean_up.run_sex_check" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs step6 (sexcheck).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>in_prefix</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the prefix of the input files.</li>
+<li><strong>in_type</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the type of the input files.</li>
+<li><strong>out_prefix</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the output prefix.</li>
+<li><strong>base_dir</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the output directory.</li>
+<li><strong>options</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; the options needed.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">a tuple containing the prefix of the output files (the input
+prefix for the next script) and the type of the output files
+(<code class="docutils literal"><span class="pre">bfile</span></code>).</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>This function calls the <a class="reference internal" href="sex_check.html#module-pyGenClean.SexCheck.sex_check" title="pyGenClean.SexCheck.sex_check"><code class="xref py py-mod docutils literal"><span class="pre">pyGenClean.SexCheck.sex_check</span></code></a> module. The
+required file type for this module is <code class="docutils literal"><span class="pre">bfile</span></code>, hence the need to use the
+<a class="reference internal" href="#pyGenClean.run_data_clean_up.check_input_files" title="pyGenClean.run_data_clean_up.check_input_files"><code class="xref py py-func docutils literal"><span class="pre">check_input_files()</span></code></a> to check if the file input file type is the
+good one, or to create it if needed.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The <a class="reference internal" href="sex_check.html#module-pyGenClean.SexCheck.sex_check" title="pyGenClean.SexCheck.sex_check"><code class="xref py py-mod docutils literal"><span class="pre">pyGenClean.SexCheck.sex_check</span></code></a> module doesn&#8217;t return
+usable output files. Hence, this function returns the input file prefix
+and its type.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.run_data_clean_up.run_snp_missingness">
+<code class="descclassname">pyGenClean.run_data_clean_up.</code><code class="descname">run_snp_missingness</code><span class="sig-paren">(</span><em>in_prefix</em>, <em>in_type</em>, <em>out_prefix</em>, <em>base_dir</em>, <em>options</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/run_data_clean_up.html#run_snp_missingness"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.run_data_clean_up.run_snp_missingness" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run step5 (clean geno).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>in_prefix</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the prefix of the input files.</li>
+<li><strong>in_type</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the type of the input files.</li>
+<li><strong>out_prefix</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the output prefix.</li>
+<li><strong>base_dir</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the output directory.</li>
+<li><strong>options</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; the options needed.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">a tuple containing the prefix of the output files (the input
+prefix for the next script) and the type of the output files
+(<code class="docutils literal"><span class="pre">bfile</span></code>).</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>This function calls the
+<a class="reference internal" href="marker_missingness.html#module-pyGenClean.MarkerMissingness.snp_missingness" title="pyGenClean.MarkerMissingness.snp_missingness"><code class="xref py py-mod docutils literal"><span class="pre">pyGenClean.MarkerMissingness.snp_missingness</span></code></a> module. The required
+file type for this module is <code class="docutils literal"><span class="pre">bfile</span></code>, hence the need to use the
+<a class="reference internal" href="#pyGenClean.run_data_clean_up.check_input_files" title="pyGenClean.run_data_clean_up.check_input_files"><code class="xref py py-func docutils literal"><span class="pre">check_input_files()</span></code></a> to check if the file input file type is the
+good one, or to create it if needed.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.run_data_clean_up.run_subset_data">
+<code class="descclassname">pyGenClean.run_data_clean_up.</code><code class="descname">run_subset_data</code><span class="sig-paren">(</span><em>in_prefix</em>, <em>in_type</em>, <em>out_prefix</em>, <em>base_dir</em>, <em>options</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/run_data_clean_up.html#run_subset_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.run_data_clean_up.run_subset_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Subsets the data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>in_prefix</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the prefix of the input files.</li>
+<li><strong>in_type</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the type of the input files.</li>
+<li><strong>out_prefix</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the output prefix.</li>
+<li><strong>base_dir</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the output directory.</li>
+<li><strong>options</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; the options needed.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">a tuple containing the prefix of the output files (the input
+prefix for the next script) and the type of the output files
+(<code class="docutils literal"><span class="pre">bfile</span></code>).</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>This function calls the
+<code class="xref py py-mod docutils literal"><span class="pre">pyGenClean.pyGenClean.PlinkUtils.subset_data</span></code> module. The required
+file type for this module is <code class="docutils literal"><span class="pre">bfile</span></code>, hence the need to use the
+<a class="reference internal" href="#pyGenClean.run_data_clean_up.check_input_files" title="pyGenClean.run_data_clean_up.check_input_files"><code class="xref py py-func docutils literal"><span class="pre">check_input_files()</span></code></a> to check if the file input file type is the
+good one, or to create it if needed.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The output file type is the same as the input file type.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.run_data_clean_up.safe_main">
+<code class="descclassname">pyGenClean.run_data_clean_up.</code><code class="descname">safe_main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/run_data_clean_up.html#safe_main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.run_data_clean_up.safe_main" title="Permalink to this definition">¶</a></dt>
+<dd><p>A safe version of the main function (that catches ProgramError).</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="duplicated_samples.html" title="Duplicated Samples Module"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="how_to_run.html" title="How to Run the Pipeline"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">pyGenClean 1.7.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2012, Louis-Philippe Lemieux Perreault.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+    </div>
+  </body>
+</html>

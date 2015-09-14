@@ -1,0 +1,1575 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>pyGenClean.DupSNPs.duplicated_snps &mdash; pyGenClean 1.7.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '1.7.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="pyGenClean 1.7.0 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body role="document">
+
+<div style="background-color: white; text-align: left; padding: 10px 10px 15px 15px">
+<a href="../../../index.html"><img src="../../../_static/logo.png" border="0" alt="py4sci"/></a>
+</div>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">pyGenClean 1.7.0 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for pyGenClean.DupSNPs.duplicated_snps</h1><div class="highlight"><pre>
+<span class="c">#!/usr/bin/env python2.7</span>
+
+<span class="c"># This file is part of pyGenClean.</span>
+<span class="c">#</span>
+<span class="c"># pyGenClean is free software: you can redistribute it and/or modify it under</span>
+<span class="c"># the terms of the GNU General Public License as published by the Free Software</span>
+<span class="c"># Foundation, either version 3 of the License, or (at your option) any later</span>
+<span class="c"># version.</span>
+<span class="c">#</span>
+<span class="c"># pyGenClean is distributed in the hope that it will be useful, but WITHOUT ANY</span>
+<span class="c"># WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR</span>
+<span class="c"># A PARTICULAR PURPOSE.  See the GNU General Public License for more details.</span>
+<span class="c">#</span>
+<span class="c"># You should have received a copy of the GNU General Public License along with</span>
+<span class="c"># pyGenClean.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
+
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">StringIO</span>
+<span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">npy</span>
+
+<span class="kn">from</span> <span class="nn">..PlinkUtils</span> <span class="kn">import</span> <span class="n">createRowFromPlinkSpacedOutput</span>
+
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&quot;duplicated_snps&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../../duplicated_markers.html#pyGenClean.DupSNPs.duplicated_snps.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">argString</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;The main function of the module..</span>
+
+<span class="sd">    Here are the steps for duplicated samples:</span>
+
+<span class="sd">    1.  Prints the options.</span>
+<span class="sd">    2.  Reads the ``map`` file to gather marker&#39;s position</span>
+<span class="sd">        (:py:func:`readMAP`).</span>
+<span class="sd">    3.  Reads the ``tfam`` file (:py:func:`readTFAM`).</span>
+<span class="sd">    4.  Finds the unique markers using the ``map`` file</span>
+<span class="sd">        (:py:func:`findUniques`).</span>
+<span class="sd">    5.  Process the ``tped`` file. Write a file containing unique markers in</span>
+<span class="sd">        ``prefix.unique_snps`` (``tfam`` and ``tped``). Keep in memory</span>
+<span class="sd">        information about the duplicated markers (``tped``)</span>
+<span class="sd">        (:py:func:`processTPED`).</span>
+<span class="sd">    6.  If there are no duplicated markers, the file ``prefix.unique_snps``</span>
+<span class="sd">        (``tped`` and ``tfam``) are copied to ``prefix.final``.</span>
+<span class="sd">    7.  If there are duplicated markers, print a ``tped`` and ``tfam`` file</span>
+<span class="sd">        containing the duplicated markers</span>
+<span class="sd">        (:py:func:`printDuplicatedTPEDandTFAM`).</span>
+<span class="sd">    8.  Computes the frequency of the duplicated markers (using Plink) and read</span>
+<span class="sd">        the output file (:py:func:`computeFrequency`).</span>
+<span class="sd">    9.  Computes the concordance and pairwise completion of each of the</span>
+<span class="sd">        duplicated markers (:py:func:`computeStatistics`).</span>
+<span class="sd">    10. Prints the problematic duplicated markers with a file containing the</span>
+<span class="sd">        summary of the statistics (completion and pairwise concordance)</span>
+<span class="sd">        (:py:func:`printProblems`).</span>
+<span class="sd">    11. Print the pairwise concordance in a file (matrices)</span>
+<span class="sd">        (:py:func:`printConcordance`).</span>
+<span class="sd">    12. Choose the best duplicated markers using concordance and completion</span>
+<span class="sd">        (:py:func:`chooseBestSnps`).</span>
+<span class="sd">    13. Completes the chosen markers with the remaining duplicated markers</span>
+<span class="sd">        (:py:func:`createAndCleanTPED`).</span>
+<span class="sd">    14. Creates the final ``tped`` file, containing the unique markers, the</span>
+<span class="sd">        chosen duplicated markers that were completed, and the problematic</span>
+<span class="sd">        duplicated markers (for further analysis). This set excludes markers</span>
+<span class="sd">        that were used for completing the chosen ones</span>
+<span class="sd">        (:py:func:`createFinalTPEDandTFAM`).</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c"># Getting and checking the options</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">parseArgs</span><span class="p">(</span><span class="n">argString</span><span class="p">)</span>
+    <span class="n">checkArgs</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Options used:&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">vars</span><span class="p">(</span><span class="n">args</span><span class="p">)</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;  --{} {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;_&quot;</span><span class="p">,</span> <span class="s">&quot;-&quot;</span><span class="p">),</span> <span class="n">value</span><span class="p">))</span>
+
+    <span class="c"># Reading the map file</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Reading MAP file&quot;</span><span class="p">)</span>
+    <span class="n">mapF</span> <span class="o">=</span> <span class="n">readMAP</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">tfile</span> <span class="o">+</span> <span class="s">&quot;.map&quot;</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">out</span><span class="p">)</span>
+
+    <span class="c"># Reading the tfam file</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Reading TFAM file&quot;</span><span class="p">)</span>
+    <span class="n">tfam</span> <span class="o">=</span> <span class="n">readTFAM</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">tfile</span> <span class="o">+</span> <span class="s">&quot;.tfam&quot;</span><span class="p">)</span>
+
+    <span class="c"># Find unique snps</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Finding unique SNPs&quot;</span><span class="p">)</span>
+    <span class="n">uniqueSNPs</span> <span class="o">=</span> <span class="n">findUniques</span><span class="p">(</span><span class="n">mapF</span><span class="p">)</span>
+
+    <span class="c"># Process the TPED file</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Reading TPED file&quot;</span><span class="p">)</span>
+    <span class="n">tped</span><span class="p">,</span> <span class="n">duplicatedSNPs</span> <span class="o">=</span> <span class="n">processTPED</span><span class="p">(</span><span class="n">uniqueSNPs</span><span class="p">,</span> <span class="n">mapF</span><span class="p">,</span>
+                                       <span class="n">args</span><span class="o">.</span><span class="n">tfile</span> <span class="o">+</span> <span class="s">&quot;.tped&quot;</span><span class="p">,</span>
+                                       <span class="n">args</span><span class="o">.</span><span class="n">tfile</span> <span class="o">+</span> <span class="s">&quot;.tfam&quot;</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">out</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tped</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;There are no duplicated SNPs&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;  - Creating final TFAM&quot;</span><span class="p">)</span>
+        <span class="c"># Copying the files</span>
+        <span class="c"># The TFAM</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">out</span> <span class="o">+</span> <span class="s">&quot;.unique_snps.tfam&quot;</span><span class="p">,</span>
+                        <span class="n">args</span><span class="o">.</span><span class="n">out</span> <span class="o">+</span> <span class="s">&quot;.final.tfam&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s">.unique_snps.tfam: can&#39;t copy file to &quot;</span> \
+                  <span class="s">&quot;</span><span class="si">%s</span><span class="s">.final.tfam&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">out</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">out</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="c"># The TPED</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;  - Creating final TPED&quot;</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">out</span> <span class="o">+</span> <span class="s">&quot;.unique_snps.tped&quot;</span><span class="p">,</span>
+                        <span class="n">args</span><span class="o">.</span><span class="n">out</span> <span class="o">+</span> <span class="s">&quot;.final.tped&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s">.unique_snps.tped: can&#39;t copy file to &quot;</span> \
+                  <span class="s">&quot;</span><span class="si">%s</span><span class="s">.final.tped&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">out</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">out</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c"># We print the TPED and TFAM for the duplicated SNPs</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Printing duplicated SNPs TPED and TFAM files&quot;</span><span class="p">)</span>
+        <span class="n">printDuplicatedTPEDandTFAM</span><span class="p">(</span><span class="n">tped</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">tfile</span> <span class="o">+</span> <span class="s">&quot;.tfam&quot;</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">out</span><span class="p">)</span>
+
+        <span class="c"># Computing the frequency of the duplicated SNPs</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Computing duplicated SNPs&#39; frequencies&quot;</span><span class="p">)</span>
+        <span class="n">dupSNPsFreq</span> <span class="o">=</span> <span class="n">computeFrequency</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">out</span> <span class="o">+</span> <span class="s">&quot;.duplicated_snps&quot;</span><span class="p">,</span>
+                                       <span class="n">args</span><span class="o">.</span><span class="n">out</span><span class="p">)</span>
+
+        <span class="c"># Compute statistics</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Computing concordance and completion of duplicated SNPs&quot;</span><span class="p">)</span>
+        <span class="n">completion</span><span class="p">,</span> <span class="n">concordance</span> <span class="o">=</span> <span class="n">computeStatistics</span><span class="p">(</span><span class="n">tped</span><span class="p">,</span> <span class="n">tfam</span><span class="p">,</span> <span class="n">duplicatedSNPs</span><span class="p">)</span>
+
+        <span class="c"># Print the statistics</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Printing duplicated SNPs summary file and finding errors &quot;</span>
+                    <span class="s">&quot;within duplicates&quot;</span><span class="p">)</span>
+        <span class="n">snpsToComplete</span> <span class="o">=</span> <span class="n">printProblems</span><span class="p">(</span><span class="n">completion</span><span class="p">,</span> <span class="n">concordance</span><span class="p">,</span> <span class="n">tped</span><span class="p">,</span>
+                                       <span class="n">duplicatedSNPs</span><span class="p">,</span> <span class="n">dupSNPsFreq</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">out</span><span class="p">,</span>
+                                       <span class="n">args</span><span class="o">.</span><span class="n">frequency_difference</span><span class="p">)</span>
+
+        <span class="c"># Print the concordance file</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Printing concordance file&quot;</span><span class="p">)</span>
+        <span class="n">printConcordance</span><span class="p">(</span><span class="n">concordance</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">out</span><span class="p">,</span> <span class="n">tped</span><span class="p">,</span> <span class="n">duplicatedSNPs</span><span class="p">)</span>
+
+        <span class="c"># Choose the best SNP</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Choosing best SNP for each duplicates&quot;</span><span class="p">)</span>
+        <span class="n">chosenSNPs</span><span class="p">,</span> <span class="n">comp</span><span class="p">,</span> <span class="n">conc</span> <span class="o">=</span> <span class="n">chooseBestSnps</span><span class="p">(</span><span class="n">tped</span><span class="p">,</span> <span class="n">duplicatedSNPs</span><span class="p">,</span>
+                                                <span class="n">completion</span><span class="p">,</span> <span class="n">concordance</span><span class="p">,</span>
+                                                <span class="n">args</span><span class="o">.</span><span class="n">out</span><span class="p">)</span>
+
+        <span class="c"># Complete the SNPs</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Completing chosen duplicates (removing discordant &quot;</span>
+                    <span class="s">&quot;genotypes)&quot;</span><span class="p">)</span>
+        <span class="n">newTPED</span><span class="p">,</span> <span class="n">snpToRemove</span> <span class="o">=</span> <span class="n">createAndCleanTPED</span><span class="p">(</span>
+            <span class="n">tped</span><span class="p">,</span>
+            <span class="n">tfam</span><span class="p">,</span>
+            <span class="n">duplicatedSNPs</span><span class="p">,</span>
+            <span class="n">args</span><span class="o">.</span><span class="n">out</span><span class="p">,</span>
+            <span class="n">chosenSNPs</span><span class="p">,</span>
+            <span class="n">comp</span><span class="p">,</span>
+            <span class="n">conc</span><span class="p">,</span>
+            <span class="n">snpsToComplete</span><span class="p">,</span>
+            <span class="n">args</span><span class="o">.</span><span class="n">tfile</span> <span class="o">+</span> <span class="s">&quot;.tfam&quot;</span><span class="p">,</span>
+            <span class="n">args</span><span class="o">.</span><span class="n">snp_completion_threshold</span><span class="p">,</span>
+            <span class="n">args</span><span class="o">.</span><span class="n">snp_concordance_threshold</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c"># Creates the final tped</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Writing final TPED and TFAM file&quot;</span><span class="p">)</span>
+        <span class="n">createFinalTPEDandTFAM</span><span class="p">(</span><span class="n">newTPED</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">out</span> <span class="o">+</span> <span class="s">&quot;.unique_snps&quot;</span><span class="p">,</span>
+                               <span class="n">args</span><span class="o">.</span><span class="n">out</span><span class="p">,</span> <span class="n">snpToRemove</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="createFinalTPEDandTFAM"><a class="viewcode-back" href="../../../duplicated_markers.html#pyGenClean.DupSNPs.duplicated_snps.createFinalTPEDandTFAM">[docs]</a><span class="k">def</span> <span class="nf">createFinalTPEDandTFAM</span><span class="p">(</span><span class="n">tped</span><span class="p">,</span> <span class="n">toReadPrefix</span><span class="p">,</span> <span class="n">prefix</span><span class="p">,</span> <span class="n">snpToRemove</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Creates the final TPED and TFAM.</span>
+
+<span class="sd">    :param tped: a representation of the ``tped`` of duplicated markers.</span>
+<span class="sd">    :param toReadPrefix: the prefix of the unique files.</span>
+<span class="sd">    :param prefix: the prefix of the output files.</span>
+<span class="sd">    :param snpToRemove: the markers to remove.</span>
+
+<span class="sd">    :type tped: numpy.array</span>
+<span class="sd">    :type toReadPrefix: str</span>
+<span class="sd">    :type prefix: str</span>
+<span class="sd">    :type snpToRemove: set</span>
+
+<span class="sd">    Starts by copying the unique markers&#39; ``tfam`` file to</span>
+<span class="sd">    ``prefix.final.tfam``. Then, it copies the unique markers&#39; ``tped`` file,</span>
+<span class="sd">    in which the chosen markers will be appended.</span>
+
+<span class="sd">    The final data set will include the unique markers, the chosen markers</span>
+<span class="sd">    which were completed, and the problematic duplicated markers (for further</span>
+<span class="sd">    analysis). The markers that were used to complete the chosen ones are not</span>
+<span class="sd">    present in the final data set.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c"># First, copying the tfam</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">toReadPrefix</span> <span class="o">+</span> <span class="s">&quot;.tfam&quot;</span><span class="p">,</span> <span class="n">prefix</span> <span class="o">+</span> <span class="s">&quot;.final.tfam&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%(toReadPrefix)s</span><span class="s">.tfam: can&#39;t copy file to &quot;</span> \
+              <span class="s">&quot;</span><span class="si">%(prefix)s</span><span class="s">.final.tfam&quot;</span> <span class="o">%</span> <span class="nb">locals</span><span class="p">()</span>
+        <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="c"># Next, copy the tped, and append at the end</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">toReadPrefix</span> <span class="o">+</span> <span class="s">&quot;.tped&quot;</span><span class="p">,</span> <span class="n">prefix</span> <span class="o">+</span> <span class="s">&quot;.final.tped&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%(toReadPrefix)s</span><span class="s">.tped: can&#39;t copy fil to &quot;</span> \
+              <span class="s">&quot;</span><span class="si">%(prefix)s</span><span class="s">.final.tped&quot;</span> <span class="o">%</span> <span class="nb">locals</span><span class="p">()</span>
+        <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+    <span class="n">tpedFile</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">tpedFile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">prefix</span> <span class="o">+</span> <span class="s">&quot;.final.tped&quot;</span><span class="p">,</span> <span class="s">&quot;a&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%(prefix)s</span><span class="s">.final.tped: can&#39;t append to file&quot;</span> <span class="o">%</span> <span class="nb">locals</span><span class="p">()</span>
+        <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tped</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">snpToRemove</span><span class="p">:</span>
+            <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">tpedFile</span><span class="p">,</span> <span class="s">&quot;</span><span class="se">\t</span><span class="s">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+    <span class="n">tpedFile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+</div>
+<div class="viewcode-block" id="createAndCleanTPED"><a class="viewcode-back" href="../../../duplicated_markers.html#pyGenClean.DupSNPs.duplicated_snps.createAndCleanTPED">[docs]</a><span class="k">def</span> <span class="nf">createAndCleanTPED</span><span class="p">(</span><span class="n">tped</span><span class="p">,</span> <span class="n">tfam</span><span class="p">,</span> <span class="n">snps</span><span class="p">,</span> <span class="n">prefix</span><span class="p">,</span> <span class="n">chosenSNPs</span><span class="p">,</span> <span class="n">completion</span><span class="p">,</span>
+                       <span class="n">concordance</span><span class="p">,</span> <span class="n">snpsToComplete</span><span class="p">,</span> <span class="n">tfamFileName</span><span class="p">,</span> <span class="n">completionT</span><span class="p">,</span>
+                       <span class="n">concordanceT</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Complete a TPED for duplicated SNPs.</span>
+
+<span class="sd">    :param tped: a representation of the ``tped`` of duplicated markers.</span>
+<span class="sd">    :param tfam: a representation of the ``tfam``.</span>
+<span class="sd">    :param snps: the position of duplicated markers in the ``tped``.</span>
+<span class="sd">    :param prefix: the prefix of the output files.</span>
+<span class="sd">    :param chosenSNPs: the markers that were chosen for completion (including</span>
+<span class="sd">                       problems).</span>
+<span class="sd">    :param completion: the completion of each of the duplicated markers.</span>
+<span class="sd">    :param concordance: the pairwise concordance of the duplicated markers.</span>
+<span class="sd">    :param snpsToComplete: the markers that will be completed (excluding</span>
+<span class="sd">                           problems).</span>
+<span class="sd">    :param tfamFileName: the name of the original ``tfam`` file.</span>
+<span class="sd">    :param completionT: the completion threshold.</span>
+<span class="sd">    :param concordanceT: the concordance threshold.</span>
+
+<span class="sd">    :type tped: numpy.array</span>
+<span class="sd">    :type tfam: list</span>
+<span class="sd">    :type snps: dict</span>
+<span class="sd">    :type prefix: str</span>
+<span class="sd">    :type chosenSNPs: dict</span>
+<span class="sd">    :type completion: numpy.array</span>
+<span class="sd">    :type concordance: dict</span>
+<span class="sd">    :type snpsToComplete: set</span>
+<span class="sd">    :type tfamFileName: str</span>
+<span class="sd">    :type completionT: float</span>
+<span class="sd">    :type concordanceT: float</span>
+
+<span class="sd">    :returns: a tuple containing the new ``tped`` after completion</span>
+<span class="sd">              (:py:class:`numpy.array` as the first element, and the index of</span>
+<span class="sd">              the markers that will need to be rid of (:py:class:`set`) as the</span>
+<span class="sd">              last element.</span>
+
+<span class="sd">    It creates three different files:</span>
+
+<span class="sd">    * ``prefix.zeroed_out``: contains information about markers and samples</span>
+<span class="sd">                             where the genotyped was zeroed out.</span>
+<span class="sd">    * ``prefix.not_good_enough``: contains information about markers that were</span>
+<span class="sd">                                  not good enough to help in completing the</span>
+<span class="sd">                                  chosen markers (because of concordance or</span>
+<span class="sd">                                  completion).</span>
+<span class="sd">    * ``prefix.removed_duplicates``: the list of markers that where used for</span>
+<span class="sd">                                     completing the chosen one, hence they will</span>
+<span class="sd">                                     be removed from the final data</span>
+<span class="sd">                                     set.</span>
+
+<span class="sd">    Cycling through every genotypes of every samples of every duplicated</span>
+<span class="sd">    markers, checks if the genotypes are all the same. If the chosen one was</span>
+<span class="sd">    not called, but the other ones were, then we complete the chosen one with</span>
+<span class="sd">    the genotypes for the others (assuming that they are all the same). If</span>
+<span class="sd">    there is a difference between the genotypes, it is zeroed out for the</span>
+<span class="sd">    chosen marker.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">zeroedOutFile</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">zeroedOutFile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">prefix</span> <span class="o">+</span> <span class="s">&quot;.zeroed_out&quot;</span><span class="p">,</span> <span class="s">&quot;w&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;%(prefix).zeroed_out: can&#39;t write file&quot;</span> <span class="o">%</span> <span class="nb">locals</span><span class="p">()</span>
+        <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+    <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">zeroedOutFile</span><span class="p">,</span> <span class="s">&quot;</span><span class="se">\t</span><span class="s">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s">&quot;famID&quot;</span><span class="p">,</span> <span class="s">&quot;indID&quot;</span><span class="p">,</span> <span class="s">&quot;snpID&quot;</span><span class="p">])</span>
+
+    <span class="n">notGoodEnoughFile</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">notGoodEnoughFile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">prefix</span> <span class="o">+</span> <span class="s">&quot;.not_good_enough&quot;</span><span class="p">,</span> <span class="s">&quot;w&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%(prefix)s</span><span class="s">.not_good_enough: can&#39;t write file&quot;</span> <span class="o">%</span> <span class="nb">locals</span><span class="p">()</span>
+        <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+    <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">notGoodEnoughFile</span><span class="p">,</span> <span class="s">&quot;</span><span class="se">\t</span><span class="s">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s">&quot;name&quot;</span><span class="p">,</span> <span class="s">&quot;reason&quot;</span><span class="p">])</span>
+
+    <span class="n">removedFile</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">removedFile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">prefix</span> <span class="o">+</span> <span class="s">&quot;.removed_duplicates&quot;</span><span class="p">,</span> <span class="s">&quot;w&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%(prefix)s</span><span class="s">.removed_duplicates: can&#39;t write file&quot;</span> <span class="o">%</span> <span class="nb">locals</span><span class="p">()</span>
+        <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="n">notGoodEnoughSnps</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+
+    <span class="c"># Split the tped in &#39;snpInfo&#39; and &#39;genotypes&#39;</span>
+    <span class="n">snpInfo</span> <span class="o">=</span> <span class="n">tped</span><span class="p">[:,</span> <span class="p">:</span><span class="mi">4</span><span class="p">]</span>
+    <span class="n">genotypes</span> <span class="o">=</span> <span class="n">tped</span><span class="p">[:,</span> <span class="mi">4</span><span class="p">:]</span>
+
+    <span class="c"># The sed of index we want to get rid of at the end</span>
+    <span class="n">getRidOfIndex</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">snpID</span><span class="p">,</span> <span class="n">indexes</span> <span class="ow">in</span> <span class="n">snps</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">snpID</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">snpsToComplete</span><span class="p">:</span>
+            <span class="c"># We don&#39;t want to complete this SNP, so we continue to next SNP</span>
+            <span class="k">continue</span>
+
+        <span class="c"># Getting the completion</span>
+        <span class="n">completionToRemove</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span>
+            <span class="n">npy</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">completion</span><span class="p">[</span><span class="n">indexes</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">completionT</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="p">)</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">completionToRemove</span><span class="p">:</span>
+            <span class="n">notGoodEnoughSnps</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">snpInfo</span><span class="p">[</span><span class="n">indexes</span><span class="p">][</span><span class="n">k</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="s">&quot;completion&quot;</span><span class="p">))</span>
+
+        <span class="c"># Getting the concordance</span>
+        <span class="n">concordanceToRemove</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span>
+            <span class="n">npy</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">concordance</span><span class="p">[</span><span class="n">snpID</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">concordanceT</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="p">)</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">concordanceToRemove</span><span class="p">:</span>
+            <span class="n">notGoodEnoughSnps</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">snpInfo</span><span class="p">[</span><span class="n">indexes</span><span class="p">][</span><span class="n">k</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="s">&quot;concordance&quot;</span><span class="p">))</span>
+
+        <span class="c"># These will be the indexes to remove</span>
+        <span class="n">indexesToRemove</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">completionToRemove</span> <span class="o">|</span> <span class="n">concordanceToRemove</span><span class="p">:</span>
+            <span class="n">indexesToRemove</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">indexes</span><span class="p">[</span><span class="n">index</span><span class="p">])</span>
+
+        <span class="c"># These are the indexes to keep</span>
+        <span class="n">indexesToKeep</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">indexes</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">index</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">indexesToRemove</span><span class="p">:</span>
+                <span class="n">indexesToKeep</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+
+        <span class="c"># Getting the chosen SNP</span>
+        <span class="n">chosenOne</span> <span class="o">=</span> <span class="n">chosenSNPs</span><span class="p">[</span><span class="n">snpID</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">chosenOne</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="n">indexesToKeep</span><span class="p">):</span>
+            <span class="c"># The chosen SNP is not a good SNP, so we go to next SNP</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s">&quot;  - {} chosen but not good enough&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">snpInfo</span><span class="p">[</span><span class="n">chosenOne</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+            <span class="p">))</span>
+            <span class="k">continue</span>
+
+        <span class="c"># Now cycling through the genotypes</span>
+        <span class="n">nbSamples</span> <span class="o">=</span> <span class="n">genotypes</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">sampleIndex</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">nbSamples</span><span class="p">):</span>
+            <span class="c"># We need to remove the no call and keep the unique genotypes</span>
+            <span class="n">curGenotypes</span> <span class="o">=</span> <span class="n">genotypes</span><span class="p">[</span><span class="n">indexesToKeep</span><span class="p">,</span> <span class="n">sampleIndex</span><span class="p">]</span>
+            <span class="n">cleanedCurGenotypes</span> <span class="o">=</span> <span class="n">curGenotypes</span><span class="p">[</span>
+                <span class="n">npy</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">curGenotypes</span> <span class="o">!=</span> <span class="s">&quot;0 0&quot;</span><span class="p">)</span>
+            <span class="p">]</span>
+            <span class="n">uniqueCleanedCurGenotypes</span> <span class="o">=</span> <span class="n">npy</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">cleanedCurGenotypes</span><span class="p">)</span>
+
+            <span class="c"># Checking the number of unique genotypes</span>
+            <span class="n">toComplete</span> <span class="o">=</span> <span class="bp">False</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">uniqueCleanedCurGenotypes</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="c"># There are more than one unique genotype (except 0 0)</span>
+                <span class="c"># len = 0 means all were 0 0</span>
+                <span class="c"># len = 1 means they are all the same</span>
+                <span class="c"># len &gt; 1 means discordance (might need to flip)</span>
+                <span class="c"># Just need to check the order of the alleles</span>
+                <span class="n">possibleAlleles</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="nb">set</span><span class="p">()</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">uniqueCleanedCurGenotypes</span><span class="p">))</span>
+                <span class="p">]</span>
+                <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">geno</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">uniqueCleanedCurGenotypes</span><span class="p">):</span>
+                    <span class="n">possibleAlleles</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">|=</span> <span class="nb">set</span><span class="p">(</span><span class="n">geno</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot; &quot;</span><span class="p">))</span>
+                <span class="n">allEqual</span> <span class="o">=</span> <span class="bp">True</span>
+                <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">possibleAlleles</span><span class="p">)):</span>
+                    <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">possibleAlleles</span><span class="p">)):</span>
+                        <span class="k">if</span> <span class="n">possibleAlleles</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">!=</span> <span class="n">possibleAlleles</span><span class="p">[</span><span class="n">l</span><span class="p">]:</span>
+                            <span class="n">allEqual</span> <span class="o">=</span> <span class="bp">False</span>
+
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">allEqual</span><span class="p">:</span>
+                    <span class="c"># The genotypes are not all equal, we set the chosen</span>
+                    <span class="c"># genotype to null (0 0)</span>
+                    <span class="n">tped</span><span class="p">[</span><span class="n">chosenOne</span><span class="p">,</span> <span class="n">sampleIndex</span><span class="o">+</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;0 0&quot;</span>
+                    <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">zeroedOutFile</span><span class="p">,</span> <span class="s">&quot;</span><span class="se">\t</span><span class="s">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">tfam</span><span class="p">[</span><span class="n">sampleIndex</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                                                      <span class="n">tfam</span><span class="p">[</span><span class="n">sampleIndex</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+                                                      <span class="n">snpInfo</span><span class="p">[</span><span class="n">chosenOne</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])</span>
+                <span class="k">elif</span> <span class="n">genotypes</span><span class="p">[</span><span class="n">chosenOne</span><span class="p">,</span> <span class="n">sampleIndex</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;0 0&quot;</span><span class="p">:</span>
+                    <span class="n">toComplete</span> <span class="o">=</span> <span class="bp">True</span>
+            <span class="k">elif</span> <span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">uniqueCleanedCurGenotypes</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">and</span>
+                    <span class="p">(</span><span class="n">genotypes</span><span class="p">[</span><span class="n">chosenOne</span><span class="p">,</span> <span class="n">sampleIndex</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;0 0&quot;</span><span class="p">)):</span>
+                <span class="n">toComplete</span> <span class="o">=</span> <span class="bp">True</span>
+
+            <span class="k">if</span> <span class="n">toComplete</span><span class="p">:</span>
+                <span class="c"># We complete the current individual</span>
+                <span class="n">tped</span><span class="p">[</span><span class="n">chosenOne</span><span class="p">,</span> <span class="n">sampleIndex</span><span class="o">+</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="n">uniqueCleanedCurGenotypes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="c"># We keep only the chose one</span>
+        <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">indexes</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">index</span> <span class="o">!=</span> <span class="n">chosenOne</span><span class="p">:</span>
+                <span class="n">getRidOfIndex</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+                <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">removedFile</span><span class="p">,</span> <span class="n">snpInfo</span><span class="p">[</span><span class="n">index</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+
+    <span class="c"># Writing the not good enough file</span>
+    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">notGoodEnoughSnps</span><span class="p">:</span>
+        <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">notGoodEnoughFile</span><span class="p">,</span> <span class="s">&quot;</span><span class="se">\t</span><span class="s">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+
+    <span class="c"># Closing the output files</span>
+    <span class="n">zeroedOutFile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">notGoodEnoughFile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="c"># Printing the chosen file</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">tfamFileName</span><span class="p">,</span> <span class="n">prefix</span> <span class="o">+</span> <span class="s">&quot;.chosen_snps.tfam&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%(tfamFileName)s</span><span class="s">: can&#39;t copy file to &quot;</span> \
+              <span class="s">&quot;</span><span class="si">%(prefix)s</span><span class="s">.chosen_snps.tfam&quot;</span> <span class="o">%</span> <span class="nb">locals</span><span class="p">()</span>
+        <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+    <span class="n">chosenFile</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">chosenFile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">prefix</span> <span class="o">+</span> <span class="s">&quot;.chosen_snps.tped&quot;</span><span class="p">,</span> <span class="s">&quot;w&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%(prefix)s</span><span class="s">.chosen_snps.tped: can&#39;t write file&quot;</span> <span class="o">%</span> <span class="nb">locals</span><span class="p">()</span>
+        <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">chosenOne</span> <span class="ow">in</span> <span class="n">chosenSNPs</span><span class="o">.</span><span class="n">itervalues</span><span class="p">():</span>
+        <span class="n">snpID</span> <span class="o">=</span> <span class="p">(</span><span class="n">tped</span><span class="p">[</span><span class="n">chosenOne</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">tped</span><span class="p">[</span><span class="n">chosenOne</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">snpID</span> <span class="ow">in</span> <span class="n">snpsToComplete</span><span class="p">:</span>
+            <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">chosenFile</span><span class="p">,</span> <span class="s">&quot;</span><span class="se">\t</span><span class="s">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tped</span><span class="p">[</span><span class="n">chosenOne</span><span class="p">])</span>
+    <span class="n">chosenFile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">tped</span><span class="p">,</span> <span class="n">getRidOfIndex</span>
+
+</div>
+<div class="viewcode-block" id="chooseBestSnps"><a class="viewcode-back" href="../../../duplicated_markers.html#pyGenClean.DupSNPs.duplicated_snps.chooseBestSnps">[docs]</a><span class="k">def</span> <span class="nf">chooseBestSnps</span><span class="p">(</span><span class="n">tped</span><span class="p">,</span> <span class="n">snps</span><span class="p">,</span> <span class="n">trueCompletion</span><span class="p">,</span> <span class="n">trueConcordance</span><span class="p">,</span> <span class="n">prefix</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Choose the best duplicates according to the completion and concordance.</span>
+
+<span class="sd">    :param tped: a representation of the ``tped`` of duplicated markers.</span>
+<span class="sd">    :param snps: the position of the duplicated markers in the ``tped``.</span>
+<span class="sd">    :param trueCompletion: the completion of each markers.</span>
+<span class="sd">    :param trueConcordance: the pairwise concordance of each markers.</span>
+<span class="sd">    :param prefix: the prefix of the output files.</span>
+
+<span class="sd">    :type tped: numpy.array</span>
+<span class="sd">    :type snps: dict</span>
+<span class="sd">    :type trueCompletion: numpy.array</span>
+<span class="sd">    :type trueConcordance: dict</span>
+<span class="sd">    :type prefix: str</span>
+
+<span class="sd">    :returns: a tuple containing the chosen indexes (:py:class:`dict`) as the</span>
+<span class="sd">              first element, the completion (:py:class:`numpy.array`) as the</span>
+<span class="sd">              second element, and the concordance (:py:class:`dict`) as last</span>
+<span class="sd">              element.</span>
+
+<span class="sd">    It creates two output files: ``prefix.chosen_snps.info`` and</span>
+<span class="sd">    ``prefix.not_chosen_snps.info``. The first one contains the markers that</span>
+<span class="sd">    were chosen for completion, and the second one, the markers that weren&#39;t.</span>
+
+<span class="sd">    It starts by computing the completion of each markers (dividing the number</span>
+<span class="sd">    of calls divided by the total number of genotypes). Then, for each of the</span>
+<span class="sd">    duplicated markers, we choose the best one according to completion and</span>
+<span class="sd">    concordance (see explanation in</span>
+<span class="sd">    :py:func:`DupSamples.duplicated_samples.chooseBestDuplicates` for more</span>
+<span class="sd">    details).</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c"># The output files</span>
+    <span class="n">chosenFile</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">chosenFile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">prefix</span> <span class="o">+</span> <span class="s">&quot;.chosen_snps.info&quot;</span><span class="p">,</span> <span class="s">&quot;w&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%(prefix)s</span><span class="s">.chosen_snps.info: can&#39;t write file&quot;</span> <span class="o">%</span> <span class="nb">locals</span><span class="p">()</span>
+        <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="n">excludedFile</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">excludedFile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">prefix</span> <span class="o">+</span> <span class="s">&quot;.not_chosen_snps.info&quot;</span><span class="p">,</span> <span class="s">&quot;w&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%(prefix)s</span><span class="s">.not_chosen_snps.info: can&#39;t write file&quot;</span> <span class="o">%</span> <span class="nb">locals</span><span class="p">()</span>
+        <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="c"># Computing the completion</span>
+    <span class="n">completion</span> <span class="o">=</span> <span class="n">npy</span><span class="o">.</span><span class="n">true_divide</span><span class="p">(</span><span class="n">trueCompletion</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">trueCompletion</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="c"># For each duplicated SNPs</span>
+    <span class="n">chosenIndexes</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">snpConcordance</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">snp</span><span class="p">,</span> <span class="n">indexes</span> <span class="ow">in</span> <span class="n">snps</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+        <span class="c"># Getting the completion for those duplicated SNPs</span>
+        <span class="n">currCompletion</span> <span class="o">=</span> <span class="n">completion</span><span class="p">[</span><span class="n">indexes</span><span class="p">]</span>
+
+        <span class="c"># Sorting those completion</span>
+        <span class="n">sortedCompletionInsexes</span> <span class="o">=</span> <span class="n">npy</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">currCompletion</span><span class="p">)</span>
+
+        <span class="c"># Getting the concordance</span>
+        <span class="n">concordance</span> <span class="o">=</span> <span class="n">npy</span><span class="o">.</span><span class="n">true_divide</span><span class="p">(</span><span class="n">trueConcordance</span><span class="p">[</span><span class="n">snp</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+                                      <span class="n">trueConcordance</span><span class="p">[</span><span class="n">snp</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+
+        <span class="n">currConcordance</span> <span class="o">=</span> <span class="p">[[]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">indexes</span><span class="p">))]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">indexes</span><span class="p">)):</span>
+            <span class="n">indexToKeep</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">indexes</span><span class="p">)))</span> <span class="o">-</span> <span class="nb">set</span><span class="p">([</span><span class="n">i</span><span class="p">]))</span>
+            <span class="n">currConcordance</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">npy</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">concordance</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">indexToKeep</span><span class="p">])</span>
+        <span class="n">currConcordance</span> <span class="o">=</span> <span class="n">npy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">currConcordance</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">snp</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">snpConcordance</span><span class="p">:</span>
+            <span class="n">snpConcordance</span><span class="p">[</span><span class="n">snp</span><span class="p">]</span> <span class="o">=</span> <span class="n">currConcordance</span>
+
+        <span class="c"># Sorting the concordance</span>
+        <span class="n">sortedConcordanceIndexes</span> <span class="o">=</span> <span class="n">npy</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">currConcordance</span><span class="p">)</span>
+
+        <span class="c"># Trying to find the best duplicate to keep</span>
+        <span class="n">nbToCheck</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">chosenIndex</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">while</span> <span class="n">nbToCheck</span> <span class="o">&lt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">indexes</span><span class="p">):</span>
+            <span class="c"># Getting the `nbToCheck` best value (higher to lower)</span>
+            <span class="n">completionValue</span> <span class="o">=</span> <span class="n">currCompletion</span><span class="p">[</span>
+                <span class="n">sortedCompletionInsexes</span><span class="p">[</span><span class="n">nbToCheck</span><span class="o">*-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="p">]</span>
+            <span class="n">concordanceValue</span> <span class="o">=</span> <span class="n">currConcordance</span><span class="p">[</span>
+                <span class="n">sortedConcordanceIndexes</span><span class="p">[</span><span class="n">nbToCheck</span><span class="o">*-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="p">]</span>
+
+            <span class="c"># Getting the indexes to consider</span>
+            <span class="n">completionToConsider</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span>
+                <span class="n">npy</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">currCompletion</span> <span class="o">&gt;=</span> <span class="n">completionValue</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="p">)</span>
+            <span class="n">concordanceToConsider</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span>
+                <span class="n">npy</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">currConcordance</span> <span class="o">&gt;=</span> <span class="n">concordanceValue</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="p">)</span>
+
+            <span class="c"># Getting the intersection of the indexes</span>
+            <span class="n">toConsider</span> <span class="o">=</span> <span class="n">concordanceToConsider</span> <span class="o">&amp;</span> <span class="n">completionToConsider</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">toConsider</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">chosenIndex</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">toConsider</span><span class="p">))</span>
+                <span class="k">break</span>
+            <span class="n">nbToCheck</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="k">if</span> <span class="n">chosenIndex</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;Could not choose the best snp ID&quot;</span>
+            <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="c"># Printing the chosen SNPs</span>
+        <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">chosenFile</span><span class="p">,</span> <span class="n">tped</span><span class="p">[</span><span class="n">indexes</span><span class="p">[</span><span class="n">chosenIndex</span><span class="p">],</span> <span class="mi">1</span><span class="p">]</span>
+
+        <span class="c"># Printing the excluded SNPs</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">indexes</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">!=</span> <span class="n">chosenIndex</span><span class="p">:</span>
+                <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">excludedFile</span><span class="p">,</span> <span class="n">tped</span><span class="p">[</span><span class="n">index</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+
+        <span class="n">chosenIndexes</span><span class="p">[</span><span class="n">snp</span><span class="p">]</span> <span class="o">=</span> <span class="n">indexes</span><span class="p">[</span><span class="n">chosenIndex</span><span class="p">]</span>
+
+    <span class="c"># Closing the output files</span>
+    <span class="n">chosenFile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">excludedFile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">chosenIndexes</span><span class="p">,</span> <span class="n">completion</span><span class="p">,</span> <span class="n">snpConcordance</span>
+
+</div>
+<div class="viewcode-block" id="computeFrequency"><a class="viewcode-back" href="../../../duplicated_markers.html#pyGenClean.DupSNPs.duplicated_snps.computeFrequency">[docs]</a><span class="k">def</span> <span class="nf">computeFrequency</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span> <span class="n">outPrefix</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Computes the frequency of the SNPs using Plink.</span>
+
+<span class="sd">    :param prefix: the prefix of the input files.</span>
+<span class="sd">    :param outPrefix: the prefix of the output files.</span>
+
+<span class="sd">    :type prefix: str</span>
+<span class="sd">    :type outPrefix: str</span>
+
+<span class="sd">    :returns: a :py:class:`dict` containing the frequency of each marker.</span>
+
+<span class="sd">    Start by computing the frequency of all markers using Plink. Then, it reads</span>
+<span class="sd">    the output file, and saves the frequency and allele information.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c"># The plink command</span>
+    <span class="n">plinkCommand</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;plink&quot;</span><span class="p">,</span> <span class="s">&quot;--noweb&quot;</span><span class="p">,</span> <span class="s">&quot;--tfile&quot;</span><span class="p">,</span> <span class="n">prefix</span><span class="p">,</span> <span class="s">&quot;--freq&quot;</span><span class="p">,</span> <span class="s">&quot;--out&quot;</span><span class="p">,</span>
+                    <span class="n">outPrefix</span> <span class="o">+</span> <span class="s">&quot;.duplicated_snps&quot;</span><span class="p">]</span>
+    <span class="n">runCommand</span><span class="p">(</span><span class="n">plinkCommand</span><span class="p">)</span>
+
+    <span class="c"># Reading the frequency file</span>
+    <span class="n">snpFreq</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">outPrefix</span> <span class="o">+</span> <span class="s">&quot;.duplicated_snps.frq&quot;</span><span class="p">,</span> <span class="s">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">inputFile</span><span class="p">:</span>
+            <span class="n">headerIndex</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">inputFile</span><span class="p">):</span>
+                <span class="n">row</span> <span class="o">=</span> <span class="n">createRowFromPlinkSpacedOutput</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="c"># This is the header</span>
+                    <span class="n">headerIndex</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">([</span>
+                        <span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">j</span><span class="p">)</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">row</span><span class="p">))</span>
+                    <span class="p">])</span>
+
+                    <span class="c"># Checking the column titles</span>
+                    <span class="k">for</span> <span class="n">columnTitle</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&quot;SNP&quot;</span><span class="p">,</span> <span class="s">&quot;MAF&quot;</span><span class="p">,</span> <span class="s">&quot;A1&quot;</span><span class="p">,</span> <span class="s">&quot;A2&quot;</span><span class="p">]:</span>
+                        <span class="k">if</span> <span class="n">columnTitle</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">headerIndex</span><span class="p">:</span>
+                            <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%(outPrefix)s</span><span class="s">.duplicated_snps.frq: no &quot;</span> \
+                                  <span class="s">&quot;column called </span><span class="si">%(columnTitle)s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="nb">locals</span><span class="p">()</span>
+                            <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c"># This is data</span>
+                    <span class="n">snpName</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">headerIndex</span><span class="p">[</span><span class="s">&quot;SNP&quot;</span><span class="p">]]</span>
+                    <span class="n">maf</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">headerIndex</span><span class="p">[</span><span class="s">&quot;MAF&quot;</span><span class="p">]]</span>
+                    <span class="n">a1</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">headerIndex</span><span class="p">[</span><span class="s">&quot;A1&quot;</span><span class="p">]]</span>
+                    <span class="n">a2</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">headerIndex</span><span class="p">[</span><span class="s">&quot;A2&quot;</span><span class="p">]]</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">maf</span> <span class="o">==</span> <span class="s">&quot;NA&quot;</span><span class="p">:</span>
+                            <span class="n">maf</span> <span class="o">=</span> <span class="mf">0.0</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">maf</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">maf</span><span class="p">)</span>
+                    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%(outPrefix)s</span><span class="s">.duplicated_snps.frq: </span><span class="si">%(maf)s</span><span class="s">: &quot;</span> \
+                              <span class="s">&quot;not a valid MAF&quot;</span> <span class="o">%</span> <span class="nb">locals</span><span class="p">()</span>
+                        <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+                    <span class="n">snpFreq</span><span class="p">[</span><span class="n">snpName</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">maf</span><span class="p">,</span> <span class="p">(</span><span class="n">a1</span><span class="p">,</span> <span class="n">a2</span><span class="p">))</span>
+    <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%(outPrefix)s</span><span class="s">.duplicated_snps.freq: no such file&quot;</span> <span class="o">%</span> <span class="nb">locals</span><span class="p">()</span>
+        <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">snpFreq</span>
+
+</div>
+<div class="viewcode-block" id="runCommand"><a class="viewcode-back" href="../../../duplicated_markers.html#pyGenClean.DupSNPs.duplicated_snps.runCommand">[docs]</a><span class="k">def</span> <span class="nf">runCommand</span><span class="p">(</span><span class="n">command</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Run the command in Plink.</span>
+
+<span class="sd">    :param command: the command to run.</span>
+
+<span class="sd">    :type command: list</span>
+
+<span class="sd">    Tries to run a command using :py:mod:`subprocess`.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">(</span><span class="n">command</span><span class="p">,</span>
+                                         <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">STDOUT</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;plink: couldn&#39;t run plink</span><span class="se">\n</span><span class="s">&quot;</span>
+        <span class="n">msg</span> <span class="o">+=</span> <span class="s">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">command</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="printDuplicatedTPEDandTFAM"><a class="viewcode-back" href="../../../duplicated_markers.html#pyGenClean.DupSNPs.duplicated_snps.printDuplicatedTPEDandTFAM">[docs]</a><span class="k">def</span> <span class="nf">printDuplicatedTPEDandTFAM</span><span class="p">(</span><span class="n">tped</span><span class="p">,</span> <span class="n">tfamFileName</span><span class="p">,</span> <span class="n">outPrefix</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Print the duplicated SNPs TPED and TFAM.</span>
+
+<span class="sd">    :param tped: a representation of the ``tped`` of duplicated markers.</span>
+<span class="sd">    :param tfamFileName: the name of the original ``tfam`` file.</span>
+<span class="sd">    :param outPrefix: the output prefix.</span>
+
+<span class="sd">    :type tped: numpy.array</span>
+<span class="sd">    :type tfamFileName: str</span>
+<span class="sd">    :type outPrefix: str</span>
+
+<span class="sd">    First, it copies the original ``tfam`` into</span>
+<span class="sd">    ``outPrefix.duplicated_snps.tfam``. Then, it prints the ``tped`` of</span>
+<span class="sd">    duplicated markers in ``outPrefix.duplicated_snps.tped``.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c"># Copying the tfam file</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">tfamFileName</span><span class="p">,</span> <span class="n">outPrefix</span> <span class="o">+</span> <span class="s">&quot;.duplicated_snps.tfam&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%(tfamFileName)s</span><span class="s">: can&#39;t copy file to &quot;</span> \
+              <span class="s">&quot;</span><span class="si">%(outPrefix)s</span><span class="s">.duplicated_snps.tfam&quot;</span> <span class="o">%</span> <span class="nb">locals</span><span class="p">()</span>
+        <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="c"># Writing the tped</span>
+    <span class="n">tpedFile</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">tpedFile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">outPrefix</span> <span class="o">+</span> <span class="s">&quot;.duplicated_snps.tped&quot;</span><span class="p">,</span> <span class="s">&quot;w&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%(outPrefix)s</span><span class="s">.duplicated_snps.tped: can&#39;t write &quot;</span> \
+              <span class="s">&quot;file&quot;</span> <span class="o">%</span> <span class="nb">locals</span><span class="p">()</span>
+        <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">tped</span><span class="p">:</span>
+        <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">tpedFile</span><span class="p">,</span> <span class="s">&quot;</span><span class="se">\t</span><span class="s">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+    <span class="n">tpedFile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+</div>
+<div class="viewcode-block" id="printConcordance"><a class="viewcode-back" href="../../../duplicated_markers.html#pyGenClean.DupSNPs.duplicated_snps.printConcordance">[docs]</a><span class="k">def</span> <span class="nf">printConcordance</span><span class="p">(</span><span class="n">concordance</span><span class="p">,</span> <span class="n">prefix</span><span class="p">,</span> <span class="n">tped</span><span class="p">,</span> <span class="n">snps</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Print the concordance.</span>
+
+<span class="sd">    :param concordance: the concordance.</span>
+<span class="sd">    :param prefix: the prefix if the output files.</span>
+<span class="sd">    :param tped: a representation of the ``tped`` of duplicated markers.</span>
+<span class="sd">    :param snps: the position of the duplicated markers in the ``tped``.</span>
+
+<span class="sd">    :type concordance: dict</span>
+<span class="sd">    :type prefix: str</span>
+<span class="sd">    :type tped: numpy.array</span>
+<span class="sd">    :type snps: dict</span>
+
+<span class="sd">    Prints the concordance in a file, in the format of a matrix. For each</span>
+<span class="sd">    duplicated markers, the first line (starting with the `#` signs) contains</span>
+<span class="sd">    the name of all the markers in the duplicated markers set. Then a :math:`N</span>
+<span class="sd">    \\times N` matrix is printed to file (where :math:`N` is the number of</span>
+<span class="sd">    markers in the duplicated marker list), containing the pairwise</span>
+<span class="sd">    concordance.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">outFile</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">outFile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">prefix</span> <span class="o">+</span> <span class="s">&quot;.concordance&quot;</span><span class="p">,</span> <span class="s">&quot;w&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s">: can&#39;t write file&quot;</span> <span class="o">%</span> <span class="n">prefix</span> <span class="o">+</span> <span class="s">&quot;.concordance&quot;</span>
+        <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">snpID</span> <span class="ow">in</span> <span class="n">concordance</span><span class="o">.</span><span class="n">iterkeys</span><span class="p">():</span>
+        <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">outFile</span><span class="p">,</span> <span class="s">&quot;#&quot;</span> <span class="o">+</span> <span class="s">&quot;</span><span class="se">\t</span><span class="s">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="nb">list</span><span class="p">(</span><span class="n">snpID</span><span class="p">)</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">tped</span><span class="p">[</span><span class="n">snps</span><span class="p">[</span><span class="n">snpID</span><span class="p">],</span> <span class="mi">1</span><span class="p">])</span>
+        <span class="p">)</span>
+
+        <span class="c"># Doing the division</span>
+        <span class="n">true_concordance</span> <span class="o">=</span> <span class="n">npy</span><span class="o">.</span><span class="n">true_divide</span><span class="p">(</span><span class="n">concordance</span><span class="p">[</span><span class="n">snpID</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+                                           <span class="n">concordance</span><span class="p">[</span><span class="n">snpID</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+
+        <span class="n">output</span> <span class="o">=</span> <span class="n">StringIO</span><span class="o">.</span><span class="n">StringIO</span><span class="p">()</span>
+        <span class="n">npy</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">true_concordance</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s">&quot;</span><span class="se">\t</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s">&quot;</span><span class="si">%.8f</span><span class="s">&quot;</span><span class="p">)</span>
+        <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">outFile</span><span class="p">,</span> <span class="n">output</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\r\n</span><span class="s">&quot;</span><span class="p">)</span>
+
+    <span class="n">outFile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+</div>
+<div class="viewcode-block" id="printProblems"><a class="viewcode-back" href="../../../duplicated_markers.html#pyGenClean.DupSNPs.duplicated_snps.printProblems">[docs]</a><span class="k">def</span> <span class="nf">printProblems</span><span class="p">(</span><span class="n">completion</span><span class="p">,</span> <span class="n">concordance</span><span class="p">,</span> <span class="n">tped</span><span class="p">,</span> <span class="n">snps</span><span class="p">,</span> <span class="n">frequencies</span><span class="p">,</span> <span class="n">prefix</span><span class="p">,</span>
+                  <span class="n">diffFreq</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Print the statistics.</span>
+
+<span class="sd">    :param completion: the completion of each duplicated markers.</span>
+<span class="sd">    :param concordance: the pairwise concordance between duplicated markers.</span>
+<span class="sd">    :param tped: a representation of the ``tped`` of duplicated markers.</span>
+<span class="sd">    :param snps: the positions of the duplicated markers in the ``tped``</span>
+<span class="sd">    :param frequencies: the frequency of each of the duplicated markers.</span>
+<span class="sd">    :param prefix: the prefix of the output files.</span>
+<span class="sd">    :param diffFreq: the frequency difference threshold.</span>
+
+<span class="sd">    :type completion: numpy.array</span>
+<span class="sd">    :type concordance: dict</span>
+<span class="sd">    :type tped: numpy.array</span>
+<span class="sd">    :type snps: dict</span>
+<span class="sd">    :type frequencies: dict</span>
+<span class="sd">    :type prefix: str</span>
+<span class="sd">    :type diffFreq: float</span>
+
+<span class="sd">    :returns: a :py:class:`set` containing duplicated markers to complete.</span>
+
+<span class="sd">    Creates a summary file (``prefix.summary``) containing information about</span>
+<span class="sd">    duplicated markers: chromosome, position, name, alleles, status, completion</span>
+<span class="sd">    percentage, completion number and mean concordance.</span>
+
+<span class="sd">    The frequency and the minor allele are used to be certain that two</span>
+<span class="sd">    duplicated markers are exactly the same marker (and not a tri-allelic one,</span>
+<span class="sd">    for example).</span>
+
+<span class="sd">    For each duplicated markers:</span>
+
+<span class="sd">    1. Constructs the set of available alleles for the first marker.</span>
+<span class="sd">    2. Constructs the set of available alleles for the second marker.</span>
+<span class="sd">    3. If the two sets are different, but the number of alleles is the same, we</span>
+<span class="sd">       try to flip one of the marker. If the two sets are the same, but the</span>
+<span class="sd">       number of alleles is 1, we set the status to ``homo_flip``. If the</span>
+<span class="sd">       markers are heterozygous, we set the status to ``flip``.</span>
+<span class="sd">    4. If there is a difference in the number of alleles (one is homozygous,</span>
+<span class="sd">       the other, heterozygous), and that there is on allele in common, we set</span>
+<span class="sd">       the status to ``homo_hetero``. If there are no allele in common, we try</span>
+<span class="sd">       to flip one. If the new sets have one allele in common, we set the</span>
+<span class="sd">       status to ``homo_hetero_flip``.</span>
+<span class="sd">    5. If the sets of available alleles are the same (without flip), we check</span>
+<span class="sd">       the frequency and the minor alleles. If the minor allele is different,</span>
+<span class="sd">       we set the status to ``diff_minor_allele``. If the difference in</span>
+<span class="sd">       frequencies is higher than a threshold, we set the status to</span>
+<span class="sd">       ``diff_frequency``.</span>
+<span class="sd">    6. If all of the above fail, we set the status to ``problem``.</span>
+
+<span class="sd">    Problems are written in the ``prefix.problems`` file, and contains the</span>
+<span class="sd">    following columns: chromosome, position, name and status. This file</span>
+<span class="sd">    contains all the markers with a status, as explained above.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">completionPercentage</span> <span class="o">=</span> <span class="n">npy</span><span class="o">.</span><span class="n">true_divide</span><span class="p">(</span><span class="n">completion</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">completion</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="n">outSummary</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">outSummary</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">prefix</span> <span class="o">+</span> <span class="s">&quot;.summary&quot;</span><span class="p">,</span> <span class="s">&quot;w&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s">: can&#39;t write file&quot;</span> <span class="o">%</span> <span class="n">prefix</span> <span class="o">+</span> <span class="s">&quot;.summary&quot;</span>
+        <span class="k">raise</span> <span class="n">ProgramError</span>
+
+    <span class="c"># Prints the header of the summary file</span>
+    <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">outSummary</span><span class="p">,</span> <span class="s">&quot;</span><span class="se">\t</span><span class="s">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s">&quot;chr&quot;</span><span class="p">,</span> <span class="s">&quot;pos&quot;</span><span class="p">,</span> <span class="s">&quot;name&quot;</span><span class="p">,</span> <span class="s">&quot;alleles&quot;</span><span class="p">,</span> <span class="s">&quot;status&quot;</span><span class="p">,</span>
+                                   <span class="s">&quot;</span><span class="si">% c</span><span class="s">ompletion&quot;</span><span class="p">,</span> <span class="s">&quot;completion&quot;</span><span class="p">,</span>
+                                   <span class="s">&quot;mean concordance&quot;</span><span class="p">])</span>
+
+    <span class="c"># The data structure containing the problems</span>
+    <span class="n">problems</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">snpID</span><span class="p">,</span> <span class="n">indexes</span> <span class="ow">in</span> <span class="n">snps</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">indexes</span><span class="p">):</span>
+            <span class="c"># The SNP information (chromosome and position)</span>
+            <span class="n">toPrint</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">snpID</span><span class="p">)</span>
+
+            <span class="c"># The name of the SNP</span>
+            <span class="n">snpName</span> <span class="o">=</span> <span class="n">tped</span><span class="p">[</span><span class="n">index</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="n">toPrint</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">snpName</span><span class="p">)</span>
+
+            <span class="c"># The frequency of the SNP</span>
+            <span class="n">snpFreq</span><span class="p">,</span> <span class="n">mafAlleles</span> <span class="o">=</span> <span class="n">frequencies</span><span class="p">[</span><span class="n">snpName</span><span class="p">]</span>
+
+            <span class="c"># A list of the other SNP name with problems</span>
+            <span class="n">otherSnpNameWithProblem</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+
+            <span class="c"># The alleles</span>
+            <span class="n">alleles</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+            <span class="n">otherAlleles</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+            <span class="n">status</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">genotype</span> <span class="ow">in</span> <span class="n">npy</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">tped</span><span class="p">[</span><span class="n">index</span><span class="p">,</span> <span class="mi">4</span><span class="p">:]):</span>
+                <span class="n">alleles</span> <span class="o">|=</span> <span class="nb">set</span><span class="p">(</span><span class="n">genotype</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot; &quot;</span><span class="p">))</span>
+            <span class="k">if</span> <span class="s">&quot;0&quot;</span> <span class="ow">in</span> <span class="n">alleles</span><span class="p">:</span>
+                <span class="n">alleles</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s">&quot;0&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">indexes</span><span class="p">)):</span>
+                <span class="n">otherIndex</span> <span class="o">=</span> <span class="n">indexes</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+                <span class="n">otherSnpName</span> <span class="o">=</span> <span class="n">tped</span><span class="p">[</span><span class="n">otherIndex</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+
+                <span class="c"># The frequency of the other SNP</span>
+                <span class="n">otherSnpFreq</span><span class="p">,</span> <span class="n">otherMafAlleles</span> <span class="o">=</span> <span class="n">frequencies</span><span class="p">[</span><span class="n">otherSnpName</span><span class="p">]</span>
+
+                <span class="c"># Checking the alleles</span>
+                <span class="k">for</span> <span class="n">genotype</span> <span class="ow">in</span> <span class="n">npy</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">tped</span><span class="p">[</span><span class="n">otherIndex</span><span class="p">,</span> <span class="mi">4</span><span class="p">:]):</span>
+                    <span class="n">otherAlleles</span> <span class="o">|=</span> <span class="nb">set</span><span class="p">(</span><span class="n">genotype</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot; &quot;</span><span class="p">))</span>
+                <span class="k">if</span> <span class="s">&quot;0&quot;</span> <span class="ow">in</span> <span class="n">otherAlleles</span><span class="p">:</span>
+                    <span class="n">otherAlleles</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s">&quot;0&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">alleles</span> <span class="o">!=</span> <span class="n">otherAlleles</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">alleles</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">otherAlleles</span><span class="p">):</span>
+                        <span class="c"># Same number of alleles</span>
+                        <span class="c"># Try the flipped ones</span>
+                        <span class="n">otherAlleles</span> <span class="o">=</span> <span class="n">flipGenotype</span><span class="p">(</span><span class="n">otherAlleles</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">alleles</span> <span class="o">==</span> <span class="n">otherAlleles</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">alleles</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                                <span class="n">status</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&quot;homo_flip&quot;</span><span class="p">)</span>
+                                <span class="n">otherSnpNameWithProblem</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">otherSnpName</span><span class="p">)</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="n">status</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&quot;flip&quot;</span><span class="p">)</span>
+                                <span class="n">otherSnpNameWithProblem</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">otherSnpName</span><span class="p">)</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">status</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&quot;problem&quot;</span><span class="p">)</span>
+                            <span class="n">otherSnpNameWithProblem</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">otherSnpName</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="c"># Different number of alleles</span>
+                        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">alleles</span> <span class="o">&amp;</span> <span class="n">otherAlleles</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                            <span class="n">status</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&quot;homo_hetero&quot;</span><span class="p">)</span>
+                            <span class="n">otherSnpNameWithProblem</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">otherSnpName</span><span class="p">)</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="c"># Try the flipped one</span>
+                            <span class="n">otherAlleles</span> <span class="o">=</span> <span class="n">flipGenotype</span><span class="p">(</span><span class="n">otherAlleles</span><span class="p">)</span>
+                            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">alleles</span> <span class="o">&amp;</span> <span class="n">otherAlleles</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                                <span class="n">status</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&quot;homo_hetero_flip&quot;</span><span class="p">)</span>
+                                <span class="n">otherSnpNameWithProblem</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">otherSnpName</span><span class="p">)</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="n">status</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&quot;problem&quot;</span><span class="p">)</span>
+                                <span class="n">otherSnpNameWithProblem</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">otherSnpName</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c"># The alleles are the same, so we check the frequency</span>
+                    <span class="k">if</span> <span class="n">mafAlleles</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">otherMafAlleles</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+                        <span class="c"># They don&#39;t have the same minor allele</span>
+                        <span class="n">status</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&quot;diff_minor_allele&quot;</span><span class="p">)</span>
+                        <span class="n">otherSnpNameWithProblem</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">otherSnpName</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="n">math</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="n">snpFreq</span> <span class="o">-</span> <span class="n">otherSnpFreq</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">diffFreq</span><span class="p">:</span>
+                        <span class="c"># They don&#39;t have same frequency</span>
+                        <span class="n">status</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&quot;diff_frequency&quot;</span><span class="p">)</span>
+                        <span class="n">otherSnpNameWithProblem</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">otherSnpName</span><span class="p">)</span>
+
+            <span class="n">alleles</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">alleles</span><span class="p">)</span>
+            <span class="n">alleles</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">alleles</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">alleles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">alleles</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">toPrint</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">alleles</span><span class="p">))</span>
+            <span class="n">toPrint</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&quot;;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">status</span><span class="p">))</span>
+
+            <span class="c"># The completion</span>
+            <span class="n">toPrint</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%.8f</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">completionPercentage</span><span class="p">[</span><span class="n">index</span><span class="p">])</span>
+            <span class="n">toPrint</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%d</span><span class="s">/</span><span class="si">%d</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">completion</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">index</span><span class="p">],</span>
+                                      <span class="n">completion</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">index</span><span class="p">]))</span>
+
+            <span class="c"># The concordance</span>
+            <span class="n">indexToKeep</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">indexes</span><span class="p">)))</span> <span class="o">-</span> <span class="nb">set</span><span class="p">([</span><span class="n">i</span><span class="p">]))</span>
+            <span class="n">currConcordance</span> <span class="o">=</span> <span class="n">npy</span><span class="o">.</span><span class="n">true_divide</span><span class="p">(</span>
+                <span class="n">concordance</span><span class="p">[</span><span class="n">snpID</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="n">i</span><span class="p">,</span> <span class="n">indexToKeep</span><span class="p">],</span>
+                <span class="n">concordance</span><span class="p">[</span><span class="n">snpID</span><span class="p">][</span><span class="mi">1</span><span class="p">][</span><span class="n">i</span><span class="p">,</span> <span class="n">indexToKeep</span><span class="p">],</span>
+            <span class="p">)</span>
+            <span class="n">currConcordance</span> <span class="o">=</span> <span class="n">npy</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">currConcordance</span><span class="p">)</span>
+            <span class="n">toPrint</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%.8f</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">currConcordance</span><span class="p">)</span>
+            <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">outSummary</span><span class="p">,</span> <span class="s">&quot;</span><span class="se">\t</span><span class="s">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">toPrint</span><span class="p">)</span>
+
+            <span class="c"># Now updating the problems data structure</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">status</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">otherSnpNameWithProblem</span><span class="p">):</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;There is a problem with the problematic SNPs&quot;</span>
+                <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">status</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">snpID</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">problems</span><span class="p">:</span>
+                    <span class="n">tmp</span> <span class="o">=</span> <span class="p">{</span><span class="s">&quot;snpNames&quot;</span><span class="p">:</span> <span class="p">{</span><span class="n">snpName</span><span class="p">},</span> <span class="s">&quot;problems&quot;</span><span class="p">:</span> <span class="nb">set</span><span class="p">()}</span>
+                    <span class="n">problems</span><span class="p">[</span><span class="n">snpID</span><span class="p">]</span> <span class="o">=</span> <span class="n">tmp</span>
+
+                <span class="c"># We have problems</span>
+                <span class="n">problems</span><span class="p">[</span><span class="n">snpID</span><span class="p">][</span><span class="s">&quot;snpNames&quot;</span><span class="p">]</span> <span class="o">|=</span> <span class="n">otherSnpNameWithProblem</span>
+                <span class="n">problems</span><span class="p">[</span><span class="n">snpID</span><span class="p">][</span><span class="s">&quot;problems&quot;</span><span class="p">]</span> <span class="o">|=</span> <span class="nb">set</span><span class="p">(</span><span class="n">status</span><span class="p">)</span>
+
+    <span class="n">outSummary</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="n">outProblems</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">outProblems</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">prefix</span> <span class="o">+</span> <span class="s">&quot;.problems&quot;</span><span class="p">,</span> <span class="s">&quot;w&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s">: can&#39;t write file&quot;</span> <span class="o">%</span> <span class="n">prefix</span> <span class="o">+</span> <span class="s">&quot;.problems&quot;</span>
+        <span class="k">raise</span> <span class="n">ProgramError</span>
+
+    <span class="c"># Printing the header of the problem file...</span>
+    <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">outProblems</span><span class="p">,</span> <span class="s">&quot;</span><span class="se">\t</span><span class="s">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s">&quot;chr&quot;</span><span class="p">,</span> <span class="s">&quot;pos&quot;</span><span class="p">,</span> <span class="s">&quot;name&quot;</span><span class="p">,</span> <span class="s">&quot;status&quot;</span><span class="p">])</span>
+    <span class="k">for</span> <span class="n">snpID</span> <span class="ow">in</span> <span class="n">problems</span><span class="o">.</span><span class="n">iterkeys</span><span class="p">():</span>
+        <span class="n">toPrint</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">snpID</span><span class="p">)</span>
+        <span class="n">toPrint</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&quot;;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">problems</span><span class="p">[</span><span class="n">snpID</span><span class="p">][</span><span class="s">&quot;snpNames&quot;</span><span class="p">])))</span>
+        <span class="n">toPrint</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&quot;;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">problems</span><span class="p">[</span><span class="n">snpID</span><span class="p">][</span><span class="s">&quot;problems&quot;</span><span class="p">])))</span>
+        <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">outProblems</span><span class="p">,</span> <span class="s">&quot;</span><span class="se">\t</span><span class="s">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">toPrint</span><span class="p">)</span>
+
+    <span class="n">outProblems</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="c"># Returning the SNPs to complete</span>
+    <span class="k">return</span> <span class="nb">set</span><span class="p">(</span><span class="n">snps</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">problems</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+</div>
+<div class="viewcode-block" id="computeStatistics"><a class="viewcode-back" href="../../../duplicated_markers.html#pyGenClean.DupSNPs.duplicated_snps.computeStatistics">[docs]</a><span class="k">def</span> <span class="nf">computeStatistics</span><span class="p">(</span><span class="n">tped</span><span class="p">,</span> <span class="n">tfam</span><span class="p">,</span> <span class="n">snps</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Computes the completion and concordance of each SNPs.</span>
+
+<span class="sd">    :param tped: a representation of the ``tped``.</span>
+<span class="sd">    :param tfam: a representation of the ``tfam``</span>
+<span class="sd">    :param snps: the position of the duplicated markers in the ``tped``.</span>
+
+<span class="sd">    :type tped: numpy.array</span>
+<span class="sd">    :type tfam: list</span>
+<span class="sd">    :type snps: dict</span>
+
+<span class="sd">    :returns: a tuple containing the completion of duplicated markers</span>
+<span class="sd">              (:py:class:`numpy.array`) as first element, and the concordance</span>
+<span class="sd">              (:py:class:`dict`) of duplicated markers, as last element.</span>
+
+<span class="sd">    A marker&#39;s completion is compute using this formula (where :math:`G_i` is</span>
+<span class="sd">    the set of genotypes for the marker :math:`i`):</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        Completion_i = \\frac{||g \\in G_i \\textrm{ where } g \\neq 0||}</span>
+<span class="sd">                             {||G_i||}</span>
+
+<span class="sd">    The pairwise concordance between duplicated markers is compute as follow</span>
+<span class="sd">    (where :math:`G_i` and :math:`G_j` are the sets of genotypes for markers</span>
+<span class="sd">    :math:`i` and :math:`j`, respectively):</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        Concordance_{i,j} = \\frac{</span>
+<span class="sd">            ||g \\in G_i \\cup G_j \\textrm{ where } g_i = g_j \\neq 0||</span>
+<span class="sd">        }{</span>
+<span class="sd">            ||g \\in G_i \\cup G_j \\textrm{ where } g \\neq 0||</span>
+<span class="sd">        }</span>
+
+<span class="sd">    Hence, we only computes the numerators and denominators of the completion</span>
+<span class="sd">    and concordance, for future reference.</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">        When the genotypes are not comparable, the function tries to flip one</span>
+<span class="sd">        of the genotype to see if it becomes comparable.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c"># The completion data type</span>
+    <span class="n">completion</span> <span class="o">=</span> <span class="n">npy</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">tped</span><span class="p">))],</span>
+                            <span class="p">[</span><span class="mi">0</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">tped</span><span class="p">))]])</span>
+
+    <span class="c"># The concordance data type</span>
+    <span class="n">concordance</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">snpID</span> <span class="ow">in</span> <span class="n">snps</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">nbDup</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">snps</span><span class="p">[</span><span class="n">snpID</span><span class="p">])</span>
+        <span class="n">concordance</span><span class="p">[</span><span class="n">snpID</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">npy</span><span class="o">.</span><span class="n">asmatrix</span><span class="p">(</span><span class="n">npy</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nbDup</span><span class="p">,</span> <span class="n">nbDup</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)),</span>
+            <span class="n">npy</span><span class="o">.</span><span class="n">asmatrix</span><span class="p">(</span><span class="n">npy</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nbDup</span><span class="p">,</span> <span class="n">nbDup</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">))</span>
+        <span class="p">]</span>
+
+    <span class="c"># The women and the no sex</span>
+    <span class="n">menIndex</span> <span class="o">=</span> <span class="n">npy</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">tfam</span><span class="p">[:,</span> <span class="mi">4</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;1&quot;</span><span class="p">)</span>
+    <span class="n">womenIndex</span> <span class="o">=</span> <span class="n">npy</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">tfam</span><span class="p">[:,</span> <span class="mi">4</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;2&quot;</span><span class="p">)</span>
+    <span class="n">noSexIndex</span> <span class="o">=</span> <span class="n">npy</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">tfam</span><span class="p">[:,</span> <span class="mi">4</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;0&quot;</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">snpID</span><span class="p">,</span> <span class="n">indexes</span> <span class="ow">in</span> <span class="n">snps</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+        <span class="n">nbDup</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">indexes</span><span class="p">)</span>
+        <span class="n">currGenotypes</span> <span class="o">=</span> <span class="n">tped</span><span class="p">[</span><span class="n">indexes</span><span class="p">,</span> <span class="mi">4</span><span class="p">:]</span>
+        <span class="n">chromosome</span><span class="p">,</span> <span class="n">position</span> <span class="o">=</span> <span class="n">snpID</span>
+
+<span class="c">#         if chromosome == &quot;24&quot;:</span>
+<span class="c">#             # Remove the heterozygous men</span>
+<span class="c">#             menToRemove = getIndexOfHeteroMen(currGenotypes, menIndex)</span>
+<span class="c">#             # Remove the women and the no sex</span>
+<span class="c">#             currGenotypes = npy.delete(currGenotypes,</span>
+<span class="c">#                                        npy.hstack((womenIndex, noSexIndex,</span>
+<span class="c">#                                                    menToRemove)), 1)</span>
+<span class="c">#         elif chromosome == &quot;23&quot;:</span>
+<span class="c">#             # Remove the heterozygous men</span>
+<span class="c">#             menToRemove = getIndexOfHeteroMen(currGenotypes, menIndex)</span>
+<span class="c">#             # Remove the no sex</span>
+<span class="c">#             currGenotypes = npy.delete(currGenotypes,</span>
+<span class="c">#                                        npy.hstack((noSexIndex, menToRemove)),</span>
+<span class="c">#                                        1)</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">nbDup</span><span class="p">):</span>
+            <span class="c"># Compute completion here</span>
+            <span class="n">completion</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">indexes</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span>
+                <span class="n">npy</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">currGenotypes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">!=</span> <span class="s">&quot;0 0&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="p">)</span>
+            <span class="n">completion</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">indexes</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">currGenotypes</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">nbDup</span><span class="p">):</span>
+                <span class="c"># Compute concordance here</span>
+                <span class="c"># Removing samples with at least one null genotype</span>
+                <span class="n">nullGenotypeIndexes</span> <span class="o">=</span> <span class="n">npy</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
+                    <span class="n">npy</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">currGenotypes</span><span class="p">[[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]]</span> <span class="o">==</span> <span class="s">&quot;0 0&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+                <span class="p">)</span>
+                <span class="n">subGenotypes</span> <span class="o">=</span> <span class="n">npy</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span>
+                    <span class="n">currGenotypes</span><span class="p">,</span>
+                    <span class="n">nullGenotypeIndexes</span><span class="p">,</span>
+                    <span class="mi">1</span><span class="p">,</span>
+                <span class="p">)</span>
+
+                <span class="c"># Finding the errors in the subseted genotypes</span>
+                <span class="n">errorIndexes</span> <span class="o">=</span> <span class="n">npy</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">subGenotypes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">!=</span> <span class="n">subGenotypes</span><span class="p">[</span><span class="n">j</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">nbDiff</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">errorIndexes</span><span class="p">)</span>
+
+                <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">errorIndexes</span><span class="p">:</span>
+                    <span class="c"># Getting the genotypes</span>
+                    <span class="n">genotype1</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">subGenotypes</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot; &quot;</span><span class="p">))</span>
+                    <span class="n">genotype2</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">subGenotypes</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot; &quot;</span><span class="p">))</span>
+
+                    <span class="c"># Checking for flips</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">genotype1</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">genotype2</span><span class="p">):</span>
+                        <span class="c"># Both have the same number of different alleles,</span>
+                        <span class="c"># so they might be flipped</span>
+                        <span class="n">genotype2</span> <span class="o">=</span> <span class="n">flipGenotype</span><span class="p">(</span><span class="n">genotype2</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">genotype1</span> <span class="o">==</span> <span class="n">genotype2</span><span class="p">:</span>
+                            <span class="c"># The genotypes are equivalent after the flip</span>
+                            <span class="n">nbDiff</span> <span class="o">-=</span> <span class="mi">1</span>
+
+                <span class="c"># Updating the concordance</span>
+                <span class="n">nbTot</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">subGenotypes</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                <span class="n">concordance</span><span class="p">[</span><span class="n">snpID</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">nbTot</span> <span class="o">-</span> <span class="n">nbDiff</span>
+                <span class="n">concordance</span><span class="p">[</span><span class="n">snpID</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="n">j</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">nbTot</span> <span class="o">-</span> <span class="n">nbDiff</span>
+                <span class="k">if</span> <span class="n">nbTot</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="c"># We will have a division by 0...</span>
+                    <span class="n">nbTot</span> <span class="o">=</span> <span class="mi">1</span>
+                <span class="n">concordance</span><span class="p">[</span><span class="n">snpID</span><span class="p">][</span><span class="mi">1</span><span class="p">][</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">nbTot</span>
+                <span class="n">concordance</span><span class="p">[</span><span class="n">snpID</span><span class="p">][</span><span class="mi">1</span><span class="p">][</span><span class="n">j</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">nbTot</span>
+
+    <span class="k">for</span> <span class="n">snpID</span> <span class="ow">in</span> <span class="n">concordance</span><span class="o">.</span><span class="n">iterkeys</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">concordance</span><span class="p">[</span><span class="n">snpID</span><span class="p">][</span><span class="mi">0</span><span class="p">])):</span>
+            <span class="n">concordance</span><span class="p">[</span><span class="n">snpID</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="n">i</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="n">concordance</span><span class="p">[</span><span class="n">snpID</span><span class="p">][</span><span class="mi">1</span><span class="p">][</span><span class="n">i</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="k">return</span> <span class="n">completion</span><span class="p">,</span> <span class="n">concordance</span>
+
+</div>
+<div class="viewcode-block" id="getIndexOfHeteroMen"><a class="viewcode-back" href="../../../duplicated_markers.html#pyGenClean.DupSNPs.duplicated_snps.getIndexOfHeteroMen">[docs]</a><span class="k">def</span> <span class="nf">getIndexOfHeteroMen</span><span class="p">(</span><span class="n">genotypes</span><span class="p">,</span> <span class="n">menIndex</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Get the indexes of heterozygous men.</span>
+
+<span class="sd">    :param genotypes: the genotypes of everybody.</span>
+<span class="sd">    :param menIndex: the indexes of the men (for the genotypes).</span>
+
+<span class="sd">    :type genotypes: numpy.array</span>
+<span class="sd">    :type menIndex: numpy.array</span>
+
+<span class="sd">    :returns: a :py:class:`numpy.array` containing the indexes of the genotypes</span>
+<span class="sd">              to remove.</span>
+
+<span class="sd">    Finds the mean that have a heterozygous genotype for this current marker.</span>
+<span class="sd">    Usually used on sexual chromosomes.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">toRemove</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">menIndex</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+        <span class="k">for</span> <span class="n">genotype</span> <span class="ow">in</span> <span class="p">[</span><span class="nb">set</span><span class="p">(</span><span class="n">j</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot; &quot;</span><span class="p">))</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">genotypes</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]]:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">genotype</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="c"># We have an heterozygous</span>
+                <span class="n">toRemove</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+
+    <span class="n">toRemove</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">toRemove</span><span class="p">)</span>
+    <span class="n">toRemove</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="p">(</span><span class="n">npy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">toRemove</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">),)</span>
+
+</div>
+<div class="viewcode-block" id="flipGenotype"><a class="viewcode-back" href="../../../duplicated_markers.html#pyGenClean.DupSNPs.duplicated_snps.flipGenotype">[docs]</a><span class="k">def</span> <span class="nf">flipGenotype</span><span class="p">(</span><span class="n">genotype</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Flips a genotype.</span>
+
+<span class="sd">    :param genotype: the genotype to flip.</span>
+
+<span class="sd">    :type genotype: set</span>
+
+<span class="sd">    :returns: the new flipped genotype (as a :py:class:`set`)</span>
+
+<span class="sd">    .. testsetup::</span>
+
+<span class="sd">        from pyGenClean.DupSNPs.duplicated_snps import flipGenotype</span>
+
+<span class="sd">    .. doctest::</span>
+
+<span class="sd">        &gt;&gt;&gt; flipGenotype({&quot;A&quot;, &quot;T&quot;})</span>
+<span class="sd">        set([&#39;A&#39;, &#39;T&#39;])</span>
+<span class="sd">        &gt;&gt;&gt; flipGenotype({&quot;C&quot;, &quot;T&quot;})</span>
+<span class="sd">        set([&#39;A&#39;, &#39;G&#39;])</span>
+<span class="sd">        &gt;&gt;&gt; flipGenotype({&quot;T&quot;, &quot;G&quot;})</span>
+<span class="sd">        set([&#39;A&#39;, &#39;C&#39;])</span>
+<span class="sd">        &gt;&gt;&gt; flipGenotype({&quot;0&quot;, &quot;0&quot;})</span>
+<span class="sd">        Traceback (most recent call last):</span>
+<span class="sd">            ...</span>
+<span class="sd">        ProgramError: 0: unkown allele</span>
+<span class="sd">        &gt;&gt;&gt; flipGenotype({&quot;A&quot;, &quot;N&quot;})</span>
+<span class="sd">        Traceback (most recent call last):</span>
+<span class="sd">            ...</span>
+<span class="sd">        ProgramError: N: unkown allele</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">newGenotype</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">allele</span> <span class="ow">in</span> <span class="n">genotype</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">allele</span> <span class="o">==</span> <span class="s">&quot;A&quot;</span><span class="p">:</span>
+            <span class="n">newGenotype</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s">&quot;T&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">allele</span> <span class="o">==</span> <span class="s">&quot;C&quot;</span><span class="p">:</span>
+            <span class="n">newGenotype</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s">&quot;G&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">allele</span> <span class="o">==</span> <span class="s">&quot;T&quot;</span><span class="p">:</span>
+            <span class="n">newGenotype</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s">&quot;A&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">allele</span> <span class="o">==</span> <span class="s">&quot;G&quot;</span><span class="p">:</span>
+            <span class="n">newGenotype</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s">&quot;C&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%(allele)s</span><span class="s">: unknown allele&quot;</span> <span class="o">%</span> <span class="nb">locals</span><span class="p">()</span>
+            <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">newGenotype</span>
+
+
+<span class="c"># def processTPED(uniqueSNPs, duplicatedSNPs, mapF, fileName, tfam, prefix):</span></div>
+<div class="viewcode-block" id="processTPED"><a class="viewcode-back" href="../../../duplicated_markers.html#pyGenClean.DupSNPs.duplicated_snps.processTPED">[docs]</a><span class="k">def</span> <span class="nf">processTPED</span><span class="p">(</span><span class="n">uniqueSNPs</span><span class="p">,</span> <span class="n">mapF</span><span class="p">,</span> <span class="n">fileName</span><span class="p">,</span> <span class="n">tfam</span><span class="p">,</span> <span class="n">prefix</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Process the TPED file.</span>
+
+<span class="sd">    :param uniqueSNPs: the unique markers.</span>
+<span class="sd">    :param mapF: a representation of the ``map`` file.</span>
+<span class="sd">    :param fileName: the name of the ``tped`` file.</span>
+<span class="sd">    :param tfam: the name of the ``tfam`` file.</span>
+<span class="sd">    :param prefix: the prefix of all the files.</span>
+
+<span class="sd">    :type uniqueSNPs: dict</span>
+<span class="sd">    :type mapF: list</span>
+<span class="sd">    :type fileName: str</span>
+<span class="sd">    :type tfam: str</span>
+<span class="sd">    :type prefix: str</span>
+
+<span class="sd">    :returns: a tuple with the representation of the ``tped`` file</span>
+<span class="sd">              (:py:class:`numpy.array`) as first element, and the updated</span>
+<span class="sd">              position of the duplicated markers in the ``tped``</span>
+<span class="sd">              representation.</span>
+
+<span class="sd">    Copies the ``tfam`` file into ``prefix.unique_snps.tfam``. While reading</span>
+<span class="sd">    the ``tped`` file, creates a new one (``prefix.unique_snps.tped``)</span>
+<span class="sd">    containing only unique markers.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c"># Copying the tfam file</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">tfam</span><span class="p">,</span> <span class="n">prefix</span> <span class="o">+</span> <span class="s">&quot;.unique_snps.tfam&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s">: can&#39;t write file&quot;</span> <span class="o">%</span> <span class="n">prefix</span> <span class="o">+</span> <span class="s">&quot;.unique_snps.tfam&quot;</span>
+        <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="n">tped</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">updatedSNPs</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+    <span class="n">outputFile</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">outputFile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">prefix</span> <span class="o">+</span> <span class="s">&quot;.unique_snps.tped&quot;</span><span class="p">,</span> <span class="s">&quot;w&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s">: can&#39;t write to file&quot;</span> <span class="o">%</span> <span class="n">prefix</span> <span class="o">+</span> <span class="s">&quot;.unique_snps.tped&quot;</span>
+        <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+    <span class="n">nbSNP</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fileName</span><span class="p">,</span> <span class="s">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">inputFile</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">inputFile</span><span class="p">:</span>
+            <span class="n">nbSNP</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">row</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\r\n</span><span class="s">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\t</span><span class="s">&quot;</span><span class="p">)</span>
+            <span class="n">snpInfo</span> <span class="o">=</span> <span class="n">row</span><span class="p">[:</span><span class="mi">4</span><span class="p">]</span>
+            <span class="n">genotype</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">row</span><span class="p">[</span><span class="mi">4</span><span class="p">:]]</span>
+
+            <span class="n">chromosome</span> <span class="o">=</span> <span class="n">snpInfo</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">position</span> <span class="o">=</span> <span class="n">snpInfo</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="n">chromosome</span><span class="p">,</span> <span class="n">position</span><span class="p">)</span> <span class="ow">in</span> <span class="n">uniqueSNPs</span><span class="p">:</span>
+                <span class="c"># Printing the new TPED file (unique SNPs only)</span>
+                <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">outputFile</span><span class="p">,</span> <span class="s">&quot;</span><span class="se">\t</span><span class="s">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">snpInfo</span> <span class="o">+</span> <span class="n">genotype</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c"># Saving the TPED file (duplicated samples only)</span>
+                <span class="n">currPos</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">tped</span><span class="p">)</span>
+                <span class="n">tped</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">snpInfo</span> <span class="o">+</span> <span class="n">genotype</span><span class="p">))</span>
+                <span class="n">updatedSNPs</span><span class="p">[(</span><span class="n">chromosome</span><span class="p">,</span> <span class="n">position</span><span class="p">)]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">currPos</span><span class="p">)</span>
+    <span class="n">outputFile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">mapF</span><span class="p">)</span> <span class="o">!=</span> <span class="n">nbSNP</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%(fileName)s</span><span class="s">: no the same number of SNPs than MAP &quot;</span> \
+              <span class="s">&quot;file&quot;</span> <span class="o">%</span> <span class="nb">locals</span><span class="p">()</span>
+        <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="n">tped</span> <span class="o">=</span> <span class="n">npy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">tped</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">tped</span><span class="p">,</span> <span class="n">updatedSNPs</span>
+
+</div>
+<div class="viewcode-block" id="findUniques"><a class="viewcode-back" href="../../../duplicated_markers.html#pyGenClean.DupSNPs.duplicated_snps.findUniques">[docs]</a><span class="k">def</span> <span class="nf">findUniques</span><span class="p">(</span><span class="n">mapF</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Finds the unique markers in a MAP.</span>
+
+<span class="sd">    :param mapF: representation of a ``map`` file.</span>
+
+<span class="sd">    :type mapF: list</span>
+
+<span class="sd">    :returns: a :py:class:`dict` containing unique markers (according to their</span>
+<span class="sd">              genomic localisation).</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">uSNPs</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">dSNPs</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">mapF</span><span class="p">):</span>
+        <span class="n">chromosome</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">position</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+        <span class="n">snpID</span> <span class="o">=</span> <span class="p">(</span><span class="n">chromosome</span><span class="p">,</span> <span class="n">position</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">snpID</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">uSNPs</span><span class="p">:</span>
+            <span class="c"># This is the first time we see this sample</span>
+            <span class="n">uSNPs</span><span class="p">[</span><span class="n">snpID</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c"># We have seen this sample at least once...</span>
+            <span class="k">if</span> <span class="n">snpID</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dSNPs</span><span class="p">:</span>
+                <span class="c"># This is the second time we see this sample...</span>
+                <span class="n">dSNPs</span><span class="p">[</span><span class="n">snpID</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">uSNPs</span><span class="p">[</span><span class="n">snpID</span><span class="p">],</span> <span class="n">i</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c"># We have seen this sample multiple times</span>
+                <span class="n">dSNPs</span><span class="p">[</span><span class="n">snpID</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+
+    <span class="c"># Removing the duplicates from the unique samples</span>
+    <span class="k">for</span> <span class="n">snpID</span> <span class="ow">in</span> <span class="n">dSNPs</span><span class="o">.</span><span class="n">iterkeys</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">snpID</span> <span class="ow">in</span> <span class="n">uSNPs</span><span class="p">:</span>
+            <span class="k">del</span> <span class="n">uSNPs</span><span class="p">[</span><span class="n">snpID</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">uSNPs</span>
+
+</div>
+<div class="viewcode-block" id="readTFAM"><a class="viewcode-back" href="../../../duplicated_markers.html#pyGenClean.DupSNPs.duplicated_snps.readTFAM">[docs]</a><span class="k">def</span> <span class="nf">readTFAM</span><span class="p">(</span><span class="n">fileName</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Reads the TFAM file.</span>
+
+<span class="sd">    :param fileName: the name of the ``tfam`` file.</span>
+
+<span class="sd">    :type fileName: str</span>
+
+<span class="sd">    :returns: a representation the ``tfam`` file (:py:class:`numpy.array`).</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c"># Saving the TFAM file</span>
+    <span class="n">tfam</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fileName</span><span class="p">,</span> <span class="s">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">inputFile</span><span class="p">:</span>
+        <span class="n">tfam</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="nb">tuple</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\r\n</span><span class="s">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\t</span><span class="s">&quot;</span><span class="p">))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">inputFile</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+        <span class="p">]</span>
+
+    <span class="n">tfam</span> <span class="o">=</span> <span class="n">npy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">tfam</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">tfam</span>
+
+</div>
+<div class="viewcode-block" id="readMAP"><a class="viewcode-back" href="../../../duplicated_markers.html#pyGenClean.DupSNPs.duplicated_snps.readMAP">[docs]</a><span class="k">def</span> <span class="nf">readMAP</span><span class="p">(</span><span class="n">fileName</span><span class="p">,</span> <span class="n">prefix</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Reads the MAP file.</span>
+
+<span class="sd">    :param fileName: the name of the ``map`` file.</span>
+
+<span class="sd">    :type fileName: str</span>
+
+<span class="sd">    :returns: a list of tuples, representing the ``map`` file.</span>
+
+<span class="sd">    While reading the ``map`` file, it saves a file</span>
+<span class="sd">    (``prefix.duplicated_marker_names``) containing the name of the unique</span>
+<span class="sd">    duplicated markers.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c"># Saving the MAP file</span>
+    <span class="n">mapF</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fileName</span><span class="p">,</span> <span class="s">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">inputFile</span><span class="p">:</span>
+        <span class="n">mapF</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="nb">tuple</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\r\n</span><span class="s">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\t</span><span class="s">&quot;</span><span class="p">))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">inputFile</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+        <span class="p">]</span>
+
+    <span class="c"># Test for uniqueness of names</span>
+    <span class="n">marker_names</span> <span class="o">=</span> <span class="n">npy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">i</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">mapF</span><span class="p">])</span>
+    <span class="n">nb_with_same_name</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">marker_names</span><span class="p">)</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">npy</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">marker_names</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">nb_with_same_name</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;  - {} markers with same name&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">nb_with_same_name</span><span class="p">))</span>
+        <span class="n">u</span><span class="p">,</span> <span class="n">indices</span> <span class="o">=</span> <span class="n">npy</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">marker_names</span><span class="p">,</span> <span class="n">return_index</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="n">duplicated_indices</span> <span class="o">=</span> <span class="n">npy</span><span class="o">.</span><span class="n">setdiff1d</span><span class="p">(</span><span class="n">npy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">marker_names</span><span class="p">)),</span>
+                                           <span class="n">indices</span><span class="p">)</span>
+        <span class="n">duplicated_indices</span> <span class="o">=</span> <span class="n">npy</span><span class="o">.</span><span class="n">in1d</span><span class="p">(</span><span class="n">marker_names</span><span class="p">,</span>
+                                      <span class="n">marker_names</span><span class="p">[</span><span class="n">duplicated_indices</span><span class="p">])</span>
+        <span class="n">marker_chr_pos</span> <span class="o">=</span> <span class="n">npy</span><span class="o">.</span><span class="n">array</span><span class="p">([(</span><span class="n">i</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">i</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">mapF</span><span class="p">],</span>
+                                   <span class="n">dtype</span><span class="o">=</span><span class="p">[(</span><span class="s">&quot;chr&quot;</span><span class="p">,</span> <span class="nb">int</span><span class="p">),</span>
+                                          <span class="p">(</span><span class="s">&quot;pos&quot;</span><span class="p">,</span> <span class="nb">int</span><span class="p">)])[</span><span class="n">duplicated_indices</span><span class="p">]</span>
+        <span class="n">marker_names</span> <span class="o">=</span> <span class="n">marker_names</span><span class="p">[</span><span class="n">duplicated_indices</span><span class="p">]</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">duplicated_marker_names</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">prefix</span> <span class="o">+</span> <span class="s">&quot;.duplicated_marker_names&quot;</span><span class="p">,</span>
+                                           <span class="s">&quot;w&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;{}.duplicated_marker_names: can&#39;t write file&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prefix</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">marker_names</span><span class="p">)):</span>
+            <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">duplicated_marker_names</span><span class="p">,</span> <span class="s">&quot;</span><span class="se">\t</span><span class="s">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">marker_names</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">+</span>
+                                                       <span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span>
+                                                           <span class="n">marker_chr_pos</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+        <span class="n">duplicated_marker_names</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">mapF</span>
+
+</div>
+<div class="viewcode-block" id="checkArgs"><a class="viewcode-back" href="../../../duplicated_markers.html#pyGenClean.DupSNPs.duplicated_snps.checkArgs">[docs]</a><span class="k">def</span> <span class="nf">checkArgs</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Checks the arguments and options.</span>
+
+<span class="sd">    :param args: an object containing the options of the program.</span>
+
+<span class="sd">    :type args: argparse.Namespace</span>
+
+<span class="sd">    :returns: ``True`` if everything was OK.</span>
+
+<span class="sd">    If there is a problem with an option, an exception is raised using the</span>
+<span class="sd">    :py:class:`ProgramError` class, a message is printed to the</span>
+<span class="sd">    :class:`sys.stderr` and the program exists with code 1.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c"># Checking the input files</span>
+    <span class="k">for</span> <span class="n">suffix</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&quot;.tped&quot;</span><span class="p">,</span> <span class="s">&quot;.tfam&quot;</span><span class="p">,</span> <span class="s">&quot;.map&quot;</span><span class="p">]:</span>
+        <span class="n">fileName</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">tfile</span> <span class="o">+</span> <span class="n">suffix</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">fileName</span><span class="p">):</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%(fileName)s</span><span class="s">: no such file&quot;</span> <span class="o">%</span> <span class="nb">locals</span><span class="p">()</span>
+            <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="c"># Checking the concordance threshold</span>
+    <span class="k">if</span> <span class="p">((</span><span class="n">args</span><span class="o">.</span><span class="n">snp_concordance_threshold</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">or</span>
+            <span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">snp_concordance_threshold</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)):</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;snp-concordance-threshold: must be between 0 and 1 &quot;</span> \
+              <span class="s">&quot;(not </span><span class="si">%f</span><span class="s">)&quot;</span> <span class="o">%</span> <span class="n">args</span><span class="o">.</span><span class="n">snp_concordance_threshold</span>
+        <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="c"># Checking the completion threshold</span>
+    <span class="k">if</span> <span class="p">((</span><span class="n">args</span><span class="o">.</span><span class="n">snp_completion_threshold</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">or</span>
+            <span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">snp_completion_threshold</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)):</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;snp-completion-threshold: must be between 0 and 1 &quot;</span> \
+              <span class="s">&quot;(not </span><span class="si">%f</span><span class="s">)&quot;</span> <span class="o">%</span> <span class="n">args</span><span class="o">.</span><span class="n">snp_completion_threshold</span>
+        <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="c"># Checking the difference in frequency</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">frequency_difference</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">frequency_difference</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&quot;{}: maximal frequency difference: value must be between 0 and &quot;</span>
+               <span class="s">&quot;1 (inclusively)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">())</span>
+        <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="bp">True</span>
+
+</div>
+<div class="viewcode-block" id="parseArgs"><a class="viewcode-back" href="../../../duplicated_markers.html#pyGenClean.DupSNPs.duplicated_snps.parseArgs">[docs]</a><span class="k">def</span> <span class="nf">parseArgs</span><span class="p">(</span><span class="n">argString</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>  <span class="c"># pragma: no cover</span>
+    <span class="sd">&quot;&quot;&quot;Parses the command line options and arguments.</span>
+
+<span class="sd">    :param argString: the options.</span>
+
+<span class="sd">    :type argString: list</span>
+
+<span class="sd">    :returns: A :py:class:`argparse.Namespace` object created by the</span>
+<span class="sd">              :py:mod:`argparse` module. It contains the values of the</span>
+<span class="sd">              different options.</span>
+
+<span class="sd">    =============================== ====== ====================================</span>
+<span class="sd">                 Options             Type              Description</span>
+<span class="sd">    =============================== ====== ====================================</span>
+<span class="sd">    ``--tfile``                     string The input file prefix (Plink tfile).</span>
+<span class="sd">    ``--snp-completion-threshold``  float  The completion threshold to consider</span>
+<span class="sd">                                           a replicate when choosing the best</span>
+<span class="sd">                                           replicates.</span>
+<span class="sd">    ``--snp-concordance-threshold`` float  The concordance threshold to</span>
+<span class="sd">                                           consider a replicate when choosing</span>
+<span class="sd">                                           the best replicates.</span>
+<span class="sd">    ``--frequency_difference``      float  The maximum difference in frequency</span>
+<span class="sd">                                           between duplicated markers.</span>
+<span class="sd">    ``--out``                       string The prefix of the output files.</span>
+<span class="sd">    =============================== ====== ====================================</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">        No option check is done here (except for the one automatically done by</span>
+<span class="sd">        argparse). Those need to be done elsewhere (see :py:func:`checkArgs`).</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">if</span> <span class="n">argString</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">(</span><span class="n">argString</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">args</span>
+
+</div>
+<div class="viewcode-block" id="ProgramError"><a class="viewcode-back" href="../../../duplicated_markers.html#pyGenClean.DupSNPs.duplicated_snps.ProgramError">[docs]</a><span class="k">class</span> <span class="nc">ProgramError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;An :py:class:`Exception` raised in case of a problem.</span>
+
+<span class="sd">    :param msg: the message to print to the user before exiting.</span>
+
+<span class="sd">    :type msg: str</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Construction of the :py:class:`ProgramError` class.</span>
+
+<span class="sd">        :param msg: the message to print to the user</span>
+
+<span class="sd">        :type msg: str</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span>
+
+
+<span class="c"># The parser object</span></div>
+<span class="n">pretty_name</span> <span class="o">=</span> <span class="s">&quot;Duplicated markers&quot;</span>
+<span class="n">desc</span> <span class="o">=</span> <span class="s">&quot;&quot;&quot;Extract and work with duplicated markers.&quot;&quot;&quot;</span>
+<span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="n">desc</span><span class="p">)</span>
+
+<span class="c"># The INPUT files</span>
+<span class="n">group</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s">&quot;Input File&quot;</span><span class="p">)</span>
+<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;--tfile&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s">&quot;FILE&quot;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+                   <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s">&quot;The input file prefix (will find the tped and tfam &quot;</span>
+                         <span class="s">&quot;file by appending the prefix to .tped and .tfam, &quot;</span>
+                         <span class="s">&quot;respectively. A .map file is also required.&quot;</span><span class="p">))</span>
+<span class="c"># The options</span>
+<span class="n">group</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s">&quot;Options&quot;</span><span class="p">)</span>
+<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;--snp-completion-threshold&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s">&quot;FLOAT&quot;</span><span class="p">,</span>
+                   <span class="n">default</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s">&quot;The completion threshold to consider &quot;</span>
+                                      <span class="s">&quot;a replicate when choosing the best &quot;</span>
+                                      <span class="s">&quot;replicates and for composite creation. &quot;</span>
+                                      <span class="s">&quot;[default: </span><span class="si">%(default).1f</span><span class="s">]&quot;</span><span class="p">))</span>
+<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;--snp-concordance-threshold&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s">&quot;FLOAT&quot;</span><span class="p">,</span>
+                   <span class="n">default</span><span class="o">=</span><span class="mf">0.98</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s">&quot;The concordance threshold to consider &quot;</span>
+                                       <span class="s">&quot;a replicate when choosing the best &quot;</span>
+                                       <span class="s">&quot;replicates and for composite &quot;</span>
+                                       <span class="s">&quot;creation. [default: </span><span class="si">%(default).2f</span><span class="s">]&quot;</span><span class="p">))</span>
+<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;--frequency_difference&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s">&quot;FLOAT&quot;</span><span class="p">,</span>
+                   <span class="n">default</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s">&quot;The maximum difference in frequency &quot;</span>
+                                       <span class="s">&quot;between duplicated markers [default: &quot;</span>
+                                       <span class="s">&quot;</span><span class="si">%(default).2f</span><span class="s">]&quot;</span><span class="p">))</span>
+<span class="c"># The OUTPUT files</span>
+<span class="n">group</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s">&quot;Output File&quot;</span><span class="p">)</span>
+<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;--out&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s">&quot;FILE&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s">&quot;dup_snps&quot;</span><span class="p">,</span>
+                   <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s">&quot;The prefix of the output files. [default: &quot;</span>
+                         <span class="s">&quot;</span><span class="si">%(default)s</span><span class="s">]&quot;</span><span class="p">))</span>
+
+
+<div class="viewcode-block" id="safe_main"><a class="viewcode-back" href="../../../duplicated_markers.html#pyGenClean.DupSNPs.duplicated_snps.safe_main">[docs]</a><span class="k">def</span> <span class="nf">safe_main</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;A safe version of the main function (that catches ProgramError).&quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">main</span><span class="p">()</span>
+    <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Cancelled by user&quot;</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">ProgramError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">message</span><span class="p">)</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">message</span><span class="p">)</span>
+
+</div>
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">safe_main</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">pyGenClean 1.7.0 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2012, Louis-Philippe Lemieux Perreault.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+    </div>
+  </body>
+</html>

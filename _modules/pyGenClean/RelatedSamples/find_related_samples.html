@@ -1,0 +1,1051 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>pyGenClean.RelatedSamples.find_related_samples &mdash; pyGenClean 1.7.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '1.7.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="pyGenClean 1.7.0 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body role="document">
+
+<div style="background-color: white; text-align: left; padding: 10px 10px 15px 15px">
+<a href="../../../index.html"><img src="../../../_static/logo.png" border="0" alt="py4sci"/></a>
+</div>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">pyGenClean 1.7.0 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for pyGenClean.RelatedSamples.find_related_samples</h1><div class="highlight"><pre>
+<span class="c">#!/usr/bin/env python2.7</span>
+
+<span class="c"># This file is part of pyGenClean.</span>
+<span class="c">#</span>
+<span class="c"># pyGenClean is free software: you can redistribute it and/or modify it under</span>
+<span class="c"># the terms of the GNU General Public License as published by the Free Software</span>
+<span class="c"># Foundation, either version 3 of the License, or (at your option) any later</span>
+<span class="c"># version.</span>
+<span class="c">#</span>
+<span class="c"># pyGenClean is distributed in the hope that it will be useful, but WITHOUT ANY</span>
+<span class="c"># WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR</span>
+<span class="c"># A PARTICULAR PURPOSE.  See the GNU General Public License for more details.</span>
+<span class="c">#</span>
+<span class="c"># You should have received a copy of the GNU General Public License along with</span>
+<span class="c"># pyGenClean.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
+
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">glob</span>
+<span class="kn">import</span> <span class="nn">gzip</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">npy</span>
+
+<span class="kn">from</span> <span class="nn">..PlinkUtils</span> <span class="kn">import</span> <span class="n">createRowFromPlinkSpacedOutput</span>
+<span class="kn">from</span> <span class="nn">..RelatedSamples</span> <span class="kn">import</span> <span class="n">merge_related_samples</span>
+
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&quot;find_related_samples&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../../find_related_samples.html#pyGenClean.RelatedSamples.find_related_samples.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">argString</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;The main function of this module.</span>
+
+<span class="sd">    :param argString: the options.</span>
+
+<span class="sd">    :type argString: list</span>
+
+<span class="sd">    Here are the steps for this function:</span>
+
+<span class="sd">    1. Prints the options.</span>
+<span class="sd">    2. Uses Plink to extract markers according to LD</span>
+<span class="sd">       (:py:func:`selectSNPsAccordingToLD`).</span>
+<span class="sd">    3. Checks if there is enough markers after pruning</span>
+<span class="sd">       (:py:func:`checkNumberOfSNP`). If not, then quits.</span>
+<span class="sd">    4. Extract markers according to LD (:py:func:`extractSNPs`).</span>
+<span class="sd">    5. Runs Plink with the ``genome`` option (:py:func:`runGenome`). Quits here</span>
+<span class="sd">       if the user asker only for the ``genome`` file.</span>
+<span class="sd">    6. Finds related individuals and gets values for plotting</span>
+<span class="sd">       (:py:func:`extractRelatedIndividuals`).</span>
+<span class="sd">    7. Plots ``Z1`` in function of ``IBS2 ratio`` for related individuals</span>
+<span class="sd">       (:py:func:`plot_related_data`).</span>
+<span class="sd">    8. Plots ``Z2`` in function of ``IBS2 ratio`` for related individuals</span>
+<span class="sd">       (:py:func:`plot_related_data`).</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c"># Getting and checking the options</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">parseArgs</span><span class="p">(</span><span class="n">argString</span><span class="p">)</span>
+    <span class="n">checkArgs</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Options used:&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">vars</span><span class="p">(</span><span class="n">args</span><span class="p">)</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;  --{} {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;_&quot;</span><span class="p">,</span> <span class="s">&quot;-&quot;</span><span class="p">),</span> <span class="n">value</span><span class="p">))</span>
+
+    <span class="c"># Run plink</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Running Plink to extract SNPs according to LD&quot;</span><span class="p">)</span>
+    <span class="n">snpsToExtract</span> <span class="o">=</span> <span class="n">selectSNPsAccordingToLD</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+
+    <span class="c"># Check there is enough SNP in the output file</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Checking if there are enough extracted SNP&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">checkNumberOfSNP</span><span class="p">(</span><span class="n">snpsToExtract</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">min_nb_snp</span><span class="p">):</span>
+        <span class="c"># There are not enough markers</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;There are not enough SNPs: STOPPING NOW!&quot;</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c"># Extract the SNPs</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Extracting the SNPs using Plink&quot;</span><span class="p">)</span>
+        <span class="n">newBfile</span> <span class="o">=</span> <span class="n">extractSNPs</span><span class="p">(</span><span class="n">snpsToExtract</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
+
+        <span class="c"># Run the genome command from plink</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Creating the genome file using Plink&quot;</span><span class="p">)</span>
+        <span class="n">genomeFileName</span> <span class="o">=</span> <span class="n">runGenome</span><span class="p">(</span><span class="n">newBfile</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">genome_only</span><span class="p">:</span>
+            <span class="c"># We just want the genome file</span>
+            <span class="k">return</span> <span class="n">newBfile</span>
+
+        <span class="c"># Extract related individuals</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Finding related individuals from genome file&quot;</span><span class="p">)</span>
+        <span class="n">related_data</span> <span class="o">=</span> <span class="n">extractRelatedIndividuals</span><span class="p">(</span><span class="n">genomeFileName</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">out</span><span class="p">,</span>
+                                                 <span class="n">args</span><span class="o">.</span><span class="n">ibs2_ratio</span><span class="p">)</span>
+        <span class="c"># Are there related samples?</span>
+        <span class="k">if</span> <span class="n">related_data</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;There are no related samples in the dataset&quot;</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c"># Plot the related data</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Plotting related individuals&quot;</span><span class="p">)</span>
+            <span class="n">plot_related_data</span><span class="p">(</span><span class="n">related_data</span><span class="p">[</span><span class="s">&quot;IBS2_RATIO&quot;</span><span class="p">],</span> <span class="n">related_data</span><span class="p">[</span><span class="s">&quot;Z1&quot;</span><span class="p">],</span>
+                              <span class="n">related_data</span><span class="p">[</span><span class="s">&quot;CODE&quot;</span><span class="p">],</span> <span class="s">r&quot;$Z_1$&quot;</span><span class="p">,</span>
+                              <span class="n">args</span><span class="o">.</span><span class="n">out</span> <span class="o">+</span> <span class="s">&quot;.related_individuals_z1.png&quot;</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
+            <span class="n">plot_related_data</span><span class="p">(</span><span class="n">related_data</span><span class="p">[</span><span class="s">&quot;IBS2_RATIO&quot;</span><span class="p">],</span> <span class="n">related_data</span><span class="p">[</span><span class="s">&quot;Z2&quot;</span><span class="p">],</span>
+                              <span class="n">related_data</span><span class="p">[</span><span class="s">&quot;CODE&quot;</span><span class="p">],</span> <span class="s">r&quot;$Z_2$&quot;</span><span class="p">,</span>
+                              <span class="n">args</span><span class="o">.</span><span class="n">out</span> <span class="o">+</span> <span class="s">&quot;.related_individuals_z2.png&quot;</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="plot_related_data"><a class="viewcode-back" href="../../../find_related_samples.html#pyGenClean.RelatedSamples.find_related_samples.plot_related_data">[docs]</a><span class="k">def</span> <span class="nf">plot_related_data</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">code</span><span class="p">,</span> <span class="n">ylabel</span><span class="p">,</span> <span class="n">fileName</span><span class="p">,</span> <span class="n">options</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Plot Z1 and Z2 in function of IBS2* ratio.</span>
+
+<span class="sd">    :param x: the x axis of the plot (``IBS2 ratio``).</span>
+<span class="sd">    :param y: the y axis of the plot (either ``z1`` or ``z2``).</span>
+<span class="sd">    :param code: the code of the relatedness of each sample pair.</span>
+<span class="sd">    :param ylabel: the label of the y axis (either ``z1`` or ``z2``).</span>
+<span class="sd">    :param fileName: the name of the output file.</span>
+<span class="sd">    :param options: the options.</span>
+
+<span class="sd">    :type x: numpy.array of floats</span>
+<span class="sd">    :type y: numpy.array of floats</span>
+<span class="sd">    :type code: numpy.array</span>
+<span class="sd">    :type ylabel: str</span>
+<span class="sd">    :type fileName: str</span>
+<span class="sd">    :type options: argparse.Namespace</span>
+
+<span class="sd">    There are four different relation codes (represented by 4 different color</span>
+<span class="sd">    in the plots:</span>
+
+<span class="sd">    ==== =============================================== ===========</span>
+<span class="sd">    Code                    Relation                        Color</span>
+<span class="sd">    ==== =============================================== ===========</span>
+<span class="sd">    1    Full-sbis                                       ``#CC0000``</span>
+<span class="sd">    2    Half-sibs or Grand-parent-Child or Uncle-Nephew ``#0099CC``</span>
+<span class="sd">    3    Parent-Child                                    ``#FF8800``</span>
+<span class="sd">    4    Twins or Duplicated samples                     ``#9933CC``</span>
+<span class="sd">    ==== =============================================== ===========</span>
+
+<span class="sd">    Sample pairs with unknown relation are plotted using ``#669900`` as color.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">matplotlib</span> <span class="kn">as</span> <span class="nn">mpl</span>
+    <span class="k">if</span> <span class="n">mpl</span><span class="o">.</span><span class="n">get_backend</span><span class="p">()</span> <span class="o">!=</span> <span class="s">&quot;agg&quot;</span><span class="p">:</span>
+        <span class="n">mpl</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s">&quot;Agg&quot;</span><span class="p">)</span>
+    <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ioff</span><span class="p">()</span>
+
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">)</span>
+
+    <span class="c"># Setting the title, the X and Y label</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">((</span><span class="s">r&quot;</span><span class="si">%d</span><span class="s"> pairs with $IBS2^\ast_{ratio} &gt;$ &quot;</span>
+                  <span class="s">r&quot;</span><span class="si">%f</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">code</span><span class="p">),</span> <span class="n">options</span><span class="o">.</span><span class="n">ibs2_ratio</span><span class="p">)))</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s">r&quot;$IBS2^\ast_{ratio}$&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">ylabel</span><span class="p">)</span>
+
+    <span class="c"># Plotting the data (there are 5 error codes)</span>
+    <span class="n">c5</span><span class="p">,</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">code</span> <span class="o">==</span> <span class="s">&quot;5&quot;</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="n">code</span> <span class="o">==</span> <span class="s">&quot;5&quot;</span><span class="p">],</span> <span class="s">&quot;o&quot;</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">mec</span><span class="o">=</span><span class="s">&quot;#669900&quot;</span><span class="p">,</span>
+                  <span class="n">mfc</span><span class="o">=</span><span class="s">&quot;#669900&quot;</span><span class="p">)</span>
+    <span class="n">c1</span><span class="p">,</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">code</span> <span class="o">==</span> <span class="s">&quot;1&quot;</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="n">code</span> <span class="o">==</span> <span class="s">&quot;1&quot;</span><span class="p">],</span> <span class="s">&quot;o&quot;</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">mec</span><span class="o">=</span><span class="s">&quot;#CC0000&quot;</span><span class="p">,</span>
+                  <span class="n">mfc</span><span class="o">=</span><span class="s">&quot;#CC0000&quot;</span><span class="p">)</span>
+    <span class="n">c2</span><span class="p">,</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">code</span> <span class="o">==</span> <span class="s">&quot;2&quot;</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="n">code</span> <span class="o">==</span> <span class="s">&quot;2&quot;</span><span class="p">],</span> <span class="s">&quot;o&quot;</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">mec</span><span class="o">=</span><span class="s">&quot;#0099CC&quot;</span><span class="p">,</span>
+                  <span class="n">mfc</span><span class="o">=</span><span class="s">&quot;#0099CC&quot;</span><span class="p">)</span>
+    <span class="n">c3</span><span class="p">,</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">code</span> <span class="o">==</span> <span class="s">&quot;3&quot;</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="n">code</span> <span class="o">==</span> <span class="s">&quot;3&quot;</span><span class="p">],</span> <span class="s">&quot;o&quot;</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">mec</span><span class="o">=</span><span class="s">&quot;#FF8800&quot;</span><span class="p">,</span>
+                  <span class="n">mfc</span><span class="o">=</span><span class="s">&quot;#FF8800&quot;</span><span class="p">)</span>
+    <span class="n">c4</span><span class="p">,</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">code</span> <span class="o">==</span> <span class="s">&quot;4&quot;</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="n">code</span> <span class="o">==</span> <span class="s">&quot;4&quot;</span><span class="p">],</span> <span class="s">&quot;o&quot;</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">mec</span><span class="o">=</span><span class="s">&quot;#9933CC&quot;</span><span class="p">,</span>
+                  <span class="n">mfc</span><span class="o">=</span><span class="s">&quot;#9933CC&quot;</span><span class="p">)</span>
+
+    <span class="c"># The legend</span>
+    <span class="n">prop</span> <span class="o">=</span> <span class="n">mpl</span><span class="o">.</span><span class="n">font_manager</span><span class="o">.</span><span class="n">FontProperties</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+    <span class="n">leg</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">([</span><span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">,</span> <span class="n">c3</span><span class="p">,</span> <span class="n">c4</span><span class="p">,</span> <span class="n">c5</span><span class="p">],</span>
+                    <span class="p">[</span><span class="s">&quot;Full sibs (n={})&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">npy</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">code</span> <span class="o">==</span> <span class="s">&quot;1&quot;</span><span class="p">)),</span>
+                     <span class="p">(</span><span class="s">&quot;Half sibs, grand-parent-child or uncle-nephew &quot;</span>
+                      <span class="s">&quot;(n={})&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">npy</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">code</span> <span class="o">==</span> <span class="s">&quot;2&quot;</span><span class="p">))),</span>
+                     <span class="s">&quot;Parent-child (n={})&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">npy</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">code</span> <span class="o">==</span> <span class="s">&quot;3&quot;</span><span class="p">)),</span>
+                     <span class="p">(</span><span class="s">&quot;Twins or duplicated samples &quot;</span>
+                      <span class="s">&quot;(n={})&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">npy</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">code</span> <span class="o">==</span> <span class="s">&quot;4&quot;</span><span class="p">))),</span>
+                     <span class="s">&quot;Unknown (n={})&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">npy</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">code</span> <span class="o">==</span> <span class="s">&quot;5&quot;</span><span class="p">))],</span>
+                    <span class="n">loc</span><span class="o">=</span><span class="s">&quot;best&quot;</span><span class="p">,</span> <span class="n">numpoints</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">fancybox</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">prop</span><span class="o">=</span><span class="n">prop</span><span class="p">)</span>
+    <span class="n">leg</span><span class="o">.</span><span class="n">get_frame</span><span class="p">()</span><span class="o">.</span><span class="n">set_alpha</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+
+    <span class="c"># Setting the limits</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">((</span><span class="n">options</span><span class="o">.</span><span class="n">ibs2_ratio</span> <span class="o">-</span> <span class="mf">0.01</span><span class="p">,</span> <span class="mf">1.01</span><span class="p">))</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">((</span><span class="o">-</span><span class="mf">0.01</span><span class="p">,</span> <span class="mf">1.01</span><span class="p">))</span>
+
+    <span class="c"># Modifying the spines</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_ticks_position</span><span class="p">(</span><span class="s">&quot;bottom&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">set_ticks_position</span><span class="p">(</span><span class="s">&quot;left&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s">&quot;top&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s">&quot;right&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+
+    <span class="c"># Saving the figure</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">fileName</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="extractRelatedIndividuals"><a class="viewcode-back" href="../../../find_related_samples.html#pyGenClean.RelatedSamples.find_related_samples.extractRelatedIndividuals">[docs]</a><span class="k">def</span> <span class="nf">extractRelatedIndividuals</span><span class="p">(</span><span class="n">fileName</span><span class="p">,</span> <span class="n">outPrefix</span><span class="p">,</span> <span class="n">ibs2_ratio_threshold</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Extract related individuals according IBS2* ratio.</span>
+
+<span class="sd">    :param fileName: the name of the input file.</span>
+<span class="sd">    :param outPrefix: the prefix of the output files.</span>
+<span class="sd">    :param ibs2_ratio_threshold: the ibs2 ratio threshold (tells if sample pair</span>
+<span class="sd">                                 is related or not).</span>
+
+<span class="sd">    :type fileName: str</span>
+<span class="sd">    :type outPrefix: str</span>
+<span class="sd">    :type ibs2_ratio_threshold: float</span>
+
+<span class="sd">    :returns: a :py:class:`numpy.recarray` data set containing (for each</span>
+<span class="sd">              related sample pair) the ``ibs2 ratio``, ``Z1``, ``Z2`` and the</span>
+<span class="sd">              type of relatedness.</span>
+
+<span class="sd">    Reads a ``genome`` file (provided by :py:func:`runGenome`) and extract</span>
+<span class="sd">    related sample pairs according to ``IBS2 ratio``.</span>
+
+<span class="sd">    A ``genome`` file contains at least the following information for each</span>
+<span class="sd">    sample pair:</span>
+
+<span class="sd">    * **FID1:** the family ID of the first sample in the pair.</span>
+<span class="sd">    * **IID1:** the individual ID of the first sample in the pair.</span>
+<span class="sd">    * **FID2:** the family ID of the second sample in the pair.</span>
+<span class="sd">    * **IID2:** the individual ID of the second sample in the pair.</span>
+<span class="sd">    * **Z0:** the probability that :math:`IBD = 0`.</span>
+<span class="sd">    * **Z1:** the probability that :math:`IBD = 1`.</span>
+<span class="sd">    * **Z2:** the probability that :math:`IBD = 2`.</span>
+<span class="sd">    * **HOMHOM:** the number of :math:`IBS = 0` SNP pairs used in ``PPC`` test.</span>
+<span class="sd">    * **HETHET:** the number of :math:`IBS = 2` het/het SNP pairs in ``PPC``</span>
+<span class="sd">      test.</span>
+
+<span class="sd">    The ``IBS2 ratio`` is computed using the following formula:</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        \\textrm{IBS2 ratio} = \\frac{\\textrm{HETHET}}</span>
+<span class="sd">                                     {\\textrm{HOMHOM} + \\textrm{HETHET}}</span>
+
+<span class="sd">    If the ``IBS2 ratio`` is higher than the threshold, the samples in the pair</span>
+<span class="sd">    are related. The following values help in finding the relatedness of the</span>
+<span class="sd">    sample pair.</span>
+
+<span class="sd">    +---------------------------------------+-----------------------+------+</span>
+<span class="sd">    |           Values                      |        Relation       | Code |</span>
+<span class="sd">    +=======================================+=======================+======+</span>
+<span class="sd">    | :math:`0.17 \\leq z_0 \\leq 0.33` and   | Full-sibs             | 1    |</span>
+<span class="sd">    | :math:`0.40 \\leq z_1 \\leq 0.60`       |                       |      |</span>
+<span class="sd">    +---------------------------------------+-----------------------+------+</span>
+<span class="sd">    | :math:`0.40 \\leq z_0 \\leq 0.60` and   | Half-sibs or          | 2    |</span>
+<span class="sd">    | :math:`0.40 \\leq z_1 \\leq 0.60`       | Grand-parent-Child or |      |</span>
+<span class="sd">    |                                       | Uncle-Nephew          |      |</span>
+<span class="sd">    +---------------------------------------+-----------------------+------+</span>
+<span class="sd">    | :math:`z_0 \\leq 0.05` and             | Parent-Child          | 3    |</span>
+<span class="sd">    | :math:`z_1 \\geq 0.95` and             |                       |      |</span>
+<span class="sd">    | :math:`z_2 \\leq 0.05`                 |                       |      |</span>
+<span class="sd">    +---------------------------------------+-----------------------+------+</span>
+<span class="sd">    | :math:`z_0 \\leq 0.05` and             | Twins or Duplicated   | 4    |</span>
+<span class="sd">    | :math:`z_1 \\leq 0.05` and             | samples               |      |</span>
+<span class="sd">    | :math:`z_2 \\geq 0.95`                 |                       |      |</span>
+<span class="sd">    +---------------------------------------+-----------------------+------+</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c"># The output file</span>
+    <span class="n">outputFile</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">outputFile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">outPrefix</span> <span class="o">+</span> <span class="s">&quot;.related_individuals&quot;</span><span class="p">,</span> <span class="s">&quot;w&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%(outPrefix)s</span><span class="s">.related_individuals: can&#39;t write file&quot;</span> <span class="o">%</span> <span class="nb">locals</span><span class="p">()</span>
+        <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="c"># The input file</span>
+    <span class="n">inputFile</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">fileName</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s">&quot;.gz&quot;</span><span class="p">):</span>
+            <span class="n">inputFile</span> <span class="o">=</span> <span class="n">gzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">fileName</span><span class="p">,</span> <span class="s">&#39;rb&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">inputFile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">fileName</span><span class="p">,</span> <span class="s">&#39;r&#39;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;{}: no such file&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">fileName</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="n">headerIndex</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">inputFile</span><span class="p">):</span>
+        <span class="n">row</span> <span class="o">=</span> <span class="n">createRowFromPlinkSpacedOutput</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c"># This is the header</span>
+            <span class="n">headerIndex</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">([(</span><span class="n">colName</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span> <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">colName</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">row</span><span class="p">)])</span>
+
+            <span class="c"># Checking columns</span>
+            <span class="k">for</span> <span class="n">columnName</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&quot;FID1&quot;</span><span class="p">,</span> <span class="s">&quot;IID1&quot;</span><span class="p">,</span> <span class="s">&quot;FID2&quot;</span><span class="p">,</span> <span class="s">&quot;IID2&quot;</span><span class="p">,</span> <span class="s">&quot;Z0&quot;</span><span class="p">,</span> <span class="s">&quot;Z1&quot;</span><span class="p">,</span>
+                               <span class="s">&quot;Z2&quot;</span><span class="p">,</span> <span class="s">&quot;HOMHOM&quot;</span><span class="p">,</span> <span class="s">&quot;HETHET&quot;</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="n">columnName</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">headerIndex</span><span class="p">:</span>
+                    <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;{}: no culumn named {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">fileName</span><span class="p">,</span> <span class="n">columnName</span><span class="p">)</span>
+                    <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+            <span class="c"># Writing header</span>
+            <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">outputFile</span><span class="p">,</span> <span class="s">&quot;</span><span class="se">\t</span><span class="s">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">row</span> <span class="o">+</span> <span class="p">[</span><span class="s">&quot;IBS2_ratio&quot;</span><span class="p">,</span> <span class="s">&quot;status&quot;</span><span class="p">,</span>
+                                                 <span class="s">&quot;code&quot;</span><span class="p">])</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c"># This is data</span>
+            <span class="n">homhom</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">headerIndex</span><span class="p">[</span><span class="s">&quot;HOMHOM&quot;</span><span class="p">]]</span>
+            <span class="n">hethet</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">headerIndex</span><span class="p">[</span><span class="s">&quot;HETHET&quot;</span><span class="p">]]</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">homhom</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">homhom</span><span class="p">)</span>
+                <span class="n">hethet</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">hethet</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;{}: invalid HOMHOM or HETHET&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">fileName</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+
+            <span class="c"># Computing IBS2* ratio</span>
+            <span class="n">ibs2_ratio</span> <span class="o">=</span> <span class="n">hethet</span> <span class="o">/</span> <span class="p">(</span><span class="n">homhom</span> <span class="o">+</span> <span class="n">hethet</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">ibs2_ratio</span> <span class="o">&gt;</span> <span class="n">ibs2_ratio_threshold</span><span class="p">:</span>
+                <span class="c"># Those pairs might be related</span>
+                <span class="c"># Finding the status</span>
+                <span class="n">status</span> <span class="o">=</span> <span class="s">&quot;unknown&quot;</span>
+                <span class="n">code</span> <span class="o">=</span> <span class="s">&quot;5&quot;</span>
+                <span class="n">z0</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">headerIndex</span><span class="p">[</span><span class="s">&quot;Z0&quot;</span><span class="p">]]</span>
+                <span class="n">z1</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">headerIndex</span><span class="p">[</span><span class="s">&quot;Z1&quot;</span><span class="p">]]</span>
+                <span class="n">z2</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">headerIndex</span><span class="p">[</span><span class="s">&quot;Z2&quot;</span><span class="p">]]</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">z0</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">z0</span><span class="p">)</span>
+                    <span class="n">z1</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">z1</span><span class="p">)</span>
+                    <span class="n">z2</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">z2</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                    <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;{}: invalid value for Z0, Z1 or Z2&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">fileName</span><span class="p">)</span>
+                    <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="p">(</span><span class="n">z0</span> <span class="o">&gt;=</span> <span class="mf">0.17</span> <span class="ow">and</span> <span class="n">z0</span> <span class="o">&lt;=</span> <span class="mf">0.33</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">z1</span> <span class="o">&gt;=</span> <span class="mf">0.40</span> <span class="ow">and</span> <span class="n">z1</span> <span class="o">&lt;=</span> <span class="mf">0.60</span><span class="p">):</span>
+                    <span class="c"># Full sibs</span>
+                    <span class="n">status</span> <span class="o">=</span> <span class="s">&quot;full-sibs&quot;</span>
+                    <span class="n">code</span> <span class="o">=</span> <span class="s">&quot;1&quot;</span>
+
+                <span class="k">elif</span> <span class="p">(</span><span class="n">z0</span> <span class="o">&gt;=</span> <span class="mf">0.4</span> <span class="ow">and</span> <span class="n">z0</span> <span class="o">&lt;=</span> <span class="mf">0.6</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">z1</span> <span class="o">&gt;=</span> <span class="mf">0.4</span> <span class="ow">and</span> <span class="n">z1</span> <span class="o">&lt;=</span> <span class="mf">0.6</span><span class="p">):</span>
+                    <span class="c"># half sibs, grand-parent child, uncle nephew</span>
+                    <span class="n">status</span> <span class="o">=</span> <span class="s">&quot;;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s">&quot;half-sibs&quot;</span><span class="p">,</span> <span class="s">&quot;grand-parent-child&quot;</span><span class="p">,</span>
+                                       <span class="s">&quot;uncle-nephew&quot;</span><span class="p">])</span>
+                    <span class="n">code</span> <span class="o">=</span> <span class="s">&quot;2&quot;</span>
+
+                <span class="k">elif</span> <span class="p">(</span><span class="n">z0</span> <span class="o">&lt;=</span> <span class="mf">0.05</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">z1</span> <span class="o">&gt;=</span> <span class="mf">0.95</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">z2</span> <span class="o">&lt;=</span> <span class="mf">0.05</span><span class="p">):</span>
+                    <span class="c"># parent child</span>
+                    <span class="n">status</span> <span class="o">=</span> <span class="s">&quot;parent-child&quot;</span>
+                    <span class="n">code</span> <span class="o">=</span> <span class="s">&quot;3&quot;</span>
+
+                <span class="k">elif</span> <span class="p">(</span><span class="n">z0</span> <span class="o">&lt;=</span> <span class="mf">0.05</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">z1</span> <span class="o">&lt;=</span> <span class="mf">0.05</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">z2</span> <span class="o">&gt;=</span> <span class="mf">0.95</span><span class="p">):</span>
+                    <span class="c"># twin</span>
+                    <span class="n">status</span> <span class="o">=</span> <span class="s">&quot;twins&quot;</span>
+                    <span class="n">code</span> <span class="o">=</span> <span class="s">&quot;4&quot;</span>
+
+                <span class="c"># Printing to file</span>
+                <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">outputFile</span><span class="p">,</span> <span class="s">&quot;</span><span class="se">\t</span><span class="s">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">row</span> <span class="o">+</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">ibs2_ratio</span><span class="p">),</span> <span class="n">status</span><span class="p">,</span>
+                                                     <span class="n">code</span><span class="p">])</span>
+                <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">ibs2_ratio</span><span class="p">,</span> <span class="n">z1</span><span class="p">,</span> <span class="n">z2</span><span class="p">,</span> <span class="n">code</span><span class="p">))</span>
+
+    <span class="c"># Closing the output and input files</span>
+    <span class="n">inputFile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">outputFile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="c"># Merging the related individuals</span>
+    <span class="n">merge_related_samples</span><span class="p">(</span><span class="n">outPrefix</span> <span class="o">+</span> <span class="s">&quot;.related_individuals&quot;</span><span class="p">,</span> <span class="n">outPrefix</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span>
+
+    <span class="c"># If there are no related samples, we return nothing</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">None</span>
+
+    <span class="c"># Creating the numpy array if there are related samples</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">npy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="p">[</span>
+        <span class="p">(</span><span class="s">&quot;IBS2_RATIO&quot;</span><span class="p">,</span> <span class="nb">float</span><span class="p">),</span>
+        <span class="p">(</span><span class="s">&quot;Z1&quot;</span><span class="p">,</span> <span class="nb">float</span><span class="p">),</span>
+        <span class="p">(</span><span class="s">&quot;Z2&quot;</span><span class="p">,</span> <span class="nb">float</span><span class="p">),</span>
+        <span class="p">(</span><span class="s">&quot;CODE&quot;</span><span class="p">,</span> <span class="s">&quot;S{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">max</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">i</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">data</span><span class="p">]))),</span>
+    <span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">data</span>
+
+</div>
+<div class="viewcode-block" id="checkNumberOfSNP"><a class="viewcode-back" href="../../../find_related_samples.html#pyGenClean.RelatedSamples.find_related_samples.checkNumberOfSNP">[docs]</a><span class="k">def</span> <span class="nf">checkNumberOfSNP</span><span class="p">(</span><span class="n">fileName</span><span class="p">,</span> <span class="n">minimumNumber</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Check there is enough SNPs in the file (with minimum).</span>
+
+<span class="sd">    :param fileName: the name of the file.</span>
+<span class="sd">    :param minimumNumber: the minimum number of markers that needs to be in the</span>
+<span class="sd">                          file.</span>
+
+<span class="sd">    :type fileName: str</span>
+<span class="sd">    :type minimumNumber: int</span>
+
+<span class="sd">    :returns: ``True`` if there is enough markers in the file, ``False``</span>
+<span class="sd">              otherwise.</span>
+
+<span class="sd">    Reads the number of markers (number of lines) in a file.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">nbSNP</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fileName</span><span class="p">,</span> <span class="s">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">inputFile</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">inputFile</span><span class="p">:</span>
+                <span class="n">nbSNP</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;{}: no such file&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">fileName</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">nbSNP</span> <span class="o">&lt;</span> <span class="n">minimumNumber</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">False</span>
+    <span class="k">return</span> <span class="bp">True</span>
+
+</div>
+<div class="viewcode-block" id="splitFile"><a class="viewcode-back" href="../../../find_related_samples.html#pyGenClean.RelatedSamples.find_related_samples.splitFile">[docs]</a><span class="k">def</span> <span class="nf">splitFile</span><span class="p">(</span><span class="n">inputFileName</span><span class="p">,</span> <span class="n">linePerFile</span><span class="p">,</span> <span class="n">outPrefix</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Split a file.</span>
+
+<span class="sd">    :param inputFileName: the name of the input file.</span>
+<span class="sd">    :param linePerFile: the number of line per file (after splitting).</span>
+<span class="sd">    :param outPrefix: the prefix of the output files.</span>
+
+<span class="sd">    :type inputFileName: str</span>
+<span class="sd">    :type linePerFile: int</span>
+<span class="sd">    :type outPrefix: str</span>
+
+<span class="sd">    :returns: the number of created temporary files.</span>
+
+<span class="sd">    Splits a file (``inputFileName`` into multiple files containing at most</span>
+<span class="sd">    ``linePerFile`` lines.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">nbTmpFile</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">nbLine</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">tmpFile</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">inputFileName</span><span class="p">,</span> <span class="s">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">inputFile</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">inputFile</span><span class="p">:</span>
+                <span class="n">row</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\r\n</span><span class="s">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot; &quot;</span><span class="p">)</span>
+                <span class="n">nbLine</span> <span class="o">+=</span> <span class="mi">1</span>
+
+                <span class="k">if</span> <span class="n">tmpFile</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">tmpFile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span>
+                            <span class="n">outPrefix</span> <span class="o">+</span> <span class="s">&quot;_tmp.list</span><span class="si">%d</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">nbTmpFile</span><span class="p">,</span>
+                            <span class="s">&quot;w&quot;</span><span class="p">,</span>
+                        <span class="p">)</span>
+                    <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
+                        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;tmp.list</span><span class="si">%d</span><span class="s">: can&#39;t write file&quot;</span> <span class="o">%</span> <span class="n">nbTmpFile</span>
+                        <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+                <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">tmpFile</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">row</span><span class="p">[:</span><span class="mi">2</span><span class="p">])</span>
+
+                <span class="k">if</span> <span class="n">nbLine</span> <span class="o">==</span> <span class="n">linePerFile</span><span class="p">:</span>
+                    <span class="n">nbLine</span> <span class="o">=</span> <span class="mi">0</span>
+                    <span class="n">nbTmpFile</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="n">tmpFile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">tmpFile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span>
+                            <span class="n">outPrefix</span> <span class="o">+</span> <span class="s">&quot;_tmp.list</span><span class="si">%d</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">nbTmpFile</span><span class="p">,</span>
+                            <span class="s">&quot;w&quot;</span><span class="p">,</span>
+                        <span class="p">)</span>
+                    <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
+                        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;tmp.list</span><span class="si">%d</span><span class="s">: can&#39;t write file&quot;</span> <span class="o">%</span> <span class="n">nbTmpFile</span>
+                        <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="n">tmpFile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+        <span class="c"># Check if the number of line is zero (hence the last file is empty)</span>
+        <span class="k">if</span> <span class="n">nbLine</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c"># We delete the last file</span>
+            <span class="n">file_name</span> <span class="o">=</span> <span class="n">outPrefix</span> <span class="o">+</span> <span class="s">&quot;_tmp.list{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">nbTmpFile</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">file_name</span><span class="p">):</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
+            <span class="n">nbTmpFile</span> <span class="o">-=</span> <span class="mi">1</span>
+
+    <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s">: no such file&quot;</span> <span class="o">%</span> <span class="n">inputFileName</span>
+        <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">nbTmpFile</span>
+
+</div>
+<div class="viewcode-block" id="runGenome"><a class="viewcode-back" href="../../../find_related_samples.html#pyGenClean.RelatedSamples.find_related_samples.runGenome">[docs]</a><span class="k">def</span> <span class="nf">runGenome</span><span class="p">(</span><span class="n">bfile</span><span class="p">,</span> <span class="n">options</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Runs the genome command from plink.</span>
+
+<span class="sd">    :param bfile: the input file prefix.</span>
+<span class="sd">    :param options: the options.</span>
+
+<span class="sd">    :type bfile: str</span>
+<span class="sd">    :type options: argparse.Namespace</span>
+
+<span class="sd">    :returns: the name of the ``genome`` file.</span>
+
+<span class="sd">    Runs Plink with the ``genome`` option. If the user asks for SGE</span>
+<span class="sd">    (``options.sge`` is True), a frequency file is first created by plink.</span>
+<span class="sd">    Then, the input files are split in ``options.line_per_file_for_sge`` and</span>
+<span class="sd">    Plink is called (using the ``genome`` option) on the cluster using SGE</span>
+<span class="sd">    (:py:func:`runGenomeSGE`). After the analysis, Plink&#39;s output files and</span>
+<span class="sd">    logs are merged using :py:func:`mergeGenomeLogFiles`.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">outPrefix</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">out</span> <span class="o">+</span> <span class="s">&quot;.genome&quot;</span>
+    <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">sge</span><span class="p">:</span>
+        <span class="c"># We run genome using SGE</span>
+        <span class="c"># We need to create a frequency file using plink</span>
+        <span class="n">plinkCommand</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;plink&quot;</span><span class="p">,</span> <span class="s">&quot;--noweb&quot;</span><span class="p">,</span> <span class="s">&quot;--bfile&quot;</span><span class="p">,</span> <span class="n">bfile</span><span class="p">,</span> <span class="s">&quot;--freq&quot;</span><span class="p">,</span>
+                        <span class="s">&quot;--out&quot;</span><span class="p">,</span> <span class="n">options</span><span class="o">.</span><span class="n">out</span> <span class="o">+</span> <span class="s">&quot;.frequency&quot;</span><span class="p">]</span>
+        <span class="n">runCommand</span><span class="p">(</span><span class="n">plinkCommand</span><span class="p">)</span>
+
+        <span class="c"># We need to split the .fam file</span>
+        <span class="n">nbJob</span> <span class="o">=</span> <span class="n">splitFile</span><span class="p">(</span><span class="n">bfile</span> <span class="o">+</span> <span class="s">&quot;.fam&quot;</span><span class="p">,</span> <span class="n">options</span><span class="o">.</span><span class="n">line_per_file_for_sge</span><span class="p">,</span>
+                          <span class="n">outPrefix</span><span class="p">)</span>
+
+        <span class="n">runGenomeSGE</span><span class="p">(</span><span class="n">bfile</span><span class="p">,</span> <span class="n">options</span><span class="o">.</span><span class="n">out</span> <span class="o">+</span> <span class="s">&quot;.frequency.frq&quot;</span><span class="p">,</span> <span class="n">nbJob</span><span class="p">,</span>
+                     <span class="n">outPrefix</span><span class="p">,</span> <span class="n">options</span><span class="p">)</span>
+
+        <span class="c"># Merging genome files</span>
+        <span class="n">mergeGenomeLogFiles</span><span class="p">(</span><span class="n">outPrefix</span><span class="p">,</span> <span class="n">nbJob</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">plinkCommand</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;plink&quot;</span><span class="p">,</span> <span class="s">&quot;--noweb&quot;</span><span class="p">,</span> <span class="s">&quot;--bfile&quot;</span><span class="p">,</span> <span class="n">bfile</span><span class="p">,</span> <span class="s">&quot;--genome&quot;</span><span class="p">,</span>
+                        <span class="s">&quot;--genome-full&quot;</span><span class="p">,</span> <span class="s">&quot;--out&quot;</span><span class="p">,</span> <span class="n">outPrefix</span><span class="p">]</span>
+        <span class="n">runCommand</span><span class="p">(</span><span class="n">plinkCommand</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">outPrefix</span> <span class="o">+</span> <span class="s">&quot;.genome&quot;</span>
+
+</div>
+<div class="viewcode-block" id="mergeGenomeLogFiles"><a class="viewcode-back" href="../../../find_related_samples.html#pyGenClean.RelatedSamples.find_related_samples.mergeGenomeLogFiles">[docs]</a><span class="k">def</span> <span class="nf">mergeGenomeLogFiles</span><span class="p">(</span><span class="n">outPrefix</span><span class="p">,</span> <span class="n">nbSet</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Merge genome and log files together.</span>
+
+<span class="sd">    :param outPrefix: the prefix of the output files.</span>
+<span class="sd">    :param nbSet: The number of set of files to merge together.</span>
+
+<span class="sd">    :type outPrefix: str</span>
+<span class="sd">    :type nbSet: int</span>
+
+<span class="sd">    :returns: the name of the output file (the ``genome`` file).</span>
+
+<span class="sd">    After merging, the files are deleted to save space.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">outputFile</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">outputFile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">outPrefix</span> <span class="o">+</span> <span class="s">&quot;.genome&quot;</span><span class="p">,</span> <span class="s">&quot;w&quot;</span><span class="p">)</span>
+        <span class="n">outputLog</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">outPrefix</span> <span class="o">+</span> <span class="s">&quot;.log&quot;</span><span class="p">,</span> <span class="s">&quot;w&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s"> or </span><span class="si">%s</span><span class="s">: can&#39;t write file&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">outPrefix</span> <span class="o">+</span> <span class="s">&quot;.genome&quot;</span><span class="p">,</span>
+                                              <span class="n">outPrefix</span> <span class="o">+</span> <span class="s">&quot;.log&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">nbSet</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">nbSet</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="n">fileName</span> <span class="o">=</span> <span class="n">outPrefix</span> <span class="o">+</span> <span class="s">&quot;_output.sub.</span><span class="si">%(i)d</span><span class="s">.</span><span class="si">%(j)d</span><span class="s">.genome&quot;</span> <span class="o">%</span> <span class="nb">locals</span><span class="p">()</span>
+
+            <span class="n">printHeader</span> <span class="o">=</span> <span class="bp">False</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">i</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">j</span> <span class="o">==</span> <span class="mi">1</span><span class="p">):</span>
+                <span class="c"># This is the first file we open</span>
+                <span class="n">printHeader</span> <span class="o">=</span> <span class="bp">True</span>
+
+            <span class="c"># Read file here</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fileName</span><span class="p">,</span> <span class="s">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">inputFile</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">nbLine</span><span class="p">,</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">inputFile</span><span class="p">):</span>
+                        <span class="k">if</span> <span class="n">nbLine</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="n">printHeader</span><span class="p">:</span>
+                                <span class="n">outputFile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">outputFile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%(fileName)s</span><span class="s">: no such file&quot;</span> <span class="o">%</span> <span class="nb">locals</span><span class="p">()</span>
+                <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+            <span class="c"># Deleting the file</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">fileName</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%(fileName)s</span><span class="s">: can&#39;t delete the file&quot;</span> <span class="o">%</span> <span class="nb">locals</span><span class="p">()</span>
+                <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+            <span class="c"># Read file here</span>
+            <span class="n">fileName</span> <span class="o">=</span> <span class="n">outPrefix</span> <span class="o">+</span> <span class="s">&quot;_output.sub.</span><span class="si">%(i)d</span><span class="s">.</span><span class="si">%(j)d</span><span class="s">.log&quot;</span> <span class="o">%</span> <span class="nb">locals</span><span class="p">()</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fileName</span><span class="p">,</span> <span class="s">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">inputFile</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">inputFile</span><span class="p">:</span>
+                        <span class="n">outputLog</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%(fileName)s</span><span class="s">: no such file&quot;</span> <span class="o">%</span> <span class="nb">locals</span><span class="p">()</span>
+                <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+            <span class="c"># Deleting the file</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">fileName</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%(fileName)s</span><span class="s">: can&#39;t delete the file&quot;</span> <span class="o">%</span> <span class="nb">locals</span><span class="p">()</span>
+                <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="c"># Removing the tmp.list* files</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">fileName</span> <span class="ow">in</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">outPrefix</span> <span class="o">+</span> <span class="s">&quot;_tmp.list*&quot;</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">fileName</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;can&#39;t delete the tmp.list* files&quot;</span>
+        <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="c"># Removing the output.sub.*</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">fileName</span> <span class="ow">in</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">outPrefix</span> <span class="o">+</span> <span class="s">&quot;_output.sub.*&quot;</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">fileName</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;can&#39;t delete the output.sub.* files&quot;</span>
+        <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="c"># Closing the output files</span>
+    <span class="n">outputFile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">outputLog</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">outPrefix</span> <span class="o">+</span> <span class="s">&quot;.genome&quot;</span>
+
+</div>
+<div class="viewcode-block" id="runGenomeSGE"><a class="viewcode-back" href="../../../find_related_samples.html#pyGenClean.RelatedSamples.find_related_samples.runGenomeSGE">[docs]</a><span class="k">def</span> <span class="nf">runGenomeSGE</span><span class="p">(</span><span class="n">bfile</span><span class="p">,</span> <span class="n">freqFile</span><span class="p">,</span> <span class="n">nbJob</span><span class="p">,</span> <span class="n">outPrefix</span><span class="p">,</span> <span class="n">options</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Runs the genome command from plink, on SGE.</span>
+
+<span class="sd">    :param bfile: the prefix of the input file.</span>
+<span class="sd">    :param freqFile: the name of the frequency file (from Plink).</span>
+<span class="sd">    :param nbJob: the number of jobs to launch.</span>
+<span class="sd">    :param outPrefix: the prefix of all the output files.</span>
+<span class="sd">    :param options: the options.</span>
+
+<span class="sd">    :type bfile: str</span>
+<span class="sd">    :type freqFile: str</span>
+<span class="sd">    :type nbJob: int</span>
+<span class="sd">    :type outPrefix: str</span>
+<span class="sd">    :type options: argparse.Namespace</span>
+
+<span class="sd">    Runs Plink with the ``genome`` options on the cluster (using SGE).</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c"># Add the environment variable for DRMAA package</span>
+    <span class="k">if</span> <span class="s">&quot;DRMAA_LIBRARY_PATH&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;could not load drmaa: set DRMAA_LIBRARY_PATH&quot;</span>
+        <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="c"># Import the python drmaa library</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">drmaa</span>
+    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="s">&quot;drmaa is not install, install drmaa&quot;</span><span class="p">)</span>
+
+    <span class="c"># Initializing a session</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">drmaa</span><span class="o">.</span><span class="n">Session</span><span class="p">()</span>
+    <span class="n">s</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
+
+    <span class="c"># Run for each sub task...</span>
+    <span class="n">jobIDs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">jobTemplates</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">nbJob</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">nbJob</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="c"># The command to run</span>
+            <span class="n">plinkCommand</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;plink&quot;</span><span class="p">,</span> <span class="s">&quot;--noweb&quot;</span><span class="p">,</span> <span class="s">&quot;--bfile&quot;</span><span class="p">,</span> <span class="n">bfile</span><span class="p">,</span>
+                            <span class="s">&quot;--read-freq&quot;</span><span class="p">,</span> <span class="n">freqFile</span><span class="p">,</span> <span class="s">&quot;--genome&quot;</span><span class="p">,</span>
+                            <span class="s">&quot;--genome-full&quot;</span><span class="p">,</span> <span class="s">&quot;--genome-lists&quot;</span><span class="p">,</span>
+                            <span class="s">&quot;{}_tmp.list{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">outPrefix</span><span class="p">,</span> <span class="n">i</span><span class="p">),</span>
+                            <span class="s">&quot;{}_tmp.list{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">outPrefix</span><span class="p">,</span> <span class="n">j</span><span class="p">),</span> <span class="s">&quot;--out&quot;</span><span class="p">,</span>
+                            <span class="s">&quot;{}_output.sub.{}.{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">outPrefix</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">)]</span>
+
+            <span class="c"># Creating the job template</span>
+            <span class="n">jt</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">createJobTemplate</span><span class="p">()</span>
+            <span class="n">jt</span><span class="o">.</span><span class="n">remoteCommand</span> <span class="o">=</span> <span class="n">plinkCommand</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">jt</span><span class="o">.</span><span class="n">workingDirectory</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
+            <span class="n">jt</span><span class="o">.</span><span class="n">jobEnvironment</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span>
+            <span class="n">jt</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="n">plinkCommand</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+            <span class="n">jt</span><span class="o">.</span><span class="n">jobName</span> <span class="o">=</span> <span class="s">&quot;_plink_genome_{}_{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span>
+
+            <span class="c"># Cluster specifics</span>
+            <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">sge_walltime</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">jt</span><span class="o">.</span><span class="n">hardWallclockTimeLimit</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">sge_walltime</span>
+            <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">sge_nodes</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">native_spec</span> <span class="o">=</span> <span class="s">&quot;-l nodes={}:ppn={}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">sge_nodes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                                                          <span class="n">options</span><span class="o">.</span><span class="n">sge_nodes</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                <span class="n">jt</span><span class="o">.</span><span class="n">nativeSpecification</span> <span class="o">=</span> <span class="n">native_spec</span>
+
+            <span class="n">jobIDs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">runJob</span><span class="p">(</span><span class="n">jt</span><span class="p">))</span>
+            <span class="n">jobTemplates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">jt</span><span class="p">)</span>
+
+    <span class="c"># Waiting for the jobs to finish</span>
+    <span class="n">hadProblems</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">jobID</span> <span class="ow">in</span> <span class="n">jobIDs</span><span class="p">:</span>
+        <span class="n">retVal</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="n">jobID</span><span class="p">,</span> <span class="n">drmaa</span><span class="o">.</span><span class="n">Session</span><span class="o">.</span><span class="n">TIMEOUT_WAIT_FOREVER</span><span class="p">)</span>
+        <span class="n">hadProblems</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">retVal</span><span class="o">.</span><span class="n">exitStatus</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+
+    <span class="c"># Deleting the jobs</span>
+    <span class="k">for</span> <span class="n">jt</span> <span class="ow">in</span> <span class="n">jobTemplates</span><span class="p">:</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">deleteJobTemplate</span><span class="p">(</span><span class="n">jt</span><span class="p">)</span>
+
+    <span class="c"># Closing the session</span>
+    <span class="n">s</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+
+    <span class="c"># Checking for problems</span>
+    <span class="k">for</span> <span class="n">hadProblem</span> <span class="ow">in</span> <span class="n">hadProblems</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">hadProblem</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;Some SGE jobs had errors...&quot;</span>
+            <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="extractSNPs"><a class="viewcode-back" href="../../../find_related_samples.html#pyGenClean.RelatedSamples.find_related_samples.extractSNPs">[docs]</a><span class="k">def</span> <span class="nf">extractSNPs</span><span class="p">(</span><span class="n">snpsToExtract</span><span class="p">,</span> <span class="n">options</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Extract markers using Plink.</span>
+
+<span class="sd">    :param snpsToExtract: the name of the file containing markers to extract.</span>
+<span class="sd">    :param options: the options</span>
+
+<span class="sd">    :type snpsToExtract: str</span>
+<span class="sd">    :type options: argparse.Namespace</span>
+
+<span class="sd">    :returns: the prefix of the output files.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">outPrefix</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">out</span> <span class="o">+</span> <span class="s">&quot;.pruned_data&quot;</span>
+    <span class="n">plinkCommand</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;plink&quot;</span><span class="p">,</span> <span class="s">&quot;--noweb&quot;</span><span class="p">,</span> <span class="s">&quot;--bfile&quot;</span><span class="p">,</span> <span class="n">options</span><span class="o">.</span><span class="n">bfile</span><span class="p">,</span> <span class="s">&quot;--extract&quot;</span><span class="p">,</span>
+                    <span class="n">snpsToExtract</span><span class="p">,</span> <span class="s">&quot;--make-bed&quot;</span><span class="p">,</span> <span class="s">&quot;--out&quot;</span><span class="p">,</span> <span class="n">outPrefix</span><span class="p">]</span>
+    <span class="n">runCommand</span><span class="p">(</span><span class="n">plinkCommand</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">outPrefix</span>
+
+</div>
+<div class="viewcode-block" id="selectSNPsAccordingToLD"><a class="viewcode-back" href="../../../find_related_samples.html#pyGenClean.RelatedSamples.find_related_samples.selectSNPsAccordingToLD">[docs]</a><span class="k">def</span> <span class="nf">selectSNPsAccordingToLD</span><span class="p">(</span><span class="n">options</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Compute LD using Plink.</span>
+
+<span class="sd">    :param options: the options.</span>
+
+<span class="sd">    :type options: argparse.Namespace</span>
+
+<span class="sd">    :returns: the name of the output file (from Plink).</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c"># The plink command</span>
+    <span class="n">outPrefix</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">out</span> <span class="o">+</span> <span class="s">&quot;.pruning_&quot;</span> <span class="o">+</span> <span class="n">options</span><span class="o">.</span><span class="n">indep_pairwise</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">plinkCommand</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s">&quot;plink&quot;</span><span class="p">,</span>
+        <span class="s">&quot;--noweb&quot;</span><span class="p">,</span>
+        <span class="s">&quot;--bfile&quot;</span><span class="p">,</span> <span class="n">options</span><span class="o">.</span><span class="n">bfile</span><span class="p">,</span>
+        <span class="s">&quot;--maf&quot;</span><span class="p">,</span> <span class="n">options</span><span class="o">.</span><span class="n">maf</span><span class="p">,</span>
+        <span class="s">&quot;--indep-pairwise&quot;</span><span class="p">,</span>
+    <span class="p">]</span> <span class="o">+</span> <span class="n">options</span><span class="o">.</span><span class="n">indep_pairwise</span> <span class="o">+</span> <span class="p">[</span><span class="s">&quot;--out&quot;</span><span class="p">,</span> <span class="n">outPrefix</span><span class="p">]</span>
+
+    <span class="n">runCommand</span><span class="p">(</span><span class="n">plinkCommand</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">outPrefix</span> <span class="o">+</span> <span class="s">&quot;.prune.in&quot;</span>
+
+</div>
+<div class="viewcode-block" id="runCommand"><a class="viewcode-back" href="../../../find_related_samples.html#pyGenClean.RelatedSamples.find_related_samples.runCommand">[docs]</a><span class="k">def</span> <span class="nf">runCommand</span><span class="p">(</span><span class="n">command</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Run a command.</span>
+
+<span class="sd">    :param command: the command to run.</span>
+
+<span class="sd">    :type command: list</span>
+
+<span class="sd">    Tries to run a command. If it fails, raise a :py:class:`ProgramError`. This</span>
+<span class="sd">    function uses the :py:mod:`subprocess` module.</span>
+
+<span class="sd">    .. warning::</span>
+<span class="sd">        The variable ``command`` should be a list of strings (no other type).</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">(</span><span class="n">command</span><span class="p">,</span>
+                                         <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">STDOUT</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;couldn&#39;t run command</span><span class="se">\n</span><span class="s">&quot;</span> <span class="o">+</span> <span class="s">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">command</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="checkArgs"><a class="viewcode-back" href="../../../find_related_samples.html#pyGenClean.RelatedSamples.find_related_samples.checkArgs">[docs]</a><span class="k">def</span> <span class="nf">checkArgs</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Checks the arguments and options.</span>
+
+<span class="sd">    :param args: an object containing the options of the program.</span>
+
+<span class="sd">    :type args: argparse.Namespace</span>
+
+<span class="sd">    :returns: ``True`` if everything was OK.</span>
+
+<span class="sd">    If there is a problem with an option, an exception is raised using the</span>
+<span class="sd">    :py:class:`ProgramError` class, a message is printed to the</span>
+<span class="sd">    :class:`sys.stderr` and the program exists with code 1.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c"># Check if we have the tped and the tfam files</span>
+    <span class="k">for</span> <span class="n">fileName</span> <span class="ow">in</span> <span class="p">[</span><span class="n">args</span><span class="o">.</span><span class="n">bfile</span> <span class="o">+</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&quot;.bed&quot;</span><span class="p">,</span> <span class="s">&quot;.bim&quot;</span><span class="p">,</span> <span class="s">&quot;.fam&quot;</span><span class="p">]]:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">fileName</span><span class="p">):</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%(fileName)s</span><span class="s">: no such file&quot;</span> <span class="o">%</span> <span class="nb">locals</span><span class="p">()</span>
+            <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="c"># Check the indep-pairwise option</span>
+    <span class="c"># The two first must be int, the last one float</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
+            <span class="n">tmp</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">indep_pairwise</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="n">tmp</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">indep_pairwise</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;indep-pairwise: need INT INT FLOAT&quot;</span>
+        <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="c"># Check the maf value</span>
+    <span class="n">tmpMAF</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">tmpMAF</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">maf</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;maf: must be a float, not </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">args</span><span class="o">.</span><span class="n">maf</span>
+        <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">tmpMAF</span> <span class="o">&gt;</span> <span class="mf">0.5</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">tmpMAF</span> <span class="o">&lt;</span> <span class="mf">0.0</span><span class="p">):</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;maf: must be between 0.0 and 0.5, not </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">args</span><span class="o">.</span><span class="n">maf</span>
+        <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="c"># Check the number of line per file</span>
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">line_per_file_for_sge</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;line-per-file-for-sge: must be above 0, not &quot;</span> \
+              <span class="s">&quot;</span><span class="si">%d</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">args</span><span class="o">.</span><span class="n">line_per_file_for_sge</span>
+        <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="c"># Check the minimum number of SNPs</span>
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">min_nb_snp</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;min-nb-snp: must be above 1&quot;</span>
+        <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="bp">True</span>
+
+</div>
+<div class="viewcode-block" id="parseArgs"><a class="viewcode-back" href="../../../find_related_samples.html#pyGenClean.RelatedSamples.find_related_samples.parseArgs">[docs]</a><span class="k">def</span> <span class="nf">parseArgs</span><span class="p">(</span><span class="n">argString</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>  <span class="c"># pragma: no cover</span>
+    <span class="sd">&quot;&quot;&quot;Parses the command line options and arguments.</span>
+
+<span class="sd">    :param argString: the options.</span>
+
+<span class="sd">    :type argString: list</span>
+
+<span class="sd">    :returns: A :py:class:`argparse.Namespace` object created by</span>
+<span class="sd">              the :py:mod:`argparse` module. It contains the values of the</span>
+<span class="sd">              different options.</span>
+
+<span class="sd">    =========================== ====== ========================================</span>
+<span class="sd">        Options       Type                     Description</span>
+<span class="sd">    =========================== ====== ========================================</span>
+<span class="sd">    ``--bfile``                 string The input file prefix (Plink binary</span>
+<span class="sd">                                       file).</span>
+<span class="sd">    ``--genome-only``           bool   Only create the genome file.</span>
+<span class="sd">    ``--min-nb-snp``            int    The minimum number of markers needed to</span>
+<span class="sd">                                       compute IBS values.</span>
+<span class="sd">    ``--indep-pairwise``        string Three numbers: window size, window shift</span>
+<span class="sd">                                       and the r2 threshold.</span>
+<span class="sd">    ``--maf``                   string Restrict to SNPs with MAF &gt;= threshold.</span>
+<span class="sd">    ``--ibs2-ratio``            float  The initial IBS2* ratio (the minimum</span>
+<span class="sd">                                       value to show in the plot.</span>
+<span class="sd">    ``--sge``                   bool   Use SGE for parallelization.</span>
+<span class="sd">    ``--sge-walltime``          int    The time limit (for clusters).</span>
+<span class="sd">    ``--sge-nodes``             int    Two INTs (number of nodes and number of</span>
+<span class="sd">                                int    processor per nodes).</span>
+<span class="sd">    ``--line-per-file-for-sge`` int    The number of line per file for SGE task</span>
+<span class="sd">                                       array.</span>
+<span class="sd">    ``--out``                   string The prefix of the output files.</span>
+<span class="sd">    =========================== ====== ========================================</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">        No option check is done here (except for the one automatically done by</span>
+<span class="sd">        argparse). Those need to be done elsewhere (see :py:func:`checkArgs`).</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">if</span> <span class="n">argString</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">(</span><span class="n">argString</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">args</span>
+
+</div>
+<div class="viewcode-block" id="ProgramError"><a class="viewcode-back" href="../../../find_related_samples.html#pyGenClean.RelatedSamples.find_related_samples.ProgramError">[docs]</a><span class="k">class</span> <span class="nc">ProgramError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;An :py:class:`Exception` raised in case of a problem.</span>
+
+<span class="sd">    :param msg: the message to print to the user before exiting.</span>
+
+<span class="sd">    :type msg: str</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Construction of the :py:class:`ProgramError` class.</span>
+
+<span class="sd">        :param msg: the message to print to the user</span>
+
+<span class="sd">        :type msg: str</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span>
+
+
+<span class="c"># The parser object</span></div>
+<span class="n">pretty_name</span> <span class="o">=</span> <span class="s">&quot;Related samples&quot;</span>
+<span class="n">desc</span> <span class="o">=</span> <span class="s">&quot;&quot;&quot;Finds related samples according to IBS values.&quot;&quot;&quot;</span>
+<span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="n">desc</span><span class="p">)</span>
+
+<span class="c"># The INPUT files</span>
+<span class="n">group</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s">&quot;Input File&quot;</span><span class="p">)</span>
+<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;--bfile&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s">&quot;FILE&quot;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+                   <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s">&quot;The input file prefix (will find the plink binary &quot;</span>
+                         <span class="s">&quot;files by appending the prefix to the .bim, .bed and &quot;</span>
+                         <span class="s">&quot;.fam files, respectively.)&quot;</span><span class="p">))</span>
+<span class="c"># The options</span>
+<span class="n">group</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s">&quot;Options&quot;</span><span class="p">)</span>
+<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;--genome-only&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s">&quot;store_true&quot;</span><span class="p">,</span>
+                   <span class="n">help</span><span class="o">=</span><span class="s">&quot;Only create the genome file&quot;</span><span class="p">)</span>
+<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;--min-nb-snp&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s">&quot;INT&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">10000</span><span class="p">,</span>
+                   <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s">&quot;The minimum number of markers needed to compute IBS &quot;</span>
+                         <span class="s">&quot;values. [Default: </span><span class="si">%(default)d</span><span class="s">]&quot;</span><span class="p">))</span>
+<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;--indep-pairwise&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s">&quot;STR&quot;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+                   <span class="n">default</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;50&quot;</span><span class="p">,</span> <span class="s">&quot;5&quot;</span><span class="p">,</span> <span class="s">&quot;0.1&quot;</span><span class="p">],</span>
+                   <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s">&quot;Three numbers: window size, window shift and the r2 &quot;</span>
+                         <span class="s">&quot;threshold. [default: </span><span class="si">%(default)s</span><span class="s">]&quot;</span><span class="p">))</span>
+<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;--maf&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s">&quot;FLOAT&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s">&quot;0.05&quot;</span><span class="p">,</span>
+                   <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s">&quot;Restrict to SNPs with MAF &gt;= threshold. [default: &quot;</span>
+                         <span class="s">&quot;</span><span class="si">%(default)s</span><span class="s">]&quot;</span><span class="p">))</span>
+<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;--ibs2-ratio&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s">&quot;FLOAT&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span>
+                   <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s">&quot;The initial IBS2* ratio (the minimum value to show &quot;</span>
+                         <span class="s">&quot;in the plot. [default: </span><span class="si">%(default).1f</span><span class="s">]&quot;</span><span class="p">))</span>
+<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;--sge&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s">&quot;store_true&quot;</span><span class="p">,</span>
+                   <span class="n">help</span><span class="o">=</span><span class="s">&quot;Use SGE for parallelization.&quot;</span><span class="p">)</span>
+<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;--sge-walltime&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s">&quot;TIME&quot;</span><span class="p">,</span>
+                   <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s">&quot;The walltime for the job to run on the cluster. Do &quot;</span>
+                         <span class="s">&quot;not use if you are not required to specify a &quot;</span>
+                         <span class="s">&quot;walltime for your jobs on your cluster (e.g. &#39;qsub &quot;</span>
+                         <span class="s">&quot;-lwalltime=1:0:0&#39; on the cluster).&quot;</span><span class="p">))</span>
+<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;--sge-nodes&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s">&quot;INT&quot;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+                   <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s">&quot;The number of nodes and the number of processor per &quot;</span>
+                         <span class="s">&quot;nodes to use (e.g. &#39;qsub -lnodes=X:ppn=Y&#39; on the &quot;</span>
+                         <span class="s">&quot;cluster, where X is the number of nodes and Y is &quot;</span>
+                         <span class="s">&quot;the number of processor to use. Do not use if you &quot;</span>
+                         <span class="s">&quot;are not required to specify the number of nodes for &quot;</span>
+                         <span class="s">&quot;your jobs on the cluster.&quot;</span><span class="p">))</span>
+<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;--line-per-file-for-sge&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s">&quot;INT&quot;</span><span class="p">,</span>
+                   <span class="n">default</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s">&quot;The number of line per file for SGE &quot;</span>
+                                      <span class="s">&quot;task array. [default: &quot;</span> <span class="s">&quot;</span><span class="si">%(default)d</span><span class="s">]&quot;</span><span class="p">))</span>
+<span class="c"># The OUTPUT files</span>
+<span class="n">group</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s">&quot;Output File&quot;</span><span class="p">)</span>
+<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;--out&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s">&quot;FILE&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s">&quot;ibs&quot;</span><span class="p">,</span>
+                   <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s">&quot;The prefix of the output files. [default: &quot;</span>
+                         <span class="s">&quot;</span><span class="si">%(default)s</span><span class="s">]&quot;</span><span class="p">))</span>
+
+
+<div class="viewcode-block" id="safe_main"><a class="viewcode-back" href="../../../find_related_samples.html#pyGenClean.RelatedSamples.find_related_samples.safe_main">[docs]</a><span class="k">def</span> <span class="nf">safe_main</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;A safe version of the main function (that catches ProgramError).&quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">main</span><span class="p">()</span>
+    <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Cancelled by user&quot;</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">ProgramError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">message</span><span class="p">)</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">message</span><span class="p">)</span>
+
+</div>
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">safe_main</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">pyGenClean 1.7.0 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2012, Louis-Philippe Lemieux Perreault.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,398 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Plate Bias Module &mdash; pyGenClean 1.7.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.7.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="pyGenClean 1.7.0 documentation" href="index.html" />
+    <link rel="next" title="Heterozygous Haploid Module" href="remove_heterozygous_haploid.html" />
+    <link rel="prev" title="Sex Check Module" href="sex_check.html" /> 
+  </head>
+  <body role="document">
+
+<div style="background-color: white; text-align: left; padding: 10px 10px 15px 15px">
+<a href="index.html"><img src="_static/logo.png" border="0" alt="py4sci"/></a>
+</div>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="remove_heterozygous_haploid.html" title="Heterozygous Haploid Module"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="sex_check.html" title="Sex Check Module"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">pyGenClean 1.7.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Plate Bias Module</a><ul>
+<li><a class="reference internal" href="#input-files">Input Files</a></li>
+<li><a class="reference internal" href="#procedure">Procedure</a></li>
+<li><a class="reference internal" href="#output-files">Output Files</a></li>
+<li><a class="reference internal" href="#the-algorithm">The Algorithm</a><ul>
+<li><a class="reference internal" href="#module-pyGenClean.PlateBias.plate_bias">pyGenClean.PlateBias.plate_bias</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="sex_check.html"
+                        title="previous chapter">Sex Check Module</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="remove_heterozygous_haploid.html"
+                        title="next chapter">Heterozygous Haploid Module</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/plate_bias.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="plate-bias-module">
+<h1>Plate Bias Module<a class="headerlink" href="#plate-bias-module" title="Permalink to this headline">¶</a></h1>
+<p>The usage of the standalone module is shown below:</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> pyGenClean_plate_bias --help
+<span class="go">usage: pyGenClean_plate_bias [-h] --bfile FILE --loop-assoc FILE</span>
+<span class="go">                             [--pfilter FLOAT] [--out FILE]</span>
+
+<span class="go">Check for plate bias.</span>
+
+<span class="go">optional arguments:</span>
+<span class="go">  -h, --help         show this help message and exit</span>
+
+<span class="go">Input File:</span>
+<span class="go">  --bfile FILE       The input file prefix (will find the plink binary files</span>
+<span class="go">                     by appending the prefix to the .bim, .bed and .fam files,</span>
+<span class="go">                     respectively.</span>
+<span class="go">  --loop-assoc FILE  The file containing the plate organization of each</span>
+<span class="go">                     samples. Must contains three column (with no header):</span>
+<span class="go">                     famID, indID and plateName.</span>
+
+<span class="go">Options:</span>
+<span class="go">  --pfilter FLOAT    The significance threshold used for the plate effect.</span>
+<span class="go">                     [default: 1.0e-07]</span>
+
+<span class="go">Output File:</span>
+<span class="go">  --out FILE         The prefix of the output files. [default: plate_bias]</span>
+</pre></div>
+</div>
+<div class="section" id="input-files">
+<h2>Input Files<a class="headerlink" href="#input-files" title="Permalink to this headline">¶</a></h2>
+<p>This module uses PLINK&#8217;s binary file format (<code class="docutils literal"><span class="pre">bed</span></code>, <code class="docutils literal"><span class="pre">bim</span></code> and <code class="docutils literal"><span class="pre">fam</span></code> files)
+for the source data set (the data of interest).</p>
+</div>
+<div class="section" id="procedure">
+<h2>Procedure<a class="headerlink" href="#procedure" title="Permalink to this headline">¶</a></h2>
+<p>Here are the steps performed by the module:</p>
+<ol class="arabic simple">
+<li>Runs the plate bias analysis using Plink.</li>
+<li>Extracts the list of significant markers after plate bias analysis.</li>
+<li>Computes the frequency of all significant markers after plate bias analysis.</li>
+</ol>
+</div>
+<div class="section" id="output-files">
+<h2>Output Files<a class="headerlink" href="#output-files" title="Permalink to this headline">¶</a></h2>
+<p>The output files of each of the steps described above are as follow (note that
+the output prefix shown is the one by default [<em>i.e.</em> <code class="docutils literal"><span class="pre">plate_bias</span></code>]):</p>
+<ol class="arabic simple">
+<li>One set of PLINK&#8217;s result files:<ul>
+<li><code class="docutils literal"><span class="pre">plate_bias</span></code>: this includes file like
+<code class="docutils literal"><span class="pre">plate_bias.PLATE_NAME.assoc.fisher</span></code> containing a list of markers that
+were significant after the plate bias analysis.</li>
+</ul>
+</li>
+<li>One file:<ul>
+<li><code class="docutils literal"><span class="pre">plate_bias.significant_SNPs.txt</span></code>: a file containing a list of markers
+that were significant after the plate bias analysis (contained in all
+the <code class="docutils literal"><span class="pre">*.fisher</span></code> files).</li>
+</ul>
+</li>
+<li>One set of PLINK&#8217;s result files:<ul>
+<li><code class="docutils literal"><span class="pre">plate_bias.significant_SNPs</span></code>: the result files containing the
+frequency of all the markers that were significant after the plate bias
+analysis (contained in all the <code class="docutils literal"><span class="pre">*.fisher</span></code> files).</li>
+</ul>
+</li>
+</ol>
+</div>
+<div class="section" id="the-algorithm">
+<h2>The Algorithm<a class="headerlink" href="#the-algorithm" title="Permalink to this headline">¶</a></h2>
+<p>For more information about the actual algorithms and source codes (the
+<a class="reference internal" href="#module-pyGenClean.PlateBias.plate_bias" title="pyGenClean.PlateBias.plate_bias"><code class="xref py py-mod docutils literal"><span class="pre">pyGenClean.PlateBias.plate_bias</span></code></a> module), refer to the following
+sections.</p>
+<div class="section" id="module-pyGenClean.PlateBias.plate_bias">
+<span id="pygenclean-platebias-plate-bias"></span><h3>pyGenClean.PlateBias.plate_bias<a class="headerlink" href="#module-pyGenClean.PlateBias.plate_bias" title="Permalink to this headline">¶</a></h3>
+<dl class="exception">
+<dt id="pyGenClean.PlateBias.plate_bias.ProgramError">
+<em class="property">exception </em><code class="descclassname">pyGenClean.PlateBias.plate_bias.</code><code class="descname">ProgramError</code><span class="sig-paren">(</span><em>msg</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/PlateBias/plate_bias.html#ProgramError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.PlateBias.plate_bias.ProgramError" title="Permalink to this definition">¶</a></dt>
+<dd><p>An <code class="xref py py-class docutils literal"><span class="pre">Exception</span></code> raised in case of a problem.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>msg</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the message to print to the user before exiting.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.PlateBias.plate_bias.checkArgs">
+<code class="descclassname">pyGenClean.PlateBias.plate_bias.</code><code class="descname">checkArgs</code><span class="sig-paren">(</span><em>args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/PlateBias/plate_bias.html#checkArgs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.PlateBias.plate_bias.checkArgs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks the arguments and options.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>args</strong> (<a class="reference external" href="http://docs.python.org/library/argparse.html#argparse.Namespace" title="(in Python v2.7)"><em>argparse.Namespace</em></a>) &#8211; an object containing the options of the program.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><code class="docutils literal"><span class="pre">True</span></code> if everything was OK.</td>
+</tr>
+</tbody>
+</table>
+<p>If there is a problem with an option, an exception is raised using the
+<a class="reference internal" href="#pyGenClean.PlateBias.plate_bias.ProgramError" title="pyGenClean.PlateBias.plate_bias.ProgramError"><code class="xref py py-class docutils literal"><span class="pre">ProgramError</span></code></a> class, a message is printed to the
+<code class="xref py py-class docutils literal"><span class="pre">sys.stderr</span></code> and the program exists with code 1.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.PlateBias.plate_bias.computeFrequencyOfSignificantSNPs">
+<code class="descclassname">pyGenClean.PlateBias.plate_bias.</code><code class="descname">computeFrequencyOfSignificantSNPs</code><span class="sig-paren">(</span><em>options</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/PlateBias/plate_bias.html#computeFrequencyOfSignificantSNPs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.PlateBias.plate_bias.computeFrequencyOfSignificantSNPs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the frequency of the significant markers.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>options</strong> (<a class="reference external" href="http://docs.python.org/library/argparse.html#argparse.Namespace" title="(in Python v2.7)"><em>argparse.Namespace</em></a>) &#8211; the options.</td>
+</tr>
+</tbody>
+</table>
+<p>Extract a list of markers (significant after plate bias analysis) and
+computes their frequencies.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.PlateBias.plate_bias.executePlateBiasAnalysis">
+<code class="descclassname">pyGenClean.PlateBias.plate_bias.</code><code class="descname">executePlateBiasAnalysis</code><span class="sig-paren">(</span><em>options</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/PlateBias/plate_bias.html#executePlateBiasAnalysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.PlateBias.plate_bias.executePlateBiasAnalysis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Execute the plate bias analysis with Plink.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>options</strong> (<a class="reference external" href="http://docs.python.org/library/argparse.html#argparse.Namespace" title="(in Python v2.7)"><em>argparse.Namespace</em></a>) &#8211; the options.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.PlateBias.plate_bias.extractSignificantSNPs">
+<code class="descclassname">pyGenClean.PlateBias.plate_bias.</code><code class="descname">extractSignificantSNPs</code><span class="sig-paren">(</span><em>prefix</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/PlateBias/plate_bias.html#extractSignificantSNPs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.PlateBias.plate_bias.extractSignificantSNPs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extract significant SNPs in the fisher file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>prefix</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the prefix of the input file.</td>
+</tr>
+</tbody>
+</table>
+<p>Reads a list of significant markers (<code class="docutils literal"><span class="pre">prefix.assoc.fisher</span></code>) after plate
+bias analysis with Plink. Writes a file (<code class="docutils literal"><span class="pre">prefix.significant_SNPs.txt</span></code>)
+containing those significant markers.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.PlateBias.plate_bias.main">
+<code class="descclassname">pyGenClean.PlateBias.plate_bias.</code><code class="descname">main</code><span class="sig-paren">(</span><em>argString=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/PlateBias/plate_bias.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.PlateBias.plate_bias.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>The main function of this module.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>argString</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; the options.</td>
+</tr>
+</tbody>
+</table>
+<p>These are the steps:</p>
+<ol class="arabic simple">
+<li>Runs a plate bias analysis using Plink
+(<a class="reference internal" href="#pyGenClean.PlateBias.plate_bias.executePlateBiasAnalysis" title="pyGenClean.PlateBias.plate_bias.executePlateBiasAnalysis"><code class="xref py py-func docutils literal"><span class="pre">executePlateBiasAnalysis()</span></code></a>).</li>
+<li>Extracts the list of significant markers after plate bias analysis
+(<a class="reference internal" href="#pyGenClean.PlateBias.plate_bias.extractSignificantSNPs" title="pyGenClean.PlateBias.plate_bias.extractSignificantSNPs"><code class="xref py py-func docutils literal"><span class="pre">extractSignificantSNPs()</span></code></a>).</li>
+<li>Computes the frequency of all significant markers after plate bias
+analysis (<a class="reference internal" href="#pyGenClean.PlateBias.plate_bias.computeFrequencyOfSignificantSNPs" title="pyGenClean.PlateBias.plate_bias.computeFrequencyOfSignificantSNPs"><code class="xref py py-func docutils literal"><span class="pre">computeFrequencyOfSignificantSNPs()</span></code></a>).</li>
+</ol>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.PlateBias.plate_bias.parseArgs">
+<code class="descclassname">pyGenClean.PlateBias.plate_bias.</code><code class="descname">parseArgs</code><span class="sig-paren">(</span><em>argString=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/PlateBias/plate_bias.html#parseArgs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.PlateBias.plate_bias.parseArgs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parses the command line options and arguments.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>argString</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; the options.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A <a class="reference external" href="http://docs.python.org/library/argparse.html#argparse.Namespace" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">argparse.Namespace</span></code></a> object created by the
+<a class="reference external" href="http://docs.python.org/library/argparse.html#module-argparse" title="(in Python v2.7)"><code class="xref py py-mod docutils literal"><span class="pre">argparse</span></code></a> module. It contains the values of the
+different options.</td>
+</tr>
+</tbody>
+</table>
+<table border="1" class="docutils">
+<colgroup>
+<col width="22%" />
+<col width="8%" />
+<col width="69%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Options</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--bfile</span></code></td>
+<td>string</td>
+<td>The input file prefix (Plink binary).</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--loop-assoc</span></code></td>
+<td>string</td>
+<td>The file containing the plate organization of each
+samples.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--pfilter</span></code></td>
+<td>float</td>
+<td>The significance threshold used for the plate
+effect.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--out</span></code></td>
+<td>string</td>
+<td>The prefix of the output files.</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">No option check is done here (except for the one automatically done by
+argparse). Those need to be done elsewhere (see <a class="reference internal" href="#pyGenClean.PlateBias.plate_bias.checkArgs" title="pyGenClean.PlateBias.plate_bias.checkArgs"><code class="xref py py-func docutils literal"><span class="pre">checkArgs()</span></code></a>).</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.PlateBias.plate_bias.runCommand">
+<code class="descclassname">pyGenClean.PlateBias.plate_bias.</code><code class="descname">runCommand</code><span class="sig-paren">(</span><em>command</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/PlateBias/plate_bias.html#runCommand"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.PlateBias.plate_bias.runCommand" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run a command.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>command</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; the command to run.</td>
+</tr>
+</tbody>
+</table>
+<p>Tries to run a command. If it fails, raise a <a class="reference internal" href="#pyGenClean.PlateBias.plate_bias.ProgramError" title="pyGenClean.PlateBias.plate_bias.ProgramError"><code class="xref py py-class docutils literal"><span class="pre">ProgramError</span></code></a>. This
+function uses the <a class="reference external" href="http://docs.python.org/library/subprocess.html#module-subprocess" title="(in Python v2.7)"><code class="xref py py-mod docutils literal"><span class="pre">subprocess</span></code></a> module.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">The variable <code class="docutils literal"><span class="pre">command</span></code> should be a list of strings (no other type).</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.PlateBias.plate_bias.safe_main">
+<code class="descclassname">pyGenClean.PlateBias.plate_bias.</code><code class="descname">safe_main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/PlateBias/plate_bias.html#safe_main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.PlateBias.plate_bias.safe_main" title="Permalink to this definition">¶</a></dt>
+<dd><p>A safe version of the main function (that catches ProgramError).</p>
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="remove_heterozygous_haploid.html" title="Heterozygous Haploid Module"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="sex_check.html" title="Sex Check Module"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">pyGenClean 1.7.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2012, Louis-Philippe Lemieux Perreault.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+    </div>
+  </body>
+</html>

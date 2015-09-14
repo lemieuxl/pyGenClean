@@ -1,0 +1,1761 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Ethnicity Module &mdash; pyGenClean 1.7.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.7.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="pyGenClean 1.7.0 documentation" href="index.html" />
+    <link rel="next" title="Minor Allele Frequency of Zero Module" href="flag_maf_zero.html" />
+    <link rel="prev" title="Related Samples Module" href="find_related_samples.html" /> 
+  </head>
+  <body role="document">
+
+<div style="background-color: white; text-align: left; padding: 10px 10px 15px 15px">
+<a href="index.html"><img src="_static/logo.png" border="0" alt="py4sci"/></a>
+</div>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="flag_maf_zero.html" title="Minor Allele Frequency of Zero Module"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="find_related_samples.html" title="Related Samples Module"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">pyGenClean 1.7.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Ethnicity Module</a><ul>
+<li><a class="reference internal" href="#input-files">Input Files</a></li>
+<li><a class="reference internal" href="#procedure">Procedure</a></li>
+<li><a class="reference internal" href="#output-files">Output Files</a></li>
+<li><a class="reference internal" href="#the-plots">The Plots</a><ul>
+<li><a class="reference internal" href="#modifying-the-outlier-plot">Modifying The Outlier Plot</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#finding-outliers">Finding Outliers</a></li>
+<li><a class="reference internal" href="#the-algorithm">The Algorithm</a><ul>
+<li><a class="reference internal" href="#module-pyGenClean.Ethnicity.check_ethnicity">pyGenClean.Ethnicity.check_ethnicity</a></li>
+<li><a class="reference internal" href="#module-pyGenClean.Ethnicity.find_outliers">pyGenClean.Ethnicity.find_outliers</a></li>
+<li><a class="reference internal" href="#module-pyGenClean.PlinkUtils.plot_MDS_standalone">pyGenClean.PlinkUtils.plot_MDS_standalone</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="find_related_samples.html"
+                        title="previous chapter">Related Samples Module</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="flag_maf_zero.html"
+                        title="next chapter">Minor Allele Frequency of Zero Module</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/check_ethnicity.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="ethnicity-module">
+<span id="ethnicity-module-label"></span><h1>Ethnicity Module<a class="headerlink" href="#ethnicity-module" title="Permalink to this headline">¶</a></h1>
+<p>The usage of the standalone module is shown below:</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> pyGenClean_check_ethnicity --help
+<span class="go">usage: pyGenClean_check_ethnicity [-h] --bfile FILE --ceu-bfile FILE</span>
+<span class="go">                                  --yri-bfile FILE --jpt-chb-bfile FILE</span>
+<span class="go">                                  [--min-nb-snp INT]</span>
+<span class="go">                                  [--indep-pairwise STR STR STR] [--maf FLOAT]</span>
+<span class="go">                                  [--sge] [--sge-walltime TIME]</span>
+<span class="go">                                  [--sge-nodes INT INT]</span>
+<span class="go">                                  [--ibs-sge-walltime TIME]</span>
+<span class="go">                                  [--ibs-sge-nodes INT INT]</span>
+<span class="go">                                  [--line-per-file-for-sge INT]</span>
+<span class="go">                                  [--nb-components INT] [--outliers-of POP]</span>
+<span class="go">                                  [--multiplier FLOAT] [--xaxis COMPONENT]</span>
+<span class="go">                                  [--yaxis COMPONENT] [--format FORMAT]</span>
+<span class="go">                                  [--title STRING] [--xlabel STRING]</span>
+<span class="go">                                  [--ylabel STRING] [--out FILE]</span>
+
+<span class="go">Check samples&#39; ethnicity using reference populations and IBS.</span>
+
+<span class="go">optional arguments:</span>
+<span class="go">  -h, --help            show this help message and exit</span>
+
+<span class="go">Input File:</span>
+<span class="go">  --bfile FILE          The input file prefix (will find the plink binary</span>
+<span class="go">                        files by appending the prefix to the .bim, .bed and</span>
+<span class="go">                        .fam files, respectively.</span>
+<span class="go">  --ceu-bfile FILE      The input file prefix (will find the plink binary</span>
+<span class="go">                        files by appending the prefix to the .bim, .bed and</span>
+<span class="go">                        .fam files, respectively.) for the CEU population</span>
+<span class="go">  --yri-bfile FILE      The input file prefix (will find the plink binary</span>
+<span class="go">                        files by appending the prefix to the .bim, .bed and</span>
+<span class="go">                        .fam files, respectively.) for the YRI population</span>
+<span class="go">  --jpt-chb-bfile FILE  The input file prefix (will find the plink binary</span>
+<span class="go">                        files by appending the prefix to the .bim, .bed and</span>
+<span class="go">                        .fam files, respectively.) for the JPT-CHB population</span>
+
+<span class="go">Options:</span>
+<span class="go">  --min-nb-snp INT      The minimum number of markers needed to compute IBS</span>
+<span class="go">                        values. [Default: 8000]</span>
+<span class="go">  --indep-pairwise STR STR STR</span>
+<span class="go">                        Three numbers: window size, window shift and the r2</span>
+<span class="go">                        threshold. [default: [&#39;50&#39;, &#39;5&#39;, &#39;0.1&#39;]]</span>
+<span class="go">  --maf FLOAT           Restrict to SNPs with MAF &gt;= threshold. [default:</span>
+<span class="go">                        0.05]</span>
+<span class="go">  --sge                 Use SGE for parallelization.</span>
+<span class="go">  --sge-walltime TIME   The walltime for the job to run on the cluster. Do not</span>
+<span class="go">                        use if you are not required to specify a walltime for</span>
+<span class="go">                        your jobs on your cluster (e.g. &#39;qsub</span>
+<span class="go">                        -lwalltime=1:0:0&#39; on the cluster).</span>
+<span class="go">  --sge-nodes INT INT   The number of nodes and the number of processor per</span>
+<span class="go">                        nodes to use (e.g. &#39;qsub -lnodes=X:ppn=Y&#39; on the</span>
+<span class="go">                        cluster, where X is the number of nodes and Y is the</span>
+<span class="go">                        number of processor to use. Do not use if you are not</span>
+<span class="go">                        required to specify the number of nodes for your jobs</span>
+<span class="go">                        on the cluster.</span>
+<span class="go">  --ibs-sge-walltime TIME</span>
+<span class="go">                        The walltime for the IBS jobs to run on the cluster.</span>
+<span class="go">                        Do not use if you are not required to specify a</span>
+<span class="go">                        walltime for your jobs on your cluster (e.g. &#39;qsub</span>
+<span class="go">                        -lwalltime=1:0:0&#39; on the cluster).</span>
+<span class="go">  --ibs-sge-nodes INT INT</span>
+<span class="go">                        The number of nodes and the number of processor per</span>
+<span class="go">                        nodes to use for the IBS jobs (e.g. &#39;qsub</span>
+<span class="go">                        -lnodes=X:ppn=Y&#39; on the cluster, where X is the number</span>
+<span class="go">                        of nodes and Y is the number of processor to use. Do</span>
+<span class="go">                        not use if you are not required to specify the number</span>
+<span class="go">                        of nodes for your jobs on the cluster.</span>
+<span class="go">  --line-per-file-for-sge INT</span>
+<span class="go">                        The number of line per file for SGE task array for the</span>
+<span class="go">                        IBS jobs. [default: 100]</span>
+<span class="go">  --nb-components INT   The number of component to compute. [default: 10]</span>
+
+<span class="go">Outlier Options:</span>
+<span class="go">  --outliers-of POP     Finds the outliers of this population. [default: CEU]</span>
+<span class="go">  --multiplier FLOAT    To find the outliers, we look for more than x times</span>
+<span class="go">                        the cluster standard deviation. [default: 1.9]</span>
+<span class="go">  --xaxis COMPONENT     The component to use for the X axis. [default: C1]</span>
+<span class="go">  --yaxis COMPONENT     The component to use for the Y axis. [default: C2]</span>
+
+<span class="go">MDS Plot Options:</span>
+<span class="go">  --format FORMAT       The output file format (png, ps, pdf, or X11 formats</span>
+<span class="go">                        are available). [default: png]</span>
+<span class="go">  --title STRING        The title of the MDS plot. [default: C2 in function of</span>
+<span class="go">                        C1 - MDS]</span>
+<span class="go">  --xlabel STRING       The label of the X axis. [default: C1]</span>
+<span class="go">  --ylabel STRING       The label of the Y axis. [default: C2]</span>
+
+<span class="go">Output File:</span>
+<span class="go">  --out FILE            The prefix of the output files. [default: ethnicity]</span>
+</pre></div>
+</div>
+<div class="section" id="input-files">
+<h2>Input Files<a class="headerlink" href="#input-files" title="Permalink to this headline">¶</a></h2>
+<p>This module uses PLINK&#8217;s binary file format (<code class="docutils literal"><span class="pre">bed</span></code>, <code class="docutils literal"><span class="pre">bim</span></code> and <code class="docutils literal"><span class="pre">fam</span></code> files)
+for the source data set (the data of interest) and three sets of binary files
+for the reference panels (CEU, YRI and JPG-CHB).</p>
+</div>
+<div class="section" id="procedure">
+<h2>Procedure<a class="headerlink" href="#procedure" title="Permalink to this headline">¶</a></h2>
+<p>Here are the steps performed by the module:</p>
+<ol class="arabic simple">
+<li>Finds the overlapping markers between the three reference panels and the
+source panel.</li>
+<li>Extracts the required markers from all the data sets (source and reference
+panels).</li>
+<li>Combines the three reference panels together to create a single data set.</li>
+<li>Renames the reference panel&#8217;s markers so that they match the names of the
+markers in the source panel.</li>
+<li>Computes the frequency of all the markers from the reference and the source
+panels.</li>
+<li>Finds the markers to flip in the reference panel, to enable fast comparison
+with the source panel.</li>
+<li>Excludes markers that cannot be flip from the reference and the source
+panels.</li>
+<li>Flips the markers that need to be in the reference panel.</li>
+<li>Combines the reference and the source panels.</li>
+<li>Computes the IBS values (see Section <a class="reference internal" href="find_related_samples.html#related-samples-label"><span>Related Samples Module</span></a> for more
+information).</li>
+<li>Creates the MDS file from the combined data set and the IBS values.</li>
+<li>Creates a population file for plotting purposes.</li>
+<li>Plots the MDS values.</li>
+<li>Finds the outliers of a given reference population (either CEU, YRI or
+JPT-CHB).<ol class="lowerroman">
+<li>Reads the population file.</li>
+<li>Reads the MDS values.</li>
+<li>Computes the three reference population clusters&#8217; center.</li>
+<li>Computes three clusters according to the reference population clusters&#8217;
+centers, and finds the outliers of a given reference population.</li>
+<li>Writes the outliers in a file.</li>
+</ol>
+</li>
+</ol>
+</div>
+<div class="section" id="output-files">
+<h2>Output Files<a class="headerlink" href="#output-files" title="Permalink to this headline">¶</a></h2>
+<p>The output files of each of the steps described above are as follow (note that
+the output prefix shown is the one by default [<em>i.e</em> <code class="docutils literal"><span class="pre">ethnicity</span></code>]):</p>
+<ol class="arabic simple">
+<li>Three files are created:<ul>
+<li><code class="docutils literal"><span class="pre">ethnicity.ref_snp_to_extract</span></code>: a list of markers to extract from the
+reference panels.</li>
+<li><code class="docutils literal"><span class="pre">ethnicity.source_snp_to_extract</span></code>: a list of markers to extract from
+the source panel.</li>
+<li><code class="docutils literal"><span class="pre">ethnicity.update_names</span></code>: the updated names of the marker in the
+reference panels, so that they match with the names in the source panel.</li>
+</ul>
+</li>
+<li>Four sets of PLINK&#8217;s binary files are created:<ul>
+<li><code class="docutils literal"><span class="pre">ethnicity.reference_panel.CEU</span></code>: the data set containing the extracted
+markers from the CEU reference population.</li>
+<li><code class="docutils literal"><span class="pre">ethnicity.reference_panel.YRI</span></code>: the data set containing the extracted
+markers from the YRI reference population.</li>
+<li><code class="docutils literal"><span class="pre">ethnicity.reference_panel.JPT-CHB</span></code>: the data set containing the
+extracted markers from the JPG-CHB reference population.</li>
+<li><code class="docutils literal"><span class="pre">ethnicity.source_panel.ALL</span></code>: the data set containing the extracted
+markers from the source population.</li>
+</ul>
+</li>
+<li>One required file and one set of PLINK&#8217;s binary files are created:<ul>
+<li><code class="docutils literal"><span class="pre">ethnicity.reference_panel.ALL.files_to_merge</span></code>: the file required by
+Plink to merge more than two data sets together.</li>
+<li><code class="docutils literal"><span class="pre">ethnicity.reference_panel.ALL</span></code>: the data set containing the merged
+data sets of the three reference population.</li>
+</ul>
+</li>
+<li>One set of PLINK&#8217;s binary files is created:<ul>
+<li><code class="docutils literal"><span class="pre">ethnicity.reference_panel.ALL.rename</span></code>: the data set after markers
+have been renamed in the reference panels.</li>
+</ul>
+</li>
+<li>Two sets of PLINK&#8217;s result files are created:<ul>
+<li><code class="docutils literal"><span class="pre">ethnicity.reference_panel.ALL.rename.frequency</span></code>: the frequencies of
+the markers in the reference panels.</li>
+<li><code class="docutils literal"><span class="pre">ethnicity.source_panel.ALL.frequency</span></code>: the frequencies of the markers
+in the source panels.</li>
+</ul>
+</li>
+<li>Two files are created:<ul>
+<li><code class="docutils literal"><span class="pre">ethnicity.snp_to_flip_in_reference</span></code>: the list of markers to flip in
+the reference panels.</li>
+<li><code class="docutils literal"><span class="pre">ethnicity.snp_to_remove</span></code>: the list of markers to remove because they
+are not comparable to the markers in the source panel, even after trying
+to flip them.</li>
+</ul>
+</li>
+<li>Two sets of PLINK&#8217;s binary files are created:<ul>
+<li><code class="docutils literal"><span class="pre">ethnicity.reference_panel.ALL.rename.cleaned</span></code>: the data set after the
+markers found in the previous step are excluded from the reference panels.</li>
+<li><code class="docutils literal"><span class="pre">ethnicity.source_panel.ALL.cleaned</span></code>: the data set after the markers
+found in the previous step are excluded from the source panel.</li>
+</ul>
+</li>
+<li>One set of PLINK&#8217;s binary files is created:<ul>
+<li><code class="docutils literal"><span class="pre">ethnicity.reference_panel.ALL.rename.cleaned.flipped</span></code>: the data set
+after markers from the reference panels were flipped so that they become
+comparable with the source panel.</li>
+</ul>
+</li>
+<li>One required file and one set of PLINK&#8217;s binary files are created:<ul>
+<li><code class="docutils literal"><span class="pre">ethnicity.final_dataset_for_genome.files_to_merge</span></code>: the file required
+by Plink to merge more than two data sets together.</li>
+<li><code class="docutils literal"><span class="pre">ethnicity.final_dataset_for_genome</span></code>: the data set containing the
+merged reference and source panels.</li>
+</ul>
+</li>
+<li>Multiple files are created after this step.<ul>
+<li><code class="docutils literal"><span class="pre">ethnicity.ibs</span></code> : for more information about those files, see Section
+<a class="reference internal" href="find_related_samples.html#related-samples-label"><span>Related Samples Module</span></a>.</li>
+</ul>
+</li>
+<li>One set of PLINK&#8217;s result files is created:<ul>
+<li><code class="docutils literal"><span class="pre">ethnicity.mds</span></code>: files containing the MDS values.</li>
+</ul>
+</li>
+<li>One file is created:<ul>
+<li><code class="docutils literal"><span class="pre">ethnicity.population_file</span></code>: the population file required for MDS
+value plotting.</li>
+</ul>
+</li>
+<li>One file is created:<ul>
+<li><code class="docutils literal"><span class="pre">ethnicity.mds.png</span></code>: the plot of the MDS values (see Figure
+<a class="reference internal" href="#mds-plot-figure"><span>Initial MDS plot</span></a>).</li>
+</ul>
+</li>
+<li>Four files are created:<ul>
+<li><code class="docutils literal"><span class="pre">ethnicity.before.png</span></code>: the MDS values before outliers detection (see
+Figure <a class="reference internal" href="#mds-plot-before-figure"><span>MDS plot before outlier detection</span></a>).</li>
+<li><code class="docutils literal"><span class="pre">ethnicity.after.png</span></code>: the MDS values after outliers detection for
+each of the three reference populations. The shaded points are the
+outliers (see Figure <a class="reference internal" href="#mds-plot-after-figure"><span>MDS plot after outlier detection</span></a>).</li>
+<li><code class="docutils literal"><span class="pre">ethnicity.outliers.png</span></code>: the MDS values after outliers detection for
+the selected reference population (default is CEU) (see Figure
+<a class="reference internal" href="#ethnicity-outliers-figure"><span>Ethnic outliers</span></a>).</li>
+<li><code class="docutils literal"><span class="pre">ethnicity.outliers</span></code>: the list of outliers (excluding the reference
+populations).</li>
+<li><code class="docutils literal"><span class="pre">ethnicity.population_file_outliers</span></code>: a population file containing the
+outliers (to help creating a new MDS plot using
+<a class="reference internal" href="#module-pyGenClean.PlinkUtils.plot_MDS_standalone" title="pyGenClean.PlinkUtils.plot_MDS_standalone"><code class="xref py py-mod docutils literal"><span class="pre">pyGenClean.PlinkUtils.plot_MDS_standalone</span></code></a>).</li>
+</ul>
+</li>
+</ol>
+</div>
+<div class="section" id="the-plots">
+<span id="ethnicity-plots-label"></span><h2>The Plots<a class="headerlink" href="#the-plots" title="Permalink to this headline">¶</a></h2>
+<p>Multiple plots are created by this module. The first one (Figure
+<a class="reference internal" href="#mds-plot-figure"><span>Initial MDS plot</span></a>) is the MDS values right after they are computed by
+Plink. There is one color per reference populations (CEU in blue, YRI in green
+and JPT-CHB in purple). The source population is represented as red crosses.</p>
+<div class="figure align-center" id="id1">
+<span id="mds-plot-figure"></span><a class="reference internal image-reference" href="_images/ethnicity_mds.png"><img alt="Initial MDS plot" src="_images/ethnicity_mds.png" style="width: 100%;" /></a>
+<p class="caption"><span class="caption-text">Initial MDS plot</span></p>
+</div>
+<p>The second one (Figure <a class="reference internal" href="#mds-plot-before-figure"><span>MDS plot before outlier detection</span></a>) is the MDS values before
+outlier detection. Points in red, green and blue represent the individuals part
+of the CEU, YRI and JPT-CHB clusters, respectively. The yellow points represent
+the center of each of the cluster, when only considering the three reference
+panels.</p>
+<div class="figure align-center" id="id2">
+<span id="mds-plot-before-figure"></span><a class="reference internal image-reference" href="_images/ethnicity_before.png"><img alt="MDS plot before" src="_images/ethnicity_before.png" style="width: 100%;" /></a>
+<p class="caption"><span class="caption-text">MDS plot before outlier detection</span></p>
+</div>
+<p>The third plot (Figure <a class="reference internal" href="#mds-plot-after-figure"><span>MDS plot after outlier detection</span></a>) is the MDS values after
+outlier detection. Points in red, green and blue represent the individuals part
+of the CEU, YRI and JPT-CHB clusters, respectively. Outliers are found for each
+of the three reference populations and they are represented with the same, but
+lighter color. Once again, the yellow points represent the center of each of the
+cluster, when only considering the three reference panels.</p>
+<div class="figure align-center" id="id3">
+<span id="mds-plot-after-figure"></span><a class="reference internal image-reference" href="_images/ethnicity_after.png"><img alt="MDS plot after" src="_images/ethnicity_after.png" style="width: 100%;" /></a>
+<p class="caption"><span class="caption-text">MDS plot after outlier detection</span></p>
+</div>
+<p>The last plot (Figure <a class="reference internal" href="#ethnicity-outliers-figure"><span>Ethnic outliers</span></a>) shows the outliers of
+the selected reference population (CEU by default). Red, green and blue
+represent the CEU, YRI and JPT-CHB samples, respectively. Orange represents the
+individuals from the source panel who are part of the selected reference
+population. Gray represents the outliers of the selected reference population.</p>
+<div class="figure align-center" id="id4">
+<span id="ethnicity-outliers-figure"></span><a class="reference internal image-reference" href="_images/ethnicity_outliers.png"><img alt="Ethnic outliers" src="_images/ethnicity_outliers.png" style="width: 100%;" /></a>
+<p class="caption"><span class="caption-text">Ethnic outliers</span></p>
+</div>
+<div class="section" id="modifying-the-outlier-plot">
+<h3>Modifying The Outlier Plot<a class="headerlink" href="#modifying-the-outlier-plot" title="Permalink to this headline">¶</a></h3>
+<p>If you want to manually modify the above figures, have a look at the
+<a class="reference internal" href="#module-pyGenClean.PlinkUtils.plot_MDS_standalone" title="pyGenClean.PlinkUtils.plot_MDS_standalone"><code class="xref py py-mod docutils literal"><span class="pre">pyGenClean.PlinkUtils.plot_MDS_standalone</span></code></a> module. Here is the usage
+of this script:</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> pyGenClean_plot_MDS --help
+<span class="go">usage: pyGenClean_plot_MDS [-h] --file FILE --population-file FORMAT</span>
+<span class="go">                           [--population-order STRING]</span>
+<span class="go">                           [--population-colors STRING]</span>
+<span class="go">                           [--population-sizes STRING]</span>
+<span class="go">                           [--population-markers STRING]</span>
+<span class="go">                           [--population-alpha STRING] [--format FORMAT]</span>
+<span class="go">                           [--title STRING] [--xaxis STRING] [--xlabel STRING]</span>
+<span class="go">                           [--yaxis STRING] [--ylabel STRING]</span>
+<span class="go">                           [--legend-position STRING] [--legend-size INT]</span>
+<span class="go">                           [--legend-ncol INT] [--legend-alpha FLOAT]</span>
+<span class="go">                           [--title-fontsize INT] [--label-fontsize INT]</span>
+<span class="go">                           [--axis-fontsize INT] [--adjust-left FLOAT]</span>
+<span class="go">                           [--adjust-right FLOAT] [--adjust-top FLOAT]</span>
+<span class="go">                           [--adjust-bottom FLOAT] [--out FILE]</span>
+
+<span class="go">Creates a MDS plot</span>
+
+<span class="go">optional arguments:</span>
+<span class="go">  -h, --help            show this help message and exit</span>
+
+<span class="go">Input File:</span>
+<span class="go">  --file FILE           The MBS file.</span>
+<span class="go">  --population-file FORMAT</span>
+<span class="go">                        A file containing population information. There must</span>
+<span class="go">                        be three columns: famID, indID and population</span>
+<span class="go">                        information.</span>
+
+<span class="go">Population Properties:</span>
+<span class="go">  --population-order STRING</span>
+<span class="go">                        The order to print the different populations.</span>
+<span class="go">                        [default: CEU,YRI,JPT-CHB,SOURCE,OUTLIER]</span>
+<span class="go">  --population-colors STRING</span>
+<span class="go">                        The population point color in the plot [default:</span>
+<span class="go">                        377eb8,4daf4a,984ea3,e41a1c,ff7f00]</span>
+<span class="go">  --population-sizes STRING</span>
+<span class="go">                        The population point size in the plot. [default:</span>
+<span class="go">                        12,12,12,8,3]</span>
+<span class="go">  --population-markers STRING</span>
+<span class="go">                        The population point marker in the plot. [default:</span>
+<span class="go">                        .,.,.,+,D]</span>
+<span class="go">  --population-alpha STRING</span>
+<span class="go">                        The population alpha value in the plot. [default:</span>
+<span class="go">                        1.0,1.0,1.0,1.0,1.0]</span>
+
+<span class="go">Graphical Properties:</span>
+<span class="go">  --format FORMAT       The output file format (png, ps, pdf, or X11 formats</span>
+<span class="go">                        are available). [default: png]</span>
+<span class="go">  --title STRING        The title of the MDS plot. [default: C2 in function of</span>
+<span class="go">                        C1 - MDS]</span>
+<span class="go">  --xaxis STRING        The component to print on the X axis. [default: C1]</span>
+<span class="go">  --xlabel STRING       The label of the X axis. [default: C1]</span>
+<span class="go">  --yaxis STRING        The component to print on the Y axis. [default: C2]</span>
+<span class="go">  --ylabel STRING       The label of the Y axis. [default: C2]</span>
+<span class="go">  --legend-position STRING</span>
+<span class="go">                        The position of the legend. [default: best]</span>
+<span class="go">  --legend-size INT     The size of the legend. [default: 10]</span>
+<span class="go">  --legend-ncol INT     The number of column for the legend. [default: 1]</span>
+<span class="go">  --legend-alpha FLOAT  The alpha value of the legend frame. [default: 1.0]</span>
+<span class="go">  --title-fontsize INT  The font size of the title. [default: 15]</span>
+<span class="go">  --label-fontsize INT  The font size of the X and Y labels. [default: 12]</span>
+<span class="go">  --axis-fontsize INT   The font size of the X and Y axis. [Default: 12]</span>
+<span class="go">  --adjust-left FLOAT   Adjust the left margin. [Default: 0.12]</span>
+<span class="go">  --adjust-right FLOAT  Adjust the right margin. [Default: 0.90]</span>
+<span class="go">  --adjust-top FLOAT    Adjust the top margin. [Default: 0.90]</span>
+<span class="go">  --adjust-bottom FLOAT</span>
+<span class="go">                        Adjust the bottom margin. [Default: 0.10]</span>
+
+<span class="go">Output File:</span>
+<span class="go">  --out FILE            The prefix of the output files. [default: mds]</span>
+</pre></div>
+</div>
+<p>And here is an example of usage (for a MDS and a population file named
+<code class="docutils literal"><span class="pre">ethnicity.mds.mds</span></code> and <code class="docutils literal"><span class="pre">ethnicity.population_file_outliers</span></code>, respectively),
+producing the Figure <a class="reference internal" href="#ethnicity-outliers-modified-figure"><span>Ethnic outliers modified</span></a>.</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> pyGenClean_plot_MDS <span class="se">\</span>
+<span class="gp">&gt;</span>     --file ethnicity.mds.mds <span class="se">\</span>
+<span class="gp">&gt;</span>     --population-file ethnicity.population_file_outliers <span class="se">\</span>
+<span class="gp">&gt;</span>     --population-order SOURCE,CEU,YRI,JPT-CHB,OUTLIER <span class="se">\</span>
+<span class="gp">&gt;</span>     --population-colors e41a1c,377eb8,4daf4a,984ea3,000000 <span class="se">\</span>
+<span class="gp">&gt;</span>     --population-markers .,.,.,.,+ <span class="se">\</span>
+<span class="gp">&gt;</span>     --population-sizes 8,8,8,8,8 <span class="se">\</span>
+<span class="gp">&gt;</span>     --axis-fontsize <span class="m">18</span> <span class="se">\</span>
+<span class="gp">&gt;</span>     --label-fontsize <span class="m">18</span> <span class="se">\</span>
+<span class="gp">&gt;</span>     --title-fontsize <span class="m">24</span> <span class="se">\</span>
+<span class="gp">&gt;</span>     --adjust-bottom 0.11 <span class="se">\</span>
+<span class="gp">&gt;</span>     --adjust-left 0.15 <span class="se">\</span>
+<span class="gp">&gt;</span>     --adjust-right 0.96 <span class="se">\</span>
+<span class="gp">&gt;</span>     --legend-size <span class="m">14</span> <span class="se">\</span>
+<span class="gp">&gt;</span>     --legend-position lower-right
+</pre></div>
+</div>
+<div class="figure align-center" id="id5">
+<span id="ethnicity-outliers-modified-figure"></span><a class="reference internal image-reference" href="_images/ethnicity_outliers_modified.png"><img alt="Ethnic outliers modified" src="_images/ethnicity_outliers_modified.png" style="width: 100%;" /></a>
+<p class="caption"><span class="caption-text">Ethnic outliers modified</span></p>
+</div>
+</div>
+</div>
+<div class="section" id="finding-outliers">
+<span id="ethnicity-find-outliers"></span><h2>Finding Outliers<a class="headerlink" href="#finding-outliers" title="Permalink to this headline">¶</a></h2>
+<p>If the multiplier of the cluster standard deviation was too stringent (or not
+stringent enough), there is no need to run the module from the start. A
+standalone script was created for this exact purpose, and it will find the
+outliers using the <code class="docutils literal"><span class="pre">MDS</span></code> and population file previously created. Just modify
+the <code class="docutils literal"><span class="pre">--multiplier</span></code> option and restart the analysis (which takes about a couple
+of seconds).</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> pyGenClean_find_outliers --help
+<span class="go">usage: pyGenClean_find_outliers [-h] --mds FILE --population-file FILE</span>
+<span class="go">                                [--outliers-of POP] [--multiplier FLOAT]</span>
+<span class="go">                                [--xaxis COMPONENT] [--yaxis COMPONENT]</span>
+<span class="go">                                [--format FORMAT] [--out FILE]</span>
+
+<span class="go">Finds outliers in SOURCE from CEU samples.</span>
+
+<span class="go">optional arguments:</span>
+<span class="go">  -h, --help            show this help message and exit</span>
+
+<span class="go">Input File:</span>
+<span class="go">  --mds FILE            The MDS file from Plink</span>
+<span class="go">  --population-file FILE</span>
+<span class="go">                        A population file containing the following columns</span>
+<span class="go">                        (without a header): FID, IID and POP. POP should be</span>
+<span class="go">                        one of &#39;CEU&#39;, &#39;JPT-CHB&#39;, &#39;YRI&#39; and SOURCE.</span>
+
+<span class="go">Options:</span>
+<span class="go">  --outliers-of POP     Finds the outliers of this population. [default: CEU]</span>
+<span class="go">  --multiplier FLOAT    To find the outliers, we look for more than x times</span>
+<span class="go">                        the cluster standard deviation. [default: 1.9]</span>
+<span class="go">  --xaxis COMPONENT     The component to use for the X axis. [default: C1]</span>
+<span class="go">  --yaxis COMPONENT     The component to use for the Y axis. [default: C2]</span>
+<span class="go">  --format FORMAT       The output file format (png, ps, or pdf formats are</span>
+<span class="go">                        available). [default: png]</span>
+
+<span class="go">Output File:</span>
+<span class="go">  --out FILE            The prefix of the output files. [default: ethnicity]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="the-algorithm">
+<h2>The Algorithm<a class="headerlink" href="#the-algorithm" title="Permalink to this headline">¶</a></h2>
+<p>For more information about the actual algorithms and source codes (the
+<a class="reference internal" href="#module-pyGenClean.Ethnicity.check_ethnicity" title="pyGenClean.Ethnicity.check_ethnicity"><code class="xref py py-mod docutils literal"><span class="pre">pyGenClean.Ethnicity.check_ethnicity</span></code></a>, the
+<a class="reference internal" href="#module-pyGenClean.Ethnicity.find_outliers" title="pyGenClean.Ethnicity.find_outliers"><code class="xref py py-mod docutils literal"><span class="pre">pyGenClean.Ethnicity.find_outliers</span></code></a> and the
+<a class="reference internal" href="#module-pyGenClean.PlinkUtils.plot_MDS_standalone" title="pyGenClean.PlinkUtils.plot_MDS_standalone"><code class="xref py py-mod docutils literal"><span class="pre">pyGenClean.PlinkUtils.plot_MDS_standalone</span></code></a> modules), refer to the
+following sections.</p>
+<div class="section" id="module-pyGenClean.Ethnicity.check_ethnicity">
+<span id="pygenclean-ethnicity-check-ethnicity"></span><h3>pyGenClean.Ethnicity.check_ethnicity<a class="headerlink" href="#module-pyGenClean.Ethnicity.check_ethnicity" title="Permalink to this headline">¶</a></h3>
+<dl class="exception">
+<dt id="pyGenClean.Ethnicity.check_ethnicity.ProgramError">
+<em class="property">exception </em><code class="descclassname">pyGenClean.Ethnicity.check_ethnicity.</code><code class="descname">ProgramError</code><span class="sig-paren">(</span><em>msg</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/Ethnicity/check_ethnicity.html#ProgramError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.Ethnicity.check_ethnicity.ProgramError" title="Permalink to this definition">¶</a></dt>
+<dd><p>An <code class="xref py py-class docutils literal"><span class="pre">Exception</span></code> raised in case of a problem.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>msg</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the message to print to the user before exiting.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.Ethnicity.check_ethnicity.allFileExists">
+<code class="descclassname">pyGenClean.Ethnicity.check_ethnicity.</code><code class="descname">allFileExists</code><span class="sig-paren">(</span><em>fileList</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/Ethnicity/check_ethnicity.html#allFileExists"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.Ethnicity.check_ethnicity.allFileExists" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check that all file exists.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>fileList</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; the list of file to check.</td>
+</tr>
+</tbody>
+</table>
+<p>Check if all the files in <code class="docutils literal"><span class="pre">fileList</span></code> exists.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.Ethnicity.check_ethnicity.checkArgs">
+<code class="descclassname">pyGenClean.Ethnicity.check_ethnicity.</code><code class="descname">checkArgs</code><span class="sig-paren">(</span><em>args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/Ethnicity/check_ethnicity.html#checkArgs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.Ethnicity.check_ethnicity.checkArgs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks the arguments and options.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>args</strong> (<a class="reference external" href="http://docs.python.org/library/argparse.html#argparse.Namespace" title="(in Python v2.7)"><em>argparse.Namespace</em></a>) &#8211; an object containing the options of the program.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><code class="docutils literal"><span class="pre">True</span></code> if everything was OK.</td>
+</tr>
+</tbody>
+</table>
+<p>If there is a problem with an option, an exception is raised using the
+<a class="reference internal" href="#pyGenClean.Ethnicity.check_ethnicity.ProgramError" title="pyGenClean.Ethnicity.check_ethnicity.ProgramError"><code class="xref py py-class docutils literal"><span class="pre">ProgramError</span></code></a> class, a message is printed to the
+<code class="xref py py-class docutils literal"><span class="pre">sys.stderr</span></code> and the program exists with code 1.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.Ethnicity.check_ethnicity.combinePlinkBinaryFiles">
+<code class="descclassname">pyGenClean.Ethnicity.check_ethnicity.</code><code class="descname">combinePlinkBinaryFiles</code><span class="sig-paren">(</span><em>prefixes</em>, <em>outPrefix</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/Ethnicity/check_ethnicity.html#combinePlinkBinaryFiles"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.Ethnicity.check_ethnicity.combinePlinkBinaryFiles" title="Permalink to this definition">¶</a></dt>
+<dd><p>Combine Plink binary files.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>prefixes</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; a list of the prefix of the files that need to be
+combined.</li>
+<li><strong>outPrefix</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the prefix of the output file (the combined file).</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>It uses Plink to merge a list of binary files (which is a list of prefixes
+(strings)), and create the final data set which as <code class="docutils literal"><span class="pre">outPrefix</span></code> as the
+prefix.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.Ethnicity.check_ethnicity.computeFrequency">
+<code class="descclassname">pyGenClean.Ethnicity.check_ethnicity.</code><code class="descname">computeFrequency</code><span class="sig-paren">(</span><em>prefix</em>, <em>outPrefix</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/Ethnicity/check_ethnicity.html#computeFrequency"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.Ethnicity.check_ethnicity.computeFrequency" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the frequency using Plink.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>prefix</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the prefix of the file binary file for which we need to
+compute frequencies.</li>
+<li><strong>outPrefix</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the prefix of the output files.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Uses Plink to compute the frequency of all the markers in the <code class="docutils literal"><span class="pre">prefix</span></code>
+binary file.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.Ethnicity.check_ethnicity.compute_eigenvalues">
+<code class="descclassname">pyGenClean.Ethnicity.check_ethnicity.</code><code class="descname">compute_eigenvalues</code><span class="sig-paren">(</span><em>in_prefix</em>, <em>out_prefix</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/Ethnicity/check_ethnicity.html#compute_eigenvalues"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.Ethnicity.check_ethnicity.compute_eigenvalues" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the Eigenvalues using smartpca from Eigensoft.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>in_prefix</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the prefix of the input files.</li>
+<li><strong>out_prefix</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the prefix of the output files.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Creates a &#8220;parameter file&#8221; used by smartpca and runs it.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.Ethnicity.check_ethnicity.createMDSFile">
+<code class="descclassname">pyGenClean.Ethnicity.check_ethnicity.</code><code class="descname">createMDSFile</code><span class="sig-paren">(</span><em>nb_components</em>, <em>inPrefix</em>, <em>outPrefix</em>, <em>genomeFileName</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/Ethnicity/check_ethnicity.html#createMDSFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.Ethnicity.check_ethnicity.createMDSFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a MDS file using Plink.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>nb_components</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; the number of component.</li>
+<li><strong>inPrefix</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the prefix of the input file.</li>
+<li><strong>outPrefix</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the prefix of the output file.</li>
+<li><strong>genomeFileName</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the name of the <code class="docutils literal"><span class="pre">genome</span></code> file.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Using Plink, computes the MDS values for each individual using the
+<code class="docutils literal"><span class="pre">inPrefix</span></code>, <code class="docutils literal"><span class="pre">genomeFileName</span></code> and the number of components. The results
+are save using the <code class="docutils literal"><span class="pre">outPrefix</span></code> prefix.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.Ethnicity.check_ethnicity.createPopulationFile">
+<code class="descclassname">pyGenClean.Ethnicity.check_ethnicity.</code><code class="descname">createPopulationFile</code><span class="sig-paren">(</span><em>inputFiles</em>, <em>labels</em>, <em>outputFileName</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/Ethnicity/check_ethnicity.html#createPopulationFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.Ethnicity.check_ethnicity.createPopulationFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a population file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>inputFiles</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; the list of input files.</li>
+<li><strong>labels</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; the list of labels (corresponding to the input files).</li>
+<li><strong>outputFileName</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the name of the output file.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>The <code class="docutils literal"><span class="pre">inputFiles</span></code> is in reality a list of <code class="docutils literal"><span class="pre">tfam</span></code> files composed of
+samples. For each of those <code class="docutils literal"><span class="pre">tfam</span></code> files, there is a label associated with
+it (representing the name of the population).</p>
+<p>The output file consists of one row per sample, with the following three
+columns: the family ID, the individual ID and the population of each
+sample.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.Ethnicity.check_ethnicity.create_scree_plot">
+<code class="descclassname">pyGenClean.Ethnicity.check_ethnicity.</code><code class="descname">create_scree_plot</code><span class="sig-paren">(</span><em>in_filename</em>, <em>out_filename</em>, <em>plot_title</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/Ethnicity/check_ethnicity.html#create_scree_plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.Ethnicity.check_ethnicity.create_scree_plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a scree plot using smartpca results.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>in_filename</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the name of the input file.</li>
+<li><strong>out_filename</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the name of the output file.</li>
+<li><strong>plot_title</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the title of the scree plot.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.Ethnicity.check_ethnicity.excludeSNPs">
+<code class="descclassname">pyGenClean.Ethnicity.check_ethnicity.</code><code class="descname">excludeSNPs</code><span class="sig-paren">(</span><em>inPrefix</em>, <em>outPrefix</em>, <em>exclusionFileName</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/Ethnicity/check_ethnicity.html#excludeSNPs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.Ethnicity.check_ethnicity.excludeSNPs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exclude some SNPs using Plink.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>inPrefix</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the prefix of the input file.</li>
+<li><strong>outPrefix</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the prefix of the output file.</li>
+<li><strong>exclusionFileName</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the name of the file containing the markers to be
+excluded.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Using Plink, exclude a list of markers from <code class="docutils literal"><span class="pre">inPrefix</span></code>, and saves the
+results in <code class="docutils literal"><span class="pre">outPrefix</span></code>. The list of markers are in <code class="docutils literal"><span class="pre">exclusionFileName</span></code>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.Ethnicity.check_ethnicity.extractSNPs">
+<code class="descclassname">pyGenClean.Ethnicity.check_ethnicity.</code><code class="descname">extractSNPs</code><span class="sig-paren">(</span><em>snpToExtractFileNames</em>, <em>referencePrefixes</em>, <em>popNames</em>, <em>outPrefix</em>, <em>runSGE</em>, <em>options</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/Ethnicity/check_ethnicity.html#extractSNPs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.Ethnicity.check_ethnicity.extractSNPs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extract a list of SNPs using Plink.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>snpToExtractFileNames</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; the name of the files which contains the
+markers to extract from the original data
+set.</li>
+<li><strong>referencePrefixes</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; a list containing the three reference population
+prefixes (the original data sets).</li>
+<li><strong>popNames</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; a list containing the three reference population names.</li>
+<li><strong>outPrefix</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the prefix of the output file.</li>
+<li><strong>runSGE</strong> (<em>boolean</em>) &#8211; Whether using SGE or not.</li>
+<li><strong>options</strong> (<a class="reference external" href="http://docs.python.org/library/argparse.html#argparse.Namespace" title="(in Python v2.7)"><em>argparse.Namespace</em></a>) &#8211; the options.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Using Plink, extract a set of markers from a list of prefixes.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.Ethnicity.check_ethnicity.findFlippedSNPs">
+<code class="descclassname">pyGenClean.Ethnicity.check_ethnicity.</code><code class="descname">findFlippedSNPs</code><span class="sig-paren">(</span><em>frqFile1</em>, <em>frqFile2</em>, <em>outPrefix</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/Ethnicity/check_ethnicity.html#findFlippedSNPs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.Ethnicity.check_ethnicity.findFlippedSNPs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find flipped SNPs and flip them in the data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>frqFile1</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the name of the first frequency file.</li>
+<li><strong>frqFile2</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the name of the second frequency file.</li>
+<li><strong>outPrefix</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the prefix of the output files.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>By reading two frequency files (<code class="docutils literal"><span class="pre">frqFile1</span></code> and <code class="docutils literal"><span class="pre">frqFile2</span></code>), it finds a
+list of markers that need to be flipped so that the first file becomes
+comparable with the second one. Also finds marker that need to be removed.</p>
+<p>A marker needs to be flipped in one of the two data set if the two markers
+are not comparable (same minor allele), but become comparable if we flip
+one of them.</p>
+<p>A marker will be removed if it is all homozygous in at least one data set.
+It will also be removed if it&#8217;s impossible to determine the phase of the
+marker (<em>e.g.</em> if the two alleles are <code class="docutils literal"><span class="pre">A</span></code> and <code class="docutils literal"><span class="pre">T</span></code> or <code class="docutils literal"><span class="pre">C</span></code> and <code class="docutils literal"><span class="pre">G</span></code>).</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.Ethnicity.check_ethnicity.findOverlappingSNPsWithReference">
+<code class="descclassname">pyGenClean.Ethnicity.check_ethnicity.</code><code class="descname">findOverlappingSNPsWithReference</code><span class="sig-paren">(</span><em>prefix</em>, <em>referencePrefixes</em>, <em>referencePopulations</em>, <em>outPrefix</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/Ethnicity/check_ethnicity.html#findOverlappingSNPsWithReference"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.Ethnicity.check_ethnicity.findOverlappingSNPsWithReference" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find the overlapping SNPs in 4 different data sets.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>prefix</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the prefix of all the files.</li>
+<li><strong>referencePrefixes</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; the prefix of the reference population files.</li>
+<li><strong>referencePopulations</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; the name of the reference population (same
+order as <code class="docutils literal"><span class="pre">referencePrefixes</span></code>)</li>
+<li><strong>outPrefix</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the prefix of the output files.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>It starts by reading the <code class="docutils literal"><span class="pre">bim</span></code> file of the source data set
+(<code class="docutils literal"><span class="pre">prefix.bim</span></code>). It finds all the markers (excluding the duplicated ones).
+Then it reads all of the reference population <code class="docutils literal"><span class="pre">bim</span></code> files
+(<code class="docutils literal"><span class="pre">referencePrefixes.bim</span></code>) and find all the markers that were found in the
+source data set.</p>
+<p>It creates three output files:</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">outPrefix.ref_snp_to_extract</span></code>: the name of the markers that needs to
+be extracted from the three reference panels.</li>
+<li><code class="docutils literal"><span class="pre">outPrefix.source_snp_to_extract</span></code>: the name of the markers that needs
+to be extracted from the source panel.</li>
+<li><code class="docutils literal"><span class="pre">outPrefix.update_names</span></code>: a file (readable by Plink) that will help in
+changing the names of the selected markers in the reference panels, so
+that they become comparable with the source panel.</li>
+</ul>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.Ethnicity.check_ethnicity.find_the_outliers">
+<code class="descclassname">pyGenClean.Ethnicity.check_ethnicity.</code><code class="descname">find_the_outliers</code><span class="sig-paren">(</span><em>mds_file_name</em>, <em>population_file_name</em>, <em>ref_pop_name</em>, <em>multiplier</em>, <em>out_prefix</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/Ethnicity/check_ethnicity.html#find_the_outliers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.Ethnicity.check_ethnicity.find_the_outliers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds the outliers of a given population.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>mds_file_name</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the name of the <code class="docutils literal"><span class="pre">mds</span></code> file.</li>
+<li><strong>population_file_name</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the name of the population file.</li>
+<li><strong>ref_pop_name</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the name of the reference population for which to find
+outliers from.</li>
+<li><strong>multiplier</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; the multiplier of the cluster standard deviation to
+modify the strictness of the outlier removal procedure.</li>
+<li><strong>out_prefix</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the prefix of the output file.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Uses the <a class="reference internal" href="#module-pyGenClean.Ethnicity.find_outliers" title="pyGenClean.Ethnicity.find_outliers"><code class="xref py py-mod docutils literal"><span class="pre">pyGenClean.Ethnicity.find_outliers</span></code></a> modules to find
+outliers. It requires the <code class="docutils literal"><span class="pre">mds</span></code> file created by <a class="reference internal" href="#pyGenClean.Ethnicity.check_ethnicity.createMDSFile" title="pyGenClean.Ethnicity.check_ethnicity.createMDSFile"><code class="xref py py-func docutils literal"><span class="pre">createMDSFile()</span></code></a>
+and the population file created by <a class="reference internal" href="#pyGenClean.Ethnicity.check_ethnicity.createPopulationFile" title="pyGenClean.Ethnicity.check_ethnicity.createPopulationFile"><code class="xref py py-func docutils literal"><span class="pre">createPopulationFile()</span></code></a>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.Ethnicity.check_ethnicity.flipSNPs">
+<code class="descclassname">pyGenClean.Ethnicity.check_ethnicity.</code><code class="descname">flipSNPs</code><span class="sig-paren">(</span><em>inPrefix</em>, <em>outPrefix</em>, <em>flipFileName</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/Ethnicity/check_ethnicity.html#flipSNPs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.Ethnicity.check_ethnicity.flipSNPs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Flip SNPs using Plink.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>inPrefix</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the prefix of the input file.</li>
+<li><strong>outPrefix</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the prefix of the output file.</li>
+<li><strong>flipFileName</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the name of the file containing the markers to flip.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Using Plink, flip a set of markers in <code class="docutils literal"><span class="pre">inPrefix</span></code>, and saves the results
+in <code class="docutils literal"><span class="pre">outPrefix</span></code>. The list of markers to be flipped is in <code class="docutils literal"><span class="pre">flipFileName</span></code>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.Ethnicity.check_ethnicity.main">
+<code class="descclassname">pyGenClean.Ethnicity.check_ethnicity.</code><code class="descname">main</code><span class="sig-paren">(</span><em>argString=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/Ethnicity/check_ethnicity.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.Ethnicity.check_ethnicity.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>The main function.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>argString</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; the options.</td>
+</tr>
+</tbody>
+</table>
+<p>These are the steps of this module:</p>
+<ol class="arabic simple">
+<li>Prints the options.</li>
+<li>Finds the overlapping markers between the three reference panels and
+the source panel (<a class="reference internal" href="#pyGenClean.Ethnicity.check_ethnicity.findOverlappingSNPsWithReference" title="pyGenClean.Ethnicity.check_ethnicity.findOverlappingSNPsWithReference"><code class="xref py py-func docutils literal"><span class="pre">findOverlappingSNPsWithReference()</span></code></a>).</li>
+<li>Extract the required markers from all the data sets
+(<a class="reference internal" href="#pyGenClean.Ethnicity.check_ethnicity.extractSNPs" title="pyGenClean.Ethnicity.check_ethnicity.extractSNPs"><code class="xref py py-func docutils literal"><span class="pre">extractSNPs()</span></code></a>).</li>
+<li>Renames the reference panel&#8217;s marker names to that they are the same as
+the source panel (for all populations) (<a class="reference internal" href="#pyGenClean.Ethnicity.check_ethnicity.renameSNPs" title="pyGenClean.Ethnicity.check_ethnicity.renameSNPs"><code class="xref py py-func docutils literal"><span class="pre">renameSNPs()</span></code></a>).</li>
+<li>Combines the three reference panels together
+(<a class="reference internal" href="#pyGenClean.Ethnicity.check_ethnicity.combinePlinkBinaryFiles" title="pyGenClean.Ethnicity.check_ethnicity.combinePlinkBinaryFiles"><code class="xref py py-func docutils literal"><span class="pre">combinePlinkBinaryFiles()</span></code></a>).</li>
+<li>Compute the frequency of all the markers from the reference and the
+source panels (<a class="reference internal" href="#pyGenClean.Ethnicity.check_ethnicity.computeFrequency" title="pyGenClean.Ethnicity.check_ethnicity.computeFrequency"><code class="xref py py-func docutils literal"><span class="pre">computeFrequency()</span></code></a>).</li>
+<li>Finds the markers to flip in the reference panel (when compared to the
+source panel) (<a class="reference internal" href="#pyGenClean.Ethnicity.check_ethnicity.findFlippedSNPs" title="pyGenClean.Ethnicity.check_ethnicity.findFlippedSNPs"><code class="xref py py-func docutils literal"><span class="pre">findFlippedSNPs()</span></code></a>).</li>
+<li>Excludes the unflippable markers from the reference and the source
+panels (<a class="reference internal" href="#pyGenClean.Ethnicity.check_ethnicity.excludeSNPs" title="pyGenClean.Ethnicity.check_ethnicity.excludeSNPs"><code class="xref py py-func docutils literal"><span class="pre">excludeSNPs()</span></code></a>).</li>
+<li>Flips the markers that need flipping in their reference panel
+(<a class="reference internal" href="#pyGenClean.Ethnicity.check_ethnicity.flipSNPs" title="pyGenClean.Ethnicity.check_ethnicity.flipSNPs"><code class="xref py py-func docutils literal"><span class="pre">flipSNPs()</span></code></a>).</li>
+<li>Combines the reference and the source panels
+(<a class="reference internal" href="#pyGenClean.Ethnicity.check_ethnicity.combinePlinkBinaryFiles" title="pyGenClean.Ethnicity.check_ethnicity.combinePlinkBinaryFiles"><code class="xref py py-func docutils literal"><span class="pre">combinePlinkBinaryFiles()</span></code></a>).</li>
+<li>Runs part of <a class="reference internal" href="find_related_samples.html#module-pyGenClean.RelatedSamples.find_related_samples" title="pyGenClean.RelatedSamples.find_related_samples"><code class="xref py py-mod docutils literal"><span class="pre">pyGenClean.RelatedSamples.find_related_samples</span></code></a>
+on the combined data set (<a class="reference internal" href="#pyGenClean.Ethnicity.check_ethnicity.runRelatedness" title="pyGenClean.Ethnicity.check_ethnicity.runRelatedness"><code class="xref py py-func docutils literal"><span class="pre">runRelatedness()</span></code></a>).</li>
+<li>Creates the <code class="docutils literal"><span class="pre">mds</span></code> file from the combined data set and the result of
+previous step (<a class="reference internal" href="#pyGenClean.Ethnicity.check_ethnicity.createMDSFile" title="pyGenClean.Ethnicity.check_ethnicity.createMDSFile"><code class="xref py py-func docutils literal"><span class="pre">createMDSFile()</span></code></a>).</li>
+<li>Creates the population file (<a class="reference internal" href="#pyGenClean.Ethnicity.check_ethnicity.createPopulationFile" title="pyGenClean.Ethnicity.check_ethnicity.createPopulationFile"><code class="xref py py-func docutils literal"><span class="pre">createPopulationFile()</span></code></a>).</li>
+<li>Plots the <code class="docutils literal"><span class="pre">mds</span></code> values (<a class="reference internal" href="#pyGenClean.Ethnicity.check_ethnicity.plotMDS" title="pyGenClean.Ethnicity.check_ethnicity.plotMDS"><code class="xref py py-func docutils literal"><span class="pre">plotMDS()</span></code></a>).</li>
+<li>Finds the outliers of a given reference population
+(<a class="reference internal" href="#pyGenClean.Ethnicity.check_ethnicity.find_the_outliers" title="pyGenClean.Ethnicity.check_ethnicity.find_the_outliers"><code class="xref py py-func docutils literal"><span class="pre">find_the_outliers()</span></code></a>).</li>
+<li>If required, computes the Eigenvalues using smartpca
+(<a class="reference internal" href="#pyGenClean.Ethnicity.check_ethnicity.compute_eigenvalues" title="pyGenClean.Ethnicity.check_ethnicity.compute_eigenvalues"><code class="xref py py-func docutils literal"><span class="pre">compute_eigenvalues()</span></code></a>).</li>
+<li>If required, creates a scree plot from smartpca resutls
+(<a class="reference internal" href="#pyGenClean.Ethnicity.check_ethnicity.create_scree_plot" title="pyGenClean.Ethnicity.check_ethnicity.create_scree_plot"><code class="xref py py-func docutils literal"><span class="pre">create_scree_plot()</span></code></a>).</li>
+</ol>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.Ethnicity.check_ethnicity.parseArgs">
+<code class="descclassname">pyGenClean.Ethnicity.check_ethnicity.</code><code class="descname">parseArgs</code><span class="sig-paren">(</span><em>argString=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/Ethnicity/check_ethnicity.html#parseArgs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.Ethnicity.check_ethnicity.parseArgs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parses the command line options and arguments.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>argString</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; the options.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A <a class="reference external" href="http://docs.python.org/library/argparse.html#argparse.Namespace" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">argparse.Namespace</span></code></a> object created by
+the <a class="reference external" href="http://docs.python.org/library/argparse.html#module-argparse" title="(in Python v2.7)"><code class="xref py py-mod docutils literal"><span class="pre">argparse</span></code></a> module. It contains the values of the
+different options.</td>
+</tr>
+</tbody>
+</table>
+<table border="1" class="docutils">
+<colgroup>
+<col width="37%" />
+<col width="8%" />
+<col width="55%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Options</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--bfile</span></code></td>
+<td>string</td>
+<td>The input file prefix (Plink binary
+file).</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--skip-ref-pops</span></code></td>
+<td>bool</td>
+<td>Perform the MDS computation, but skip
+the three reference panels.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--ceu-bfile</span></code></td>
+<td>string</td>
+<td>The input file prefix for the CEU
+population (Plink binary file).</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--yri-bfile</span></code></td>
+<td>string</td>
+<td>The input file prefix for the YRI
+population (Plink binary file).</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--jpt-chb-bfile</span></code></td>
+<td>string</td>
+<td>The input file prefix for the JPT-CHB
+population (Plink binary file).</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--min-nb-snp</span></code></td>
+<td>int</td>
+<td>The minimum number of markers needed to
+compute IBS.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--indep-pairwise</span></code></td>
+<td>string</td>
+<td>Three numbers: window size, window shift
+and the r2 threshold.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--maf</span></code></td>
+<td>string</td>
+<td>Restrict to SNPs with MAF &gt;= threshold.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--sge</span></code></td>
+<td>bool</td>
+<td>Use SGE for parallelization.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--sge-walltime</span></code></td>
+<td>int</td>
+<td>The time limit (for clusters).</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--sge-nodes</span></code></td>
+<td>int
+int</td>
+<td>Two INTs (number of nodes and number of
+processor per nodes).</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--ibs-sge-walltime</span></code></td>
+<td>int</td>
+<td>The time limit (for clusters) (for IBS)</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--ibs-sge-nodes</span></code></td>
+<td>int
+int</td>
+<td>Two INTs (number of nodes and number of
+processor per nodes) (for IBS).</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--line-per-file-for-sge</span></code></td>
+<td>int</td>
+<td>The number of line per file for SGE task
+array.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--nb-components</span></code></td>
+<td>int</td>
+<td>The number of component to compute.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--outliers-of</span></code></td>
+<td>string</td>
+<td>Finds the ouliers of this population.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--multiplier</span></code></td>
+<td>float</td>
+<td>To find the outliers, we look for more
+than x times the cluster standard
+deviation.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--xaxis</span></code></td>
+<td>string</td>
+<td>The component to use for the X axis.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--yaxis</span></code></td>
+<td>string</td>
+<td>The component to use for the Y axis.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--format</span></code></td>
+<td>string</td>
+<td>The output file format.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--title</span></code></td>
+<td>string</td>
+<td>The title of the MDS plot.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--xlabel</span></code></td>
+<td>string</td>
+<td>The label of the X axis.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--ylabel</span></code></td>
+<td>string</td>
+<td>The label of the Y axis.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--out</span></code></td>
+<td>string</td>
+<td>The prefix of the output files.</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">No option check is done here (except for the one automatically done by
+argparse). Those need to be done elsewhere (see <a class="reference internal" href="#pyGenClean.Ethnicity.check_ethnicity.checkArgs" title="pyGenClean.Ethnicity.check_ethnicity.checkArgs"><code class="xref py py-func docutils literal"><span class="pre">checkArgs()</span></code></a>).</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.Ethnicity.check_ethnicity.plotMDS">
+<code class="descclassname">pyGenClean.Ethnicity.check_ethnicity.</code><code class="descname">plotMDS</code><span class="sig-paren">(</span><em>inputFileName</em>, <em>outPrefix</em>, <em>populationFileName</em>, <em>options</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/Ethnicity/check_ethnicity.html#plotMDS"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.Ethnicity.check_ethnicity.plotMDS" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plots the MDS value.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>inputFileName</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the name of the <code class="docutils literal"><span class="pre">mds</span></code> file.</li>
+<li><strong>outPrefix</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the prefix of the output files.</li>
+<li><strong>populationFileName</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the name of the population file.</li>
+<li><strong>options</strong> (<a class="reference external" href="http://docs.python.org/library/argparse.html#argparse.Namespace" title="(in Python v2.7)"><em>argparse.Namespace</em></a>) &#8211; the options</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Plots the <code class="docutils literal"><span class="pre">mds</span></code> value according to the <code class="docutils literal"><span class="pre">inputFileName</span></code> file (<code class="docutils literal"><span class="pre">mds</span></code>)
+and the <code class="docutils literal"><span class="pre">populationFileName</span></code> (the population file).</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.Ethnicity.check_ethnicity.renameSNPs">
+<code class="descclassname">pyGenClean.Ethnicity.check_ethnicity.</code><code class="descname">renameSNPs</code><span class="sig-paren">(</span><em>inPrefix</em>, <em>updateFileName</em>, <em>outPrefix</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/Ethnicity/check_ethnicity.html#renameSNPs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.Ethnicity.check_ethnicity.renameSNPs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates the name of the SNPs using Plink.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>inPrefix</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the prefix of the input file.</li>
+<li><strong>updateFileName</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the name of the file containing the updated marker
+names.</li>
+<li><strong>outPrefix</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the prefix of the output file.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Using Plink, changes the name of the markers in <code class="docutils literal"><span class="pre">inPrefix</span></code> using
+<code class="docutils literal"><span class="pre">updateFileName</span></code>. It saves the results in <code class="docutils literal"><span class="pre">outPrefix</span></code>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.Ethnicity.check_ethnicity.runCommand">
+<code class="descclassname">pyGenClean.Ethnicity.check_ethnicity.</code><code class="descname">runCommand</code><span class="sig-paren">(</span><em>command</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/Ethnicity/check_ethnicity.html#runCommand"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.Ethnicity.check_ethnicity.runCommand" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run a command.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>command</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; the command to run.</td>
+</tr>
+</tbody>
+</table>
+<p>Tries to run a command. If it fails, raise a <a class="reference internal" href="#pyGenClean.Ethnicity.check_ethnicity.ProgramError" title="pyGenClean.Ethnicity.check_ethnicity.ProgramError"><code class="xref py py-class docutils literal"><span class="pre">ProgramError</span></code></a>. This
+function uses the <a class="reference external" href="http://docs.python.org/library/subprocess.html#module-subprocess" title="(in Python v2.7)"><code class="xref py py-mod docutils literal"><span class="pre">subprocess</span></code></a> module.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">The variable <code class="docutils literal"><span class="pre">command</span></code> should be a list of strings (no other type).</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.Ethnicity.check_ethnicity.runRelatedness">
+<code class="descclassname">pyGenClean.Ethnicity.check_ethnicity.</code><code class="descname">runRelatedness</code><span class="sig-paren">(</span><em>inputPrefix</em>, <em>outPrefix</em>, <em>options</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/Ethnicity/check_ethnicity.html#runRelatedness"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.Ethnicity.check_ethnicity.runRelatedness" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run the relatedness step of the data clean up.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>inputPrefix</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the prefix of the input file.</li>
+<li><strong>outPrefix</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the prefix of the output file.</li>
+<li><strong>options</strong> (<a class="reference external" href="http://docs.python.org/library/argparse.html#argparse.Namespace" title="(in Python v2.7)"><em>argparse.Namespace</em></a>) &#8211; the options</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">the prefix of the new bfile.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Runs <a class="reference internal" href="find_related_samples.html#module-pyGenClean.RelatedSamples.find_related_samples" title="pyGenClean.RelatedSamples.find_related_samples"><code class="xref py py-mod docutils literal"><span class="pre">pyGenClean.RelatedSamples.find_related_samples</span></code></a> using the
+<code class="docutils literal"><span class="pre">inputPrefix</span></code> files and <code class="docutils literal"><span class="pre">options</span></code> options, and saves the results using
+the <code class="docutils literal"><span class="pre">outPrefix</span></code> prefix.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.Ethnicity.check_ethnicity.safe_main">
+<code class="descclassname">pyGenClean.Ethnicity.check_ethnicity.</code><code class="descname">safe_main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/Ethnicity/check_ethnicity.html#safe_main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.Ethnicity.check_ethnicity.safe_main" title="Permalink to this definition">¶</a></dt>
+<dd><p>A safe version of the main function (that catches ProgramError).</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyGenClean.Ethnicity.find_outliers">
+<span id="pygenclean-ethnicity-find-outliers"></span><h3>pyGenClean.Ethnicity.find_outliers<a class="headerlink" href="#module-pyGenClean.Ethnicity.find_outliers" title="Permalink to this headline">¶</a></h3>
+<dl class="exception">
+<dt id="pyGenClean.Ethnicity.find_outliers.ProgramError">
+<em class="property">exception </em><code class="descclassname">pyGenClean.Ethnicity.find_outliers.</code><code class="descname">ProgramError</code><span class="sig-paren">(</span><em>msg</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/Ethnicity/find_outliers.html#ProgramError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.Ethnicity.find_outliers.ProgramError" title="Permalink to this definition">¶</a></dt>
+<dd><p>An <code class="xref py py-class docutils literal"><span class="pre">Exception</span></code> raised in case of a problem.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>msg</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the message to print to the user before exiting.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.Ethnicity.find_outliers.add_custom_options">
+<code class="descclassname">pyGenClean.Ethnicity.find_outliers.</code><code class="descname">add_custom_options</code><span class="sig-paren">(</span><em>parser</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/Ethnicity/find_outliers.html#add_custom_options"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.Ethnicity.find_outliers.add_custom_options" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds custom options to a parser.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>parser</strong> (<a class="reference external" href="http://docs.python.org/library/argparse.html#argparse.ArgumentParser" title="(in Python v2.7)"><em>argparse.ArgumentParser</em></a>) &#8211; the parser to which to add options.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.Ethnicity.find_outliers.checkArgs">
+<code class="descclassname">pyGenClean.Ethnicity.find_outliers.</code><code class="descname">checkArgs</code><span class="sig-paren">(</span><em>args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/Ethnicity/find_outliers.html#checkArgs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.Ethnicity.find_outliers.checkArgs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks the arguments and options.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>args</strong> (<a class="reference external" href="http://docs.python.org/library/argparse.html#argparse.Namespace" title="(in Python v2.7)"><em>argparse.Namespace</em></a>) &#8211; a <a class="reference external" href="http://docs.python.org/library/argparse.html#argparse.Namespace" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">argparse.Namespace</span></code></a> object containing the options
+of the program.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><code class="docutils literal"><span class="pre">True</span></code> if everything was OK.</td>
+</tr>
+</tbody>
+</table>
+<p>If there is a problem with an option, an exception is raised using the
+<a class="reference internal" href="#pyGenClean.Ethnicity.find_outliers.ProgramError" title="pyGenClean.Ethnicity.find_outliers.ProgramError"><code class="xref py py-class docutils literal"><span class="pre">ProgramError</span></code></a> class, a message is printed to the
+<code class="xref py py-class docutils literal"><span class="pre">sys.stderr</span></code> and the program exists with code 1.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.Ethnicity.find_outliers.find_outliers">
+<code class="descclassname">pyGenClean.Ethnicity.find_outliers.</code><code class="descname">find_outliers</code><span class="sig-paren">(</span><em>mds</em>, <em>centers</em>, <em>center_info</em>, <em>ref_pop</em>, <em>options</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/Ethnicity/find_outliers.html#find_outliers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.Ethnicity.find_outliers.find_outliers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds the outliers for a given population.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>mds</strong> (<a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.recarray.html#numpy.recarray" title="(in NumPy v1.9)"><em>numpy.recarray</em></a>) &#8211; the <code class="docutils literal"><span class="pre">mds</span></code> information about each samples.</li>
+<li><strong>centers</strong> (<a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.array.html#numpy.array" title="(in NumPy v1.9)"><em>numpy.array</em></a>) &#8211; the centers of the three reference population clusters.</li>
+<li><strong>center_info</strong> (<a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) &#8211; the label of the three reference population clusters.</li>
+<li><strong>ref_pop</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the reference population for which we need the outliers
+from.</li>
+<li><strong>options</strong> (<a class="reference external" href="http://docs.python.org/library/argparse.html#argparse.Namespace" title="(in Python v2.7)"><em>argparse.Namespace</em></a>) &#8211; the options</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">a <a class="reference external" href="http://docs.python.org/library/stdtypes.html#set" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">set</span></code></a> of outliers from the <code class="docutils literal"><span class="pre">ref_pop</span></code> population.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Perform a <code class="docutils literal"><span class="pre">KMeans</span></code> classification using the three centers from the three
+reference population cluster.</p>
+<p>Samples are outliers of the required reference population (<code class="docutils literal"><span class="pre">ref_pop</span></code>) if:</p>
+<ul class="simple">
+<li>the sample is part of another reference population cluster;</li>
+<li>the sample is an outlier of the desired reference population
+(<code class="docutils literal"><span class="pre">ref_pop</span></code>).</li>
+</ul>
+<p>A sample is an outlier of a given cluster <span class="math">\(C_j\)</span> if the distance
+between this sample and the center of the cluster <span class="math">\(C_j\)</span> (<span class="math">\(O_j\)</span>)
+is bigger than a constant times the cluster&#8217;s standard deviation
+<span class="math">\(\sigma_j\)</span>.</p>
+<div class="math">
+\[\sigma_j = \sqrt{\frac{\sum{d(s_i,O_j)^2}}{||C_j|| - 1}}\]</div>
+<p>where <span class="math">\(||C_j||\)</span> is the number of samples in the cluster <span class="math">\(C_j\)</span>,
+and <span class="math">\(d(s_i,O_j)\)</span> is the distance between the sample <span class="math">\(s_i\)</span> and
+the center <span class="math">\(O_j\)</span> of the cluster <span class="math">\(C_j\)</span>.</p>
+<div class="math">
+\[d(s_i, O_j) = \sqrt{(x_{O_j} - x_{s_i})^2 + (y_{O_j} - y_{s_i})^2}\]</div>
+<p>Using a constant equals to one ensure we remove 100% of the outliers from
+the cluster. Using a constant of 1.6 or 1.9 ensures we remove 99% and 95%
+of outliers, respectively (an error rate of 1% and 5%, respectively).</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.Ethnicity.find_outliers.find_ref_centers">
+<code class="descclassname">pyGenClean.Ethnicity.find_outliers.</code><code class="descname">find_ref_centers</code><span class="sig-paren">(</span><em>mds</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/Ethnicity/find_outliers.html#find_ref_centers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.Ethnicity.find_outliers.find_ref_centers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds the center of the three reference clusters.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>mds</strong> (<a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.recarray.html#numpy.recarray" title="(in NumPy v1.9)"><em>numpy.recarray</em></a>) &#8211; the <code class="docutils literal"><span class="pre">mds</span></code> information about each samples.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">a tuple with a <code class="xref py py-class docutils literal"><span class="pre">numpy.array</span></code> containing the centers of
+the three reference population cluster as first element, and a
+<a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">dict</span></code></a> containing the label of each of the three
+reference population clusters.</td>
+</tr>
+</tbody>
+</table>
+<p>First, we extract the <code class="docutils literal"><span class="pre">mds</span></code> values of each of the three reference
+populations. The, we compute the center of each of those clusters by
+computing the means.</p>
+<div class="math">
+\[\textrm{Cluster}_\textrm{pop} = \left(
+    \frac{\sum_{i=1}^n x_i}{n}, \frac{\sum_{i=1}^n y_i}{n}
+\right)\]</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.Ethnicity.find_outliers.main">
+<code class="descclassname">pyGenClean.Ethnicity.find_outliers.</code><code class="descname">main</code><span class="sig-paren">(</span><em>argString=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/Ethnicity/find_outliers.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.Ethnicity.find_outliers.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>The main function.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>argString</strong> (<em>list of strings</em>) &#8211; the options.</td>
+</tr>
+</tbody>
+</table>
+<p>These are the steps of the modules:</p>
+<ol class="arabic simple">
+<li>Prints the options.</li>
+<li>Reads the population file (<a class="reference internal" href="#pyGenClean.Ethnicity.find_outliers.read_population_file" title="pyGenClean.Ethnicity.find_outliers.read_population_file"><code class="xref py py-func docutils literal"><span class="pre">read_population_file()</span></code></a>).</li>
+<li>Reads the <code class="docutils literal"><span class="pre">mds</span></code> file (<a class="reference internal" href="#pyGenClean.Ethnicity.find_outliers.read_mds_file" title="pyGenClean.Ethnicity.find_outliers.read_mds_file"><code class="xref py py-func docutils literal"><span class="pre">read_mds_file()</span></code></a>).</li>
+<li>Computes the three reference population clusters&#8217; centers
+(<a class="reference internal" href="#pyGenClean.Ethnicity.find_outliers.find_ref_centers" title="pyGenClean.Ethnicity.find_outliers.find_ref_centers"><code class="xref py py-func docutils literal"><span class="pre">find_ref_centers()</span></code></a>).</li>
+<li>Computes three clusters according to the reference population clusters&#8217;
+centers, and finds the outliers of a given reference population
+(<a class="reference internal" href="#pyGenClean.Ethnicity.find_outliers.find_outliers" title="pyGenClean.Ethnicity.find_outliers.find_outliers"><code class="xref py py-func docutils literal"><span class="pre">find_outliers()</span></code></a>). This steps also produce three different
+plots.</li>
+<li>Writes outliers in a file (<code class="docutils literal"><span class="pre">prefix.outliers</span></code>).</li>
+</ol>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.Ethnicity.find_outliers.parseArgs">
+<code class="descclassname">pyGenClean.Ethnicity.find_outliers.</code><code class="descname">parseArgs</code><span class="sig-paren">(</span><em>argString=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/Ethnicity/find_outliers.html#parseArgs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.Ethnicity.find_outliers.parseArgs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parses the command line options and arguments.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>argString</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; the options.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A <a class="reference external" href="http://docs.python.org/library/argparse.html#argparse.Namespace" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">argparse.Namespace</span></code></a> object created by the
+<a class="reference external" href="http://docs.python.org/library/argparse.html#module-argparse" title="(in Python v2.7)"><code class="xref py py-mod docutils literal"><span class="pre">argparse</span></code></a> module. It contains the values of the
+different options.</td>
+</tr>
+</tbody>
+</table>
+<table border="1" class="docutils">
+<colgroup>
+<col width="29%" />
+<col width="8%" />
+<col width="63%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Options</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--mds</span></code></td>
+<td>string</td>
+<td>The MDS file from Plink.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--population-file</span></code></td>
+<td>string</td>
+<td>A population file from
+<a class="reference internal" href="#module-pyGenClean.Ethnicity.check_ethnicity" title="pyGenClean.Ethnicity.check_ethnicity"><code class="xref py py-mod docutils literal"><span class="pre">pyGenClean.Ethnicity.check_ethnicity</span></code></a>
+module.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--format</span></code></td>
+<td>string</td>
+<td>The output file format (png, ps, or pdf.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--out</span></code></td>
+<td>string</td>
+<td>The prefix of the output files.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--outliers-of</span></code></td>
+<td>string</td>
+<td>Finds the outliers of this population.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--multiplier</span></code></td>
+<td>float</td>
+<td>To find the outliers, we look for more than
+<span class="math">\(x\)</span> times the cluster standard
+deviation.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--xaxis</span></code></td>
+<td>string</td>
+<td>The component to use for the X axis.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--yaxis</span></code></td>
+<td>string</td>
+<td>The component to use for the Y axis.</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">No option check is done here (except for the one automatically done by
+argparse). Those need to be done elsewhere (see <a class="reference internal" href="#pyGenClean.Ethnicity.find_outliers.checkArgs" title="pyGenClean.Ethnicity.find_outliers.checkArgs"><code class="xref py py-func docutils literal"><span class="pre">checkArgs()</span></code></a>).</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.Ethnicity.find_outliers.read_mds_file">
+<code class="descclassname">pyGenClean.Ethnicity.find_outliers.</code><code class="descname">read_mds_file</code><span class="sig-paren">(</span><em>file_name</em>, <em>c1</em>, <em>c2</em>, <em>pops</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/Ethnicity/find_outliers.html#read_mds_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.Ethnicity.find_outliers.read_mds_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads a MDS file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>file_name</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the name of the <code class="docutils literal"><span class="pre">mds</span></code> file.</li>
+<li><strong>c1</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the first component to read (x axis).</li>
+<li><strong>c2</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the second component to read (y axis).</li>
+<li><strong>pops</strong> (<a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) &#8211; the population of each sample.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">a <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.recarray.html#numpy.recarray" title="(in NumPy v1.9)"><code class="xref py py-class docutils literal"><span class="pre">numpy.recarray</span></code></a> (one sample per line) with the
+information about the family ID, the individual ID, the first
+component to extract, the second component to extract and the
+population.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>The <code class="docutils literal"><span class="pre">mds</span></code> file is the result of Plink (as produced by the
+<a class="reference internal" href="#module-pyGenClean.Ethnicity.check_ethnicity" title="pyGenClean.Ethnicity.check_ethnicity"><code class="xref py py-mod docutils literal"><span class="pre">pyGenClean.Ethnicity.check_ethnicity</span></code></a> module).</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.Ethnicity.find_outliers.read_population_file">
+<code class="descclassname">pyGenClean.Ethnicity.find_outliers.</code><code class="descname">read_population_file</code><span class="sig-paren">(</span><em>file_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/Ethnicity/find_outliers.html#read_population_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.Ethnicity.find_outliers.read_population_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads the population file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>file_name</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the name of the population file.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">a <a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">dict</span></code></a> containing the population for each of the
+samples.</td>
+</tr>
+</tbody>
+</table>
+<p>The population file should contain three columns:</p>
+<ol class="arabic simple">
+<li>The family ID.</li>
+<li>The individual ID.</li>
+<li>The population of the file (one of <code class="docutils literal"><span class="pre">CEU</span></code>, <code class="docutils literal"><span class="pre">YRI</span></code>, <code class="docutils literal"><span class="pre">JPT-CHB</span></code> or
+<code class="docutils literal"><span class="pre">SOURCE</span></code>).</li>
+</ol>
+<p>The outliers are from the <code class="docutils literal"><span class="pre">SOURCE</span></code> population, when compared to one of
+the three reference population (<code class="docutils literal"><span class="pre">CEU</span></code>, <code class="docutils literal"><span class="pre">YRI</span></code> or <code class="docutils literal"><span class="pre">JPT-CHB</span></code>).</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.Ethnicity.find_outliers.safe_main">
+<code class="descclassname">pyGenClean.Ethnicity.find_outliers.</code><code class="descname">safe_main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/Ethnicity/find_outliers.html#safe_main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.Ethnicity.find_outliers.safe_main" title="Permalink to this definition">¶</a></dt>
+<dd><p>A safe version of the main function (that catches ProgramError).</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyGenClean.PlinkUtils.plot_MDS_standalone">
+<span id="pygenclean-plinkutils-plot-mds-standalone"></span><h3>pyGenClean.PlinkUtils.plot_MDS_standalone<a class="headerlink" href="#module-pyGenClean.PlinkUtils.plot_MDS_standalone" title="Permalink to this headline">¶</a></h3>
+<dl class="exception">
+<dt id="pyGenClean.PlinkUtils.plot_MDS_standalone.ProgramError">
+<em class="property">exception </em><code class="descclassname">pyGenClean.PlinkUtils.plot_MDS_standalone.</code><code class="descname">ProgramError</code><span class="sig-paren">(</span><em>msg</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/PlinkUtils/plot_MDS_standalone.html#ProgramError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.PlinkUtils.plot_MDS_standalone.ProgramError" title="Permalink to this definition">¶</a></dt>
+<dd><p>An <code class="xref py py-class docutils literal"><span class="pre">Exception</span></code> raised in case of a problem.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>msg</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the message to print to the user before exiting.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.PlinkUtils.plot_MDS_standalone.checkArgs">
+<code class="descclassname">pyGenClean.PlinkUtils.plot_MDS_standalone.</code><code class="descname">checkArgs</code><span class="sig-paren">(</span><em>args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/PlinkUtils/plot_MDS_standalone.html#checkArgs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.PlinkUtils.plot_MDS_standalone.checkArgs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks the arguments and options.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>args</strong> (<a class="reference external" href="http://docs.python.org/library/argparse.html#argparse.Namespace" title="(in Python v2.7)"><em>argparse.Namespace</em></a>) &#8211; an object containing the options of the program.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><code class="docutils literal"><span class="pre">True</span></code> if everything was OK.</td>
+</tr>
+</tbody>
+</table>
+<p>If there is a problem with an option, an exception is raised using the
+<a class="reference internal" href="#pyGenClean.PlinkUtils.plot_MDS_standalone.ProgramError" title="pyGenClean.PlinkUtils.plot_MDS_standalone.ProgramError"><code class="xref py py-class docutils literal"><span class="pre">ProgramError</span></code></a> class, a message is printed to the
+<code class="xref py py-class docutils literal"><span class="pre">sys.stderr</span></code> and the program exists with code 1.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.PlinkUtils.plot_MDS_standalone.extractData">
+<code class="descclassname">pyGenClean.PlinkUtils.plot_MDS_standalone.</code><code class="descname">extractData</code><span class="sig-paren">(</span><em>fileName</em>, <em>populations</em>, <em>population_order</em>, <em>xaxis</em>, <em>yaxis</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/PlinkUtils/plot_MDS_standalone.html#extractData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.PlinkUtils.plot_MDS_standalone.extractData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extract the C1 and C2 columns for plotting.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>fileName</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the name of the MDS file.</li>
+<li><strong>populations</strong> (<a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) &#8211; the population of each sample in the MDS file.</li>
+<li><strong>population_order</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; the required population order.</li>
+<li><strong>xaxis</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the component to print as the X axis.</li>
+<li><strong>yaxis</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the component to print as the Y axis.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">the MDS data with information about the population of each
+sample. The first element of the returned tuple is a tuple. The
+last element of the returned tuple is the list of the populations
+(the order is the same as in the first element). The first
+element of the first tuple is the C1 data, and the last element
+is the C2 data.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If a sample in the MDS file is not in the population file, it is skip.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.PlinkUtils.plot_MDS_standalone.main">
+<code class="descclassname">pyGenClean.PlinkUtils.plot_MDS_standalone.</code><code class="descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/PlinkUtils/plot_MDS_standalone.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.PlinkUtils.plot_MDS_standalone.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>The main function of the module.</p>
+<p>These are the steps:</p>
+<ol class="arabic simple">
+<li>Reads the population file (<a class="reference internal" href="#pyGenClean.PlinkUtils.plot_MDS_standalone.readPopulations" title="pyGenClean.PlinkUtils.plot_MDS_standalone.readPopulations"><code class="xref py py-func docutils literal"><span class="pre">readPopulations()</span></code></a>).</li>
+<li>Extracts the MDS values (<a class="reference internal" href="#pyGenClean.PlinkUtils.plot_MDS_standalone.extractData" title="pyGenClean.PlinkUtils.plot_MDS_standalone.extractData"><code class="xref py py-func docutils literal"><span class="pre">extractData()</span></code></a>).</li>
+<li>Plots the MDS values (<a class="reference internal" href="#pyGenClean.PlinkUtils.plot_MDS_standalone.plotMDS" title="pyGenClean.PlinkUtils.plot_MDS_standalone.plotMDS"><code class="xref py py-func docutils literal"><span class="pre">plotMDS()</span></code></a>).</li>
+</ol>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.PlinkUtils.plot_MDS_standalone.parseArgs">
+<code class="descclassname">pyGenClean.PlinkUtils.plot_MDS_standalone.</code><code class="descname">parseArgs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/PlinkUtils/plot_MDS_standalone.html#parseArgs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.PlinkUtils.plot_MDS_standalone.parseArgs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parses the command line options and arguments.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A <a class="reference external" href="http://docs.python.org/library/argparse.html#argparse.Namespace" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">argparse.Namespace</span></code></a> object created by the
+<a class="reference external" href="http://docs.python.org/library/argparse.html#module-argparse" title="(in Python v2.7)"><code class="xref py py-mod docutils literal"><span class="pre">argparse</span></code></a> module. It contains the values of the
+different options.</td>
+</tr>
+</tbody>
+</table>
+<table border="1" class="docutils">
+<colgroup>
+<col width="34%" />
+<col width="8%" />
+<col width="58%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Options</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--file</span></code></td>
+<td>string</td>
+<td>The MBS file.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--population-file</span></code></td>
+<td>string</td>
+<td>A file containing population information.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--population-order</span></code></td>
+<td>string</td>
+<td>The order to print the different
+populations.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--population-colors</span></code></td>
+<td>string</td>
+<td>The population point color in the plot.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--population-sizes</span></code></td>
+<td>string</td>
+<td>The population point size in the plot.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--population-markers</span></code></td>
+<td>string</td>
+<td>The population point marker in the plot.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--population-alpha</span></code></td>
+<td>string</td>
+<td>The population alpha value in the plot.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--format</span></code></td>
+<td>string</td>
+<td>The output file format.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--title</span></code></td>
+<td>string</td>
+<td>The title of the MDS plot.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--xaxis</span></code></td>
+<td>string</td>
+<td>The component to print on the X axis.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--xlabel</span></code></td>
+<td>string</td>
+<td>The label of the X axis.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--yaxis</span></code></td>
+<td>string</td>
+<td>The component to print on the Y axis.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--ylabel</span></code></td>
+<td>string</td>
+<td>The label of the Y axis.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--legend-position</span></code></td>
+<td>string</td>
+<td>The position of the legend.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--legend-size</span></code></td>
+<td>int</td>
+<td>The size of the legend text.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--legend-ncol</span></code></td>
+<td>int</td>
+<td>The number of columns for the legend.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--legend-alpha</span></code></td>
+<td>float</td>
+<td>The alpha value of the legend.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--title-fontsize</span></code></td>
+<td>int</td>
+<td>The font size of the title.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--label-fontsize</span></code></td>
+<td>int</td>
+<td>The font size of the X and Y labels.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--axis-fontsize</span></code></td>
+<td>int</td>
+<td>The font size of the X and Y axis.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--adjust-left</span></code></td>
+<td>float</td>
+<td>Adjust the left margin.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--adjust-right</span></code></td>
+<td>float</td>
+<td>Adjust the right margin.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--adjust-top</span></code></td>
+<td>float</td>
+<td>Adjust the top margin.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--adjust-bottom</span></code></td>
+<td>float</td>
+<td>Adjust the bottom margin.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--out</span></code></td>
+<td>string</td>
+<td>The prefix of the output files.</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">No option check is done here (except for the one automatically done by
+argparse). Those need to be done elsewhere (see <a class="reference internal" href="#pyGenClean.PlinkUtils.plot_MDS_standalone.checkArgs" title="pyGenClean.PlinkUtils.plot_MDS_standalone.checkArgs"><code class="xref py py-func docutils literal"><span class="pre">checkArgs()</span></code></a>).</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.PlinkUtils.plot_MDS_standalone.plotMDS">
+<code class="descclassname">pyGenClean.PlinkUtils.plot_MDS_standalone.</code><code class="descname">plotMDS</code><span class="sig-paren">(</span><em>data</em>, <em>theOrders</em>, <em>theLabels</em>, <em>theColors</em>, <em>theAlphas</em>, <em>theSizes</em>, <em>theMarkers</em>, <em>options</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/PlinkUtils/plot_MDS_standalone.html#plotMDS"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.PlinkUtils.plot_MDS_standalone.plotMDS" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot the MDS data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>data</strong> (<em>list of numpy.array</em>) &#8211; the data to plot (MDS values).</li>
+<li><strong>theOrders</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; the order of the populations to plot.</li>
+<li><strong>theLabels</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; the names of the populations to plot.</li>
+<li><strong>theColors</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; the colors of the populations to plot.</li>
+<li><strong>theAlphas</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; the alpha value for the populations to plot.</li>
+<li><strong>theSizes</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; the sizes of the markers for each population to plot.</li>
+<li><strong>theMarkers</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; the type of marker for each population to plot.</li>
+<li><strong>options</strong> (<a class="reference external" href="http://docs.python.org/library/argparse.html#argparse.Namespace" title="(in Python v2.7)"><em>argparse.Namespace</em></a>) &#8211; the options.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.PlinkUtils.plot_MDS_standalone.readPopulations">
+<code class="descclassname">pyGenClean.PlinkUtils.plot_MDS_standalone.</code><code class="descname">readPopulations</code><span class="sig-paren">(</span><em>inputFileName</em>, <em>requiredPopulation</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/PlinkUtils/plot_MDS_standalone.html#readPopulations"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.PlinkUtils.plot_MDS_standalone.readPopulations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads a population file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>inputFileName</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the name of the population file.</li>
+<li><strong>requiredPopulation</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; the required population.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">a <a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">dict</span></code></a> containing the population of each samples.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.PlinkUtils.plot_MDS_standalone.safe_main">
+<code class="descclassname">pyGenClean.PlinkUtils.plot_MDS_standalone.</code><code class="descname">safe_main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/PlinkUtils/plot_MDS_standalone.html#safe_main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.PlinkUtils.plot_MDS_standalone.safe_main" title="Permalink to this definition">¶</a></dt>
+<dd><p>A safe version of the main function (that catches ProgramError).</p>
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="flag_maf_zero.html" title="Minor Allele Frequency of Zero Module"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="find_related_samples.html" title="Related Samples Module"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">pyGenClean 1.7.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2012, Louis-Philippe Lemieux Perreault.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+    </div>
+  </body>
+</html>

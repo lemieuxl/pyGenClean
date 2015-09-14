@@ -1,0 +1,201 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>How to Run the Pipeline &mdash; pyGenClean 1.7.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.7.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="pyGenClean 1.7.0 documentation" href="index.html" />
+    <link rel="next" title="The Data Clean Up Module" href="data_clean_up_module.html" />
+    <link rel="prev" title="Configuration Files" href="configuration_files.html" /> 
+  </head>
+  <body role="document">
+
+<div style="background-color: white; text-align: left; padding: 10px 10px 15px 15px">
+<a href="index.html"><img src="_static/logo.png" border="0" alt="py4sci"/></a>
+</div>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="data_clean_up_module.html" title="The Data Clean Up Module"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="configuration_files.html" title="Configuration Files"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">pyGenClean 1.7.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="configuration_files.html"
+                        title="previous chapter">Configuration Files</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="data_clean_up_module.html"
+                        title="next chapter">The Data Clean Up Module</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/how_to_run.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="how-to-run-the-pipeline">
+<span id="how-ro-run"></span><h1>How to Run the Pipeline<a class="headerlink" href="#how-to-run-the-pipeline" title="Permalink to this headline">¶</a></h1>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p>If you are working in a Linux environment, before doing anything, be sure to
+activate the Python virtual environment (refer to the
+<a class="reference internal" href="install_linux.html#python-virtual-environment-label"><span>Virtual environment</span></a> installation section for more
+information).</p>
+<p>If you are working in a Windows environment, you will need to modify the
+command so that it loads correctly. For example, the following command</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> run_pyGenClean <span class="se">\</span>
+<span class="gp">&gt;</span>     --conf conf_1.txt <span class="se">\</span>
+<span class="gp">&gt;</span>     --tfile /PATH/TO/ORIGINAL/DATASET_PREFIX
+</pre></div>
+</div>
+<p>will become</p>
+<div class="last highlight-none"><div class="highlight"><pre>&gt; python C:\Python27\Scripts\run_pyGenClean ^
+    --conf conf_1.txt ^
+    --bfile \PATH\TO\ORIGINAL\DATASET_PREFIX
+</pre></div>
+</div>
+</div>
+<p>Modify the <a class="reference internal" href="configuration_files.html#first-conf-file"><span>First Configuration File</span></a> so that it suits your needs. After following
+the <a class="reference internal" href="protocol.html#preprocessing-label"><span>Preprocessing Steps</span></a> described in the <a class="reference internal" href="protocol.html#proposed-protocol-label"><span>Proposed Protocol</span></a>
+section, run the following command:</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> run_pyGenClean <span class="se">\</span>
+<span class="gp">&gt;</span>     --conf conf_1.txt <span class="se">\</span>
+<span class="gp">&gt;</span>     --tfile /PATH/TO/ORIGINAL/DATASET_PREFIX
+</pre></div>
+</div>
+<p>While the protocol is running, check the outputs according to the
+<a class="reference internal" href="protocol.html#proposed-protocol-label"><span>Proposed Protocol</span></a>. If there are any problems, interrupt the
+analysis and make the required modifications. The completed steps can be skipped
+by commenting them out, while using the last output dataset as the input one for
+the steps that need to be done again.</p>
+<p>Once everything was checked, locate the samples and the markers that need to be
+removed. For example, if the output directory from the first dataset is
+<code class="docutils literal"><span class="pre">data_clean_up.YYYY-MM-DD_HH.MM.SS</span></code>, the following command will help you:</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> <span class="nv">output_dir</span><span class="o">=</span>data_clean_up.YYYY-MM-DD_HH.MM.SS
+<span class="gp">$</span> cat <span class="nv">$output_dir</span>/7_sex_check/sexcheck.list_problem_sex_ids <span class="se">\</span>
+<span class="gp">&gt;</span>     <span class="nv">$output_dir</span>/9_find_related_samples/ibs.discarded_related_individuals <span class="se">\</span>
+<span class="gp">&gt;</span>     <span class="nv">$output_dir</span>/10_check_ethnicity/ethnicity.outliers <span class="se">\</span>
+<span class="gp">&gt;</span>     &gt; samples_to_remove.txt
+</pre></div>
+</div>
+<p>Then, modify the first <code class="docutils literal"><span class="pre">subset</span></code> section in the <a class="reference internal" href="configuration_files.html#second-conf-file"><span>Second Configuration File</span></a> so that
+it reads:</p>
+<div class="highlight-lighttpd"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4</pre></div></td><td class="code"><div class="highlight"><pre><span class="p">[</span><span class="m">11</span><span class="p">]</span>
+<span class="k">script</span> <span class="o">=</span> <span class="k">subset</span>
+<span class="k">remove</span> <span class="o">=</span> <span class="k">samples_to_remove.txt</span>
+<span class="k">exclude</span> <span class="o">=</span> <span class="k">data_clean_up.YYYY-MM-DD_HH.MM.SS</span><span class="n">/8_plate_bias/plate_bias.significant_SNPs.txt</span>
+</pre></div>
+</td></tr></table></div>
+<p>Once everything was checked, run the following command to finish the data clean
+up pipeline:</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> <span class="nv">output_dir</span><span class="o">=</span>data_clean_up.YYYY-MM-DD_HH.MM.SS
+<span class="gp">$</span> run_pyGenClean <span class="se">\</span>
+<span class="gp">&gt;</span>     --conf conf_2.txt <span class="se">\</span>
+<span class="gp">&gt;</span>     --bfile <span class="nv">$output_dir</span>/6_sample_missingness/clean_mind
+</pre></div>
+</div>
+<p>If you want to removed the markers that were flagged in the <code class="docutils literal"><span class="pre">flag_maf_zero</span></code>
+and <code class="docutils literal"><span class="pre">flag_hw</span></code> section, performed the following commands (using the newly
+created output directory <code class="docutils literal"><span class="pre">data_clean_up.YYYY-MM-DD_HH.MM.SS</span></code>):</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> <span class="nv">output_dir</span><span class="o">=</span>data_clean_up.YYYY-MM-DD_HH.MM.SS
+<span class="gp">$</span> cat <span class="nv">$output_dir</span>/13_flag_maf_zero/flag_maf_0.list <span class="se">\</span>
+<span class="gp">&gt;</span>     <span class="nv">$output_dir</span>/14_flag_hw/flag_hw.snp_flag_threshold_1e-4 <span class="se">\</span>
+<span class="gp">&gt;</span>     &gt; markers_to_exclude.txt
+<span class="gp">$</span> pyGenClean_subset_data <span class="se">\</span>
+<span class="gp">&gt;</span>     --ifile <span class="nv">$output_dir</span>/14_remove_heterozygous_haploid/without_hh_genotypes <span class="se">\</span>
+<span class="gp">&gt;</span>     --is-bfile <span class="se">\</span>
+<span class="gp">&gt;</span>     --exclude markers_to_exclude.txt <span class="se">\</span>
+<span class="gp">&gt;</span>     --out final_dataset
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="data_clean_up_module.html" title="The Data Clean Up Module"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="configuration_files.html" title="Configuration Files"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">pyGenClean 1.7.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2012, Louis-Philippe Lemieux Perreault.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+    </div>
+  </body>
+</html>

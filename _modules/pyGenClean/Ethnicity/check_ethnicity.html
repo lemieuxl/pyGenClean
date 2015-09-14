@@ -1,0 +1,1417 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>pyGenClean.Ethnicity.check_ethnicity &mdash; pyGenClean 1.7.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '1.7.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="pyGenClean 1.7.0 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body role="document">
+
+<div style="background-color: white; text-align: left; padding: 10px 10px 15px 15px">
+<a href="../../../index.html"><img src="../../../_static/logo.png" border="0" alt="py4sci"/></a>
+</div>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">pyGenClean 1.7.0 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for pyGenClean.Ethnicity.check_ethnicity</h1><div class="highlight"><pre>
+<span class="c">#!/usr/bin/env python2.7</span>
+
+<span class="c"># This file is part of pyGenClean.</span>
+<span class="c">#</span>
+<span class="c"># pyGenClean is free software: you can redistribute it and/or modify it under</span>
+<span class="c"># the terms of the GNU General Public License as published by the Free Software</span>
+<span class="c"># Foundation, either version 3 of the License, or (at your option) any later</span>
+<span class="c"># version.</span>
+<span class="c">#</span>
+<span class="c"># pyGenClean is distributed in the hope that it will be useful, but WITHOUT ANY</span>
+<span class="c"># WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR</span>
+<span class="c"># A PARTICULAR PURPOSE.  See the GNU General Public License for more details.</span>
+<span class="c">#</span>
+<span class="c"># You should have received a copy of the GNU General Public License along with</span>
+<span class="c"># pyGenClean.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
+
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">izip</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
+
+<span class="kn">from</span> <span class="nn">..PlinkUtils</span> <span class="kn">import</span> <span class="n">plot_MDS</span> <span class="k">as</span> <span class="n">PlotMDS</span>
+<span class="kn">from</span> <span class="nn">..PlinkUtils</span> <span class="kn">import</span> <span class="n">createRowFromPlinkSpacedOutput</span>
+
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">find_outliers</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">plot_eigenvalues</span> <span class="k">as</span> <span class="n">PlotEigenvalues</span>
+<span class="kn">from</span> <span class="nn">..DupSNPs.duplicated_snps</span> <span class="kn">import</span> <span class="n">flipGenotype</span>
+<span class="kn">from</span> <span class="nn">..RelatedSamples</span> <span class="kn">import</span> <span class="n">find_related_samples</span> <span class="k">as</span> <span class="n">Relatedness</span>
+
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&quot;check_ethnicity&quot;</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">Dummy</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../../check_ethnicity.html#pyGenClean.Ethnicity.check_ethnicity.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">argString</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;The main function.</span>
+
+<span class="sd">    :param argString: the options.</span>
+
+<span class="sd">    :type argString: list</span>
+
+<span class="sd">    These are the steps of this module:</span>
+
+<span class="sd">    1.  Prints the options.</span>
+<span class="sd">    2.  Finds the overlapping markers between the three reference panels and</span>
+<span class="sd">        the source panel (:py:func:`findOverlappingSNPsWithReference`).</span>
+<span class="sd">    3.  Extract the required markers from all the data sets</span>
+<span class="sd">        (:py:func:`extractSNPs`).</span>
+<span class="sd">    4.  Renames the reference panel&#39;s marker names to that they are the same as</span>
+<span class="sd">        the source panel (for all populations) (:py:func:`renameSNPs`).</span>
+<span class="sd">    5.  Combines the three reference panels together</span>
+<span class="sd">        (:py:func:`combinePlinkBinaryFiles`).</span>
+<span class="sd">    6.  Compute the frequency of all the markers from the reference and the</span>
+<span class="sd">        source panels (:py:func:`computeFrequency`).</span>
+<span class="sd">    7.  Finds the markers to flip in the reference panel (when compared to the</span>
+<span class="sd">        source panel) (:py:func:`findFlippedSNPs`).</span>
+<span class="sd">    8.  Excludes the unflippable markers from the reference and the source</span>
+<span class="sd">        panels (:py:func:`excludeSNPs`).</span>
+<span class="sd">    9.  Flips the markers that need flipping in their reference panel</span>
+<span class="sd">        (:py:func:`flipSNPs`).</span>
+<span class="sd">    10. Combines the reference and the source panels</span>
+<span class="sd">        (:py:func:`combinePlinkBinaryFiles`).</span>
+<span class="sd">    11. Runs part of :py:mod:`pyGenClean.RelatedSamples.find_related_samples`</span>
+<span class="sd">        on the combined data set (:py:func:`runRelatedness`).</span>
+<span class="sd">    12. Creates the ``mds`` file from the combined data set and the result of</span>
+<span class="sd">        previous step (:py:func:`createMDSFile`).</span>
+<span class="sd">    13. Creates the population file (:py:func:`createPopulationFile`).</span>
+<span class="sd">    14. Plots the ``mds`` values (:py:func:`plotMDS`).</span>
+<span class="sd">    15. Finds the outliers of a given reference population</span>
+<span class="sd">        (:py:func:`find_the_outliers`).</span>
+<span class="sd">    16. If required, computes the Eigenvalues using smartpca</span>
+<span class="sd">        (:py:func:`compute_eigenvalues`).</span>
+<span class="sd">    17. If required, creates a scree plot from smartpca resutls</span>
+<span class="sd">        (:py:func:`create_scree_plot`).</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c"># Getting and checking the options</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">parseArgs</span><span class="p">(</span><span class="n">argString</span><span class="p">)</span>
+    <span class="n">checkArgs</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Options used:&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">vars</span><span class="p">(</span><span class="n">args</span><span class="p">)</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;  --{} {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;_&quot;</span><span class="p">,</span> <span class="s">&quot;-&quot;</span><span class="p">),</span> <span class="n">value</span><span class="p">))</span>
+
+    <span class="n">newBfile</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">popNames</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;CEU&quot;</span><span class="p">,</span> <span class="s">&quot;YRI&quot;</span><span class="p">,</span> <span class="s">&quot;JPT-CHB&quot;</span><span class="p">]</span>
+    <span class="n">referencePrefixes</span> <span class="o">=</span> <span class="p">[</span><span class="n">args</span><span class="o">.</span><span class="n">ceu_bfile</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">yri_bfile</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">jpt_chb_bfile</span><span class="p">]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">args</span><span class="o">.</span><span class="n">skip_ref_pops</span><span class="p">:</span>
+        <span class="c"># Find overlap with the reference file</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Finding overlapping SNPs between reference and &quot;</span>
+                    <span class="s">&quot;source panels&quot;</span><span class="p">)</span>
+        <span class="n">findOverlappingSNPsWithReference</span><span class="p">(</span>
+            <span class="n">prefix</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">bfile</span><span class="p">,</span>
+            <span class="n">referencePrefixes</span><span class="o">=</span><span class="n">referencePrefixes</span><span class="p">,</span>
+            <span class="n">referencePopulations</span><span class="o">=</span><span class="n">popNames</span><span class="p">,</span>
+            <span class="n">outPrefix</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">out</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c"># Extract the required SNPs using Plink (reference panels)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Extracting overlapping SNPs from the reference panels&quot;</span><span class="p">)</span>
+        <span class="n">extractSNPs</span><span class="p">(</span>
+            <span class="n">snpToExtractFileNames</span><span class="o">=</span><span class="p">[</span>
+                <span class="n">args</span><span class="o">.</span><span class="n">out</span> <span class="o">+</span> <span class="s">&quot;.{}_snp_to_extract&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">popName</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">popName</span> <span class="ow">in</span> <span class="n">popNames</span>
+            <span class="p">],</span>
+            <span class="n">referencePrefixes</span><span class="o">=</span><span class="n">referencePrefixes</span><span class="p">,</span>
+            <span class="n">popNames</span><span class="o">=</span><span class="n">popNames</span><span class="p">,</span>
+            <span class="n">outPrefix</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">out</span> <span class="o">+</span> <span class="s">&quot;.reference_panel&quot;</span><span class="p">,</span>
+            <span class="n">runSGE</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">sge</span><span class="p">,</span>
+            <span class="n">options</span><span class="o">=</span><span class="n">args</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c"># Extract the required SNPs using Plink (source panel)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Extracting overlapping SNPs from the source panel&quot;</span><span class="p">)</span>
+        <span class="n">extractSNPs</span><span class="p">(</span>
+            <span class="n">snpToExtractFileNames</span><span class="o">=</span><span class="p">[</span><span class="n">args</span><span class="o">.</span><span class="n">out</span> <span class="o">+</span> <span class="s">&quot;.source_snp_to_extract&quot;</span><span class="p">],</span>
+            <span class="n">referencePrefixes</span><span class="o">=</span><span class="p">[</span><span class="n">args</span><span class="o">.</span><span class="n">bfile</span><span class="p">],</span>
+            <span class="n">popNames</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;ALL&quot;</span><span class="p">],</span>
+            <span class="n">outPrefix</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">out</span> <span class="o">+</span> <span class="s">&quot;.source_panel&quot;</span><span class="p">,</span>
+            <span class="n">runSGE</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+            <span class="n">options</span><span class="o">=</span><span class="n">args</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c"># Renaming the reference file, so that the SNP names are the same</span>
+        <span class="k">for</span> <span class="n">pop</span> <span class="ow">in</span> <span class="n">popNames</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Renaming reference panel&#39;s SNPs {} to match source &quot;</span>
+                        <span class="s">&quot;panel&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pop</span><span class="p">))</span>
+            <span class="n">renameSNPs</span><span class="p">(</span>
+                <span class="n">inPrefix</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">out</span> <span class="o">+</span> <span class="s">&quot;.reference_panel.{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pop</span><span class="p">),</span>
+                <span class="n">updateFileName</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">out</span> <span class="o">+</span> <span class="s">&quot;.{}_update_names&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pop</span><span class="p">),</span>
+                <span class="n">outPrefix</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">out</span> <span class="o">+</span> <span class="s">&quot;.reference_panel.{}.rename&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pop</span><span class="p">),</span>
+            <span class="p">)</span>
+
+        <span class="c"># Combining the reference panel</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Combining the reference panels&quot;</span><span class="p">)</span>
+        <span class="n">combinePlinkBinaryFiles</span><span class="p">(</span>
+            <span class="n">prefixes</span><span class="o">=</span><span class="p">[</span>
+                <span class="n">args</span><span class="o">.</span><span class="n">out</span> <span class="o">+</span> <span class="s">&quot;.reference_panel.{}.rename&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pop</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">pop</span> <span class="ow">in</span> <span class="n">popNames</span>
+            <span class="p">],</span>
+            <span class="n">outPrefix</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">out</span> <span class="o">+</span> <span class="s">&quot;.reference_panel.ALL.rename&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c"># Computing the frequency (reference panel)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Computing reference panel frequencies&quot;</span><span class="p">)</span>
+        <span class="n">computeFrequency</span><span class="p">(</span>
+            <span class="n">prefix</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">out</span> <span class="o">+</span> <span class="s">&quot;.reference_panel.ALL.rename&quot;</span><span class="p">,</span>
+            <span class="n">outPrefix</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">out</span> <span class="o">+</span> <span class="s">&quot;.reference_panel.ALL.rename.frequency&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c"># Computing the frequency (source panel)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Computing source panel frequencies&quot;</span><span class="p">)</span>
+        <span class="n">computeFrequency</span><span class="p">(</span>
+            <span class="n">prefix</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">out</span> <span class="o">+</span> <span class="s">&quot;.source_panel.ALL&quot;</span><span class="p">,</span>
+            <span class="n">outPrefix</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">out</span> <span class="o">+</span> <span class="s">&quot;.source_panel.ALL.frequency&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c"># Finding the SNPs to flip and flip them in the reference panel</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Finding SNPs to flip or to exclude from reference panel&quot;</span><span class="p">)</span>
+        <span class="n">findFlippedSNPs</span><span class="p">(</span>
+            <span class="n">frqFile1</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">out</span> <span class="o">+</span> <span class="s">&quot;.reference_panel.ALL.rename.frequency.frq&quot;</span><span class="p">,</span>
+            <span class="n">frqFile2</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">out</span> <span class="o">+</span> <span class="s">&quot;.source_panel.ALL.frequency.frq&quot;</span><span class="p">,</span>
+            <span class="n">outPrefix</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">out</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c"># Excluding SNPs (reference panel)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Excluding SNPs from reference panel&quot;</span><span class="p">)</span>
+        <span class="n">excludeSNPs</span><span class="p">(</span>
+            <span class="n">inPrefix</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">out</span> <span class="o">+</span> <span class="s">&quot;.reference_panel.ALL.rename&quot;</span><span class="p">,</span>
+            <span class="n">outPrefix</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">out</span> <span class="o">+</span> <span class="s">&quot;.reference_panel.ALL.rename.cleaned&quot;</span><span class="p">,</span>
+            <span class="n">exclusionFileName</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">out</span> <span class="o">+</span> <span class="s">&quot;.snp_to_remove&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c"># Excluding SNPs (source panel)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Excluding SNPs from source panel&quot;</span><span class="p">)</span>
+        <span class="n">excludeSNPs</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">out</span> <span class="o">+</span> <span class="s">&quot;.source_panel.ALL&quot;</span><span class="p">,</span>
+                    <span class="n">args</span><span class="o">.</span><span class="n">out</span> <span class="o">+</span> <span class="s">&quot;.source_panel.ALL.cleaned&quot;</span><span class="p">,</span>
+                    <span class="n">args</span><span class="o">.</span><span class="n">out</span> <span class="o">+</span> <span class="s">&quot;.snp_to_remove&quot;</span><span class="p">)</span>
+
+        <span class="c"># Flipping the SNP that need to be flip in the reference</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Flipping SNPs in reference panel&quot;</span><span class="p">)</span>
+        <span class="n">flipSNPs</span><span class="p">(</span>
+            <span class="n">inPrefix</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">out</span> <span class="o">+</span> <span class="s">&quot;.reference_panel.ALL.rename.cleaned&quot;</span><span class="p">,</span>
+            <span class="n">outPrefix</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">out</span> <span class="o">+</span> <span class="s">&quot;.reference_panel.ALL.rename.cleaned.flipped&quot;</span><span class="p">,</span>
+            <span class="n">flipFileName</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">out</span> <span class="o">+</span> <span class="s">&quot;.snp_to_flip_in_reference&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c"># Combining the reference panel</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Combining reference and source panels&quot;</span><span class="p">)</span>
+        <span class="n">combinePlinkBinaryFiles</span><span class="p">(</span>
+            <span class="n">prefixes</span><span class="o">=</span><span class="p">[</span><span class="n">args</span><span class="o">.</span><span class="n">out</span> <span class="o">+</span> <span class="s">&quot;.reference_panel.ALL.rename.cleaned.flipped&quot;</span><span class="p">,</span>
+                      <span class="n">args</span><span class="o">.</span><span class="n">out</span> <span class="o">+</span> <span class="s">&quot;.source_panel.ALL.cleaned&quot;</span><span class="p">],</span>
+            <span class="n">outPrefix</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">out</span> <span class="o">+</span> <span class="s">&quot;.final_dataset_for_genome&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c"># Runing the relatedness step</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Creating the genome file using Plink&quot;</span><span class="p">)</span>
+        <span class="n">newBfile</span> <span class="o">=</span> <span class="n">runRelatedness</span><span class="p">(</span>
+            <span class="n">inputPrefix</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">out</span> <span class="o">+</span> <span class="s">&quot;.final_dataset_for_genome&quot;</span><span class="p">,</span>
+            <span class="n">outPrefix</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">out</span><span class="p">,</span>
+            <span class="n">options</span><span class="o">=</span><span class="n">args</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c"># Just run relatedness on the dataset</span>
+        <span class="n">newBfile</span> <span class="o">=</span> <span class="n">runRelatedness</span><span class="p">(</span>
+            <span class="n">inputPrefix</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">bfile</span><span class="p">,</span>
+            <span class="n">outPrefix</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">out</span><span class="p">,</span>
+            <span class="n">options</span><span class="o">=</span><span class="n">args</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="c"># Creating the MDS file</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Creating the MDS file using Plink&quot;</span><span class="p">)</span>
+    <span class="n">createMDSFile</span><span class="p">(</span>
+        <span class="n">nb_components</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">nb_components</span><span class="p">,</span>
+        <span class="n">inPrefix</span><span class="o">=</span><span class="n">newBfile</span><span class="p">,</span>
+        <span class="n">outPrefix</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">out</span> <span class="o">+</span> <span class="s">&quot;.mds&quot;</span><span class="p">,</span>
+        <span class="n">genomeFileName</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">out</span> <span class="o">+</span> <span class="s">&quot;.ibs.genome.genome&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">args</span><span class="o">.</span><span class="n">skip_ref_pops</span><span class="p">:</span>
+        <span class="c"># Creating the population files</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Creating a population file&quot;</span><span class="p">)</span>
+        <span class="n">famFiles</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">args</span><span class="o">.</span><span class="n">out</span> <span class="o">+</span> <span class="s">&quot;.reference_panel.&quot;</span> <span class="o">+</span> <span class="n">i</span> <span class="o">+</span> <span class="s">&quot;.fam&quot;</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">popNames</span>
+        <span class="p">]</span>
+        <span class="n">famFiles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">out</span> <span class="o">+</span> <span class="s">&quot;.source_panel.ALL.fam&quot;</span><span class="p">)</span>
+        <span class="n">labels</span> <span class="o">=</span> <span class="n">popNames</span> <span class="o">+</span> <span class="p">[</span><span class="s">&quot;SOURCE&quot;</span><span class="p">]</span>
+        <span class="n">createPopulationFile</span><span class="p">(</span>
+            <span class="n">inputFiles</span><span class="o">=</span><span class="n">famFiles</span><span class="p">,</span>
+            <span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="p">,</span>
+            <span class="n">outputFileName</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">out</span> <span class="o">+</span> <span class="s">&quot;.population_file&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c"># Plot the MDS value</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Creating the MDS plot&quot;</span><span class="p">)</span>
+        <span class="n">plotMDS</span><span class="p">(</span>
+            <span class="n">inputFileName</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">out</span> <span class="o">+</span> <span class="s">&quot;.mds.mds&quot;</span><span class="p">,</span>
+            <span class="n">outPrefix</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">out</span> <span class="o">+</span> <span class="s">&quot;.mds&quot;</span><span class="p">,</span>
+            <span class="n">populationFileName</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">out</span> <span class="o">+</span> <span class="s">&quot;.population_file&quot;</span><span class="p">,</span>
+            <span class="n">options</span><span class="o">=</span><span class="n">args</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c"># Finding the outliers</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Finding the outliers&quot;</span><span class="p">)</span>
+        <span class="n">find_the_outliers</span><span class="p">(</span>
+            <span class="n">mds_file_name</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">out</span> <span class="o">+</span> <span class="s">&quot;.mds.mds&quot;</span><span class="p">,</span>
+            <span class="n">population_file_name</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">out</span> <span class="o">+</span> <span class="s">&quot;.population_file&quot;</span><span class="p">,</span>
+            <span class="n">ref_pop_name</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">outliers_of</span><span class="p">,</span>
+            <span class="n">multiplier</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">multiplier</span><span class="p">,</span>
+            <span class="n">out_prefix</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">out</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="c"># De we need to create a scree plot?</span>
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">create_scree_plot</span><span class="p">:</span>
+        <span class="c"># Computing the eigenvalues using smartpca</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Computing eigenvalues&quot;</span><span class="p">)</span>
+        <span class="n">compute_eigenvalues</span><span class="p">(</span>
+            <span class="n">in_prefix</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">out</span> <span class="o">+</span> <span class="s">&quot;.ibs.pruned_data&quot;</span><span class="p">,</span>
+            <span class="n">out_prefix</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">out</span> <span class="o">+</span> <span class="s">&quot;.smartpca&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Creating scree plot&quot;</span><span class="p">)</span>
+        <span class="n">create_scree_plot</span><span class="p">(</span>
+            <span class="n">in_filename</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">out</span> <span class="o">+</span> <span class="s">&quot;.smartpca.evec.txt&quot;</span><span class="p">,</span>
+            <span class="n">out_filename</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">out</span> <span class="o">+</span> <span class="s">&quot;.smartpca.scree_plot.png&quot;</span><span class="p">,</span>
+            <span class="n">plot_title</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">scree_plot_title</span><span class="p">,</span>
+        <span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="create_scree_plot"><a class="viewcode-back" href="../../../check_ethnicity.html#pyGenClean.Ethnicity.check_ethnicity.create_scree_plot">[docs]</a><span class="k">def</span> <span class="nf">create_scree_plot</span><span class="p">(</span><span class="n">in_filename</span><span class="p">,</span> <span class="n">out_filename</span><span class="p">,</span> <span class="n">plot_title</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Creates a scree plot using smartpca results.</span>
+
+<span class="sd">    :param in_filename: the name of the input file.</span>
+<span class="sd">    :param out_filename: the name of the output file.</span>
+<span class="sd">    :param plot_title: the title of the scree plot.</span>
+
+<span class="sd">    :type in_filename: str</span>
+<span class="sd">    :type out_filename: str</span>
+<span class="sd">    :type plot_title: str</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c"># Constructing the arguments</span>
+    <span class="n">scree_plot_args</span> <span class="o">=</span> <span class="p">(</span><span class="s">&quot;--evec&quot;</span><span class="p">,</span> <span class="n">in_filename</span><span class="p">,</span> <span class="s">&quot;--out&quot;</span><span class="p">,</span> <span class="n">out_filename</span><span class="p">,</span>
+                       <span class="s">&quot;--scree-plot-title&quot;</span><span class="p">,</span> <span class="n">plot_title</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c"># Executing the main method</span>
+        <span class="n">PlotEigenvalues</span><span class="o">.</span><span class="n">main</span><span class="p">(</span><span class="n">argString</span><span class="o">=</span><span class="n">scree_plot_args</span><span class="p">)</span>
+
+    <span class="k">except</span> <span class="n">PlotEigenvalues</span><span class="o">.</span><span class="n">ProgramError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;PlotEigenvalues: {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="compute_eigenvalues"><a class="viewcode-back" href="../../../check_ethnicity.html#pyGenClean.Ethnicity.check_ethnicity.compute_eigenvalues">[docs]</a><span class="k">def</span> <span class="nf">compute_eigenvalues</span><span class="p">(</span><span class="n">in_prefix</span><span class="p">,</span> <span class="n">out_prefix</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Computes the Eigenvalues using smartpca from Eigensoft.</span>
+
+<span class="sd">    :param in_prefix: the prefix of the input files.</span>
+<span class="sd">    :param out_prefix: the prefix of the output files.</span>
+
+<span class="sd">    :type in_prefix: str</span>
+<span class="sd">    :type out_prefix: str</span>
+
+<span class="sd">    Creates a &quot;parameter file&quot; used by smartpca and runs it.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c"># First, we create the parameter file</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">out_prefix</span> <span class="o">+</span> <span class="s">&quot;.parameters&quot;</span><span class="p">,</span> <span class="s">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">o_file</span><span class="p">:</span>
+        <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">o_file</span><span class="p">,</span> <span class="s">&quot;genotypename:    &quot;</span> <span class="o">+</span> <span class="n">in_prefix</span> <span class="o">+</span> <span class="s">&quot;.bed&quot;</span>
+        <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">o_file</span><span class="p">,</span> <span class="s">&quot;snpname:         &quot;</span> <span class="o">+</span> <span class="n">in_prefix</span> <span class="o">+</span> <span class="s">&quot;.bim&quot;</span>
+        <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">o_file</span><span class="p">,</span> <span class="s">&quot;indivname:       &quot;</span> <span class="o">+</span> <span class="n">in_prefix</span> <span class="o">+</span> <span class="s">&quot;.fam&quot;</span>
+        <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">o_file</span><span class="p">,</span> <span class="s">&quot;evecoutname:     &quot;</span> <span class="o">+</span> <span class="n">out_prefix</span> <span class="o">+</span> <span class="s">&quot;.evec.txt&quot;</span>
+        <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">o_file</span><span class="p">,</span> <span class="s">&quot;evaloutname:     &quot;</span> <span class="o">+</span> <span class="n">out_prefix</span> <span class="o">+</span> <span class="s">&quot;.eval.txt&quot;</span>
+        <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">o_file</span><span class="p">,</span> <span class="s">&quot;numoutlieriter:  0&quot;</span>
+        <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">o_file</span><span class="p">,</span> <span class="s">&quot;altnormstyle:    NO&quot;</span>
+
+    <span class="c"># Executing smartpca</span>
+    <span class="n">command</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;smartpca&quot;</span><span class="p">,</span> <span class="s">&quot;-p&quot;</span><span class="p">,</span> <span class="n">out_prefix</span> <span class="o">+</span> <span class="s">&quot;.parameters&quot;</span><span class="p">]</span>
+    <span class="n">runCommand</span><span class="p">(</span><span class="n">command</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="find_the_outliers"><a class="viewcode-back" href="../../../check_ethnicity.html#pyGenClean.Ethnicity.check_ethnicity.find_the_outliers">[docs]</a><span class="k">def</span> <span class="nf">find_the_outliers</span><span class="p">(</span><span class="n">mds_file_name</span><span class="p">,</span> <span class="n">population_file_name</span><span class="p">,</span> <span class="n">ref_pop_name</span><span class="p">,</span>
+                      <span class="n">multiplier</span><span class="p">,</span> <span class="n">out_prefix</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Finds the outliers of a given population.</span>
+
+<span class="sd">    :param mds_file_name: the name of the ``mds`` file.</span>
+<span class="sd">    :param population_file_name: the name of the population file.</span>
+<span class="sd">    :param ref_pop_name: the name of the reference population for which to find</span>
+<span class="sd">                         outliers from.</span>
+<span class="sd">    :param multiplier: the multiplier of the cluster standard deviation to</span>
+<span class="sd">                       modify the strictness of the outlier removal procedure.</span>
+<span class="sd">    :param out_prefix: the prefix of the output file.</span>
+
+<span class="sd">    :type mds_file_name: str</span>
+<span class="sd">    :type population_file_name: str</span>
+<span class="sd">    :type ref_pop_name: str</span>
+<span class="sd">    :type multiplier: float</span>
+<span class="sd">    :type out_prefix: str</span>
+
+<span class="sd">    Uses the :py:mod:`pyGenClean.Ethnicity.find_outliers` modules to find</span>
+<span class="sd">    outliers. It requires the ``mds`` file created by :py:func:`createMDSFile`</span>
+<span class="sd">    and the population file created by :py:func:`createPopulationFile`.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">options</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;--mds&quot;</span><span class="p">,</span> <span class="n">mds_file_name</span><span class="p">,</span> <span class="s">&quot;--population-file&quot;</span><span class="p">,</span>
+               <span class="n">population_file_name</span><span class="p">,</span> <span class="s">&quot;--outliers-of&quot;</span><span class="p">,</span> <span class="n">ref_pop_name</span><span class="p">,</span>
+               <span class="s">&quot;--multiplier&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">multiplier</span><span class="p">),</span> <span class="s">&quot;--out&quot;</span><span class="p">,</span> <span class="n">out_prefix</span><span class="p">]</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">find_outliers</span><span class="o">.</span><span class="n">main</span><span class="p">(</span><span class="n">options</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">find_outliers</span><span class="o">.</span><span class="n">ProgramError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;find_outliers: {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="createPopulationFile"><a class="viewcode-back" href="../../../check_ethnicity.html#pyGenClean.Ethnicity.check_ethnicity.createPopulationFile">[docs]</a><span class="k">def</span> <span class="nf">createPopulationFile</span><span class="p">(</span><span class="n">inputFiles</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">outputFileName</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Creates a population file.</span>
+
+<span class="sd">    :param inputFiles: the list of input files.</span>
+<span class="sd">    :param labels: the list of labels (corresponding to the input files).</span>
+<span class="sd">    :param outputFileName: the name of the output file.</span>
+
+<span class="sd">    :type inputFiles: list</span>
+<span class="sd">    :type labels: list</span>
+<span class="sd">    :type outputFileName: str</span>
+
+<span class="sd">    The ``inputFiles`` is in reality a list of ``tfam`` files composed of</span>
+<span class="sd">    samples. For each of those ``tfam`` files, there is a label associated with</span>
+<span class="sd">    it (representing the name of the population).</span>
+
+<span class="sd">    The output file consists of one row per sample, with the following three</span>
+<span class="sd">    columns: the family ID, the individual ID and the population of each</span>
+<span class="sd">    sample.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">outputFile</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">outputFile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">outputFileName</span><span class="p">,</span> <span class="s">&#39;w&#39;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%(outputFileName)s</span><span class="s">: can&#39;t write file&quot;</span>
+        <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">inputFiles</span><span class="p">)):</span>
+        <span class="c"># For each file</span>
+        <span class="n">fileName</span> <span class="o">=</span> <span class="n">inputFiles</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="n">labels</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fileName</span><span class="p">,</span> <span class="s">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">inputFile</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">inputFile</span><span class="p">:</span>
+                    <span class="n">row</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\r\n</span><span class="s">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot; &quot;</span><span class="p">)</span>
+
+                    <span class="c"># Getting the informations</span>
+                    <span class="n">famID</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="n">indID</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+                    <span class="c"># Printing to file</span>
+                    <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">outputFile</span><span class="p">,</span> <span class="s">&quot;</span><span class="se">\t</span><span class="s">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">famID</span><span class="p">,</span> <span class="n">indID</span><span class="p">,</span> <span class="n">label</span><span class="p">])</span>
+        <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%(fileName)s</span><span class="s">: no such file&quot;</span> <span class="o">%</span> <span class="nb">locals</span><span class="p">()</span>
+            <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="c"># Closing the output file</span>
+    <span class="n">outputFile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+</div>
+<div class="viewcode-block" id="plotMDS"><a class="viewcode-back" href="../../../check_ethnicity.html#pyGenClean.Ethnicity.check_ethnicity.plotMDS">[docs]</a><span class="k">def</span> <span class="nf">plotMDS</span><span class="p">(</span><span class="n">inputFileName</span><span class="p">,</span> <span class="n">outPrefix</span><span class="p">,</span> <span class="n">populationFileName</span><span class="p">,</span> <span class="n">options</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Plots the MDS value.</span>
+
+<span class="sd">    :param inputFileName: the name of the ``mds`` file.</span>
+<span class="sd">    :param outPrefix: the prefix of the output files.</span>
+<span class="sd">    :param populationFileName: the name of the population file.</span>
+<span class="sd">    :param options: the options</span>
+
+<span class="sd">    :type inputFileName: str</span>
+<span class="sd">    :type outPrefix: str</span>
+<span class="sd">    :type populationFileName: str</span>
+<span class="sd">    :type options: argparse.Namespace</span>
+
+<span class="sd">    Plots the ``mds`` value according to the ``inputFileName`` file (``mds``)</span>
+<span class="sd">    and the ``populationFileName`` (the population file).</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c"># The options</span>
+    <span class="n">plotMDS_options</span> <span class="o">=</span> <span class="n">Dummy</span><span class="p">()</span>
+    <span class="n">plotMDS_options</span><span class="o">.</span><span class="n">file</span> <span class="o">=</span> <span class="n">inputFileName</span>
+    <span class="n">plotMDS_options</span><span class="o">.</span><span class="n">out</span> <span class="o">=</span> <span class="n">outPrefix</span>
+    <span class="n">plotMDS_options</span><span class="o">.</span><span class="n">format</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">format</span>
+    <span class="n">plotMDS_options</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">title</span>
+    <span class="n">plotMDS_options</span><span class="o">.</span><span class="n">xlabel</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">xlabel</span>
+    <span class="n">plotMDS_options</span><span class="o">.</span><span class="n">ylabel</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">ylabel</span>
+    <span class="n">plotMDS_options</span><span class="o">.</span><span class="n">population_file</span> <span class="o">=</span> <span class="n">populationFileName</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c"># Checking the options</span>
+        <span class="n">PlotMDS</span><span class="o">.</span><span class="n">checkArgs</span><span class="p">(</span><span class="n">plotMDS_options</span><span class="p">)</span>
+
+        <span class="c"># Reading the population file</span>
+        <span class="n">populations</span> <span class="o">=</span> <span class="n">PlotMDS</span><span class="o">.</span><span class="n">readPopulations</span><span class="p">(</span><span class="n">plotMDS_options</span><span class="o">.</span><span class="n">population_file</span><span class="p">)</span>
+
+        <span class="c"># Getting the data</span>
+        <span class="n">data</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">PlotMDS</span><span class="o">.</span><span class="n">extractData</span><span class="p">(</span><span class="n">plotMDS_options</span><span class="o">.</span><span class="n">file</span><span class="p">,</span> <span class="n">populations</span><span class="p">)</span>
+        <span class="n">order</span> <span class="o">=</span> <span class="p">[</span><span class="n">labels</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s">&quot;CEU&quot;</span><span class="p">),</span> <span class="n">labels</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s">&quot;YRI&quot;</span><span class="p">),</span>
+                 <span class="n">labels</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s">&quot;JPT-CHB&quot;</span><span class="p">),</span> <span class="n">labels</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s">&quot;SOURCE&quot;</span><span class="p">)]</span>
+        <span class="k">if</span> <span class="s">&quot;HIGHLIGHT&quot;</span> <span class="ow">in</span> <span class="n">labels</span><span class="p">:</span>
+            <span class="n">order</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">labels</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s">&quot;HIGHLIGHT&quot;</span><span class="p">))</span>
+        <span class="n">color</span> <span class="o">=</span> <span class="p">[(</span><span class="mf">0.215686275</span><span class="p">,</span> <span class="mf">0.000494118</span><span class="p">,</span> <span class="mf">0.721568627</span><span class="p">),</span>
+                 <span class="p">(</span><span class="mf">0.301960784</span><span class="p">,</span> <span class="mf">0.68627451</span><span class="p">,</span> <span class="mf">0.290196078</span><span class="p">),</span>
+                 <span class="p">(</span><span class="mf">0.596078431</span><span class="p">,</span> <span class="mf">0.305882353</span><span class="p">,</span> <span class="mf">0.639215686</span><span class="p">),</span>
+                 <span class="p">(</span><span class="mf">0.894117647</span><span class="p">,</span> <span class="mf">0.101960784</span><span class="p">,</span> <span class="mf">0.109803922</span><span class="p">),</span>
+                 <span class="p">(</span><span class="mf">0.596078431</span><span class="p">,</span> <span class="mf">0.305882353</span><span class="p">,</span> <span class="mf">0.639215686</span><span class="p">)]</span>
+        <span class="n">sizes</span> <span class="o">=</span> <span class="p">[</span><span class="mi">12</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">12</span><span class="p">]</span>
+        <span class="n">markers</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;.&quot;</span><span class="p">,</span> <span class="s">&quot;.&quot;</span><span class="p">,</span> <span class="s">&quot;.&quot;</span><span class="p">,</span> <span class="s">&quot;+&quot;</span><span class="p">,</span> <span class="s">&quot;D&quot;</span><span class="p">]</span>
+
+        <span class="c"># Plotting the data</span>
+        <span class="n">PlotMDS</span><span class="o">.</span><span class="n">plotMDS</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">order</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">color</span><span class="p">,</span> <span class="n">sizes</span><span class="p">,</span> <span class="n">markers</span><span class="p">,</span>
+                        <span class="n">plotMDS_options</span><span class="p">)</span>
+
+    <span class="k">except</span> <span class="n">PlotMDS</span><span class="o">.</span><span class="n">ProgramError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;PlotMDS: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">e</span>
+        <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="createMDSFile"><a class="viewcode-back" href="../../../check_ethnicity.html#pyGenClean.Ethnicity.check_ethnicity.createMDSFile">[docs]</a><span class="k">def</span> <span class="nf">createMDSFile</span><span class="p">(</span><span class="n">nb_components</span><span class="p">,</span> <span class="n">inPrefix</span><span class="p">,</span> <span class="n">outPrefix</span><span class="p">,</span> <span class="n">genomeFileName</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Creates a MDS file using Plink.</span>
+
+<span class="sd">    :param nb_components: the number of component.</span>
+<span class="sd">    :param inPrefix: the prefix of the input file.</span>
+<span class="sd">    :param outPrefix: the prefix of the output file.</span>
+<span class="sd">    :param genomeFileName: the name of the ``genome`` file.</span>
+
+<span class="sd">    :type nb_components: int</span>
+<span class="sd">    :type inPrefix: str</span>
+<span class="sd">    :type outPrefix: str</span>
+<span class="sd">    :type genomeFileName: str</span>
+
+<span class="sd">    Using Plink, computes the MDS values for each individual using the</span>
+<span class="sd">    ``inPrefix``, ``genomeFileName`` and the number of components. The results</span>
+<span class="sd">    are save using the ``outPrefix`` prefix.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">plinkCommand</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;plink&quot;</span><span class="p">,</span> <span class="s">&quot;--noweb&quot;</span><span class="p">,</span> <span class="s">&quot;--bfile&quot;</span><span class="p">,</span> <span class="n">inPrefix</span><span class="p">,</span> <span class="s">&quot;--read-genome&quot;</span><span class="p">,</span>
+                    <span class="n">genomeFileName</span><span class="p">,</span> <span class="s">&quot;--cluster&quot;</span><span class="p">,</span> <span class="s">&quot;--mds-plot&quot;</span><span class="p">,</span>
+                    <span class="nb">str</span><span class="p">(</span><span class="n">nb_components</span><span class="p">),</span> <span class="s">&quot;--out&quot;</span><span class="p">,</span> <span class="n">outPrefix</span><span class="p">]</span>
+    <span class="n">runCommand</span><span class="p">(</span><span class="n">plinkCommand</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="runRelatedness"><a class="viewcode-back" href="../../../check_ethnicity.html#pyGenClean.Ethnicity.check_ethnicity.runRelatedness">[docs]</a><span class="k">def</span> <span class="nf">runRelatedness</span><span class="p">(</span><span class="n">inputPrefix</span><span class="p">,</span> <span class="n">outPrefix</span><span class="p">,</span> <span class="n">options</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Run the relatedness step of the data clean up.</span>
+
+<span class="sd">    :param inputPrefix: the prefix of the input file.</span>
+<span class="sd">    :param outPrefix: the prefix of the output file.</span>
+<span class="sd">    :param options: the options</span>
+
+<span class="sd">    :type inputPrefix: str</span>
+<span class="sd">    :type outPrefix: str</span>
+<span class="sd">    :type options: argparse.Namespace</span>
+
+<span class="sd">    :returns: the prefix of the new bfile.</span>
+
+<span class="sd">    Runs :py:mod:`pyGenClean.RelatedSamples.find_related_samples` using the</span>
+<span class="sd">    ``inputPrefix`` files and ``options`` options, and saves the results using</span>
+<span class="sd">    the ``outPrefix`` prefix.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c"># The options</span>
+    <span class="n">new_options</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;--bfile&quot;</span><span class="p">,</span> <span class="n">inputPrefix</span><span class="p">,</span> <span class="s">&quot;--genome-only&quot;</span><span class="p">,</span>
+                   <span class="s">&quot;--min-nb-snp&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">min_nb_snp</span><span class="p">),</span>
+                   <span class="s">&quot;--maf&quot;</span><span class="p">,</span> <span class="n">options</span><span class="o">.</span><span class="n">maf</span><span class="p">,</span>
+                   <span class="s">&quot;--out&quot;</span><span class="p">,</span> <span class="s">&quot;{}.ibs&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">outPrefix</span><span class="p">)]</span>
+    <span class="n">new_options</span> <span class="o">+=</span> <span class="p">[</span><span class="s">&quot;--indep-pairwise&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">options</span><span class="o">.</span><span class="n">indep_pairwise</span>
+    <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">sge</span><span class="p">:</span>
+        <span class="n">new_options</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&quot;--sge&quot;</span><span class="p">)</span>
+        <span class="n">new_options</span> <span class="o">+=</span> <span class="p">[</span><span class="s">&quot;--line-per-file-for-sge&quot;</span><span class="p">,</span>
+                        <span class="nb">str</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">line_per_file_for_sge</span><span class="p">)]</span>
+        <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">ibs_sge_walltime</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">new_options</span> <span class="o">+=</span> <span class="p">[</span><span class="s">&quot;--sge-walltime&quot;</span><span class="p">,</span> <span class="n">options</span><span class="o">.</span><span class="n">ibs_sge_walltime</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">ibs_sge_nodes</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">new_options</span> <span class="o">+=</span> <span class="p">[</span><span class="s">&quot;--sge-nodes&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">options</span><span class="o">.</span><span class="n">ibs_sge_nodes</span><span class="p">)</span>
+
+    <span class="c"># Checking the input file</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">allFileExists</span><span class="p">([</span><span class="n">inputPrefix</span> <span class="o">+</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&quot;.bed&quot;</span><span class="p">,</span> <span class="s">&quot;.bim&quot;</span><span class="p">,</span> <span class="s">&quot;.fam&quot;</span><span class="p">]]):</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;{}: not a valid binary prefix&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">inputPrefix</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="n">newBfile</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">newBfile</span> <span class="o">=</span> <span class="n">Relatedness</span><span class="o">.</span><span class="n">main</span><span class="p">(</span><span class="n">new_options</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">Relatedness</span><span class="o">.</span><span class="n">ProgramError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;compute genome: {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">newBfile</span>
+
+</div>
+<div class="viewcode-block" id="allFileExists"><a class="viewcode-back" href="../../../check_ethnicity.html#pyGenClean.Ethnicity.check_ethnicity.allFileExists">[docs]</a><span class="k">def</span> <span class="nf">allFileExists</span><span class="p">(</span><span class="n">fileList</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Check that all file exists.</span>
+
+<span class="sd">    :param fileList: the list of file to check.</span>
+
+<span class="sd">    :type fileList: list</span>
+
+<span class="sd">    Check if all the files in ``fileList`` exists.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">allExists</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="k">for</span> <span class="n">fileName</span> <span class="ow">in</span> <span class="n">fileList</span><span class="p">:</span>
+        <span class="n">allExists</span> <span class="o">=</span> <span class="n">allExists</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">fileName</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">allExists</span>
+
+</div>
+<div class="viewcode-block" id="flipSNPs"><a class="viewcode-back" href="../../../check_ethnicity.html#pyGenClean.Ethnicity.check_ethnicity.flipSNPs">[docs]</a><span class="k">def</span> <span class="nf">flipSNPs</span><span class="p">(</span><span class="n">inPrefix</span><span class="p">,</span> <span class="n">outPrefix</span><span class="p">,</span> <span class="n">flipFileName</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Flip SNPs using Plink.</span>
+
+<span class="sd">    :param inPrefix: the prefix of the input file.</span>
+<span class="sd">    :param outPrefix: the prefix of the output file.</span>
+<span class="sd">    :param flipFileName: the name of the file containing the markers to flip.</span>
+
+<span class="sd">    :type inPrefix: str</span>
+<span class="sd">    :type outPrefix: str</span>
+<span class="sd">    :type flipFileName: str</span>
+
+<span class="sd">    Using Plink, flip a set of markers in ``inPrefix``, and saves the results</span>
+<span class="sd">    in ``outPrefix``. The list of markers to be flipped is in ``flipFileName``.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">plinkCommand</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;plink&quot;</span><span class="p">,</span> <span class="s">&quot;--noweb&quot;</span><span class="p">,</span> <span class="s">&quot;--bfile&quot;</span><span class="p">,</span> <span class="n">inPrefix</span><span class="p">,</span> <span class="s">&quot;--flip&quot;</span><span class="p">,</span>
+                    <span class="n">flipFileName</span><span class="p">,</span> <span class="s">&quot;--make-bed&quot;</span><span class="p">,</span> <span class="s">&quot;--out&quot;</span><span class="p">,</span> <span class="n">outPrefix</span><span class="p">]</span>
+    <span class="n">runCommand</span><span class="p">(</span><span class="n">plinkCommand</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="excludeSNPs"><a class="viewcode-back" href="../../../check_ethnicity.html#pyGenClean.Ethnicity.check_ethnicity.excludeSNPs">[docs]</a><span class="k">def</span> <span class="nf">excludeSNPs</span><span class="p">(</span><span class="n">inPrefix</span><span class="p">,</span> <span class="n">outPrefix</span><span class="p">,</span> <span class="n">exclusionFileName</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Exclude some SNPs using Plink.</span>
+
+<span class="sd">    :param inPrefix: the prefix of the input file.</span>
+<span class="sd">    :param outPrefix: the prefix of the output file.</span>
+<span class="sd">    :param exclusionFileName: the name of the file containing the markers to be</span>
+<span class="sd">                              excluded.</span>
+
+<span class="sd">    :type inPrefix: str</span>
+<span class="sd">    :type outPrefix: str</span>
+<span class="sd">    :type exclusionFileName: str</span>
+
+<span class="sd">    Using Plink, exclude a list of markers from ``inPrefix``, and saves the</span>
+<span class="sd">    results in ``outPrefix``. The list of markers are in ``exclusionFileName``.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">plinkCommand</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;plink&quot;</span><span class="p">,</span> <span class="s">&quot;--noweb&quot;</span><span class="p">,</span> <span class="s">&quot;--bfile&quot;</span><span class="p">,</span> <span class="n">inPrefix</span><span class="p">,</span> <span class="s">&quot;--exclude&quot;</span><span class="p">,</span>
+                    <span class="n">exclusionFileName</span><span class="p">,</span> <span class="s">&quot;--make-bed&quot;</span><span class="p">,</span> <span class="s">&quot;--out&quot;</span><span class="p">,</span> <span class="n">outPrefix</span><span class="p">]</span>
+    <span class="n">runCommand</span><span class="p">(</span><span class="n">plinkCommand</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="renameSNPs"><a class="viewcode-back" href="../../../check_ethnicity.html#pyGenClean.Ethnicity.check_ethnicity.renameSNPs">[docs]</a><span class="k">def</span> <span class="nf">renameSNPs</span><span class="p">(</span><span class="n">inPrefix</span><span class="p">,</span> <span class="n">updateFileName</span><span class="p">,</span> <span class="n">outPrefix</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Updates the name of the SNPs using Plink.</span>
+
+<span class="sd">    :param inPrefix: the prefix of the input file.</span>
+<span class="sd">    :param updateFileName: the name of the file containing the updated marker</span>
+<span class="sd">                           names.</span>
+<span class="sd">    :param outPrefix: the prefix of the output file.</span>
+
+<span class="sd">    :type inPrefix: str</span>
+<span class="sd">    :type updateFileName: str</span>
+<span class="sd">    :type outPrefix: str</span>
+
+<span class="sd">    Using Plink, changes the name of the markers in ``inPrefix`` using</span>
+<span class="sd">    ``updateFileName``. It saves the results in ``outPrefix``.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">plinkCommand</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;plink&quot;</span><span class="p">,</span> <span class="s">&quot;--noweb&quot;</span><span class="p">,</span> <span class="s">&quot;--bfile&quot;</span><span class="p">,</span> <span class="n">inPrefix</span><span class="p">,</span> <span class="s">&quot;--update-map&quot;</span><span class="p">,</span>
+                    <span class="n">updateFileName</span><span class="p">,</span> <span class="s">&quot;--update-name&quot;</span><span class="p">,</span> <span class="s">&quot;--make-bed&quot;</span><span class="p">,</span> <span class="s">&quot;--out&quot;</span><span class="p">,</span>
+                    <span class="n">outPrefix</span><span class="p">]</span>
+    <span class="n">runCommand</span><span class="p">(</span><span class="n">plinkCommand</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="findFlippedSNPs"><a class="viewcode-back" href="../../../check_ethnicity.html#pyGenClean.Ethnicity.check_ethnicity.findFlippedSNPs">[docs]</a><span class="k">def</span> <span class="nf">findFlippedSNPs</span><span class="p">(</span><span class="n">frqFile1</span><span class="p">,</span> <span class="n">frqFile2</span><span class="p">,</span> <span class="n">outPrefix</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Find flipped SNPs and flip them in the data.</span>
+
+<span class="sd">    :param frqFile1: the name of the first frequency file.</span>
+<span class="sd">    :param frqFile2: the name of the second frequency file.</span>
+<span class="sd">    :param outPrefix: the prefix of the output files.</span>
+
+<span class="sd">    :type frqFile1: str</span>
+<span class="sd">    :type frqFile2: str</span>
+<span class="sd">    :type outPrefix: str</span>
+
+<span class="sd">    By reading two frequency files (``frqFile1`` and ``frqFile2``), it finds a</span>
+<span class="sd">    list of markers that need to be flipped so that the first file becomes</span>
+<span class="sd">    comparable with the second one. Also finds marker that need to be removed.</span>
+
+<span class="sd">    A marker needs to be flipped in one of the two data set if the two markers</span>
+<span class="sd">    are not comparable (same minor allele), but become comparable if we flip</span>
+<span class="sd">    one of them.</span>
+
+<span class="sd">    A marker will be removed if it is all homozygous in at least one data set.</span>
+<span class="sd">    It will also be removed if it&#39;s impossible to determine the phase of the</span>
+<span class="sd">    marker (*e.g.* if the two alleles are ``A`` and ``T`` or ``C`` and ``G``).</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">allelesFiles</span> <span class="o">=</span> <span class="p">[{},</span> <span class="p">{}]</span>
+    <span class="n">files</span> <span class="o">=</span> <span class="p">[</span><span class="n">frqFile1</span><span class="p">,</span> <span class="n">frqFile2</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">fileName</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">files</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fileName</span><span class="p">,</span> <span class="s">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">inputFile</span><span class="p">:</span>
+                <span class="n">headerIndex</span> <span class="o">=</span> <span class="bp">None</span>
+                <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">inputFile</span><span class="p">):</span>
+                    <span class="n">row</span> <span class="o">=</span> <span class="n">createRowFromPlinkSpacedOutput</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+
+                    <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="c"># This is the header</span>
+                        <span class="n">headerIndex</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">([</span>
+                            <span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">j</span><span class="p">)</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">row</span><span class="p">))</span>
+                        <span class="p">])</span>
+
+                        <span class="c"># Checking the columns</span>
+                        <span class="k">for</span> <span class="n">columnName</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&quot;SNP&quot;</span><span class="p">,</span> <span class="s">&quot;A1&quot;</span><span class="p">,</span> <span class="s">&quot;A2&quot;</span><span class="p">]:</span>
+                            <span class="k">if</span> <span class="n">columnName</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">headerIndex</span><span class="p">:</span>
+                                <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%(fileName)s</span><span class="s">: no column named &quot;</span> \
+                                      <span class="s">&quot;</span><span class="si">%(columnName)s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="nb">locals</span><span class="p">()</span>
+                                <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">snpName</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">headerIndex</span><span class="p">[</span><span class="s">&quot;SNP&quot;</span><span class="p">]]</span>
+                        <span class="n">allele1</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">headerIndex</span><span class="p">[</span><span class="s">&quot;A1&quot;</span><span class="p">]]</span>
+                        <span class="n">allele2</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">headerIndex</span><span class="p">[</span><span class="s">&quot;A2&quot;</span><span class="p">]]</span>
+
+                        <span class="n">alleles</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([</span><span class="n">allele1</span><span class="p">,</span> <span class="n">allele2</span><span class="p">])</span>
+                        <span class="k">if</span> <span class="s">&quot;0&quot;</span> <span class="ow">in</span> <span class="n">alleles</span><span class="p">:</span>
+                            <span class="n">alleles</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s">&quot;0&quot;</span><span class="p">)</span>
+
+                        <span class="n">allelesFiles</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">snpName</span><span class="p">]</span> <span class="o">=</span> <span class="n">alleles</span>
+        <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%(fileName)s</span><span class="s">: no such file&quot;</span> <span class="o">%</span> <span class="nb">locals</span><span class="p">()</span>
+            <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="n">allelesFile1</span><span class="p">,</span> <span class="n">allelesFile2</span> <span class="o">=</span> <span class="n">allelesFiles</span>
+
+    <span class="c"># Finding the SNPs to flip</span>
+    <span class="n">toFlipOutputFile</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">toFlipOutputFile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">outPrefix</span> <span class="o">+</span> <span class="s">&quot;.snp_to_flip_in_reference&quot;</span><span class="p">,</span> <span class="s">&quot;w&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%(outPrefix)s</span><span class="s">.snp_to_flip_in_reference: can&#39;t write &quot;</span> \
+              <span class="s">&quot;file&quot;</span> <span class="o">%</span> <span class="nb">locals</span><span class="p">()</span>
+        <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="n">toRemoveOutputFile</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">toRemoveOutputFile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">outPrefix</span> <span class="o">+</span> <span class="s">&quot;.snp_to_remove&quot;</span><span class="p">,</span> <span class="s">&quot;w&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%(outPrefix)s</span><span class="s">.snp_to_remove: can&#39;t write file&quot;</span> <span class="o">%</span> <span class="nb">locals</span><span class="p">()</span>
+        <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">snpName</span> <span class="ow">in</span> <span class="n">allelesFile1</span><span class="o">.</span><span class="n">iterkeys</span><span class="p">():</span>
+        <span class="n">alleles1</span> <span class="o">=</span> <span class="n">allelesFile1</span><span class="p">[</span><span class="n">snpName</span><span class="p">]</span>
+        <span class="n">alleles2</span> <span class="o">=</span> <span class="n">allelesFile2</span><span class="p">[</span><span class="n">snpName</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">alleles1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">alleles2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">):</span>
+            <span class="c"># Both are heterozygous</span>
+            <span class="k">if</span> <span class="p">({</span><span class="s">&quot;A&quot;</span><span class="p">,</span> <span class="s">&quot;T&quot;</span><span class="p">}</span> <span class="o">==</span> <span class="n">alleles1</span><span class="p">)</span> <span class="ow">or</span> <span class="p">({</span><span class="s">&quot;C&quot;</span><span class="p">,</span> <span class="s">&quot;G&quot;</span><span class="p">}</span> <span class="o">==</span> <span class="n">alleles1</span><span class="p">)</span> <span class="ow">or</span> \
+                    <span class="p">({</span><span class="s">&quot;A&quot;</span><span class="p">,</span> <span class="s">&quot;T&quot;</span><span class="p">}</span> <span class="o">==</span> <span class="n">alleles2</span><span class="p">)</span> <span class="ow">or</span> <span class="p">({</span><span class="s">&quot;C&quot;</span><span class="p">,</span> <span class="s">&quot;G&quot;</span><span class="p">}</span> <span class="o">==</span> <span class="n">alleles2</span><span class="p">):</span>
+                <span class="c"># We can&#39;t flip those..., so we remove them</span>
+                <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">toRemoveOutputFile</span><span class="p">,</span> <span class="n">snpName</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">alleles1</span> <span class="o">!=</span> <span class="n">alleles2</span><span class="p">:</span>
+                    <span class="c"># Let&#39;s try the flip one</span>
+                    <span class="k">if</span> <span class="n">flipGenotype</span><span class="p">(</span><span class="n">alleles1</span><span class="p">)</span> <span class="o">==</span> <span class="n">alleles2</span><span class="p">:</span>
+                        <span class="c"># We need to flip it</span>
+                        <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">toFlipOutputFile</span><span class="p">,</span> <span class="n">snpName</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="c"># Those SNP are discordant...</span>
+                        <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">toRemoveOutputFile</span><span class="p">,</span> <span class="n">snpName</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c"># We want to remove this SNP, because there is at least one</span>
+            <span class="c"># homozygous individual</span>
+            <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">toRemoveOutputFile</span><span class="p">,</span> <span class="n">snpName</span>
+
+    <span class="c"># Closing output files</span>
+    <span class="n">toFlipOutputFile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">toRemoveOutputFile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+</div>
+<div class="viewcode-block" id="computeFrequency"><a class="viewcode-back" href="../../../check_ethnicity.html#pyGenClean.Ethnicity.check_ethnicity.computeFrequency">[docs]</a><span class="k">def</span> <span class="nf">computeFrequency</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span> <span class="n">outPrefix</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Compute the frequency using Plink.</span>
+
+<span class="sd">    :param prefix: the prefix of the file binary file for which we need to</span>
+<span class="sd">                   compute frequencies.</span>
+<span class="sd">    :param outPrefix: the prefix of the output files.</span>
+
+<span class="sd">    :type prefix: str</span>
+<span class="sd">    :type outPrefix: str</span>
+
+<span class="sd">    Uses Plink to compute the frequency of all the markers in the ``prefix``</span>
+<span class="sd">    binary file.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">plinkCommand</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;plink&quot;</span><span class="p">,</span> <span class="s">&quot;--noweb&quot;</span><span class="p">,</span> <span class="s">&quot;--bfile&quot;</span><span class="p">,</span> <span class="n">prefix</span><span class="p">,</span> <span class="s">&quot;--freq&quot;</span><span class="p">,</span> <span class="s">&quot;--out&quot;</span><span class="p">,</span>
+                    <span class="n">outPrefix</span><span class="p">]</span>
+    <span class="n">runCommand</span><span class="p">(</span><span class="n">plinkCommand</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="combinePlinkBinaryFiles"><a class="viewcode-back" href="../../../check_ethnicity.html#pyGenClean.Ethnicity.check_ethnicity.combinePlinkBinaryFiles">[docs]</a><span class="k">def</span> <span class="nf">combinePlinkBinaryFiles</span><span class="p">(</span><span class="n">prefixes</span><span class="p">,</span> <span class="n">outPrefix</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Combine Plink binary files.</span>
+
+<span class="sd">    :param prefixes: a list of the prefix of the files that need to be</span>
+<span class="sd">                     combined.</span>
+<span class="sd">    :param outPrefix: the prefix of the output file (the combined file).</span>
+
+<span class="sd">    :type prefixes: list</span>
+<span class="sd">    :type outPrefix: str</span>
+
+<span class="sd">    It uses Plink to merge a list of binary files (which is a list of prefixes</span>
+<span class="sd">    (strings)), and create the final data set which as ``outPrefix`` as the</span>
+<span class="sd">    prefix.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c"># The first file is the bfile, the others are the ones to merge</span>
+    <span class="n">outputFile</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">outputFile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">outPrefix</span> <span class="o">+</span> <span class="s">&quot;.files_to_merge&quot;</span><span class="p">,</span> <span class="s">&quot;w&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%(outPrefix)s</span><span class="s">.filesToMerge: can&#39;t write file&quot;</span> <span class="o">%</span> <span class="nb">locals</span><span class="p">()</span>
+        <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">prefix</span> <span class="ow">in</span> <span class="n">prefixes</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+        <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">outputFile</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span>
+            <span class="n">prefix</span> <span class="o">+</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&quot;.bed&quot;</span><span class="p">,</span> <span class="s">&quot;.bim&quot;</span><span class="p">,</span> <span class="s">&quot;.fam&quot;</span><span class="p">]</span>
+        <span class="p">])</span>
+
+    <span class="c"># Closing the output files</span>
+    <span class="n">outputFile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="c"># Runing plink</span>
+    <span class="n">plinkCommand</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;plink&quot;</span><span class="p">,</span> <span class="s">&quot;--noweb&quot;</span><span class="p">,</span> <span class="s">&quot;--bfile&quot;</span><span class="p">,</span> <span class="n">prefixes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                    <span class="s">&quot;--merge-list&quot;</span><span class="p">,</span> <span class="n">outPrefix</span> <span class="o">+</span> <span class="s">&quot;.files_to_merge&quot;</span><span class="p">,</span>
+                    <span class="s">&quot;--make-bed&quot;</span><span class="p">,</span> <span class="s">&quot;--out&quot;</span><span class="p">,</span> <span class="n">outPrefix</span><span class="p">]</span>
+    <span class="n">runCommand</span><span class="p">(</span><span class="n">plinkCommand</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="findOverlappingSNPsWithReference"><a class="viewcode-back" href="../../../check_ethnicity.html#pyGenClean.Ethnicity.check_ethnicity.findOverlappingSNPsWithReference">[docs]</a><span class="k">def</span> <span class="nf">findOverlappingSNPsWithReference</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span> <span class="n">referencePrefixes</span><span class="p">,</span>
+                                     <span class="n">referencePopulations</span><span class="p">,</span> <span class="n">outPrefix</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Find the overlapping SNPs in 4 different data sets.</span>
+
+<span class="sd">    :param prefix: the prefix of all the files.</span>
+<span class="sd">    :param referencePrefixes: the prefix of the reference population files.</span>
+<span class="sd">    :param referencePopulations: the name of the reference population (same</span>
+<span class="sd">                                 order as ``referencePrefixes``)</span>
+<span class="sd">    :param outPrefix: the prefix of the output files.</span>
+
+<span class="sd">    :type prefix: str</span>
+<span class="sd">    :type referencePrefixes: list</span>
+<span class="sd">    :type referencePopulations: list</span>
+<span class="sd">    :type outPrefix: str</span>
+
+<span class="sd">    It starts by reading the ``bim`` file of the source data set</span>
+<span class="sd">    (``prefix.bim``). It finds all the markers (excluding the duplicated ones).</span>
+<span class="sd">    Then it reads all of the reference population ``bim`` files</span>
+<span class="sd">    (``referencePrefixes.bim``) and find all the markers that were found in the</span>
+<span class="sd">    source data set.</span>
+
+<span class="sd">    It creates three output files:</span>
+
+<span class="sd">    * ``outPrefix.ref_snp_to_extract``: the name of the markers that needs to</span>
+<span class="sd">      be extracted from the three reference panels.</span>
+<span class="sd">    * ``outPrefix.source_snp_to_extract``: the name of the markers that needs</span>
+<span class="sd">      to be extracted from the source panel.</span>
+<span class="sd">    * ``outPrefix.update_names``: a file (readable by Plink) that will help in</span>
+<span class="sd">      changing the names of the selected markers in the reference panels, so</span>
+<span class="sd">      that they become comparable with the source panel.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c"># Reading the main file</span>
+    <span class="n">sourceSnpToExtract</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">duplicates</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">prefix</span> <span class="o">+</span> <span class="s">&quot;.bim&quot;</span><span class="p">,</span> <span class="s">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">inputFile</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">inputFile</span><span class="p">:</span>
+                <span class="n">row</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\r\n</span><span class="s">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\t</span><span class="s">&quot;</span><span class="p">)</span>
+                <span class="n">chromosome</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">position</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+                <span class="n">snpName</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+                <span class="k">if</span> <span class="p">(</span><span class="n">chromosome</span><span class="p">,</span> <span class="n">position</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sourceSnpToExtract</span><span class="p">:</span>
+                    <span class="n">sourceSnpToExtract</span><span class="p">[(</span><span class="n">chromosome</span><span class="p">,</span> <span class="n">position</span><span class="p">)]</span> <span class="o">=</span> <span class="n">snpName</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c"># It&#39;s a duplicate</span>
+                    <span class="n">duplicates</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">chromosome</span><span class="p">,</span> <span class="n">position</span><span class="p">))</span>
+    <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s">.bim: no such file&quot;</span> <span class="o">%</span> <span class="n">prefix</span>
+        <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="c"># Removing duplicates from the list</span>
+    <span class="k">for</span> <span class="n">snpID</span> <span class="ow">in</span> <span class="n">duplicates</span><span class="p">:</span>
+        <span class="k">del</span> <span class="n">sourceSnpToExtract</span><span class="p">[</span><span class="n">snpID</span><span class="p">]</span>
+
+    <span class="c"># Reading each of the reference markers</span>
+    <span class="n">refSnpToExtract</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">dict</span><span class="p">)</span>
+    <span class="n">refSnp</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">set</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">refPop</span><span class="p">,</span> <span class="n">refPrefix</span> <span class="ow">in</span> <span class="n">izip</span><span class="p">(</span><span class="n">referencePopulations</span><span class="p">,</span> <span class="n">referencePrefixes</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">refPrefix</span> <span class="o">+</span> <span class="s">&quot;.bim&quot;</span><span class="p">,</span> <span class="s">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">inputFile</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">inputFile</span><span class="p">:</span>
+                    <span class="n">row</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\r\n</span><span class="s">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\t</span><span class="s">&quot;</span><span class="p">)</span>
+                    <span class="n">chromosome</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="n">position</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+                    <span class="n">snpName</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+                    <span class="n">key</span> <span class="o">=</span> <span class="p">(</span><span class="n">chromosome</span><span class="p">,</span> <span class="n">position</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">sourceSnpToExtract</span><span class="p">:</span>
+                        <span class="c"># We want this SNP</span>
+                        <span class="n">refSnpToExtract</span><span class="p">[</span><span class="n">refPop</span><span class="p">][</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">snpName</span>
+                        <span class="n">refSnp</span><span class="p">[</span><span class="n">refPop</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;  - {:,d} overlaps with {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="nb">len</span><span class="p">(</span><span class="n">refSnp</span><span class="p">[</span><span class="n">refPop</span><span class="p">]),</span>
+                    <span class="n">refPrefix</span><span class="p">,</span>
+                <span class="p">))</span>
+
+        <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%(refPrefix)s</span><span class="s">.bim: no such file&quot;</span> <span class="o">%</span> <span class="nb">locals</span><span class="p">()</span>
+            <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="c"># Creating the intersect of the reference SNP</span>
+    <span class="n">refSnpIntersect</span> <span class="o">=</span> <span class="n">refSnp</span><span class="p">[</span><span class="n">referencePopulations</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+    <span class="k">for</span> <span class="n">refPop</span> <span class="ow">in</span> <span class="n">referencePopulations</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+        <span class="n">refSnpIntersect</span> <span class="o">&amp;=</span> <span class="n">refSnp</span><span class="p">[</span><span class="n">refPop</span><span class="p">]</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;  - {:,d} in common between reference &quot;</span>
+                <span class="s">&quot;panels&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">refSnpIntersect</span><span class="p">)))</span>
+
+    <span class="c"># Printing the names of the SNPs to extract in the reference</span>
+    <span class="n">refOutputFiles</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">refPop</span> <span class="ow">in</span> <span class="n">referencePopulations</span><span class="p">:</span>
+            <span class="n">refOutputFiles</span><span class="p">[</span><span class="n">refPop</span><span class="p">]</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span>
+                <span class="n">outPrefix</span> <span class="o">+</span> <span class="s">&quot;.{}_snp_to_extract&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">refPop</span><span class="p">),</span>
+                <span class="n">mode</span><span class="o">=</span><span class="s">&quot;w&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+    <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;{}.POP_snp_to_extract: can&#39;t write file&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">outPrefix</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="n">sourceOutputFile</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">sourceOutputFile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">outPrefix</span> <span class="o">+</span> <span class="s">&quot;.source_snp_to_extract&quot;</span><span class="p">,</span> <span class="s">&quot;w&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;{}.source_snp_to_extract: can&#39;t write file&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">outPrefix</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="n">changeNameOutputFiles</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">refPop</span> <span class="ow">in</span> <span class="n">referencePopulations</span><span class="p">:</span>
+            <span class="n">changeNameOutputFiles</span><span class="p">[</span><span class="n">refPop</span><span class="p">]</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span>
+                <span class="n">outPrefix</span> <span class="o">+</span> <span class="s">&quot;.{}_update_names&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">refPop</span><span class="p">),</span>
+                <span class="n">mode</span><span class="o">=</span><span class="s">&quot;w&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+    <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%(outPrefix)s</span><span class="s">.updateNames: can&#39;t write file&quot;</span> <span class="o">%</span> <span class="nb">locals</span><span class="p">()</span>
+        <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="c"># Writing the file containing the SNPs to extract in the source</span>
+    <span class="k">for</span> <span class="n">snpID</span> <span class="ow">in</span> <span class="n">refSnpIntersect</span><span class="p">:</span>
+        <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">sourceOutputFile</span><span class="p">,</span> <span class="n">sourceSnpToExtract</span><span class="p">[</span><span class="n">snpID</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">refPop</span> <span class="ow">in</span> <span class="n">referencePopulations</span><span class="p">:</span>
+            <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">refOutputFiles</span><span class="p">[</span><span class="n">refPop</span><span class="p">],</span> <span class="n">refSnpToExtract</span><span class="p">[</span><span class="n">refPop</span><span class="p">][</span><span class="n">snpID</span><span class="p">]</span>
+            <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">changeNameOutputFiles</span><span class="p">[</span><span class="n">refPop</span><span class="p">],</span> <span class="s">&quot;</span><span class="se">\t</span><span class="s">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span>
+                <span class="n">refSnpToExtract</span><span class="p">[</span><span class="n">refPop</span><span class="p">][</span><span class="n">snpID</span><span class="p">],</span>
+                <span class="n">sourceSnpToExtract</span><span class="p">[</span><span class="n">snpID</span><span class="p">],</span>
+            <span class="p">])</span>
+
+    <span class="c"># Closing the output file</span>
+    <span class="n">sourceOutputFile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">refOutputFile</span> <span class="ow">in</span> <span class="n">refOutputFiles</span><span class="o">.</span><span class="n">itervalues</span><span class="p">():</span>
+        <span class="n">refOutputFile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">changeNameOutputFile</span> <span class="ow">in</span> <span class="n">changeNameOutputFiles</span><span class="o">.</span><span class="n">itervalues</span><span class="p">():</span>
+        <span class="n">changeNameOutputFile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+</div>
+<div class="viewcode-block" id="extractSNPs"><a class="viewcode-back" href="../../../check_ethnicity.html#pyGenClean.Ethnicity.check_ethnicity.extractSNPs">[docs]</a><span class="k">def</span> <span class="nf">extractSNPs</span><span class="p">(</span><span class="n">snpToExtractFileNames</span><span class="p">,</span> <span class="n">referencePrefixes</span><span class="p">,</span> <span class="n">popNames</span><span class="p">,</span> <span class="n">outPrefix</span><span class="p">,</span>
+                <span class="n">runSGE</span><span class="p">,</span> <span class="n">options</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Extract a list of SNPs using Plink.</span>
+
+<span class="sd">    :param snpToExtractFileNames: the name of the files which contains the</span>
+<span class="sd">                                  markers to extract from the original data</span>
+<span class="sd">                                  set.</span>
+<span class="sd">    :param referencePrefixes: a list containing the three reference population</span>
+<span class="sd">                              prefixes (the original data sets).</span>
+<span class="sd">    :param popNames: a list containing the three reference population names.</span>
+<span class="sd">    :param outPrefix: the prefix of the output file.</span>
+<span class="sd">    :param runSGE: Whether using SGE or not.</span>
+<span class="sd">    :param options: the options.</span>
+
+<span class="sd">    :type snpToExtractFileNames: list</span>
+<span class="sd">    :type referencePrefixes: list</span>
+<span class="sd">    :type popNames: list</span>
+<span class="sd">    :type outPrefix: str</span>
+<span class="sd">    :type runSGE: boolean</span>
+<span class="sd">    :type options: argparse.Namespace</span>
+
+<span class="sd">    Using Plink, extract a set of markers from a list of prefixes.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">jobIDs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">jobTemplates</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="n">runSGE</span><span class="p">:</span>
+        <span class="c"># Add the environment variable for DRMAA package</span>
+        <span class="k">if</span> <span class="s">&quot;DRMAA_LIBRARY_PATH&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;could not load drmaa: set DRMAA_LIBRARY_PATH&quot;</span>
+            <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="c"># Import the python drmaa library</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">import</span> <span class="nn">drmaa</span>
+        <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="s">&quot;drmaa is not install, install drmaa&quot;</span><span class="p">)</span>
+
+        <span class="c"># Initializing a session</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">drmaa</span><span class="o">.</span><span class="n">Session</span><span class="p">()</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
+
+    <span class="n">zipped</span> <span class="o">=</span> <span class="n">izip</span><span class="p">(</span><span class="n">popNames</span><span class="p">,</span> <span class="n">referencePrefixes</span><span class="p">,</span> <span class="n">snpToExtractFileNames</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">popName</span><span class="p">,</span> <span class="n">refPrefix</span><span class="p">,</span> <span class="n">snpToExtractFileName</span> <span class="ow">in</span> <span class="n">zipped</span><span class="p">:</span>
+        <span class="n">plinkCommand</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;plink&quot;</span><span class="p">,</span> <span class="s">&quot;--noweb&quot;</span><span class="p">,</span> <span class="s">&quot;--bfile&quot;</span><span class="p">,</span> <span class="n">refPrefix</span><span class="p">,</span> <span class="s">&quot;--extract&quot;</span><span class="p">,</span>
+                        <span class="n">snpToExtractFileName</span><span class="p">,</span> <span class="s">&quot;--make-bed&quot;</span><span class="p">,</span> <span class="s">&quot;--out&quot;</span><span class="p">,</span>
+                        <span class="n">outPrefix</span> <span class="o">+</span> <span class="s">&quot;.&quot;</span> <span class="o">+</span> <span class="n">popName</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">runSGE</span><span class="p">:</span>
+            <span class="c"># We run using SGE</span>
+            <span class="c"># Creating the job template</span>
+            <span class="n">jt</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">createJobTemplate</span><span class="p">()</span>
+            <span class="n">jt</span><span class="o">.</span><span class="n">remoteCommand</span> <span class="o">=</span> <span class="n">plinkCommand</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">jt</span><span class="o">.</span><span class="n">workingDirectory</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
+            <span class="n">jt</span><span class="o">.</span><span class="n">jobEnvironment</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span>
+            <span class="n">jt</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="n">plinkCommand</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+            <span class="n">jt</span><span class="o">.</span><span class="n">jobName</span> <span class="o">=</span> <span class="s">&quot;_plink_extract_snps&quot;</span>
+
+            <span class="c"># Cluster specifics</span>
+            <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">sge_walltime</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">jt</span><span class="o">.</span><span class="n">hardWallclockTimeLimit</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">sge_walltime</span>
+            <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">sge_nodes</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">native_spec</span> <span class="o">=</span> <span class="s">&quot;-l nodes={}:ppn={}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">sge_nodes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                                                          <span class="n">options</span><span class="o">.</span><span class="n">sge_nodes</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                <span class="n">jt</span><span class="o">.</span><span class="n">nativeSpecification</span> <span class="o">=</span> <span class="n">native_spec</span>
+
+            <span class="c"># Running the job</span>
+            <span class="n">jobID</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">runJob</span><span class="p">(</span><span class="n">jt</span><span class="p">)</span>
+
+            <span class="c"># Storing the job template and the job ID</span>
+            <span class="n">jobTemplates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">jt</span><span class="p">)</span>
+            <span class="n">jobIDs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">jobID</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c"># We run normal</span>
+            <span class="n">runCommand</span><span class="p">(</span><span class="n">plinkCommand</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">runSGE</span><span class="p">:</span>
+        <span class="c"># We wait for all the jobs to be over</span>
+        <span class="n">hadProblems</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">jobID</span> <span class="ow">in</span> <span class="n">jobIDs</span><span class="p">:</span>
+            <span class="n">retVal</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="n">jobID</span><span class="p">,</span> <span class="n">drmaa</span><span class="o">.</span><span class="n">Session</span><span class="o">.</span><span class="n">TIMEOUT_WAIT_FOREVER</span><span class="p">)</span>
+            <span class="n">hadProblems</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">retVal</span><span class="o">.</span><span class="n">exitStatus</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+
+        <span class="c"># The jobs should be finished, so we clean everything</span>
+        <span class="c"># Deleting the job template, and exiting the session</span>
+        <span class="k">for</span> <span class="n">jt</span> <span class="ow">in</span> <span class="n">jobTemplates</span><span class="p">:</span>
+            <span class="n">s</span><span class="o">.</span><span class="n">deleteJobTemplate</span><span class="p">(</span><span class="n">jt</span><span class="p">)</span>
+
+        <span class="c"># Closing the connection</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">hadProblem</span> <span class="ow">in</span> <span class="n">hadProblems</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">hadProblem</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;Some SGE jobs had errors...&quot;</span>
+                <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="runCommand"><a class="viewcode-back" href="../../../check_ethnicity.html#pyGenClean.Ethnicity.check_ethnicity.runCommand">[docs]</a><span class="k">def</span> <span class="nf">runCommand</span><span class="p">(</span><span class="n">command</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Run a command.</span>
+
+<span class="sd">    :param command: the command to run.</span>
+
+<span class="sd">    :type command: list</span>
+
+<span class="sd">    Tries to run a command. If it fails, raise a :py:class:`ProgramError`. This</span>
+<span class="sd">    function uses the :py:mod:`subprocess` module.</span>
+
+<span class="sd">    .. warning::</span>
+<span class="sd">        The variable ``command`` should be a list of strings (no other type).</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">(</span>
+            <span class="n">command</span><span class="p">,</span>
+            <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">STDOUT</span><span class="p">,</span>
+            <span class="n">shell</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">except</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;couldn&#39;t run command</span><span class="se">\n</span><span class="s">&quot;</span> <span class="o">+</span> <span class="s">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">command</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="checkArgs"><a class="viewcode-back" href="../../../check_ethnicity.html#pyGenClean.Ethnicity.check_ethnicity.checkArgs">[docs]</a><span class="k">def</span> <span class="nf">checkArgs</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Checks the arguments and options.</span>
+
+<span class="sd">    :param args: an object containing the options of the program.</span>
+
+<span class="sd">    :type args: argparse.Namespace</span>
+
+<span class="sd">    :returns: ``True`` if everything was OK.</span>
+
+<span class="sd">    If there is a problem with an option, an exception is raised using the</span>
+<span class="sd">    :py:class:`ProgramError` class, a message is printed to the</span>
+<span class="sd">    :py:class:`sys.stderr` and the program exists with code 1.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c"># Check if we have the tped and the tfam files</span>
+    <span class="n">prefixes_to_check</span> <span class="o">=</span> <span class="p">[</span><span class="n">args</span><span class="o">.</span><span class="n">bfile</span><span class="p">]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">args</span><span class="o">.</span><span class="n">skip_ref_pops</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">pop</span> <span class="ow">in</span> <span class="p">(</span><span class="s">&quot;ceu&quot;</span><span class="p">,</span> <span class="s">&quot;yri&quot;</span><span class="p">,</span> <span class="s">&quot;jpt_chb&quot;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">vars</span><span class="p">(</span><span class="n">args</span><span class="p">)[</span><span class="s">&quot;{}_bfile&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pop</span><span class="p">)]</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="s">&quot;argument --{}-bfile is &quot;</span>
+                                   <span class="s">&quot;required&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pop</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;_&quot;</span><span class="p">,</span> <span class="s">&quot;-&quot;</span><span class="p">)))</span>
+        <span class="n">prefixes_to_check</span> <span class="o">+=</span> <span class="p">[</span>
+            <span class="n">args</span><span class="o">.</span><span class="n">ceu_bfile</span><span class="p">,</span>
+            <span class="n">args</span><span class="o">.</span><span class="n">yri_bfile</span><span class="p">,</span>
+            <span class="n">args</span><span class="o">.</span><span class="n">jpt_chb_bfile</span><span class="p">,</span>
+        <span class="p">]</span>
+    <span class="k">for</span> <span class="n">prefix</span> <span class="ow">in</span> <span class="n">prefixes_to_check</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">prefix</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;no input file&quot;</span>
+            <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">fileName</span> <span class="ow">in</span> <span class="p">[</span><span class="n">prefix</span> <span class="o">+</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&quot;.bed&quot;</span><span class="p">,</span> <span class="s">&quot;.bim&quot;</span><span class="p">,</span> <span class="s">&quot;.fam&quot;</span><span class="p">]]:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">fileName</span><span class="p">):</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%(fileName)s</span><span class="s">: no such file&quot;</span> <span class="o">%</span> <span class="nb">locals</span><span class="p">()</span>
+                <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="c"># Check the indep-pairwise option</span>
+    <span class="c"># The two first must be int, the last one float</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
+            <span class="n">tmp</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">indep_pairwise</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="n">tmp</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">indep_pairwise</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;indep-pairwise: need INT INT FLOAT&quot;</span>
+        <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="c"># Check the maf value</span>
+    <span class="n">tmpMAF</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">tmpMAF</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">maf</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;maf: must be a float, not </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">args</span><span class="o">.</span><span class="n">maf</span>
+        <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">tmpMAF</span> <span class="o">&gt;</span> <span class="mf">0.5</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">tmpMAF</span> <span class="o">&lt;</span> <span class="mf">0.0</span><span class="p">):</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;maf: must be between 0.0 and 0.5, not </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">args</span><span class="o">.</span><span class="n">maf</span>
+        <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="c"># Check the number of line per file</span>
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">line_per_file_for_sge</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;line-per-file-for-sge: must be above 0, not &quot;</span> \
+              <span class="s">&quot;</span><span class="si">%d</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">args</span><span class="o">.</span><span class="n">line_per_file_for_sge</span>
+        <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="c"># Check the number of component to compute</span>
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">nb_components</span> <span class="o">&lt;</span> <span class="mi">2</span> <span class="ow">or</span> <span class="n">args</span><span class="o">.</span><span class="n">nb_components</span> <span class="o">&gt;</span> <span class="mi">10</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&quot;nb-components: must be between 2 and 10 (inclusive), &quot;</span>
+               <span class="s">&quot;not {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">nb_components</span><span class="p">))</span>
+        <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="c"># Check the minimum number of SNPs</span>
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">min_nb_snp</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;min-nb-snp: must be above 1&quot;</span>
+        <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="bp">True</span>
+
+</div>
+<div class="viewcode-block" id="parseArgs"><a class="viewcode-back" href="../../../check_ethnicity.html#pyGenClean.Ethnicity.check_ethnicity.parseArgs">[docs]</a><span class="k">def</span> <span class="nf">parseArgs</span><span class="p">(</span><span class="n">argString</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>  <span class="c"># pragma: no cover</span>
+    <span class="sd">&quot;&quot;&quot;Parses the command line options and arguments.</span>
+
+<span class="sd">    :param argString: the options.</span>
+
+<span class="sd">    :type argString: list</span>
+
+<span class="sd">    :returns: A :py:class:`argparse.Namespace` object created by</span>
+<span class="sd">              the :py:mod:`argparse` module. It contains the values of the</span>
+<span class="sd">              different options.</span>
+
+<span class="sd">    =========================== ====== ========================================</span>
+<span class="sd">              Options            Type               Description</span>
+<span class="sd">    =========================== ====== ========================================</span>
+<span class="sd">    ``--bfile``                 string The input file prefix (Plink binary</span>
+<span class="sd">                                       file).</span>
+<span class="sd">    ``--skip-ref-pops``         bool   Perform the MDS computation, but skip</span>
+<span class="sd">                                       the three reference panels.</span>
+<span class="sd">    ``--ceu-bfile``             string The input file prefix for the CEU</span>
+<span class="sd">                                       population (Plink binary file).</span>
+<span class="sd">    ``--yri-bfile``             string The input file prefix for the YRI</span>
+<span class="sd">                                       population (Plink binary file).</span>
+<span class="sd">    ``--jpt-chb-bfile``         string The input file prefix for the JPT-CHB</span>
+<span class="sd">                                       population (Plink binary file).</span>
+<span class="sd">    ``--min-nb-snp``            int    The minimum number of markers needed to</span>
+<span class="sd">                                       compute IBS.</span>
+<span class="sd">    ``--indep-pairwise``        string Three numbers: window size, window shift</span>
+<span class="sd">                                       and the r2 threshold.</span>
+<span class="sd">    ``--maf``                   string Restrict to SNPs with MAF &gt;= threshold.</span>
+<span class="sd">    ``--sge``                   bool   Use SGE for parallelization.</span>
+<span class="sd">    ``--sge-walltime``          int    The time limit (for clusters).</span>
+<span class="sd">    ``--sge-nodes``             int    Two INTs (number of nodes and number of</span>
+<span class="sd">                                int    processor per nodes).</span>
+<span class="sd">    ``--ibs-sge-walltime``      int    The time limit (for clusters) (for IBS)</span>
+<span class="sd">    ``--ibs-sge-nodes``         int    Two INTs (number of nodes and number of</span>
+<span class="sd">                                int    processor per nodes) (for IBS).</span>
+<span class="sd">    ``--line-per-file-for-sge`` int    The number of line per file for SGE task</span>
+<span class="sd">                                       array.</span>
+<span class="sd">    ``--nb-components``         int    The number of component to compute.</span>
+<span class="sd">    ``--outliers-of``           string Finds the ouliers of this population.</span>
+<span class="sd">    ``--multiplier``            float  To find the outliers, we look for more</span>
+<span class="sd">                                       than x times the cluster standard</span>
+<span class="sd">                                       deviation.</span>
+<span class="sd">    ``--xaxis``                 string The component to use for the X axis.</span>
+<span class="sd">    ``--yaxis``                 string The component to use for the Y axis.</span>
+<span class="sd">    ``--format``                string The output file format.</span>
+<span class="sd">    ``--title``                 string The title of the MDS plot.</span>
+<span class="sd">    ``--xlabel``                string The label of the X axis.</span>
+<span class="sd">    ``--ylabel``                string The label of the Y axis.</span>
+<span class="sd">    ``--out``                   string The prefix of the output files.</span>
+<span class="sd">    =========================== ====== ========================================</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">        No option check is done here (except for the one automatically done by</span>
+<span class="sd">        argparse). Those need to be done elsewhere (see :py:func:`checkArgs`).</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">if</span> <span class="n">argString</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">(</span><span class="n">argString</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">args</span>
+
+</div>
+<div class="viewcode-block" id="ProgramError"><a class="viewcode-back" href="../../../check_ethnicity.html#pyGenClean.Ethnicity.check_ethnicity.ProgramError">[docs]</a><span class="k">class</span> <span class="nc">ProgramError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;An :py:class:`Exception` raised in case of a problem.</span>
+
+<span class="sd">    :param msg: the message to print to the user before exiting.</span>
+
+<span class="sd">    :type msg: str</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Construction of the :py:class:`ProgramError` class.</span>
+
+<span class="sd">        :param msg: the message to print to the user</span>
+
+<span class="sd">        :type msg: str</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span>
+
+
+<span class="c"># The parser object</span></div>
+<span class="n">pretty_name</span> <span class="o">=</span> <span class="s">&quot;Ethnicity&quot;</span>
+<span class="n">desc</span> <span class="o">=</span> <span class="s">&quot;&quot;&quot;Check samples&#39; ethnicity using reference populations and IBS.&quot;&quot;&quot;</span>
+<span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="n">desc</span><span class="p">)</span>
+
+<span class="c"># The INPUT files</span>
+<span class="n">group</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s">&quot;Input File&quot;</span><span class="p">)</span>
+<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;--bfile&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s">&quot;FILE&quot;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+                   <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s">&quot;The input file prefix (will find the plink binary &quot;</span>
+                         <span class="s">&quot;files by appending the prefix to the .bim, .bed and &quot;</span>
+                         <span class="s">&quot;.fam files, respectively.&quot;</span><span class="p">))</span>
+<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;--skip-ref-pops&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s">&quot;store_true&quot;</span><span class="p">,</span>
+                   <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s">&quot;Perform the MDS computation, but skip the three &quot;</span>
+                         <span class="s">&quot;reference panels.&quot;</span><span class="p">))</span>
+<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;--ceu-bfile&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s">&quot;FILE&quot;</span><span class="p">,</span>
+                   <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s">&quot;The input file prefix (will find the plink binary &quot;</span>
+                         <span class="s">&quot;files by appending the prefix to the .bim, .bed and &quot;</span>
+                         <span class="s">&quot;.fam files, respectively.) for the CEU population&quot;</span><span class="p">))</span>
+<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;--yri-bfile&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s">&quot;FILE&quot;</span><span class="p">,</span>
+                   <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s">&quot;The input file prefix (will find the plink binary &quot;</span>
+                         <span class="s">&quot;files by appending the prefix to the .bim, .bed and &quot;</span>
+                         <span class="s">&quot;.fam files, respectively.) for the YRI population&quot;</span><span class="p">))</span>
+<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;--jpt-chb-bfile&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s">&quot;FILE&quot;</span><span class="p">,</span>
+                   <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s">&quot;The input file prefix (will find the plink binary &quot;</span>
+                         <span class="s">&quot;files by appending the prefix to the .bim, .bed and &quot;</span>
+                         <span class="s">&quot;.fam files, respectively.) for the JPT-CHB &quot;</span>
+                         <span class="s">&quot;population&quot;</span><span class="p">))</span>
+<span class="c"># The options</span>
+<span class="n">group</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s">&quot;Options&quot;</span><span class="p">)</span>
+<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;--min-nb-snp&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s">&quot;INT&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">8000</span><span class="p">,</span>
+                   <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s">&quot;The minimum number of markers needed to compute IBS &quot;</span>
+                         <span class="s">&quot;values. [Default: </span><span class="si">%(default)d</span><span class="s">]&quot;</span><span class="p">))</span>
+<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;--indep-pairwise&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s">&quot;STR&quot;</span><span class="p">,</span>
+                   <span class="n">nargs</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;50&quot;</span><span class="p">,</span> <span class="s">&quot;5&quot;</span><span class="p">,</span> <span class="s">&quot;0.1&quot;</span><span class="p">],</span>
+                   <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s">&quot;Three numbers: window size, window shift and &quot;</span>
+                         <span class="s">&quot;the r2 threshold. [default: </span><span class="si">%(default)s</span><span class="s">]&quot;</span><span class="p">))</span>
+<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;--maf&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s">&quot;FLOAT&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s">&quot;0.05&quot;</span><span class="p">,</span>
+                   <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s">&quot;Restrict to SNPs with MAF &gt;= threshold. &quot;</span>
+                         <span class="s">&quot;[default: </span><span class="si">%(default)s</span><span class="s">]&quot;</span><span class="p">))</span>
+<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;--sge&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s">&quot;store_true&quot;</span><span class="p">,</span>
+                   <span class="n">help</span><span class="o">=</span><span class="s">&quot;Use SGE for parallelization.&quot;</span><span class="p">)</span>
+<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;--sge-walltime&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s">&quot;TIME&quot;</span><span class="p">,</span>
+                   <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s">&quot;The walltime for the job to run on the cluster. Do &quot;</span>
+                         <span class="s">&quot;not use if you are not required to specify a &quot;</span>
+                         <span class="s">&quot;walltime for your jobs on your cluster (e.g. &#39;qsub &quot;</span>
+                         <span class="s">&quot;-lwalltime=1:0:0&#39; on the cluster).&quot;</span><span class="p">))</span>
+<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;--sge-nodes&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s">&quot;INT&quot;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+                   <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s">&quot;The number of nodes and the number of processor per &quot;</span>
+                         <span class="s">&quot;nodes to use (e.g. &#39;qsub -lnodes=X:ppn=Y&#39; on the &quot;</span>
+                         <span class="s">&quot;cluster, where X is the number of nodes and Y is &quot;</span>
+                         <span class="s">&quot; the number of processor to use. Do not use if you &quot;</span>
+                         <span class="s">&quot;are not required to specify the number of nodes for &quot;</span>
+                         <span class="s">&quot;your jobs on the cluster.&quot;</span><span class="p">))</span>
+<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;--ibs-sge-walltime&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s">&quot;TIME&quot;</span><span class="p">,</span>
+                   <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s">&quot;The walltime for the IBS jobs to run on the &quot;</span>
+                         <span class="s">&quot;cluster. Do not use if you are not required to &quot;</span>
+                         <span class="s">&quot;specify a walltime for your jobs on your cluster &quot;</span>
+                         <span class="s">&quot;(e.g. &#39;qsub -lwalltime=1:0:0&#39; on the cluster).&quot;</span><span class="p">))</span>
+<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;--ibs-sge-nodes&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s">&quot;INT&quot;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+                   <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s">&quot;The number of nodes and the number of processor per &quot;</span>
+                         <span class="s">&quot;nodes to use for the IBS jobs (e.g. &#39;qsub &quot;</span>
+                         <span class="s">&quot;-lnodes=X:ppn=Y&#39; on the cluster, where X is the &quot;</span>
+                         <span class="s">&quot;number of nodes and Y is the number of processor to &quot;</span>
+                         <span class="s">&quot;use. Do not use if you are not required to specify &quot;</span>
+                         <span class="s">&quot;the number of nodes for your jobs on the cluster.&quot;</span><span class="p">))</span>
+<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;--line-per-file-for-sge&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s">&quot;INT&quot;</span><span class="p">,</span>
+                   <span class="n">default</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s">&quot;The number of line per file for SGE &quot;</span>
+                                      <span class="s">&quot;task array for the IBS jobs. [default: &quot;</span>
+                                      <span class="s">&quot;</span><span class="si">%(default)d</span><span class="s">]&quot;</span><span class="p">))</span>
+<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;--nb-components&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s">&quot;INT&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+                   <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s">&quot;The number of component to compute. [default: &quot;</span>
+                         <span class="s">&quot;</span><span class="si">%(default)d</span><span class="s">]&quot;</span><span class="p">))</span>
+
+<span class="c"># The outlier options</span>
+<span class="n">group</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s">&quot;Outlier Options&quot;</span><span class="p">)</span>
+<span class="n">find_outliers</span><span class="o">.</span><span class="n">add_custom_options</span><span class="p">(</span><span class="n">group</span><span class="p">)</span>
+
+<span class="c"># The MDS plotting options</span>
+<span class="n">group</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s">&quot;MDS Plot Options&quot;</span><span class="p">)</span>
+<span class="n">PlotMDS</span><span class="o">.</span><span class="n">addCustomOptions</span><span class="p">(</span><span class="n">group</span><span class="p">)</span>
+
+<span class="c"># The Scree Plot options</span>
+<span class="n">group</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s">&quot;Scree Plot Options&quot;</span><span class="p">)</span>
+<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;--create-scree-plot&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s">&quot;store_true&quot;</span><span class="p">,</span>
+                   <span class="n">help</span><span class="o">=</span><span class="s">&quot;Computes Eigenvalues and creates a scree plot.&quot;</span><span class="p">)</span>
+<span class="n">PlotEigenvalues</span><span class="o">.</span><span class="n">add_custom_options</span><span class="p">(</span><span class="n">group</span><span class="p">)</span>
+
+<span class="c"># The OUTPUT files</span>
+<span class="n">group</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s">&quot;Output File&quot;</span><span class="p">)</span>
+<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;--out&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s">&quot;FILE&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s">&quot;ethnicity&quot;</span><span class="p">,</span>
+                   <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s">&quot;The prefix of the output files. [default: &quot;</span>
+                         <span class="s">&quot;</span><span class="si">%(default)s</span><span class="s">]&quot;</span><span class="p">))</span>
+
+
+<div class="viewcode-block" id="safe_main"><a class="viewcode-back" href="../../../check_ethnicity.html#pyGenClean.Ethnicity.check_ethnicity.safe_main">[docs]</a><span class="k">def</span> <span class="nf">safe_main</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;A safe version of the main function (that catches ProgramError).&quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">main</span><span class="p">()</span>
+    <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Cancelled by user&quot;</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">ProgramError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">message</span><span class="p">)</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">message</span><span class="p">)</span>
+
+</div>
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">safe_main</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">pyGenClean 1.7.0 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2012, Louis-Philippe Lemieux Perreault.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+    </div>
+  </body>
+</html>

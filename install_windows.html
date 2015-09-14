@@ -1,0 +1,324 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Windows Installation &mdash; pyGenClean 1.7.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.7.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="pyGenClean 1.7.0 documentation" href="index.html" />
+    <link rel="next" title="List of Modules and their Options" href="list_of_options.html" />
+    <link rel="prev" title="Linux Installation" href="install_linux.html" /> 
+  </head>
+  <body role="document">
+
+<div style="background-color: white; text-align: left; padding: 10px 10px 15px 15px">
+<a href="index.html"><img src="_static/logo.png" border="0" alt="py4sci"/></a>
+</div>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="list_of_options.html" title="List of Modules and their Options"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="install_linux.html" title="Linux Installation"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">pyGenClean 1.7.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Windows Installation</a><ul>
+<li><a class="reference internal" href="#requirements">Requirements</a></li>
+<li><a class="reference internal" href="#installation">Installation</a><ul>
+<li><a class="reference internal" href="#miniconda">Miniconda</a><ul>
+<li><a class="reference internal" href="#activating-the-conda-environment">Activating the conda environment</a></li>
+<li><a class="reference internal" href="#installing-pygenclean">Installing pyGenClean</a></li>
+<li><a class="reference internal" href="#updating-pygenclean">Updating pyGenClean</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#testing-the-algorithm">Testing the Algorithm</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="install_linux.html"
+                        title="previous chapter">Linux Installation</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="list_of_options.html"
+                        title="next chapter">List of Modules and their Options</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/install_windows.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="windows-installation">
+<h1>Windows Installation<a class="headerlink" href="#windows-installation" title="Permalink to this headline">¶</a></h1>
+<p>The following steps will help you install <em>pyGenClean</em> on a Windows machine. It
+has been tested on both Windows XP and Windows 7.</p>
+<div class="section" id="requirements">
+<h2>Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h2>
+<p>The following softwares and packages are required for <code class="xref py py-mod docutils literal"><span class="pre">pyGenClean</span></code>:</p>
+<ol class="arabic simple">
+<li>Python 2.7</li>
+<li>PLINK (1.07)</li>
+<li><code class="docutils literal"><span class="pre">numpy</span></code> (version 1.6.2 or latest)</li>
+<li><code class="docutils literal"><span class="pre">matplotlib</span></code> (version 1.2.0 or latest)</li>
+<li><code class="docutils literal"><span class="pre">scipy</span></code> (version 0.11.0 or latest)</li>
+<li><code class="docutils literal"><span class="pre">scikit-learn</span></code> (version 0.12.1 or latest)</li>
+<li><code class="docutils literal"><span class="pre">Jinja2</span></code> (version 2.7.3 or latest)</li>
+</ol>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">All the requirements will be installed along with the main
+<code class="xref py py-mod docutils literal"><span class="pre">pyGenClean</span></code> module.</p>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">The <cite>Plink</cite> software needs to be in the <cite>PATH</cite> (or in the current working
+directory). In other words, you should be able to type <cite>plink</cite> at the
+command line.</p>
+</div>
+</div>
+<div class="section" id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<p>The easiest way to install Python on windows is by using
+<a class="reference internal" href="install_linux.html#python-miniconda"><span>Miniconda</span></a>.</p>
+<div class="section" id="miniconda">
+<span id="installation-python-win-label"></span><h3>Miniconda<a class="headerlink" href="#miniconda" title="Permalink to this headline">¶</a></h3>
+<p>Download miniconda (located at <a class="reference external" href="http://conda.pydata.org/miniconda.html">http://conda.pydata.org/miniconda.html</a>).</p>
+<p>To create a new virtual environment, perform the following command:</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> conda create -n Python-2.7_virtualenv <span class="nv">python</span><span class="o">=</span>2
+</pre></div>
+</div>
+<div class="section" id="activating-the-conda-environment">
+<span id="activate-conda-virtual-environment-win-label"></span><h4>Activating the conda environment<a class="headerlink" href="#activating-the-conda-environment" title="Permalink to this headline">¶</a></h4>
+<p>To activate the Python virtual environment (miniconda), perform the following
+command:</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> activate Python-2.7_virtualenv
+</pre></div>
+</div>
+</div>
+<div class="section" id="installing-pygenclean">
+<h4>Installing pyGenClean<a class="headerlink" href="#installing-pygenclean" title="Permalink to this headline">¶</a></h4>
+<p>To install <code class="xref py py-mod docutils literal"><span class="pre">pyGenClean</span></code>, only perform the following command:</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> conda install pyGenClean -c http://statgen.org/wp-content/uploads/Softwares/pyGenclean
+</pre></div>
+</div>
+</div>
+<div class="section" id="updating-pygenclean">
+<h4>Updating pyGenClean<a class="headerlink" href="#updating-pygenclean" title="Permalink to this headline">¶</a></h4>
+<p>To update <code class="xref py py-mod docutils literal"><span class="pre">pyGenClean</span></code>, perform the following command:</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> conda update pyGenClean -c http://statgen.org/wp-content/uploads/Softwares/pyGenclean
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="testing-the-algorithm">
+<h2>Testing the Algorithm<a class="headerlink" href="#testing-the-algorithm" title="Permalink to this headline">¶</a></h2>
+<p>To test the algorithm, download the test data from
+<a class="reference external" href="http://statgen.org/downloads/pygenclean/">http://statgen.org/downloads/pygenclean/</a> and the HapMap reference
+populations (build 37). Create a directory on your Desktop named
+<code class="docutils literal"><span class="pre">pyGenClean_test</span></code>, and extract the two archive into it. You should have the
+following directory structure:</p>
+<div class="highlight-none"><div class="highlight"><pre>Desktop\
+    pyGenClean_test_data\
+        1000G_EUR-MXL_Human610-Quad-v1_H.bed
+        1000G_EUR-MXL_Human610-Quad-v1_H.bim
+        1000G_EUR-MXL_Human610-Quad-v1_H.fam
+    check_ethnicity_HapMap_ref_pops_b37\
+        hapmap_CEU_r23a_filtered_b37.bed
+        hapmap_CEU_r23a_filtered_b37.bim
+        hapmap_CEU_r23a_filtered_b37.fam
+        hapmap_YRI_r23a_filtered_b37.bed
+        hapmap_YRI_r23a_filtered_b37.bim
+        hapmap_YRI_r23a_filtered_b37.fam
+        hapmap_JPT_CHB_r23a_filtered_b37.bed
+        hapmap_JPT_CHB_r23a_filtered_b37.bim
+        hapmap_JPT_CHB_r23a_filtered_b37.fam
+</pre></div>
+</div>
+<p>Open the command prompt and navigate to the newly created directory, and
+created an new text file using <code class="docutils literal"><span class="pre">notepad</span></code>:</p>
+<div class="highlight-none"><div class="highlight"><pre>&gt; cd Desktop\pyGenClean_test
+&gt; notepad conf.txt
+</pre></div>
+</div>
+<p>Insert the following code in the file:</p>
+<div class="highlight-lighttpd"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10</pre></div></td><td class="code"><div class="highlight"><pre><span class="p">[</span><span class="m">1</span><span class="p">]</span>
+<span class="k">script</span> <span class="o">=</span> <span class="k">check_ethnicity</span>
+<span class="k">ceu-bfile</span> <span class="o">=</span> <span class="k">check_ethnicity_HapMap_ref_pops_b</span><span class="m">37</span><span class="n">/hapmap_CEU_r23a_filtered_b37</span>
+<span class="k">yri-bfile</span> <span class="o">=</span> <span class="k">check_ethnicity_HapMap_ref_pops_b</span><span class="m">37</span><span class="n">/hapmap_YRI_r23a_filtered_b37</span>
+<span class="k">jpt-chb-bfile</span> <span class="o">=</span> <span class="k">check_ethnicity_HapMap_ref_pops_b</span><span class="m">37</span><span class="n">/hapmap_JPT_CHB_r23a_filtered_b37</span>
+<span class="k">nb-components</span> <span class="o">=</span> <span class="m">2</span>
+<span class="k">multiplier</span> <span class="o">=</span> <span class="m">1</span>
+
+<span class="p">[</span><span class="m">2</span><span class="p">]</span>
+<span class="k">script</span> <span class="o">=</span> <span class="k">sex_check</span>
+</pre></div>
+</td></tr></table></div>
+<p>Finally, run the following command:</p>
+<div class="highlight-none"><div class="highlight"><pre>&gt; run_pyGenClean ^
+      --conf conf.txt ^
+      --bfile pyGenClean_test_data\1000G_EUR-MXL_Human610-Quad-v1_H
+</pre></div>
+</div>
+<p>Valuable information will be shown on the command prompt. Once the program has
+finished, the results are in the new directory <code class="docutils literal"><span class="pre">data_clean_up.date_time</span></code>
+where <code class="docutils literal"><span class="pre">date</span></code> is the current date, and <code class="docutils literal"><span class="pre">time</span></code> is the time when the program
+started.</p>
+<p>Here are the new directory structure, with only the files you might be
+interested in:</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">data_clean_up.data_time\</span></code><ul>
+<li><code class="docutils literal"><span class="pre">1_check_ethnicity\</span></code><ul>
+<li><code class="docutils literal"><span class="pre">ethnicity.before.png</span></code></li>
+<li><code class="docutils literal"><span class="pre">ethnicity.outliers.png</span></code></li>
+<li><code class="docutils literal"><span class="pre">ethnicity.outliers</span></code></li>
+<li><code class="docutils literal"><span class="pre">ethnicity.population_file_outliers</span></code></li>
+</ul>
+</li>
+<li><code class="docutils literal"><span class="pre">2_sex_check\</span></code><ul>
+<li><code class="docutils literal"><span class="pre">sexcheck.list_problem_sex</span></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>The first image in the first directory
+(<a class="reference internal" href="#test-ethnicity-before-win-figure"><span>ethnicity.before.png</span></a>) shows the MDS values for each sample
+before outlier detection. The second image
+(<a class="reference internal" href="#test-ethnicity-outliers-win-figure"><span>ethnicity.outliers.png</span></a>) shows the outliers that should be
+removed for further analysis. Finally, the file <code class="docutils literal"><span class="pre">ethnicity.outliers</span></code> include
+a list of samples that should be removed for further analysis. <strong>The total
+number of outliers for this test should be exactly 63</strong>. For more information
+about the results of this module, refer to Section
+<a class="reference internal" href="check_ethnicity.html#ethnicity-module-label"><span>Ethnicity Module</span></a>.</p>
+<div class="figure align-center" id="id2">
+<span id="test-ethnicity-before-win-figure"></span><a class="reference internal image-reference" href="_images/ethnicity_before1.png"><img alt="Ethnic Before Outliers" src="_images/ethnicity_before1.png" style="width: 50%;" /></a>
+<p class="caption"><span class="caption-text">ethnicity.before.png</span></p>
+</div>
+<div class="figure align-center" id="id3">
+<span id="test-ethnicity-outliers-win-figure"></span><a class="reference internal image-reference" href="_images/ethnicity_outliers1.png"><img alt="Ethnic After Outliers" src="_images/ethnicity_outliers1.png" style="width: 50%;" /></a>
+<p class="caption"><span class="caption-text">ethnicity.outliers.png</span></p>
+</div>
+<p>In the second directory, there should be a file containing the list of samples
+with gender problem. <strong>There should be exactly 4 samples with gender problem.</strong>
+For more information about this module, refer to Section
+<a class="reference internal" href="sex_check.html#sexcheck-module-lable"><span>Sex Check Module</span></a>.</p>
+<p>If you want to compare your results with the expected ones, just download the
+files in the archive <code class="docutils literal"><span class="pre">pyGenClean_expected_results.tar.bz2</span></code>, available through
+<a class="reference external" href="http://statgen.org/downloads/pygenclean/">http://statgen.org/downloads/pygenclean/</a>. They were generated using Fedora
+18 (64 bits) in about 20 minutes. You should at least compare the following
+files:</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">1_check_ethnicity</span></code><ul>
+<li><code class="docutils literal"><span class="pre">ethnicity.outliers</span></code></li>
+<li><code class="docutils literal"><span class="pre">ethnicity.population_file_outliers</span></code></li>
+<li>All the figures (they might be mirrored).</li>
+</ul>
+</li>
+<li><code class="docutils literal"><span class="pre">2_sex_check</span></code><ul>
+<li><code class="docutils literal"><span class="pre">sexcheck.list_problem_sex</span></code></li>
+<li><code class="docutils literal"><span class="pre">sexcheck.list_problem_sex_ids</span></code></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="list_of_options.html" title="List of Modules and their Options"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="install_linux.html" title="Linux Installation"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">pyGenClean 1.7.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2012, Louis-Philippe Lemieux Perreault.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+    </div>
+  </body>
+</html>

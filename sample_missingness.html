@@ -1,0 +1,328 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Sample Missingness Module &mdash; pyGenClean 1.7.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.7.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="pyGenClean 1.7.0 documentation" href="index.html" />
+    <link rel="next" title="Marker Missingness Module" href="marker_missingness.html" />
+    <link rel="prev" title="Clean No Call and Only Heterozygous Markers Module" href="clean_noCall_hetero_snps.html" /> 
+  </head>
+  <body role="document">
+
+<div style="background-color: white; text-align: left; padding: 10px 10px 15px 15px">
+<a href="index.html"><img src="_static/logo.png" border="0" alt="py4sci"/></a>
+</div>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="marker_missingness.html" title="Marker Missingness Module"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="clean_noCall_hetero_snps.html" title="Clean No Call and Only Heterozygous Markers Module"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">pyGenClean 1.7.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Sample Missingness Module</a><ul>
+<li><a class="reference internal" href="#input-files">Input FIles</a></li>
+<li><a class="reference internal" href="#procedure">Procedure</a></li>
+<li><a class="reference internal" href="#output-files">Output Files</a></li>
+<li><a class="reference internal" href="#the-algorithm">The Algorithm</a><ul>
+<li><a class="reference internal" href="#module-pyGenClean.SampleMissingness.sample_missingness">pyGenClean.SampleMissingness.sample_missingness</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="clean_noCall_hetero_snps.html"
+                        title="previous chapter">Clean No Call and Only Heterozygous Markers Module</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="marker_missingness.html"
+                        title="next chapter">Marker Missingness Module</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/sample_missingness.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="sample-missingness-module">
+<h1>Sample Missingness Module<a class="headerlink" href="#sample-missingness-module" title="Permalink to this headline">¶</a></h1>
+<p>The usage of the standalone module is shown below:</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> pyGenClean_sample_missingness --help
+<span class="go">usage: pyGenClean_sample_missingness [-h] --ifile FILE [--is-bfile]</span>
+<span class="go">                                     [--mind FLOAT] [--out FILE]</span>
+
+<span class="go">Computes sample missingness using Plink</span>
+
+<span class="go">optional arguments:</span>
+<span class="go">  -h, --help    show this help message and exit</span>
+
+<span class="go">Input File:</span>
+<span class="go">  --ifile FILE  The input file prefix (by default, this input file must be a</span>
+<span class="go">                tfile. If options --is-bfile is used, the input file must be a</span>
+<span class="go">                bfile).</span>
+
+<span class="go">Options:</span>
+<span class="go">  --is-bfile    The input file (--ifile) is a bfile instead of a tfile.</span>
+<span class="go">  --mind FLOAT  The missingness threshold (remove samples with more than x</span>
+<span class="go">                percent missing genotypes). [Default: 0.100]</span>
+
+<span class="go">Output File:</span>
+<span class="go">  --out FILE    The prefix of the output files (wich will be a Plink binary</span>
+<span class="go">                file). [default: clean_mind]</span>
+</pre></div>
+</div>
+<div class="section" id="input-files">
+<h2>Input FIles<a class="headerlink" href="#input-files" title="Permalink to this headline">¶</a></h2>
+<p>This module uses either PLINK&#8217;s binary file format (<code class="docutils literal"><span class="pre">bed</span></code>, <code class="docutils literal"><span class="pre">bim</span></code> and <code class="docutils literal"><span class="pre">fam</span></code>
+files) or the transposed pedfile format separated by tabulations (<code class="docutils literal"><span class="pre">tped</span></code> and
+<code class="docutils literal"><span class="pre">tfam</span></code>) for the source data set (the data of interest).</p>
+</div>
+<div class="section" id="procedure">
+<h2>Procedure<a class="headerlink" href="#procedure" title="Permalink to this headline">¶</a></h2>
+<p>Here are the steps performed by the module:</p>
+<ol class="arabic simple">
+<li>Uses Plink to remove samples with a high missing rate (above a user defined
+threshold).</li>
+</ol>
+</div>
+<div class="section" id="output-files">
+<h2>Output Files<a class="headerlink" href="#output-files" title="Permalink to this headline">¶</a></h2>
+<p>The output files of each of the steps described above are as follow (note that
+the output prefix shown is the one by default [<em>i.e.</em> <code class="docutils literal"><span class="pre">clean_geno</span></code>]):</p>
+<ol class="arabic simple">
+<li>One set of PLINK&#8217;s output and result files:<ul>
+<li><code class="docutils literal"><span class="pre">clean_mind</span></code>: the new dataset with samples having a high missing rate
+removed (above a user defined threshold). The file <code class="docutils literal"><span class="pre">clean_mind.irem</span></code>
+contains a list of samples that were removed.</li>
+</ul>
+</li>
+</ol>
+</div>
+<div class="section" id="the-algorithm">
+<h2>The Algorithm<a class="headerlink" href="#the-algorithm" title="Permalink to this headline">¶</a></h2>
+<p>For more information about the actual algorithms and source codes (the
+<a class="reference internal" href="#module-pyGenClean.SampleMissingness.sample_missingness" title="pyGenClean.SampleMissingness.sample_missingness"><code class="xref py py-mod docutils literal"><span class="pre">pyGenClean.SampleMissingness.sample_missingness</span></code></a> module), refer to the
+following sections.</p>
+<div class="section" id="module-pyGenClean.SampleMissingness.sample_missingness">
+<span id="pygenclean-samplemissingness-sample-missingness"></span><h3>pyGenClean.SampleMissingness.sample_missingness<a class="headerlink" href="#module-pyGenClean.SampleMissingness.sample_missingness" title="Permalink to this headline">¶</a></h3>
+<dl class="exception">
+<dt id="pyGenClean.SampleMissingness.sample_missingness.ProgramError">
+<em class="property">exception </em><code class="descclassname">pyGenClean.SampleMissingness.sample_missingness.</code><code class="descname">ProgramError</code><span class="sig-paren">(</span><em>msg</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/SampleMissingness/sample_missingness.html#ProgramError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.SampleMissingness.sample_missingness.ProgramError" title="Permalink to this definition">¶</a></dt>
+<dd><p>An <code class="xref py py-class docutils literal"><span class="pre">Exception</span></code> raised in case of a problem.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>msg</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the message to print to the user before exiting.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.SampleMissingness.sample_missingness.checkArgs">
+<code class="descclassname">pyGenClean.SampleMissingness.sample_missingness.</code><code class="descname">checkArgs</code><span class="sig-paren">(</span><em>args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/SampleMissingness/sample_missingness.html#checkArgs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.SampleMissingness.sample_missingness.checkArgs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks the arguments and options.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>args</strong> (<a class="reference external" href="http://docs.python.org/library/argparse.html#argparse.Namespace" title="(in Python v2.7)"><em>argparse.Namespace</em></a>) &#8211; a object containing the options of the program.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><code class="docutils literal"><span class="pre">True</span></code> if everything was OK.</td>
+</tr>
+</tbody>
+</table>
+<p>If there is a problem with an option, an exception is raised using the
+<a class="reference internal" href="#pyGenClean.SampleMissingness.sample_missingness.ProgramError" title="pyGenClean.SampleMissingness.sample_missingness.ProgramError"><code class="xref py py-class docutils literal"><span class="pre">ProgramError</span></code></a> class, a message is printed to the
+<code class="xref py py-class docutils literal"><span class="pre">sys.stderr</span></code> and the program exists with code 1.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.SampleMissingness.sample_missingness.main">
+<code class="descclassname">pyGenClean.SampleMissingness.sample_missingness.</code><code class="descname">main</code><span class="sig-paren">(</span><em>argString=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/SampleMissingness/sample_missingness.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.SampleMissingness.sample_missingness.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>The main function of the module.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>argString</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; the options.</td>
+</tr>
+</tbody>
+</table>
+<p>These are the steps:</p>
+<ol class="arabic simple">
+<li>Prints the options.</li>
+<li>Runs Plink with the <code class="docutils literal"><span class="pre">mind</span></code> option (<a class="reference internal" href="#pyGenClean.SampleMissingness.sample_missingness.runPlink" title="pyGenClean.SampleMissingness.sample_missingness.runPlink"><code class="xref py py-func docutils literal"><span class="pre">runPlink()</span></code></a>).</li>
+</ol>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.SampleMissingness.sample_missingness.parseArgs">
+<code class="descclassname">pyGenClean.SampleMissingness.sample_missingness.</code><code class="descname">parseArgs</code><span class="sig-paren">(</span><em>argString=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/SampleMissingness/sample_missingness.html#parseArgs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.SampleMissingness.sample_missingness.parseArgs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parses the command line options and arguments.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>argString</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; the options.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A <a class="reference external" href="http://docs.python.org/library/argparse.html#argparse.Namespace" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">argparse.Namespace</span></code></a> object created by the
+<a class="reference external" href="http://docs.python.org/library/argparse.html#module-argparse" title="(in Python v2.7)"><code class="xref py py-mod docutils literal"><span class="pre">argparse</span></code></a> module. It contains the values of the
+different options.</td>
+</tr>
+</tbody>
+</table>
+<table border="1" class="docutils">
+<colgroup>
+<col width="19%" />
+<col width="8%" />
+<col width="73%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Options</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--ifile</span></code></td>
+<td>string</td>
+<td>The input file prefix (either a Plink binary file or
+a tfile).</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--is-bfile</span></code></td>
+<td>bool</td>
+<td>The input file (<code class="docutils literal"><span class="pre">--ifile</span></code>) is a bfile instead of a
+tfile.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--mind</span></code></td>
+<td>float</td>
+<td>The missingness threshold.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--out</span></code></td>
+<td>string</td>
+<td>The prefix of the output files.</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">No option check is done here (except for the one automatically done by
+argparse). Those need to be done elsewhere (see <a class="reference internal" href="#pyGenClean.SampleMissingness.sample_missingness.checkArgs" title="pyGenClean.SampleMissingness.sample_missingness.checkArgs"><code class="xref py py-func docutils literal"><span class="pre">checkArgs()</span></code></a>).</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.SampleMissingness.sample_missingness.runPlink">
+<code class="descclassname">pyGenClean.SampleMissingness.sample_missingness.</code><code class="descname">runPlink</code><span class="sig-paren">(</span><em>options</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/SampleMissingness/sample_missingness.html#runPlink"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.SampleMissingness.sample_missingness.runPlink" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run Plink with the <code class="docutils literal"><span class="pre">mind</span></code> option.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>options</strong> (<a class="reference external" href="http://docs.python.org/library/argparse.html#argparse.Namespace" title="(in Python v2.7)"><em>argparse.Namespace</em></a>) &#8211; the options.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.SampleMissingness.sample_missingness.safe_main">
+<code class="descclassname">pyGenClean.SampleMissingness.sample_missingness.</code><code class="descname">safe_main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/SampleMissingness/sample_missingness.html#safe_main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.SampleMissingness.sample_missingness.safe_main" title="Permalink to this definition">¶</a></dt>
+<dd><p>A safe version of the main function (that catches ProgramError).</p>
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="marker_missingness.html" title="Marker Missingness Module"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="clean_noCall_hetero_snps.html" title="Clean No Call and Only Heterozygous Markers Module"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">pyGenClean 1.7.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2012, Louis-Philippe Lemieux Perreault.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+    </div>
+  </body>
+</html>
