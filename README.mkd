@@ -10,6 +10,14 @@ accelerates the completion of the data clean up process and it provides
 informative graphics and metrics to guide decision making for statistical
 analysis.
 
+If you use `pyGenClean` in you project, please cite the published paper
+describing the tool:
+
+> Lemieux Perreault LP, Provost S, Legault MA, Barhdadi A, Dubé MP (2013)
+> pyGenClean: efficient tool for genetic data clean up before association testing.
+> *Bioinformatics*, **29**(13): 1704-1705
+> [DOI:[10.1093/bioinformatics/btt261](http://dx.doi.org/10.1093/bioinformatics/btt261)]
+
 
 
 ## Documentation##
