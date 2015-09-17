@@ -27,7 +27,7 @@ import itertools
 import subprocess
 import ConfigParser
 from glob import glob
-from collections import namedtuple, Counter
+from collections import namedtuple, Counter, defaultdict
 
 from . import __version__, add_file_handler_to_root
 
@@ -505,54 +505,60 @@ def run_duplicated_snps(in_prefix, in_type, out_prefix, base_dir, options):
         raise ProgramError(msg)
 
     # Reading the number of duplicated markers
-    duplicated_count = None
-    with open(script_prefix + ".duplicated_snps.tped", "r") as i_file:
-        duplicated_count = Counter(
-            (i[0], i[3]) for i in [
-                tuple(createRowFromPlinkSpacedOutput(line)[:4])
-                for line in i_file
-            ]
-        )
+    duplicated_count = defaultdict(int)
+    if os.path.isfile(script_prefix + ".duplicated_snps.tped"):
+        with open(script_prefix + ".duplicated_snps.tped", "r") as i_file:
+            duplicated_count = Counter(
+                (i[0], i[3]) for i in [
+                    tuple(createRowFromPlinkSpacedOutput(line)[:4])
+                    for line in i_file
+                ]
+            )
 
     # Counting the number of zeroed out genotypes per duplicated markers
-    zeroed_out = None
-    with open(script_prefix + ".zeroed_out", "r") as i_file:
-        zeroed_out = Counter([
-            tuple(line.rstrip("\r\n").split("\t")[:2])
-            for line in i_file.read().splitlines()[1:]
-        ])
+    zeroed_out = defaultdict(int)
+    if os.path.isfile(script_prefix + ".zeroed_out"):
+        with open(script_prefix + ".zeroed_out", "r") as i_file:
+            zeroed_out = Counter([
+                tuple(line.rstrip("\r\n").split("\t")[:2])
+                for line in i_file.read().splitlines()[1:]
+            ])
     nb_zeroed_out = sum(zeroed_out.values())
 
     # Checking the not good enough markers
-    not_good_enough = None
-    with open(script_prefix + ".not_good_enough", "r") as i_file:
-        not_good_enough = {
-            line.rstrip("\r\n").split("\t")[0]
-            for line in i_file.read().splitlines()[1:]
-        }
+    not_good_enough = set()
+    if os.path.isfile(script_prefix + ".not_good_enough"):
+        with open(script_prefix + ".not_good_enough", "r") as i_file:
+            not_good_enough = {
+                line.rstrip("\r\n").split("\t")[0]
+                for line in i_file.read().splitlines()[1:]
+            }
 
     # Checking which markers were chosen
-    chosen_markers = None
-    with open(script_prefix + ".chosen_snps.info", "r") as i_file:
-        chosen_markers = set(i_file.read().splitlines())
+    chosen_markers = set()
+    if os.path.isfile(script_prefix + ".chosen_snps.info"):
+        with open(script_prefix + ".chosen_snps.info", "r") as i_file:
+            chosen_markers = set(i_file.read().splitlines())
 
     # Finding if some 'not_good_enough' samples were chosen
     not_good_still = chosen_markers & not_good_enough
 
     # Adding the 'not chosen markers' to the list of excluded markers
-    removed_markers = None
+    removed_markers = set()
     o_filename = os.path.join(base_dir, "excluded_markers.txt")
-    with open(script_prefix + ".removed_duplicates", "r") as i_file:
-        removed_markers = set(i_file.read().splitlines())
-        with open(o_filename, "a") as o_file:
-            for marker_id in removed_markers:
-                print >>o_file, marker_id + "\t" + "removed duplicate"
+    if os.path.isfile(script_prefix + ".removed_duplicates"):
+        with open(script_prefix + ".removed_duplicates", "r") as i_file:
+            removed_markers = set(i_file.read().splitlines())
+            with open(o_filename, "a") as o_file:
+                for marker_id in removed_markers:
+                    print >>o_file, marker_id + "\t" + "removed duplicate"
 
     # Reading the markers with problem
     problematic_markers = set()
-    with open(script_prefix + ".problems", "r") as i_file:
-        for markers in i_file.read().splitlines()[1:]:
-            problematic_markers |= set(markers.split("\t")[2].split(";"))
+    if os.path.isfile(script_prefix + ".problems"):
+        with open(script_prefix + ".problems", "r") as i_file:
+            for markers in i_file.read().splitlines()[1:]:
+                problematic_markers |= set(markers.split("\t")[2].split(";"))
 
     # We create a LaTeX summary
     latex_file = os.path.join(script_prefix + ".summary.tex")
@@ -620,7 +626,10 @@ def run_duplicated_snps(in_prefix, in_type, out_prefix, base_dir, options):
     with open(os.path.join(base_dir, "results_summary.txt"), "a") as o_file:
         print >>o_file, "# {}".format(script_prefix)
         counter = Counter(duplicated_count.values()).most_common()
-        print >>o_file, "Number of replicated markers"
+        if counter:
+            print >>o_file, "Number of replicated markers"
+        else:
+            print >>o_file, "Number of replicated markers\t0"
         for rep_type, rep_count in counter:
             print >>o_file, "  - x{}\t{:,d}\t-{:,d}".format(
                 rep_type,
