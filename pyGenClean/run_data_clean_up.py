@@ -275,36 +275,41 @@ def run_duplicated_samples(in_prefix, in_type, out_prefix, base_dir, options):
         raise ProgramError(msg)
 
     # Reading the number of duplicated samples
-    duplicated_count = None
-    with open(script_prefix + ".duplicated_samples.tfam", "r") as i_file:
-        duplicated_count = Counter([
-            tuple(createRowFromPlinkSpacedOutput(line)[:2]) for line in i_file
-        ])
+    duplicated_count = defaultdict(int)
+    if os.path.isfile(script_prefix + ".duplicated_samples.tfam"):
+        with open(script_prefix + ".duplicated_samples.tfam", "r") as i_file:
+            duplicated_count = Counter([
+                tuple(createRowFromPlinkSpacedOutput(line)[:2])
+                for line in i_file
+            ])
 
     # Counting the number of zeroed out genotypes per duplicated sample
-    zeroed_out = None
-    with open(script_prefix + ".zeroed_out", "r") as i_file:
-        zeroed_out = Counter([
-            tuple(line.rstrip("\r\n").split("\t")[:2])
-            for line in i_file.read().splitlines()[1:]
-        ])
+    zeroed_out = defaultdict(int)
+    if os.path.isfile(script_prefix + ".zeroed_out"):
+        with open(script_prefix + ".zeroed_out", "r") as i_file:
+            zeroed_out = Counter([
+                tuple(line.rstrip("\r\n").split("\t")[:2])
+                for line in i_file.read().splitlines()[1:]
+            ])
     nb_zeroed_out = sum(zeroed_out.values())
 
     # Checking the not good enough samples
-    not_good_enough = None
-    with open(script_prefix + ".not_good_enough", "r") as i_file:
-        not_good_enough = {
-            tuple(line.rstrip("\r\n").split("\t")[:4])
-            for line in i_file.read().splitlines()[1:]
-        }
+    not_good_enough = set()
+    if os.path.isfile(script_prefix + ".not_good_enough"):
+        with open(script_prefix + ".not_good_enough", "r") as i_file:
+            not_good_enough = {
+                tuple(line.rstrip("\r\n").split("\t")[:4])
+                for line in i_file.read().splitlines()[1:]
+            }
 
     # Checking which samples were chosen
-    chosen_sample = None
-    with open(script_prefix + ".chosen_samples.info", "r") as i_file:
-        chosen_sample = {
-            tuple(line.rstrip("\r\n").split("\t"))
-            for line in i_file.read().splitlines()[1:]
-        }
+    chosen_sample = set()
+    if os.path.isfile(script_prefix + ".chosen_samples.info"):
+        with open(script_prefix + ".chosen_samples.info", "r") as i_file:
+            chosen_sample = {
+                tuple(line.rstrip("\r\n").split("\t"))
+                for line in i_file.read().splitlines()[1:]
+            }
 
     # Finding if some 'not_good_enough' samples were chosen
     not_good_still = {s[2:] for s in chosen_sample & not_good_enough}
@@ -421,7 +426,10 @@ def run_duplicated_samples(in_prefix, in_type, out_prefix, base_dir, options):
     with open(os.path.join(base_dir, "results_summary.txt"), "a") as o_file:
         print >>o_file, "# {}".format(script_prefix)
         counter = Counter(duplicated_count.values()).most_common()
-        print >>o_file, "Number of replicated samples"
+        if counter:
+            print >>o_file, "Number of replicated samples"
+        else:
+            print >>o_file, "Number of replicated samples\t0"
         for rep_type, rep_count in counter:
             print >>o_file, "  - x{}\t{:,d}\t\t-{:,d}".format(
                 rep_type,
