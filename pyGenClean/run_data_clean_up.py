@@ -2344,12 +2344,13 @@ def run_subset_data(in_prefix, in_type, out_prefix, base_dir, options):
     marker_subset_fn = None
 
     # The samples and markers that were removed
-    removed_samples = None
-    removed_markers = None
+    removed_samples = {}
+    removed_markers = {}
 
     # The set of samples and markers before subset
     samples_before = None
     markers_before = None
+
     # The set of remaining samples and markers after subset
     samples_after = None
     markers_after = None
@@ -2452,7 +2453,7 @@ def run_subset_data(in_prefix, in_type, out_prefix, base_dir, options):
         nb_marker_end = int(nb_marker_end.group(1))
 
     # Checking the number of samples
-    if nb_marker_end != len(markers_after):
+    if (markers_after is not None) and (nb_marker_end != len(markers_after)):
         raise ProgramError("Something went wrong with Plink's subset (numbers "
                            "are different from data and log file)")
     if nb_marker_start - nb_marker_end != len(removed_markers):
@@ -2477,7 +2478,7 @@ def run_subset_data(in_prefix, in_type, out_prefix, base_dir, options):
                         int(nb_sample_end.group(2))
 
     # Checking the number of samples
-    if nb_sample_end != len(samples_after):
+    if (samples_after is not None) and (nb_sample_end != len(samples_after)):
         raise ProgramError("Something went wrong with Plink's subset (numbers "
                            "are different from data and log file)")
     if nb_sample_start - nb_sample_end != len(removed_samples):
