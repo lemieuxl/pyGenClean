@@ -6,15 +6,16 @@ The usage of the standalone module is shown below:
 .. code-block:: console
 
     $ pyGenClean_duplicated_samples --help
-    usage: pyGenClean_duplicated_samples [-h] --tfile FILE
+    usage: pyGenClean_duplicated_samples [-h] [-v] --tfile FILE
                                          [--sample-completion-threshold FLOAT]
                                          [--sample-concordance-threshold FLOAT]
                                          [--out FILE]
 
-    Extract and work with duplicated samples.
+    Extracts and merges duplicated samples.
 
     optional arguments:
       -h, --help            show this help message and exit
+      -v, --version         show program's version number and exit
 
     Input File:
       --tfile FILE          The input file prefix (will find the tped and tfam
@@ -35,6 +36,7 @@ The usage of the standalone module is shown below:
 
     Output File:
       --out FILE            The prefix of the output files. [default: dup_samples]
+
 
 Input Files
 -----------
