@@ -216,19 +216,8 @@ sample to exclude to only keep unrelated samples in a dataset.
 The Algorithm
 -------------
 
-For more information about the actual algorithms and source codes (the
-:py:mod:`pyGenClean.RelatedSamples.find_related_samples` and
-:py:mod:`pyGenClean.RelatedSamples.merge_related_samples` modules), refer to
-the following sections.
+For more information about the actual algorithms and source codes, refer to the
+following page.
 
-pyGenClean.RelatedSamples.find_related_samples
-..............................................
-
-.. automodule:: pyGenClean.RelatedSamples.find_related_samples
-    :members:
-
-pyGenClean.RelatedSamples.merge_related_samples
-...............................................
-
-.. automodule:: pyGenClean.RelatedSamples.merge_related_samples
-    :members:
+* :py:mod:`pyGenClean.RelatedSamples.find_related_samples`
+* :py:mod:`pyGenClean.RelatedSamples.merge_related_samples`

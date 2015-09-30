@@ -1,3 +1,5 @@
+.. _flag_MAF_zero_label:
+
 Minor Allele Frequency of Zero Module
 =====================================
 
@@ -23,7 +25,7 @@ The usage of the standalone module is shown below:
       --out FILE     The prefix of the output files. [default: flag_maf_0]
 
 
-Input FIles
+Input Files
 -----------
 
 This module uses PLINK's binary file format (``bed``, ``bim`` and ``fam`` files)
@@ -52,12 +54,7 @@ the output prefix shown is the one by default [*i.e.* ``flag_maf_0``]):
 The Algorithm
 -------------
 
-For more information about the actual algorithms and source codes (the
-:py:mod:`pyGenClean.FlagMAF.flag_maf_zero` module), refer to the following
-sections.
+For more information about the actual algorithms and source codes, refer to the
+following page.
 
-pyGenClean.FlagMAF.flag_maf_zero
-................................
-
-.. automodule:: pyGenClean.FlagMAF.flag_maf_zero
-    :members:
+* :py:mod:`pyGenClean.FlagMAF.flag_maf_zero`

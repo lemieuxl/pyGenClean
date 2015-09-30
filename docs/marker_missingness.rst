@@ -1,3 +1,5 @@
+.. _marker_missingness_label:
+
 Marker Missingness Module
 =========================
 
@@ -28,7 +30,7 @@ The usage of the standalone module is shown below:
       --out FILE     The prefix of the output files. [default: clean_geno]
 
 
-Input FIles
+Input Files
 -----------
 
 This module uses PLINK's binary file format (``bed``, ``bim`` and ``fam`` files)
@@ -63,12 +65,7 @@ the output prefix shown is the one by default [*i.e.* ``clean_geno``]):
 The Algorithm
 -------------
 
-For more information about the actual algorithms and source codes (the
-:py:mod:`pyGenClean.MarkerMissingness.snp_missingness` module), refer to the
-following sections.
+For more information about the actual algorithms and source codes, refer to the
+following page.
 
-pyGenClean.MarkerMissingness.snp_missingness
-............................................
-
-.. automodule:: pyGenClean.MarkerMissingness.snp_missingness
-    :members:
+* :py:mod:`pyGenClean.MarkerMissingness.snp_missingness`

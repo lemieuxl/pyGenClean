@@ -1,3 +1,5 @@
+.. _flag_HW_label:
+
 Hardy Weinberg Equilibrium Module
 =================================
 
@@ -79,11 +81,7 @@ the output prefix shown is the one by default [*i.e.* ``flag_hw``]):
 The Algorithm
 -------------
 
-For more information about the actual algorithms and source codes (the
-:py:mod:`pyGenClean.FlagHW.flag_hw` module), refer to the following sections.
+For more information about the actual algorithms and source codes, refer to the
+following page.
 
-pyGenClean.FlagHW.flag_hw
-.........................
-
-.. automodule:: pyGenClean.FlagHW.flag_hw
-    :members:
+* :py:mod:`pyGenClean.FlagHW.flag_hw`

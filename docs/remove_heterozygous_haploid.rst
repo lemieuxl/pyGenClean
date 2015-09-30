@@ -1,3 +1,5 @@
+.. _hetero_haplo_label:
+
 Heterozygous Haploid Module
 ===========================
 
@@ -53,12 +55,7 @@ the output prefix shown is the one by default [*i.e.*
 The Algorithm
 -------------
 
-For more information about the actual algorithms and source codes (the
-:py:mod:`pyGenClean.HeteroHap.remove_heterozygous_haploid` module), refer to
-the following sections.
+For more information about the actual algorithms and source codes, refer to the
+following page.
 
-pyGenClean.HeteroHap.remove_heterozygous_haploid
-................................................
-
-.. automodule:: pyGenClean.HeteroHap.remove_heterozygous_haploid
-    :members:
+* :py:mod:`pyGenClean.HeteroHap.remove_heterozygous_haploid`

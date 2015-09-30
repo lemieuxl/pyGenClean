@@ -323,26 +323,9 @@ clean up pipeline, using this following standalone script:
 The Algorithm
 -------------
 
-For more information about the actual algorithms and source codes (the
-:py:mod:`pyGenClean.SexCheck.sex_check`,
-:py:mod:`pyGenClean.SexCheck.gender_plot` and
-:py:mod:`pyGenClean.SexCheck.baf_lrr_plot` modules), refer to the following
-sections.
+For more information about the actual algorithms and source codes, refer to the
+following pages.
 
-pyGenClean.SexCheck.sex_check
-.............................
-
-.. automodule:: pyGenClean.SexCheck.sex_check
-    :members:
-
-pyGenClean.SexCheck.gender_plot
-...............................
-
-.. automodule:: pyGenClean.SexCheck.gender_plot
-    :members:
-
-pyGenClean.SexCheck.baf_lrr_plot
-................................
-
-.. automodule:: pyGenClean.SexCheck.baf_lrr_plot
-    :members:
+* :py:mod:`pyGenClean.SexCheck.sex_check`
+* :py:mod:`pyGenClean.SexCheck.gender_plot`
+* :py:mod:`pyGenClean.SexCheck.baf_lrr_plot`

@@ -1,3 +1,5 @@
+.. _sample_missingness_label:
+
 Sample Missingness Module
 =========================
 
@@ -30,7 +32,7 @@ The usage of the standalone module is shown below:
                      file). [default: clean_mind]
 
 
-Input FIles
+Input Files
 -----------
 
 This module uses either PLINK's binary file format (``bed``, ``bim`` and ``fam``
@@ -60,12 +62,7 @@ the output prefix shown is the one by default [*i.e.* ``clean_geno``]):
 The Algorithm
 -------------
 
-For more information about the actual algorithms and source codes (the
-:py:mod:`pyGenClean.SampleMissingness.sample_missingness` module), refer to the
-following sections.
+For more information about the actual algorithms and source codes, refer to the
+following page.
 
-pyGenClean.SampleMissingness.sample_missingness
-...............................................
-
-.. automodule:: pyGenClean.SampleMissingness.sample_missingness
-    :members:
+* :py:mod:`pyGenClean.SampleMissingness.sample_missingness`

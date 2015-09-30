@@ -1,3 +1,5 @@
+.. _plate_bias_label:
+
 Plate Bias Module
 =================
 
@@ -73,12 +75,7 @@ the output prefix shown is the one by default [*i.e.* ``plate_bias``]):
 The Algorithm
 -------------
 
-For more information about the actual algorithms and source codes (the
-:py:mod:`pyGenClean.PlateBias.plate_bias` module), refer to the following
-sections.
+For more information about the actual algorithms and source codes, refer to the
+following page.
 
-pyGenClean.PlateBias.plate_bias
-...............................
-
-.. automodule:: pyGenClean.PlateBias.plate_bias
-    :members:
+* :py:mod:`pyGenClean.PlateBias.plate_bias`

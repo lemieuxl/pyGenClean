@@ -1,3 +1,5 @@
+.. _clean_no_call_hetero_label:
+
 Clean No Call and Only Heterozygous Markers Module
 ==================================================
 
@@ -23,7 +25,7 @@ The usage of the standalone module is shown below:
                      clean_noCall_hetero]
 
 
-Input FIles
+Input Files
 -----------
 
 This module uses the transposed pedfile format separated by tabulations
@@ -116,19 +118,8 @@ heterozygosity rates.
 The Algorithm
 -------------
 
-For more information about the actual algorithms and source codes (the
-:py:mod:`pyGenClean.NoCallHetero.clean_noCall_hetero_snps` and
-:py:mod:`pyGenClean.NoCallHetero.heterozygosity_plot` modules), refer to the
-following sections.
+For more information about the actual algorithms and source codes, refer to the
+following pages.
 
-pyGenClean.NoCallHetero.clean_noCall_hetero_snps
-................................................
-
-.. automodule:: pyGenClean.NoCallHetero.clean_noCall_hetero_snps
-    :members:
-
-pyGenClean.NoCallHetero.heterozygosity_plot
-...........................................
-
-.. automodule:: pyGenClean.NoCallHetero.heterozygosity_plot
-    :members:
+* :py:mod:`pyGenClean.NoCallHetero.clean_noCall_hetero_snps`
+* :py:mod:`pyGenClean.NoCallHetero.heterozygosity_plot`

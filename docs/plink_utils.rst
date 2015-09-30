@@ -1,3 +1,5 @@
+.. _plink_utils_label:
+
 Plink Utils
 ===========
 
@@ -86,25 +88,9 @@ file. The output file format will be the same as the input one.
 The Algorithm
 -------------
 
-For more information about the actual algorithms and source codes (the
-:py:mod:`pyGenClean.PlinkUtils`, :py:mod:`pyGenClean.PlinkUtils.compare_bim`
-and :py:mod:`pyGenClean.PlinkUtils.subset_data` modules), refer to the
-following sections.
+For more information about the actual algorithms and source codes, refer to the
+following pages.
 
-pyGenClean.PlinkUtils
-.....................
-
-.. automodule:: pyGenClean.PlinkUtils
-    :members:
-
-pyGenClean.PlinkUtils.compare_bim
-.................................
-
-.. automodule:: pyGenClean.PlinkUtils.compare_bim
-    :members:
-
-pyGenClean.PlinkUtils.subset_data
-.................................
-
-.. automodule:: pyGenClean.PlinkUtils.subset_data
-    :members:
+* :py:mod:`pyGenClean.PlinkUtils`
+* :py:mod:`pyGenClean.PlinkUtils.compare_bim`
+* :py:mod:`pyGenClean.PlinkUtils.subset_data`

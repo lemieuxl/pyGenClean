@@ -484,32 +484,9 @@ of seconds).
 The Algorithm
 --------------
 
-For more information about the actual algorithms and source codes (the
-:py:mod:`pyGenClean.Ethnicity.check_ethnicity`, the
-:py:mod:`pyGenClean.Ethnicity.find_outliers` and the
-:mod:`pyGenClean.PlinkUtils.plot_MDS_standalone` modules), refer to the
-following sections.
+For more information about the actual algorithms and source codes, refer to the
+following pages.
 
-pyGenClean.Ethnicity.check_ethnicity
-....................................
-
-.. automodule:: pyGenClean.Ethnicity.check_ethnicity
-    :members:
-
-pyGenClean.Ethnicity.find_outliers
-..................................
-
-.. automodule:: pyGenClean.Ethnicity.find_outliers
-    :members:
-
-pyGenClean.Ethnicity.plot_eigenvalues
-.....................................
-
-.. automodule:: pyGenClean.Ethnicity.plot_eigenvalues
-    :members:
-
-pyGenClean.PlinkUtils.plot_MDS_standalone
-.........................................
-
-.. automodule:: pyGenClean.PlinkUtils.plot_MDS_standalone
-    :members:
+* :py:mod:`pyGenClean.Ethnicity.check_ethnicity`
+* :py:mod:`pyGenClean.Ethnicity.find_outliers`
+* :py:mod:`pyGenClean.PlinkUtils.plot_MDS_standalone`

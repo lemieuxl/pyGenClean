@@ -1,3 +1,5 @@
+.. _dup_samples_label:
+
 Duplicated Samples Module
 =========================
 
@@ -151,12 +153,7 @@ the output prefix shown is the one by default [*i.e.* dup_samples]):
 The Algorithm
 -------------
 
-For more information about the actual algorithms and source codes (the
-:py:mod:`pyGenClean.DupSamples.duplicated_samples` module), refer to the
-following sections.
+For more information about the actual algorithms and source codes, refer to the
+following page.
 
-pyGenClean.DupSamples.duplicated_samples
-........................................
-
-.. automodule:: pyGenClean.DupSamples.duplicated_samples
-    :members:
+* :py:mod:`pyGenClean.DupSamples.duplicated_samples`

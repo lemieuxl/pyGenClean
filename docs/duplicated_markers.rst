@@ -1,3 +1,5 @@
+.. _dup_markers_label:
+
 Duplicated Markers Module
 =========================
 
@@ -163,12 +165,7 @@ the output prefix shown is the one by default [*i.e.* dup_snps]):
 The Algorithm
 -------------
 
-For more information about the actual algorithms and source codes (the
-:py:mod:`pyGenClean.DupSNPs.duplicated_snps` module), refer to the following
-sections.
+For more information about the actual algorithms and source codes, refer to the
+following page.
 
-pyGenClean.DupSNPs.duplicated_snps
-..................................
-
-.. automodule:: pyGenClean.DupSNPs.duplicated_snps
-    :members:
+* :py:mod:`pyGenClean.DupSNPs.duplicated_snps`
