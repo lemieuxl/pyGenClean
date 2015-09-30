@@ -24,6 +24,7 @@ import logging
 import argparse
 import subprocess
 
+from .. import __version__
 from ..PlinkUtils import createRowFromPlinkSpacedOutput
 from ..DupSNPs.duplicated_snps import flipGenotype
 
@@ -1009,8 +1010,12 @@ class ProgramError(Exception):
 
 # The parser object
 pretty_name = "Gold standard comparison"
-desc = """Compares the dataset with a gold standard."""
+desc = "Compares the dataset with a gold standard."
+long_desc = ("The script compares two dataset (the study dataset and a gold "
+             "standard) to find genotyping discordance.")
 parser = argparse.ArgumentParser(description=desc)
+parser.add_argument("-v", "--version", action="version",
+                    version="pyGenClean version {}".format(__version__))
 
 # The INPUT files
 group = parser.add_argument_group("Input File")
