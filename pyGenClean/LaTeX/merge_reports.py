@@ -25,6 +25,7 @@ import argparse
 from glob import glob
 
 from . import auto_report
+from ..PlinkUtils import get_plink_version
 
 
 logger = logging.getLogger("merge_reports")
@@ -233,7 +234,7 @@ def generate_report(out_dir, latex_summaries, nb_markers, nb_samples, options):
 
     """
     # We create the automatic report
-    report_name = os.path.join(out_dir, "merged_reports.tex")
+    report_name = os.path.join(out_dir, "merged_report.tex")
     auto_report.create_report(
         out_dir,
         report_name,
@@ -242,11 +243,13 @@ def generate_report(out_dir, latex_summaries, nb_markers, nb_samples, options):
         summaries=latex_summaries,
         background=options.report_background,
         summary_fn=os.path.join(out_dir, "results_summary.txt"),
+        report_title=options.report_title,
         report_author=options.report_author,
         initial_files=os.path.join(out_dir, "initial_files.txt"),
         final_files=os.path.join(out_dir, "final_files.txt"),
         final_nb_markers=nb_markers,
         final_nb_samples=nb_samples,
+        plink_version=get_plink_version(),
     )
 
 
@@ -328,6 +331,9 @@ def add_custom_options(parser):
     :type parser: argparse.ArgumentParser
 
     """
+    parser.add_argument("--report-title", type=str, metavar="TITLE",
+                        default="Genetic Data Clean Up",
+                        help="The report title. [default: %(default)s]")
     parser.add_argument("--report-author", type=str, metavar="AUTHOR",
                         default="pyGenClean",
                         help="The current project number. "

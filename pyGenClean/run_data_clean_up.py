@@ -227,6 +227,7 @@ def main():
         summaries=latex_summaries,
         background=args.report_background,
         summary_fn=os.path.join(dirname, "results_summary.txt"),
+        report_title=args.report_title,
         report_author=args.report_author,
         initial_files=os.path.join(dirname, "initial_files.txt"),
         final_files=os.path.join(dirname, "final_files.txt"),

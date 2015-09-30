@@ -46,18 +46,13 @@ def create_report(outdirname, report_filename, **kwargs):
     assert "background" in kwargs
     assert "project_name" in kwargs
     assert "summary_fn" in kwargs
+    assert "report_title" in kwargs
     assert "report_author" in kwargs
     assert "initial_files" in kwargs
     assert "final_nb_markers" in kwargs
     assert "final_nb_samples" in kwargs
     assert "final_files" in kwargs
     assert "plink_version" in kwargs
-
-    # Getting the required information
-    project_name = kwargs["project_name"]
-    summaries = kwargs["summaries"]
-    summary_fn = kwargs["summary_fn"]
-    report_author = kwargs["report_author"]
 
     # Formatting the background section
     background_section = _format_background(kwargs["background"])
@@ -83,7 +78,7 @@ def create_report(outdirname, report_filename, **kwargs):
 
     # Adding the content of the results section
     result_summaries = []
-    for name in summaries:
+    for name in kwargs["summaries"]:
         full_path = os.path.abspath(name)
         if os.path.isfile(full_path):
             rel_path = os.path.relpath(full_path, outdirname)
@@ -134,7 +129,7 @@ def create_report(outdirname, report_filename, **kwargs):
         with open(report_filename, "w") as i_file:
             # Rendering the template
             print >>i_file, main_template.render(
-                project_name=project_name,
+                project_name=latex.sanitize_tex(kwargs["project_name"]),
                 month=today.strftime("%B"),
                 day=today.day,
                 year=today.year,
@@ -145,12 +140,13 @@ def create_report(outdirname, report_filename, **kwargs):
                 plink_version=kwargs["plink_version"],
                 steps_filename=os.path.basename(steps_filename),
                 final_results=_create_summary_table(
-                    summary_fn,
+                    kwargs["summary_fn"],
                     latex.jinja2_env.get_template("summary_table.tex"),
                     nb_samples=kwargs["final_nb_samples"],
                     nb_markers=kwargs["final_nb_markers"],
                 ),
-                report_author=report_author,
+                report_title=latex.sanitize_tex(kwargs["report_title"]),
+                report_author=latex.sanitize_tex(kwargs["report_author"]),
                 initial_files=initial_files,
                 final_files=final_files,
                 final_nb_samples=kwargs["final_nb_samples"],
