@@ -25,6 +25,8 @@ import numpy as np
 
 import matplotlib as mpl
 
+from .. import __version__
+
 
 logger = logging.getLogger("plot_eigenvalues")
 
@@ -239,8 +241,11 @@ class ProgramError(Exception):
 
 
 # The parser object
-desc = """Plots eigenvalues"""
+desc = "Plots eigenvalues"
+long_desc = None
 parser = argparse.ArgumentParser(description=desc)
+parser.add_argument("-v", "--version", action="version",
+                    version="pyGenClean version {}".format(__version__))
 
 # The input files
 group = parser.add_argument_group("Input File")

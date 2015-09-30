@@ -26,6 +26,7 @@ from collections import defaultdict
 from ..PlinkUtils import plot_MDS as PlotMDS
 from ..PlinkUtils import createRowFromPlinkSpacedOutput
 
+from .. import __version__
 from . import find_outliers
 from . import plot_eigenvalues as PlotEigenvalues
 from ..DupSNPs.duplicated_snps import flipGenotype
@@ -1210,8 +1211,13 @@ class ProgramError(Exception):
 
 # The parser object
 pretty_name = "Ethnicity"
-desc = """Check samples' ethnicity using reference populations and IBS."""
+desc = "Checks samples' ethnicity using reference populations and IBS."
+long_desc = ("The script uses pairwise IBS matrix as a distance metric to "
+             "identify cryptic relatedness among samples and sample outliers "
+             "by multi-dimensional scaling (MDS).")
 parser = argparse.ArgumentParser(description=desc)
+parser.add_argument("-v", "--version", action="version",
+                    version="pyGenClean version {}".format(__version__))
 
 # The INPUT files
 group = parser.add_argument_group("Input File")

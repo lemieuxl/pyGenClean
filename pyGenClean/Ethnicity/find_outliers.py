@@ -22,6 +22,7 @@ import argparse
 
 import numpy as npy
 
+from .. import __version__
 from ..PlinkUtils import createRowFromPlinkSpacedOutput as create_row
 
 
@@ -617,8 +618,11 @@ class ProgramError(Exception):
         return self.message
 
 # The parser object
-desc = """Finds outliers in SOURCE from CEU samples."""
+desc = "Finds outliers in SOURCE from CEU samples."
+long_desc = None
 parser = argparse.ArgumentParser(description=desc)
+parser.add_argument("-v", "--version", action="version",
+                    version="pyGenClean version {}".format(__version__))
 
 
 # The INPUT files
