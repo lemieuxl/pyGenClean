@@ -21,6 +21,7 @@ import logging
 import argparse
 import subprocess
 
+from .. import __version__
 from ..PlinkUtils import compare_bim as CompareBIM
 from ..PlinkUtils import createRowFromPlinkSpacedOutput
 
@@ -304,8 +305,13 @@ class ProgramError(Exception):
 
 # The parser object
 pretty_name = "Hardy-Weinberg flagging"
-desc = """Flag SNPs with Hardy-Weinberg disequilibrium."""
+desc = "Flags SNPs with Hardy-Weinberg disequilibrium."
+long_desc = ("The script tests for Hardy-Weinberg equilibrium for each marker "
+             "(using an exact test). It adjusts for multiple testing using "
+             "Bonferroni.")
 parser = argparse.ArgumentParser(description=desc)
+parser.add_argument("-v", "--version", action="version",
+                    version="pyGenClean version {}".format(__version__))
 
 # The INPUT files
 group = parser.add_argument_group("Input File")
