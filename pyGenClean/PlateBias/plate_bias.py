@@ -22,6 +22,7 @@ import logging
 import argparse
 import subprocess
 
+from .. import __version__
 from ..PlinkUtils import createRowFromPlinkSpacedOutput
 
 
@@ -259,8 +260,12 @@ class ProgramError(Exception):
 
 # The parser object
 pretty_name = "Plate bias"
-desc = """Check for plate bias."""
+desc = "Checks for plate bias."
+long_desc = ("The script identifies markers with plate bias, based on the "
+             "plates used to dilute DNA samples.")
 parser = argparse.ArgumentParser(description=desc)
+parser.add_argument("-v", "--version", action="version",
+                    version="pyGenClean version {}".format(__version__))
 
 # The INPUT files
 group = parser.add_argument_group("Input File")
