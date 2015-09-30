@@ -202,6 +202,7 @@ files (with all available parameters) are given.
     protocol
     configuration_files
     how_to_run
+    automatic_report
 
 
 The algorithm
