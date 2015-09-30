@@ -6,15 +6,16 @@ The usage of the standalone module is shown below:
 .. code-block:: console
 
     $ pyGenClean_duplicated_snps --help
-    usage: pyGenClean_duplicated_snps [-h] --tfile FILE
+    usage: pyGenClean_duplicated_snps [-h] [-v] --tfile FILE
                                       [--snp-completion-threshold FLOAT]
                                       [--snp-concordance-threshold FLOAT]
                                       [--frequency_difference FLOAT] [--out FILE]
-    
-    Extract and work with duplicated SNPs.
+
+    Extracts and merges duplicated markers.
 
     optional arguments:
       -h, --help            show this help message and exit
+      -v, --version         show program's version number and exit
 
     Input File:
       --tfile FILE          The input file prefix (will find the tped and tfam
@@ -36,6 +37,7 @@ The usage of the standalone module is shown below:
 
     Output File:
       --out FILE            The prefix of the output files. [default: dup_snps]
+
 
 Input Files
 -----------
