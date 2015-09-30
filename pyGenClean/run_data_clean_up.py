@@ -746,14 +746,16 @@ def run_noCall_hetero_snps(in_prefix, in_type, out_prefix, base_dir, options):
                 noCall_hetero_snps.pretty_name,
             )
             text = (
-                "After scrutiny, {:,d} marker{} were excluded from the "
+                "After scrutiny, {:,d} marker{} {} excluded from the "
                 "dataset because of a call rate of 0. Also, {:,d} marker{} "
-                "were excluded from the dataset because all samples were "
+                "{} excluded from the dataset because all samples were "
                 "heterozygous (excluding the mitochondrial "
                 "chromosome)".format(nb_all_failed,
                                      "s" if nb_all_failed > 1 else "",
+                                     "were" if nb_all_failed > 1 else "was",
                                      nb_all_hetero,
-                                     "s" if nb_all_hetero > 1 else "")
+                                     "s" if nb_all_hetero > 1 else "",
+                                     "were" if nb_all_hetero > 1 else "was")
             )
             print >>o_file, latex_template.wrap_lines(text, 80)
 
@@ -865,12 +867,15 @@ def run_sample_missingness(in_prefix, in_type, out_prefix, base_dir, options):
                 sample_missingness.pretty_name,
             )
             text = ("Using a {} threshold of {} ({} keeping only samples with "
-                    r"a missing rate $\leq {}$), {:,d} sample{} were excluded "
-                    "from the dataset.".format(latex_template.texttt("mind"),
-                                               mind_value,
-                                               latex_template.textit("i.e."),
-                                               mind_value, nb_samples,
-                                               "s" if nb_samples > 1 else ""))
+                    r"a missing rate $\leq {}$), {:,d} sample{} {} excluded "
+                    "from the dataset.".format(
+                        latex_template.texttt("mind"),
+                        mind_value,
+                        latex_template.textit("i.e."),
+                        mind_value, nb_samples,
+                        "s" if nb_samples > 1 else ""
+                        "were" if nb_samples > 1 else "was",
+                    ))
             print >>o_file, latex_template.wrap_lines(text)
 
     except IOError:
@@ -978,12 +983,15 @@ def run_snp_missingness(in_prefix, in_type, out_prefix, base_dir, options):
                 snp_missingness.pretty_name,
             )
             text = ("Using a {} threshold of {} ({} keeping only markers with "
-                    r"a missing rate $\leq {}$), {:,d} marker{} were excluded "
-                    "from the dataset.".format(latex_template.texttt("geno"),
-                                               geno_value,
-                                               latex_template.textit("i.e."),
-                                               geno_value, nb_markers,
-                                               "s" if nb_markers > 1 else ""))
+                    r"a missing rate $\leq {}$), {:,d} marker{} {} excluded "
+                    "from the dataset.".format(
+                        latex_template.texttt("geno"),
+                        geno_value,
+                        latex_template.textit("i.e."),
+                        geno_value, nb_markers,
+                        "s" if nb_markers > 1 else "",
+                        "were" if nb_markers > 1 else "was",
+                    ))
             print >>o_file, latex_template.wrap_lines(text)
 
     except IOError:
