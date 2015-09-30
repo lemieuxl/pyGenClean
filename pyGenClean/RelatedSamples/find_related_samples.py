@@ -26,8 +26,9 @@ from collections import defaultdict
 
 import numpy as npy
 
+from .. import __version__
 from ..PlinkUtils import createRowFromPlinkSpacedOutput
-from ..RelatedSamples import merge_related_samples
+from ..RelatedSamples.merge_related_samples import merge_related_samples
 
 
 logger = logging.getLogger("find_related_samples")
@@ -884,10 +885,20 @@ class ProgramError(Exception):
         return self.message
 
 
+# Default values
+_ibs2_ratio_default = 0.8
+_indep_pairwise_r2_default = "0.1"
+
 # The parser object
 pretty_name = "Related samples"
-desc = """Finds related samples according to IBS values."""
+desc = "Finds related samples according to IBS values."
+long_desc = ("The script conducts close familial relationship checks with "
+             "pairwise IBD. It flags and removes all but one pair-member of "
+             r"samples duplicates ($IBS2^\ast_{ratio}>{ratio_value}$) based "
+             "on a selection of uncorrelated markers ($r^2 < {r_squared}$).")
 parser = argparse.ArgumentParser(description=desc)
+parser.add_argument("-v", "--version", action="version",
+                    version="pyGenClean version {}".format(__version__))
 
 # The INPUT files
 group = parser.add_argument_group("Input File")
@@ -903,13 +914,14 @@ group.add_argument("--min-nb-snp", type=int, metavar="INT", default=10000,
                    help=("The minimum number of markers needed to compute IBS "
                          "values. [Default: %(default)d]"))
 group.add_argument("--indep-pairwise", type=str, metavar="STR", nargs=3,
-                   default=["50", "5", "0.1"],
+                   default=["50", "5", _indep_pairwise_r2_default],
                    help=("Three numbers: window size, window shift and the r2 "
                          "threshold. [default: %(default)s]"))
 group.add_argument("--maf", type=str, metavar="FLOAT", default="0.05",
                    help=("Restrict to SNPs with MAF >= threshold. [default: "
                          "%(default)s]"))
-group.add_argument("--ibs2-ratio", type=float, metavar="FLOAT", default=0.8,
+group.add_argument("--ibs2-ratio", type=float, metavar="FLOAT",
+                   default=_ibs2_ratio_default,
                    help=("The initial IBS2* ratio (the minimum value to show "
                          "in the plot. [default: %(default).1f]"))
 group.add_argument("--sge", action="store_true",
