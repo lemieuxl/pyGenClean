@@ -20,9 +20,14 @@ import sys
 import logging
 import argparse
 
+from .. import __version__
 
-desc = """Compare BIM file"""
+
+desc = "Compares BIM file."
+long_desc = None
 parser = argparse.ArgumentParser(description=desc)
+parser.add_argument("-v", "--version", action="version",
+                    version="pyGenClean version {}".format(__version__))
 
 
 logger = logging.getLogger("compare_bim")

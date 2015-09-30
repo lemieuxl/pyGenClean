@@ -22,6 +22,7 @@ import argparse
 
 import numpy as npy
 
+from .. import __version__
 from . import createRowFromPlinkSpacedOutput
 
 
@@ -415,8 +416,11 @@ class ProgramError(Exception):
 
 
 # The parser object
-desc = """Creates a MDS plot"""
+desc = "Creates a MDS plot."
+long_desc = None
 parser = argparse.ArgumentParser(description=desc)
+parser.add_argument("-v", "--version", action="version",
+                    version="pyGenClean version {}".format(__version__))
 
 # The INPUT files
 group = parser.add_argument_group("Input File")

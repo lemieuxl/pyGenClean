@@ -28,7 +28,8 @@ from . import createRowFromPlinkSpacedOutput
 logger = logging.getLogger("plot_MDS")
 
 
-desc = """Creates a MDS plot"""
+desc = "Creates a MDS plot"
+long_desc = None
 parser = argparse.ArgumentParser(description=desc)
 
 
