@@ -23,6 +23,8 @@ import argparse
 
 import numpy as npy
 
+from .. import __version__
+
 
 logger = logging.getLogger("heterozygosity_plot")
 
@@ -373,9 +375,10 @@ class ProgramError(Exception):
 
 
 # The parser object
-desc = """Plot the distribution of the heterozygosity ratio."""
+desc = "Plots the distribution of the heterozygosity ratio."
 parser = argparse.ArgumentParser(description=desc)
-
+parser.add_argument("-v", "--version", action="version",
+                    version="pyGenClean version {}".format(__version__))
 
 # The INPUT files
 group = parser.add_argument_group("Input File")

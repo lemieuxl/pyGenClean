@@ -23,6 +23,8 @@ import argparse
 
 import numpy as npy
 
+from .. import __version__
+
 
 logger = logging.getLogger("noCall_hetero_snps")
 
@@ -226,8 +228,12 @@ class ProgramError(Exception):
 
 # The parser object
 pretty_name = "No calls and heterozygous only markers"
-desc = """Removes "no calls" only and heterozygous only markers."""
+desc = 'Removes "no calls" only and heterozygous only markers.'
+long_desc = ("The script removes completely failed markers (no calls) or "
+             "markers with only heterozygous genotypes.")
 parser = argparse.ArgumentParser(description=desc)
+parser.add_argument("-v", "--version", action="version",
+                    version="pyGenClean version {}".format(__version__))
 
 # The INPUT files
 group = parser.add_argument_group("Input File")
