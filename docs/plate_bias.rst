@@ -6,13 +6,14 @@ The usage of the standalone module is shown below:
 .. code-block:: console
 
     $ pyGenClean_plate_bias --help
-    usage: pyGenClean_plate_bias [-h] --bfile FILE --loop-assoc FILE
+    usage: pyGenClean_plate_bias [-h] [-v] --bfile FILE --loop-assoc FILE
                                  [--pfilter FLOAT] [--out FILE]
 
-    Check for plate bias.
+    Checks for plate bias.
 
     optional arguments:
       -h, --help         show this help message and exit
+      -v, --version      show program's version number and exit
 
     Input File:
       --bfile FILE       The input file prefix (will find the plink binary files
@@ -28,6 +29,7 @@ The usage of the standalone module is shown below:
 
     Output File:
       --out FILE         The prefix of the output files. [default: plate_bias]
+
 
 Input Files
 -----------
