@@ -8,7 +8,7 @@ The usage of the standalone module is shown below:
 .. code-block:: console
 
     $ pyGenClean_find_related_samples --help
-    usage: pyGenClean_find_related_samples [-h] --bfile FILE [--genome-only]
+    usage: pyGenClean_find_related_samples [-h] [-v] --bfile FILE [--genome-only]
                                            [--min-nb-snp INT]
                                            [--indep-pairwise STR STR STR]
                                            [--maf FLOAT] [--ibs2-ratio FLOAT]
@@ -16,17 +16,18 @@ The usage of the standalone module is shown below:
                                            [--sge-nodes INT INT]
                                            [--line-per-file-for-sge INT]
                                            [--out FILE]
-    
+
     Finds related samples according to IBS values.
-    
+
     optional arguments:
       -h, --help            show this help message and exit
-    
+      -v, --version         show program's version number and exit
+
     Input File:
       --bfile FILE          The input file prefix (will find the plink binary
                             files by appending the prefix to the .bim, .bed and
                             .fam files, respectively.)
-    
+
     Options:
       --genome-only         Only create the genome file
       --min-nb-snp INT      The minimum number of markers needed to compute IBS
@@ -52,9 +53,10 @@ The usage of the standalone module is shown below:
       --line-per-file-for-sge INT
                             The number of line per file for SGE task array.
                             [default: 100]
-    
+
     Output File:
       --out FILE            The prefix of the output files. [default: ibs]
+
 
 Input Files
 -----------
@@ -175,6 +177,41 @@ pairs, where the location of the "clusters" is different.
     :alt: Z2 in function of IBS2 ratio
 
     Z2 in function of IBS2 ratio
+
+Finding Outliers
+----------------
+
+A standalone script was created in order to regroup related samples in
+different subset. The usage is as follow:
+
+.. code-block:: console
+
+    $ pyGenClean_merge_related_samples --help
+    usage: pyGenClean_merge_related_samples [-h] [-v] --ibs-related FILE
+                                            [--no-status] [--out FILE]
+
+    Merges related samples according to IBS.
+
+    optional arguments:
+      -h, --help          show this help message and exit
+      -v, --version       show program's version number and exit
+
+    Input File:
+      --ibs-related FILE  The input file containing related individuals according
+                          to IBS value.
+
+    Options:
+      --no-status         The input file doesn't have a 'status' column.
+
+    Output File:
+      --out FILE          The prefix of the output files. [default: ibs_merged]
+
+
+At the end of the analysis, two files are created. The file
+``*.chosen_related_individuals"`` contains a list of randomly selected samples
+according to their relatedness (to keep only on sample for a group of related
+samples). The file ``*.discarded_related_individuals`` contains a list of
+sample to exclude to only keep unrelated samples in a dataset.
 
 The Algorithm
 -------------
