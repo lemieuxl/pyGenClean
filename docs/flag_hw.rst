@@ -6,23 +6,25 @@ The usage of the standalone module is shown below:
 .. code-block:: console
 
     $ pyGenClean_flag_hw --help
-    usage: pyGenClean_flag_hw [-h] --bfile FILE [--hwe FLOAT] [--out FILE]
-    
-    Flag SNPs with Hardy-Weinberg disequilibrium.
+    usage: pyGenClean_flag_hw [-h] [-v] --bfile FILE [--hwe FLOAT] [--out FILE]
+
+    Flags SNPs with Hardy-Weinberg disequilibrium.
 
     optional arguments:
-      -h, --help    show this help message and exit
+      -h, --help     show this help message and exit
+      -v, --version  show program's version number and exit
 
     Input File:
-      --bfile FILE  The input file prefix (will find the plink binary files by
-                    appending the prefix to the .bim, .bed and .fam files,
-                    respectively.
+      --bfile FILE   The input file prefix (will find the plink binary files by
+                     appending the prefix to the .bim, .bed and .fam files,
+                     respectively.
 
     Options:
-      --hwe FLOAT   The Hardy-Weinberg equilibrium threshold. [default: 1e-4]
+      --hwe FLOAT    The Hardy-Weinberg equilibrium threshold. [default: 1e-4]
 
     Output File:
-      --out FILE    The prefix of the output files. [default: flag_hw]
+      --out FILE     The prefix of the output files. [default: flag_hw]
+
 
 Input Files
 -----------
