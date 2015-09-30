@@ -6,25 +6,27 @@ The usage of the standalone module is shown below:
 .. code-block:: console
 
     $ pyGenClean_snp_missingness --help
-    usage: pyGenClean_snp_missingness [-h] --bfile FILE [--geno FLOAT]
+    usage: pyGenClean_snp_missingness [-h] [-v] --bfile FILE [--geno FLOAT]
                                       [--out FILE]
 
-    Computes sample missingness using Plink
+    Computes marker missingness using Plink.
 
     optional arguments:
-      -h, --help    show this help message and exit
+      -h, --help     show this help message and exit
+      -v, --version  show program's version number and exit
 
     Input File:
-      --bfile FILE  The input file prefix (will find the plink binary files by
-                    appending the prefix to the .bim, .bed and .fam files,
-                    respectively.
+      --bfile FILE   The input file prefix (will find the plink binary files by
+                     appending the prefix to the .bim, .bed and .fam files,
+                     respectively.
 
     Options:
-      --geno FLOAT  The missingness threshold (remove SNPs with more than x
-                    percent missing genotypes). [Default: 0.020]
+      --geno FLOAT   The missingness threshold (remove SNPs with more than x
+                     percent missing genotypes). [Default: 0.020]
 
     Output File:
-      --out FILE    The prefix of the output files. [default: clean_geno]
+      --out FILE     The prefix of the output files. [default: clean_geno]
+
 
 Input FIles
 -----------
