@@ -106,7 +106,7 @@ def merge_required_files(dirnames, out_dir):
     """
     # The list of files to merge
     fn_to_merge = ("steps_summary.tex", "excluded_markers.txt",
-                   "excluded_samples.txt", "results_summary.txt")
+                   "excluded_samples.txt")
 
     # Merging the files
     for fn in fn_to_merge:
@@ -116,6 +116,17 @@ def merge_required_files(dirnames, out_dir):
                 i_fn = os.path.join(dn, fn)
                 with open(i_fn, "r") as i_file:
                     o_file.write(i_file.read())
+
+    # Merging the result summary file
+    o_fn = os.path.join(out_dir, "results_summary.txt")
+    with open(o_fn, "w") as o_file:
+        for i, dn in enumerate(dirnames):
+            i_fn = os.path.join(dn, "results_summary.txt")
+            with open(i_fn, "r") as i_file:
+                if i != 0:
+                    # We skip the first 4 lines (file descriptions)
+                    [i_file.readline() for i in range(4)]
+                o_file.write(i_file.read())
 
 
 def copy_initial_files(filename, out_dir):
