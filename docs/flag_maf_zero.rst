@@ -6,20 +6,22 @@ The usage of the standalone module is shown below:
 .. code-block:: console
 
     $ pyGenClean_flag_maf_zero --help
-    usage: pyGenClean_flag_maf_zero [-h] --bfile FILE [--out FILE]
-    
-    Flag SNPs with MAF of 0.
+    usage: pyGenClean_flag_maf_zero [-h] [-v] --bfile FILE [--out FILE]
+
+    Flags SNPs with MAF of 0.
 
     optional arguments:
-      -h, --help    show this help message and exit
+      -h, --help     show this help message and exit
+      -v, --version  show program's version number and exit
 
     Input File:
-      --bfile FILE  The input file prefix (will find the plink binary files by
-                    appending the prefix to the .bim, .bed and .fam files,
-                    respectively.
+      --bfile FILE   The input file prefix (will find the plink binary files by
+                     appending the prefix to the .bim, .bed and .fam files,
+                     respectively.
 
     Output File:
-      --out FILE    The prefix of the output files. [default: flag_maf_0]
+      --out FILE     The prefix of the output files. [default: flag_maf_0]
+
 
 Input FIles
 -----------
