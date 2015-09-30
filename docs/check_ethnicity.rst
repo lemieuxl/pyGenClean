@@ -8,9 +8,9 @@ The usage of the standalone module is shown below:
 .. code-block:: console
 
     $ pyGenClean_check_ethnicity --help
-    usage: pyGenClean_check_ethnicity [-h] --bfile FILE --ceu-bfile FILE
-                                      --yri-bfile FILE --jpt-chb-bfile FILE
-                                      [--min-nb-snp INT]
+    usage: pyGenClean_check_ethnicity [-h] [-v] --bfile FILE [--skip-ref-pops]
+                                      [--ceu-bfile FILE] [--yri-bfile FILE]
+                                      [--jpt-chb-bfile FILE] [--min-nb-snp INT]
                                       [--indep-pairwise STR STR STR] [--maf FLOAT]
                                       [--sge] [--sge-walltime TIME]
                                       [--sge-nodes INT INT]
@@ -21,17 +21,21 @@ The usage of the standalone module is shown below:
                                       [--multiplier FLOAT] [--xaxis COMPONENT]
                                       [--yaxis COMPONENT] [--format FORMAT]
                                       [--title STRING] [--xlabel STRING]
-                                      [--ylabel STRING] [--out FILE]
-    
-    Check samples' ethnicity using reference populations and IBS.
-    
+                                      [--ylabel STRING] [--create-scree-plot]
+                                      [--scree-plot-title TITLE] [--out FILE]
+
+    Checks samples' ethnicity using reference populations and IBS.
+
     optional arguments:
       -h, --help            show this help message and exit
-    
+      -v, --version         show program's version number and exit
+
     Input File:
       --bfile FILE          The input file prefix (will find the plink binary
                             files by appending the prefix to the .bim, .bed and
                             .fam files, respectively.
+      --skip-ref-pops       Perform the MDS computation, but skip the three
+                            reference panels.
       --ceu-bfile FILE      The input file prefix (will find the plink binary
                             files by appending the prefix to the .bim, .bed and
                             .fam files, respectively.) for the CEU population
@@ -41,7 +45,7 @@ The usage of the standalone module is shown below:
       --jpt-chb-bfile FILE  The input file prefix (will find the plink binary
                             files by appending the prefix to the .bim, .bed and
                             .fam files, respectively.) for the JPT-CHB population
-    
+
     Options:
       --min-nb-snp INT      The minimum number of markers needed to compute IBS
                             values. [Default: 8000]
@@ -77,14 +81,14 @@ The usage of the standalone module is shown below:
                             The number of line per file for SGE task array for the
                             IBS jobs. [default: 100]
       --nb-components INT   The number of component to compute. [default: 10]
-    
+
     Outlier Options:
       --outliers-of POP     Finds the outliers of this population. [default: CEU]
       --multiplier FLOAT    To find the outliers, we look for more than x times
                             the cluster standard deviation. [default: 1.9]
       --xaxis COMPONENT     The component to use for the X axis. [default: C1]
       --yaxis COMPONENT     The component to use for the Y axis. [default: C2]
-    
+
     MDS Plot Options:
       --format FORMAT       The output file format (png, ps, pdf, or X11 formats
                             are available). [default: png]
@@ -92,9 +96,15 @@ The usage of the standalone module is shown below:
                             C1 - MDS]
       --xlabel STRING       The label of the X axis. [default: C1]
       --ylabel STRING       The label of the Y axis. [default: C2]
-    
+
+    Scree Plot Options:
+      --create-scree-plot   Computes Eigenvalues and creates a scree plot.
+      --scree-plot-title TITLE
+                            The main title of the scree plot [EIGENSOFT results]
+
     Output File:
       --out FILE            The prefix of the output files. [default: ethnicity]
+
 
 Input Files
 -----------
@@ -321,7 +331,7 @@ of this script:
 .. code-block:: console
 
     $ pyGenClean_plot_MDS --help
-    usage: pyGenClean_plot_MDS [-h] --file FILE --population-file FORMAT
+    usage: pyGenClean_plot_MDS [-h] [-v] --file FILE --population-file FORMAT
                                [--population-order STRING]
                                [--population-colors STRING]
                                [--population-sizes STRING]
@@ -336,10 +346,11 @@ of this script:
                                [--adjust-right FLOAT] [--adjust-top FLOAT]
                                [--adjust-bottom FLOAT] [--out FILE]
 
-    Creates a MDS plot
+    Creates a MDS plot.
 
     optional arguments:
       -h, --help            show this help message and exit
+      -v, --version         show program's version number and exit
 
     Input File:
       --file FILE           The MBS file.
@@ -391,6 +402,7 @@ of this script:
     Output File:
       --out FILE            The prefix of the output files. [default: mds]
 
+
 And here is an example of usage (for a MDS and a population file named
 ``ethnicity.mds.mds`` and ``ethnicity.population_file_outliers``, respectively),
 producing the Figure :ref:`ethnicity_outliers_modified_figure`.
@@ -411,7 +423,7 @@ producing the Figure :ref:`ethnicity_outliers_modified_figure`.
     >     --adjust-left 0.15 \
     >     --adjust-right 0.96 \
     >     --legend-size 14 \
-    >     --legend-position lower-right    
+    >     --legend-position lower-right
 
 
 .. _ethnicity_outliers_modified_figure:
@@ -438,7 +450,7 @@ of seconds).
 .. code-block:: console
 
     $ pyGenClean_find_outliers --help
-    usage: pyGenClean_find_outliers [-h] --mds FILE --population-file FILE
+    usage: pyGenClean_find_outliers [-h] [-v] --mds FILE --population-file FILE
                                     [--outliers-of POP] [--multiplier FLOAT]
                                     [--xaxis COMPONENT] [--yaxis COMPONENT]
                                     [--format FORMAT] [--out FILE]
@@ -447,6 +459,7 @@ of seconds).
 
     optional arguments:
       -h, --help            show this help message and exit
+      -v, --version         show program's version number and exit
 
     Input File:
       --mds FILE            The MDS file from Plink
@@ -467,6 +480,7 @@ of seconds).
     Output File:
       --out FILE            The prefix of the output files. [default: ethnicity]
 
+
 The Algorithm
 --------------
 
@@ -486,6 +500,12 @@ pyGenClean.Ethnicity.find_outliers
 ..................................
 
 .. automodule:: pyGenClean.Ethnicity.find_outliers
+    :members:
+
+pyGenClean.Ethnicity.plot_eigenvalues
+.....................................
+
+.. automodule:: pyGenClean.Ethnicity.plot_eigenvalues
     :members:
 
 pyGenClean.PlinkUtils.plot_MDS_standalone

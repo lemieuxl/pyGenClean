@@ -546,13 +546,15 @@ def parseArgs(argString=None):  # pragma: no cover
                                  :py:mod:`pyGenClean.Ethnicity.check_ethnicity`
                                  module.
     ``--format``          string The output file format (png, ps, or pdf.
-    ``--out``             string The prefix of the output files.
     ``--outliers-of``     string Finds the outliers of this population.
     ``--multiplier``      float  To find the outliers, we look for more than
                                  :math:`x` times the cluster standard
                                  deviation.
     ``--xaxis``           string The component to use for the X axis.
     ``--yaxis``           string The component to use for the Y axis.
+    ``--format``          string The output file format (png, ps, or pdf
+                                 formats are available).
+    ``--out``             string The prefix of the output files.
     ===================== ====== ==============================================
 
     .. note::

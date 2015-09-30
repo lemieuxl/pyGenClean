@@ -1170,6 +1170,9 @@ def parseArgs(argString=None):  # pragma: no cover
     ``--title``                 string The title of the MDS plot.
     ``--xlabel``                string The label of the X axis.
     ``--ylabel``                string The label of the Y axis.
+    ``--create-scree-plot``     bool   Computes Eigenvalues and creates a scree
+                                       plot.
+    ``--scree-plot-title``      string The main title of the scree plot
     ``--out``                   string The prefix of the output files.
     =========================== ====== ========================================
 

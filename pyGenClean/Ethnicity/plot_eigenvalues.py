@@ -182,13 +182,13 @@ def parse_args(argString=None):
               :py:mod:`argparse` module. It contains the values of the
               different options.
 
-    =========   ======  ================================
-     Options     Type             Description
-    =========   ======  ================================
-    `--evec`    string  The EVEC file from EIGENSOFT
-    `--title`   string  The main title of the scree plot
-    `--out`     string  The name of the output file
-    =========   ======  ================================
+    ====================== ====== ================================
+            Options         Type            Description
+    ====================== ====== ================================
+    ``--evec``             string The EVEC file from EIGENSOFT
+    ``--scree-plot-title`` string The main title of the scree plot
+    ``--out``              string The name of the output file
+    ====================== ====== ================================
 
     .. note::
         No option check is done here (except for the one automatically done by
