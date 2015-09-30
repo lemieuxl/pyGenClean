@@ -22,13 +22,11 @@ import time
 import shutil
 import logging
 import datetime
-import tempfile
 import argparse
 import itertools
 import subprocess
 import ConfigParser
 from glob import glob
-from subprocess import Popen, PIPE
 from collections import namedtuple, Counter, defaultdict
 
 from . import __version__, add_file_handler_to_root
@@ -54,6 +52,7 @@ from .LaTeX import utils as latex_template
 from .LaTeX.merge_reports import add_custom_options as report_options
 
 from .PlinkUtils import subset_data
+from .PlinkUtils import get_plink_version
 from .PlinkUtils import createRowFromPlinkSpacedOutput
 
 
@@ -101,6 +100,7 @@ def main():
 
     logger.info("pyGenClean version {}".format(__version__))
     plink_version = get_plink_version()
+    logger.info("Using Plink version {}".format(plink_version))
 
     # Reading the configuration file
     logger.info("Reading configuration file [ {} ]".format(args.conf))
@@ -2823,54 +2823,6 @@ def all_files_exist(file_list):
     for filename in file_list:
         all_exist = all_exist and os.path.isfile(filename)
     return all_exist
-
-
-def get_plink_version():
-    """Gets the Plink version from the binary.
-
-    :returns: the version of the Plink software
-    :rtype: str
-
-    This function uses :py:class:`subprocess.Popen` to gather the version of
-    the Plink binary. Since executing the software to gather the version
-    creates an output file, it is deleted.
-
-    .. warning::
-        This function only works as long as the version is returned as
-        ``| PLINK! | NNN |`` (where, ``NNN`` is the version), since we use
-        regular expresion to extract the version number from the standard
-        output of the software.
-
-    """
-    # Running the command
-    tmp_fn = None
-    with tempfile.NamedTemporaryFile(delete=False) as tmpfile:
-        tmp_fn = tmpfile.name + "_pyGenClean"
-
-    # The command to run
-    command = ["plink", "--noweb", "--out", tmp_fn]
-
-    output = None
-    try:
-        proc = Popen(command, stdout=PIPE, stderr=PIPE)
-        output = proc.communicate()[0].decode()
-    except OSError:
-        raise ProgramError("plink: command not found")
-
-    # Deleting the output file automatically created by Plink
-    if os.path.isfile(tmp_fn + ".log"):
-        os.remove(tmp_fn + ".log")
-
-    # Finding the version
-    version = re.search(r"\|\s+PLINK!\s+\|\s+(\S+)\s+\|", output)
-    if version is None:
-        version = "unknown"
-    else:
-        version = version.group(1)
-
-    logger.info("Using Plink version {}".format(version))
-
-    return version
 
 
 def read_config_file(filename):
