@@ -26,6 +26,8 @@ from collections import defaultdict
 
 import numpy as npy
 
+from .. import __version__
+
 
 logger = logging.getLogger("duplicated_samples")
 
@@ -1158,8 +1160,13 @@ class ProgramError(Exception):
 
 # The parser object
 pretty_name = "Duplicated samples"
-desc = """Extract and work with duplicated samples."""
+desc = "Extracts and merges duplicated samples."
+long_desc = ("The script evaluates concordance and completion rate. If the "
+             "thresholds are met, the script merges and completes the "
+             "genotypes.")
 parser = argparse.ArgumentParser(description=desc)
+parser.add_argument("-v", "--version", action="version",
+                    version="pyGenClean version {}".format(__version__))
 
 # The INPUT files
 group = parser.add_argument_group("Input File")
