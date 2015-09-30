@@ -240,7 +240,7 @@ def _create_summary_table(fn, template, nb_samples, nb_markers):
                 if data["header"].endswith("/subset"):
                     tmp[0] = r"\path{" + tmp[0] + "}"
                 elif data["header"].endswith("/flag_hw"):
-                    tmp[0] = latex.format_numbers(tmp[0])
+                    tmp[0] = latex.format_numbers(tmp[0], prefix="p < ")
                 else:
                     tmp = map(latex.sanitize_tex, tmp)
                     if tmp[0].startswith("x"):

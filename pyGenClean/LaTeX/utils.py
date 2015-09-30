@@ -168,11 +168,14 @@ def wrap_lines(content, length=80):
     return "\n".join(textwrap.wrap(content, length, break_long_words=False))
 
 
-def format_numbers(number):
+def format_numbers(number, prefix=""):
     """Formats number in the scientific notation for LaTeX.
 
     :param number: the number to format.
+    :param prefix: a prefix to add before the number (e.g. "p < ").
+
     :type number: str
+    :type prefix: str
 
     :returns: a string containing the scientific notation of the number.
     :rtype: str
@@ -189,7 +192,7 @@ def format_numbers(number):
     coefficient = r.group(1)
     exponent = int(r.group(2))
 
-    return "$" + coefficient + r"\times 10^{" + str(exponent) + "}$"
+    return "$" + prefix + coefficient + r"\times 10^{" + str(exponent) + "}$"
 
 
 def sanitize_fig_name(name):
