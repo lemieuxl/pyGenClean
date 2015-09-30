@@ -22,11 +22,13 @@ import time
 import shutil
 import logging
 import datetime
+import tempfile
 import argparse
 import itertools
 import subprocess
 import ConfigParser
 from glob import glob
+from subprocess import Popen, PIPE
 from collections import namedtuple, Counter, defaultdict
 
 from . import __version__, add_file_handler_to_root
@@ -97,27 +99,28 @@ def main():
     # Configuring the root logger
     add_file_handler_to_root(os.path.join(dirname, "pyGenClean.log"))
 
-    logger.info("Data Clean Up version {}".format(__version__))
+    logger.info("pyGenClean version {}".format(__version__))
+    plink_version = get_plink_version()
 
     # Reading the configuration file
     logger.info("Reading configuration file [ {} ]".format(args.conf))
     order, conf = read_config_file(args.conf)
 
     # Executing the data clean up
-    current_input = None
-    current_input_type = None
+    current_in = None
+    current_in_type = None
     suffixes = None
     if args.tfile is not None:
-        current_input = args.tfile
-        current_input_type = "tfile"
+        current_in = args.tfile
+        current_in_type = "tfile"
         suffixes = (".tped", ".tfam")
     elif args.bfile is not None:
-        current_input = args.bfile
-        current_input_type = "bfile"
+        current_in = args.bfile
+        current_in_type = "bfile"
         suffixes = (".bed", ".bim", ".fam")
     else:
-        current_input = args.file
-        current_input_type = "file"
+        current_in = args.file
+        current_in_type = "file"
         suffixes = (".ped", ".map")
 
     # Creating the excluded files
@@ -128,7 +131,7 @@ def main():
             pass
         with open(os.path.join(dirname, "initial_files.txt"), "w") as o_file:
             for s in suffixes:
-                print >>o_file, current_input + s
+                print >>o_file, current_in + s
 
     except IOError:
         msg = "{}: cannot write summary".format(dirname)
@@ -136,8 +139,8 @@ def main():
 
     # Counting the number of markers and samples in the datafile
     logger.info("Counting initial number of samples and markers")
-    nb_markers, nb_samples = count_markers_samples(current_input,
-                                                   current_input_type)
+    nb_markers, nb_samples = count_markers_samples(current_in,
+                                                   current_in_type)
     logger.info("  - {:,d} samples".format(nb_samples))
     logger.info("  - {:,d} markers".format(nb_markers))
 
@@ -157,6 +160,7 @@ def main():
     latex_summaries = []
     steps = []
     descriptions = []
+    long_descriptions = []
     for number in order:
         # Getting the script name and its options
         script_name, options = conf[number]
@@ -171,11 +175,11 @@ def main():
         # Executing the function
         logger.info("Running {} {}".format(number, script_name))
         logger.info("  - Using {} as prefix for input "
-                    "files".format(current_input))
+                    "files".format(current_in))
         logger.info("  - Results will be in [ {} ]".format(output_prefix))
-        current_input, current_input_type, summary, desc = function_to_use(
-            current_input,
-            current_input_type,
+        current_in, current_in_type, summary, desc, l_desc = function_to_use(
+            current_in,
+            current_in_type,
             output_prefix,
             dirname,
             options,
@@ -185,19 +189,20 @@ def main():
         latex_summaries.append(summary)
         steps.append(script_name)
         descriptions.append(desc)
+        long_descriptions.append(l_desc)
 
     # Counting the final number of samples and markers
     logger.info("Counting final number of samples and markers")
-    nb_markers, nb_samples = count_markers_samples(current_input,
-                                                   current_input_type)
+    nb_markers, nb_samples = count_markers_samples(current_in,
+                                                   current_in_type)
     logger.info("  - {:,d} samples".format(nb_samples))
     logger.info("  - {:,d} markers".format(nb_markers))
 
     # Getting the final suffixes
     suffixes = None
-    if current_input_type == "tfile":
+    if current_in_type == "tfile":
         suffixes = ((".tped", nb_markers), (".tfam", nb_samples))
-    elif current_input_type == "bfile":
+    elif current_in_type == "bfile":
         suffixes = ((".bed", None), (".bim", nb_markers), (".fam", nb_samples))
     else:
         suffixes = ((".ped", nb_samples), (".map", nb_markers))
@@ -205,9 +210,9 @@ def main():
     with open(os.path.join(dirname, "final_files.txt"), "w") as o_file:
         for s, nb in suffixes:
             if nb:
-                print >>o_file, current_input + s + "\t{:,d}".format(nb)
+                print >>o_file, current_in + s + "\t{:,d}".format(nb)
             else:
-                print >>o_file, current_input + s
+                print >>o_file, current_in + s
 
     # We create the automatic report
     logger.info("Generating automatic report")
@@ -218,6 +223,7 @@ def main():
         project_name=args.report_number,
         steps=steps,
         descriptions=descriptions,
+        long_descriptions=long_descriptions,
         summaries=latex_summaries,
         background=args.report_background,
         summary_fn=os.path.join(dirname, "results_summary.txt"),
@@ -226,6 +232,7 @@ def main():
         final_files=os.path.join(dirname, "final_files.txt"),
         final_nb_markers="{:,d}".format(nb_markers),
         final_nb_samples="{:,d}".format(nb_samples),
+        plink_version=plink_version,
     )
 
 
@@ -442,7 +449,7 @@ def run_duplicated_samples(in_prefix, in_type, out_prefix, base_dir, options):
 
     # We know this step does produce a new data set (tfile), so we return it
     return (os.path.join(out_prefix, "dup_samples.final"), "tfile", latex_file,
-            duplicated_samples.desc)
+            duplicated_samples.desc, duplicated_samples.long_desc)
 
 
 def run_duplicated_snps(in_prefix, in_type, out_prefix, base_dir, options):
@@ -656,7 +663,7 @@ def run_duplicated_snps(in_prefix, in_type, out_prefix, base_dir, options):
 
     # We know this step does produce a new data set (tfile), so we return it
     return (os.path.join(out_prefix, "dup_snps.final"), "tfile", latex_file,
-            duplicated_snps.desc)
+            duplicated_snps.desc, duplicated_snps.long_desc)
 
 
 def run_noCall_hetero_snps(in_prefix, in_type, out_prefix, base_dir, options):
@@ -743,9 +750,9 @@ def run_noCall_hetero_snps(in_prefix, in_type, out_prefix, base_dir, options):
                 "were excluded from the dataset because all samples were "
                 "heterozygous (excluding the mitochondrial "
                 "chromosome)".format(nb_all_failed,
-                                     "s" if nb_all_failed > 0 else "",
+                                     "s" if nb_all_failed > 1 else "",
                                      nb_all_hetero,
-                                     "s" if nb_all_hetero > 0 else "")
+                                     "s" if nb_all_hetero > 1 else "")
             )
             print >>o_file, latex_template.wrap_lines(text, 80)
 
@@ -766,7 +773,7 @@ def run_noCall_hetero_snps(in_prefix, in_type, out_prefix, base_dir, options):
     # We know this step does produce a new data set (tfile), so we return it
     # along with the report name
     return (os.path.join(out_prefix, "clean_noCall_hetero"), "tfile",
-            latex_file, noCall_hetero_snps.desc)
+            latex_file, noCall_hetero_snps.desc, noCall_hetero_snps.long_desc)
 
 
 def run_sample_missingness(in_prefix, in_type, out_prefix, base_dir, options):
@@ -826,9 +833,12 @@ def run_sample_missingness(in_prefix, in_type, out_prefix, base_dir, options):
         # Since we already run the script, we know that the mind option is a
         # valid float
         mind_value = options[options.index("--mind") + 1]
-    if desc[-1] == ".":
+    if desc.endswith("."):
         desc = desc[:-1] + r" (${}={}$).".format(latex_template.texttt("mind"),
                                                  mind_value)
+    long_description = sample_missingness.long_desc.format(
+        success_rate="{:.1f}".format((1-float(mind_value)) * 100),
+    )
 
     # We want to save in a file the samples that were removed
     # There is one file to look at, which contains only one row, the name of
@@ -859,7 +869,7 @@ def run_sample_missingness(in_prefix, in_type, out_prefix, base_dir, options):
                                                mind_value,
                                                latex_template.textit("i.e."),
                                                mind_value, nb_samples,
-                                               "s" if nb_samples > 0 else ""))
+                                               "s" if nb_samples > 1 else ""))
             print >>o_file, latex_template.wrap_lines(text)
 
     except IOError:
@@ -869,15 +879,16 @@ def run_sample_missingness(in_prefix, in_type, out_prefix, base_dir, options):
     # Writing the summary results
     with open(os.path.join(base_dir, "results_summary.txt"), "a") as o_file:
         print >>o_file, "# {}".format(script_prefix)
-        print >>o_file, ("Number of samples with call rate less or equal to "
-                         "{t}\t{nb:,d}\t\t-{nb:,d}".format(
+        print >>o_file, ("Number of samples with missing rate less or equal "
+                         "to {t}\t{nb:,d}\t\t-{nb:,d}".format(
                             t=mind_value,
                             nb=nb_samples,
                          ))
         print >>o_file, "---"
 
     # We know this step does produce a new data set (bfile), so we return it
-    return os.path.join(out_prefix, "clean_mind"), "bfile", latex_file, desc
+    return (os.path.join(out_prefix, "clean_mind"), "bfile", latex_file, desc,
+            long_description)
 
 
 def run_snp_missingness(in_prefix, in_type, out_prefix, base_dir, options):
@@ -933,9 +944,12 @@ def run_snp_missingness(in_prefix, in_type, out_prefix, base_dir, options):
         # Since we already run the script, we know that the mind option is a
         # valid float
         geno_value = options[options.index("--geno") + 1]
-    if desc[-1] == ".":
-        desc = desc[:-1] + r" (${}={}$).".format(latex_template.texttt("mind"),
+    if desc.endswith("."):
+        desc = desc[:-1] + r" (${}={}$).".format(latex_template.texttt("geno"),
                                                  geno_value)
+    long_description = sample_missingness.long_desc.format(
+        success_rate="{:.1f}".format((1-float(geno_value)) * 100),
+    )
 
     # We want to save in a file the samples that were removed
     # There is one file to look at, which contains only one row, the name of
@@ -968,7 +982,7 @@ def run_snp_missingness(in_prefix, in_type, out_prefix, base_dir, options):
                                                geno_value,
                                                latex_template.textit("i.e."),
                                                geno_value, nb_markers,
-                                               "s" if nb_markers > 0 else ""))
+                                               "s" if nb_markers > 1 else ""))
             print >>o_file, latex_template.wrap_lines(text)
 
     except IOError:
@@ -978,15 +992,16 @@ def run_snp_missingness(in_prefix, in_type, out_prefix, base_dir, options):
     # Writing the summary results
     with open(os.path.join(base_dir, "results_summary.txt"), "a") as o_file:
         print >>o_file, "# {}".format(script_prefix)
-        print >>o_file, ("Number of markers with call rate less or equal to "
-                         "{t}\t{nb:,d}\t-{nb:,d}".format(
+        print >>o_file, ("Number of markers with missing rate less or equal "
+                         "to {t}\t{nb:,d}\t-{nb:,d}".format(
                             t=geno_value,
                             nb=nb_markers,
                          ))
         print >>o_file, "---"
 
     # We know this step does produce a new data set (bfile), so we return it
-    return os.path.join(out_prefix, "clean_geno"), "bfile", latex_file, desc
+    return (os.path.join(out_prefix, "clean_geno"), "bfile", latex_file, desc,
+            long_description)
 
 
 def run_sex_check(in_prefix, in_type, out_prefix, base_dir, options):
@@ -1335,7 +1350,8 @@ def run_sex_check(in_prefix, in_type, out_prefix, base_dir, options):
 
     # We know this step does not produce a new data set, so we return the
     # original one
-    return in_prefix, required_type, latex_file, sex_check.desc
+    return (in_prefix, required_type, latex_file, sex_check.desc,
+            sex_check.long_desc)
 
 
 def run_plate_bias(in_prefix, in_type, out_prefix, base_dir, options):
@@ -1516,7 +1532,8 @@ def run_plate_bias(in_prefix, in_type, out_prefix, base_dir, options):
 
     # We know this step doesn't produce an new data set, so we return the old
     # prefix and the old in_type
-    return in_prefix, required_type, latex_file, plate_bias.desc
+    return (in_prefix, required_type, latex_file, plate_bias.desc,
+            plate_bias.long_desc)
 
 
 def run_remove_heterozygous_haploid(in_prefix, in_type, out_prefix, base_dir,
@@ -1605,7 +1622,8 @@ def run_remove_heterozygous_haploid(in_prefix, in_type, out_prefix, base_dir,
 
     # We know this step produces an new data set (bfile), so we return it
     return (os.path.join(out_prefix, "without_hh_genotypes"), "bfile",
-            latex_file, remove_heterozygous_haploid.desc)
+            latex_file, remove_heterozygous_haploid.desc,
+            remove_heterozygous_haploid.long_desc)
 
 
 def run_find_related_samples(in_prefix, in_type, out_prefix, base_dir,
@@ -1652,6 +1670,16 @@ def run_find_related_samples(in_prefix, in_type, out_prefix, base_dir,
     script_prefix = os.path.join(out_prefix, "ibs")
     options += ["--{}".format(required_type), in_prefix,
                 "--out", script_prefix]
+
+    # The IBS2 ratio
+    ibs2_ratio = find_related_samples._ibs2_ratio_default
+    if "--ibs2-ratio" in options:
+        ibs2_ratio = options[options.index("--ibs2-ratio") + 1]
+
+    # The indep pairwiase
+    r2_value = find_related_samples._indep_pairwise_r2_default
+    if "--indep-pairwise" in options:
+        r2_value = options[options.index("--indep-pairwise") + 3]
 
     # We run the script
     try:
@@ -1789,9 +1817,17 @@ def run_find_related_samples(in_prefix, in_type, out_prefix, base_dir,
                          "{:,d}".format(len(related_samples)))
         print >>o_file, "---"
 
+    # The long description
+    long_description = find_related_samples.long_desc.format(
+        ratio="{ratio}",
+        ratio_value=ibs2_ratio,
+        r_squared=r2_value,
+    )
+
     # We know this step doesn't produce an new data set, so we return the old
     # prefix and the old in_type
-    return in_prefix, required_type, latex_file, find_related_samples.desc
+    return (in_prefix, required_type, latex_file, find_related_samples.desc,
+            long_description)
 
 
 def run_check_ethnicity(in_prefix, in_type, out_prefix, base_dir, options):
@@ -1952,7 +1988,8 @@ def run_check_ethnicity(in_prefix, in_type, out_prefix, base_dir, options):
 
     # We know this step doesn't produce an new data set, so we return the old
     # prefix and the old in_type
-    return in_prefix, required_type, latex_file, check_ethnicity.desc
+    return (in_prefix, required_type, latex_file, check_ethnicity.desc,
+            check_ethnicity.long_desc)
 
 
 def run_flag_maf_zero(in_prefix, in_type, out_prefix, base_dir, options):
@@ -2044,7 +2081,8 @@ def run_flag_maf_zero(in_prefix, in_type, out_prefix, base_dir, options):
 
     # We know this step doesn't produce an new data set, so we return the old
     # prefix and the old in_type
-    return in_prefix, required_type, latex_file, flag_maf_zero.desc
+    return (in_prefix, required_type, latex_file, flag_maf_zero.desc,
+            flag_maf_zero.long_desc)
 
 
 def run_flag_hw(in_prefix, in_type, out_prefix, base_dir, options):
@@ -2173,7 +2211,8 @@ def run_flag_hw(in_prefix, in_type, out_prefix, base_dir, options):
 
     # We know this step doesn't produce an new data set, so we return the old
     # prefix and the old in_type
-    return in_prefix, required_type, latex_file, flag_hw.desc
+    return (in_prefix, required_type, latex_file, flag_hw.desc,
+            flag_hw.long_desc)
 
 
 def run_compare_gold_standard(in_prefix, in_type, out_prefix, base_dir,
@@ -2241,7 +2280,8 @@ def run_compare_gold_standard(in_prefix, in_type, out_prefix, base_dir,
 
     # We know this step doesn't produce an new data set, so we return the old
     # prefix and the old in_type
-    return in_prefix, required_type, latex_file, compare_gold_standard.desc
+    return (in_prefix, required_type, latex_file, compare_gold_standard.desc,
+            compare_gold_standard.long_desc)
 
 
 def run_subset_data(in_prefix, in_type, out_prefix, base_dir, options):
@@ -2581,7 +2621,7 @@ def run_subset_data(in_prefix, in_type, out_prefix, base_dir, options):
 
     # We know this step does produce a new data set (bfile), so we return it
     return (os.path.join(out_prefix, "subset"), required_type, latex_file,
-            subset_data.desc)
+            subset_data.desc, subset_data.long_desc)
 
 
 def run_command(command):
@@ -2783,6 +2823,54 @@ def all_files_exist(file_list):
     for filename in file_list:
         all_exist = all_exist and os.path.isfile(filename)
     return all_exist
+
+
+def get_plink_version():
+    """Gets the Plink version from the binary.
+
+    :returns: the version of the Plink software
+    :rtype: str
+
+    This function uses :py:class:`subprocess.Popen` to gather the version of
+    the Plink binary. Since executing the software to gather the version
+    creates an output file, it is deleted.
+
+    .. warning::
+        This function only works as long as the version is returned as
+        ``| PLINK! | NNN |`` (where, ``NNN`` is the version), since we use
+        regular expresion to extract the version number from the standard
+        output of the software.
+
+    """
+    # Running the command
+    tmp_fn = None
+    with tempfile.NamedTemporaryFile(delete=False) as tmpfile:
+        tmp_fn = tmpfile.name + "_pyGenClean"
+
+    # The command to run
+    command = ["plink", "--noweb", "--out", tmp_fn]
+
+    output = None
+    try:
+        proc = Popen(command, stdout=PIPE, stderr=PIPE)
+        output = proc.communicate()[0].decode()
+    except OSError:
+        raise ProgramError("plink: command not found")
+
+    # Deleting the output file automatically created by Plink
+    if os.path.isfile(tmp_fn + ".log"):
+        os.remove(tmp_fn + ".log")
+
+    # Finding the version
+    version = re.search(r"\|\s+PLINK!\s+\|\s+(\S+)\s+\|", output)
+    if version is None:
+        version = "unknown"
+    else:
+        version = version.group(1)
+
+    logger.info("Using Plink version {}".format(version))
+
+    return version
 
 
 def read_config_file(filename):
@@ -2996,10 +3084,10 @@ def parse_args():
 
 
 # The parser object
-desc = """Runs the data clean up (version {}).""".format(__version__)
+desc = "Runs the data clean up (pyGenClean version {}).".format(__version__)
 parser = argparse.ArgumentParser(description=desc)
 parser.add_argument("-v", "--version", action="version",
-                    version="%(prog)s {}".format(__version__))
+                    version="pyGenClean version {}".format(__version__))
 
 group = parser.add_argument_group("Input File")
 group.add_argument("--bfile", type=str, metavar="FILE",

@@ -113,6 +113,7 @@
 \microtypesetup{protrusion=false} % disables protrusion locally in the document
 \tableofcontents{}
 \listoffigures{}
+\listoftables{}
 \microtypesetup{protrusion=true} % enables protrusion
 \clearpage
 \newpage
@@ -122,9 +123,10 @@
 
 
 \section{Methods}
-Plink was used for the data cleanup procedure. The automated script
-\texttt{pyGenClean} version \VAR{ pygenclean_version }~\cite{pyGenClean} was
-used to launch the analysis. The following files were used as input.
+The automated script \texttt{pyGenClean} version
+\VAR{ pygenclean_version }~\cite{pyGenClean} was used to launch the analysis.
+Plink version \VAR{ plink_version }~\cite{plink} was used for the data cleanup
+procedure. The following files were used as input.
 
 \begin{itemize}
 \BLOCK{ for fn in initial_files }

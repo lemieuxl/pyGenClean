@@ -36,10 +36,12 @@ def create_report(outdirname, report_filename, **kwargs):
     # Checking the required variables
     if "steps" in kwargs:
         assert "descriptions" in kwargs
+        assert "long_descriptions" in kwargs
         assert "steps_filename" not in kwargs
     else:
         assert "steps_filename" in kwargs
         assert "descriptions" not in kwargs
+        assert "long_descriptions" not in kwargs
     assert "summaries" in kwargs
     assert "background" in kwargs
     assert "project_name" in kwargs
@@ -49,10 +51,10 @@ def create_report(outdirname, report_filename, **kwargs):
     assert "final_nb_markers" in kwargs
     assert "final_nb_samples" in kwargs
     assert "final_files" in kwargs
+    assert "plink_version" in kwargs
 
     # Getting the required information
     project_name = kwargs["project_name"]
-    prog_version = ".".join(pygenclean_version)
     summaries = kwargs["summaries"]
     summary_fn = kwargs["summary_fn"]
     report_author = kwargs["report_author"]
@@ -67,10 +69,16 @@ def create_report(outdirname, report_filename, **kwargs):
     else:
         steps_filename = os.path.join(outdirname, "steps_summary.tex")
         with open(steps_filename, "w") as o_file:
-            for step, desc in zip(kwargs["steps"], kwargs["descriptions"]):
+            zipped = zip(kwargs["steps"], kwargs["descriptions"],
+                         kwargs["long_descriptions"])
+            for step, desc, long_desc in zipped:
+                if desc.endswith("."):
+                    desc = desc[:-1]
                 step = step.replace("_", r"\_")
                 to_print = latex.item(desc)
-                to_print += " ({})".format(latex.texttt(step))
+                to_print += " ({}).".format(latex.texttt(step))
+                if long_desc is not None:
+                    to_print += " " + long_desc
                 print >>o_file, latex.wrap_lines(to_print) + "\n"
 
     # Adding the content of the results section
@@ -134,6 +142,7 @@ def create_report(outdirname, report_filename, **kwargs):
                 result_summaries=result_summaries,
                 bibliography_content=biblio_entry,
                 pygenclean_version=pygenclean_version,
+                plink_version=kwargs["plink_version"],
                 steps_filename=os.path.basename(steps_filename),
                 final_results=_create_summary_table(
                     summary_fn,
