@@ -28,6 +28,7 @@ from collections import defaultdict
 
 import numpy as npy
 
+from .. import __version__
 from ..PlinkUtils import createRowFromPlinkSpacedOutput
 
 
@@ -1428,8 +1429,16 @@ class ProgramError(Exception):
 
 # The parser object
 pretty_name = "Duplicated markers"
-desc = """Extract and work with duplicated markers."""
+desc = "Extracts and merges duplicated markers."
+long_desc = ("The script searches for duplicated markers according to "
+             "chromosomal location. It then evaluates concordance, completion "
+             "rate, allele calls and minor allele frequency (MAF). The script "
+             "keeps markers with different allele calls or with different "
+             "MAF. If thresholds are met, the script merges and completes the "
+             "genotypes.")
 parser = argparse.ArgumentParser(description=desc)
+parser.add_argument("-v", "--version", action="version",
+                    version="pyGenClean version {}".format(__version__))
 
 # The INPUT files
 group = parser.add_argument_group("Input File")
