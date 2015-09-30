@@ -17,20 +17,6 @@
 import re
 
 
-# The module version
-__version__ = "0.9.2"
-
-
-def get_version():
-    """Returns the version of the module.
-
-    :returns: (major, minor, micro)
-
-    """
-
-    return tuple(__version__.split("."))
-
-
 def createRowFromPlinkSpacedOutput(line):
     """Remove leading spaces and change spaces to tabs.
 
