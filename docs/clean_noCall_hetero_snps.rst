@@ -6,19 +6,22 @@ The usage of the standalone module is shown below:
 .. code-block:: console
 
     $ pyGenClean_clean_noCall_hetero_snps --help
-    usage: pyGenClean_clean_noCall_hetero_snps [-h] --tfile FILE [--out FILE]
+    usage: pyGenClean_clean_noCall_hetero_snps [-h] [-v] --tfile FILE [--out FILE]
 
     Removes "no calls" only and heterozygous only markers.
 
     optional arguments:
-      -h, --help    show this help message and exit
+      -h, --help     show this help message and exit
+      -v, --version  show program's version number and exit
 
     Input File:
-      --tfile FILE  The input file prefix (will find the tped and tfam file by
-                    appending the prefix to .tped and .tfam, respectively.
+      --tfile FILE   The input file prefix (will find the tped and tfam file by
+                     appending the prefix to .tped and .tfam, respectively.
 
     Output File:
-      --out FILE    The prefix of the output files. [default: clean_noCall_hetero]
+      --out FILE     The prefix of the output files. [default:
+                     clean_noCall_hetero]
+
 
 Input FIles
 -----------
@@ -61,15 +64,16 @@ included in the automated pipeline, so it needs to be started manually.
 .. code-block:: console
 
     $ pyGenClean_heterozygosity_plot --help
-    usage: pyGenClean_heterozygosity_plot [-h] --tfile FILE [--boxplot]
+    usage: pyGenClean_heterozygosity_plot [-h] [-v] --tfile FILE [--boxplot]
                                           [--format FORMAT] [--bins INT]
                                           [--xlim FLOAT FLOAT] [--ymax FLOAT]
                                           [--out FILE]
 
-    Plot the distribution of the heterozygosity ratio.
+    Plots the distribution of the heterozygosity ratio.
 
     optional arguments:
       -h, --help          show this help message and exit
+      -v, --version       show program's version number and exit
 
     Input File:
       --tfile FILE        The prefix of the transposed file
@@ -84,7 +88,8 @@ included in the automated pipeline, so it needs to be started manually.
 
     Output File:
       --out FILE          The prefix of the output files. [default:
-                          heterozygosity]    
+                          heterozygosity]
+
 
 The script produces either a histogram (see the :ref:`hetero_hist_figure`
 figure) or a box plot (see the :ref:`hetero_boxplot_figure` figure) of samples'
