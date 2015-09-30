@@ -23,6 +23,8 @@ import argparse
 
 import numpy as npy
 
+from .. import __version__
+
 
 logger = logging.getLogger("baf_llr_plot")
 
@@ -391,9 +393,10 @@ class ProgramError(Exception):
         return self.message
 
 # The parser object
-desc = """Plots the BAF and LRR of problematic samples."""
+desc = "Plots the BAF and LRR of problematic samples."
 parser = argparse.ArgumentParser(description=desc)
-
+parser.add_argument("-v", "--version", action="version",
+                    version="pyGenClean version {}".format(__version__))
 
 # The INPUT files
 group = parser.add_argument_group("Input File")

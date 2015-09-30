@@ -26,6 +26,7 @@ import numpy as npy
 from .import gender_plot
 from . import baf_lrr_plot
 
+from .. import __version__
 from ..PlinkUtils import createRowFromPlinkSpacedOutput
 
 
@@ -626,8 +627,13 @@ class ProgramError(Exception):
 
 # The parser object
 pretty_name = "Gender check"
-desc = """Check sample's gender using Plink."""
+desc = "Check sample's gender using Plink."
+long_desc = ("The script identifies any individual with discrepancies between "
+             "phenotype and genotype data for sex. Individuals with sex error "
+             "are to be investigated.")
 parser = argparse.ArgumentParser(description=desc)
+parser.add_argument("-v", "--version", action="version",
+                    version="pyGenClean version {}".format(__version__))
 
 # The INPUT files
 group = parser.add_argument_group("Input File")
