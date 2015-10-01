@@ -21,7 +21,7 @@ import gzip
 import logging
 import argparse
 
-import numpy as npy
+import numpy as np
 
 from .. import __version__
 
@@ -243,8 +243,8 @@ def plot_baf_lrr(file_names, options):
                 data.append((chromosome, position, lrr, baf))
 
         # Creating the numpy array
-        data = npy.array(data, dtype=[("chr", "a1"), ("pos", int),
-                                      ("lrr", float), ("baf", float)])
+        data = np.array(data, dtype=[("chr", "a1"), ("pos", int),
+                                     ("lrr", float), ("baf", float)])
 
         # Creating the figure and axes
         fig, axes = plt.subplots(2, 2, figsize=(20, 8))

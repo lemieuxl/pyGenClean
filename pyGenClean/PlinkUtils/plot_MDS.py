@@ -20,7 +20,7 @@ import sys
 import logging
 import argparse
 
-import numpy as npy
+import numpy as np
 
 from . import createRowFromPlinkSpacedOutput
 
@@ -223,7 +223,7 @@ def extractData(fileName, populations):
                 c1[possibleLabels.index(curLabel)].append(currC1)
                 c2[possibleLabels.index(curLabel)].append(currC2)
 
-    return (npy.array(c1), npy.array(c2)), possibleLabels
+    return (np.array(c1), np.array(c2)), possibleLabels
 
 
 def checkArgs(args):

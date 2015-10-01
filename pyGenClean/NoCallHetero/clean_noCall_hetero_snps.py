@@ -21,7 +21,7 @@ import shutil
 import logging
 import argparse
 
-import numpy as npy
+import numpy as np
 
 from .. import __version__
 
@@ -102,10 +102,10 @@ def processTPEDandTFAM(tped, tfam, prefix):
             row = line.rstrip("\r\n").split("\t")
             snpInfo = row[:4]
             chromosome = snpInfo[0]
-            genotypes = npy.array([i.upper() for i in row[4:]])
+            genotypes = np.array([i.upper() for i in row[4:]])
 
             # Testing the genotypes
-            uniqueGenotypes = npy.unique(genotypes)
+            uniqueGenotypes = np.unique(genotypes)
             if len(uniqueGenotypes) == 1:
                 # We have only one kind of genotype, either all homo, all
                 # hetero or all no call

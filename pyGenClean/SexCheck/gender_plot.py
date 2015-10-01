@@ -21,7 +21,7 @@ import gzip
 import logging
 import argparse
 
-import numpy as npy
+import numpy as np
 
 from .. import __version__
 
@@ -301,7 +301,7 @@ def plot_gender(data, options):
     labels = []
 
     # Plotting the OK males
-    males = npy.logical_and(data["gender"] == "Male", data["status"] == "OK")
+    males = np.logical_and(data["gender"] == "Male", data["status"] == "OK")
     tmp, = ax.plot(data["chr23"][males], data["chr24"][males], "o", ms=5,
                    mec="#0099CC", mfc="#0099CC")
     plot_object.append(tmp)
@@ -310,8 +310,8 @@ def plot_gender(data, options):
         print_data_to_file(data[males], "{}.ok_males.txt".format(options.out))
 
     # Plotting the OK females
-    females = npy.logical_and(data["gender"] == "Female",
-                              data["status"] == "OK")
+    females = np.logical_and(data["gender"] == "Female",
+                             data["status"] == "OK")
     tmp, = ax.plot(data["chr23"][females], data["chr24"][females], "o", ms=5,
                    mec="#CC0000", mfc="#CC0000")
     plot_object.append(tmp)
@@ -321,8 +321,8 @@ def plot_gender(data, options):
                            "{}.ok_females.txt".format(options.out))
 
     # Plotting the OK unknowns
-    unknowns = npy.logical_and(data["gender"] == "Unknown",
-                               data["status"] == "OK")
+    unknowns = np.logical_and(data["gender"] == "Unknown",
+                              data["status"] == "OK")
     tmp, = ax.plot(data["chr23"][unknowns], data["chr24"][unknowns], "o", ms=5,
                    mec="#555555", mfc="#555555")
     plot_object.append(tmp)
@@ -332,8 +332,8 @@ def plot_gender(data, options):
                            "{}.ok_unknowns.txt".format(options.out))
 
     # Plotting the Problem males
-    males = npy.logical_and(data["gender"] == "Male",
-                            data["status"] == "Problem")
+    males = np.logical_and(data["gender"] == "Male",
+                           data["status"] == "Problem")
     tmp, = ax.plot(data["chr23"][males], data["chr24"][males], "^", ms=6,
                    mec="#000000", mfc="#669900")
     plot_object.append(tmp)
@@ -343,8 +343,8 @@ def plot_gender(data, options):
                            "{}.problematic_males.txt".format(options.out))
 
     # Plotting the Problem females
-    females = npy.logical_and(data["gender"] == "Female",
-                              data["status"] == "Problem")
+    females = np.logical_and(data["gender"] == "Female",
+                             data["status"] == "Problem")
     tmp, = ax.plot(data["chr23"][females], data["chr24"][females], "v", ms=6,
                    mec="#000000", mfc="#9933CC")
     plot_object.append(tmp)
@@ -354,8 +354,8 @@ def plot_gender(data, options):
                            "{}.problematic_females.txt".format(options.out))
 
     # Plotting the Problem unknowns
-    unknowns = npy.logical_and(data["gender"] == "Unknown",
-                               data["status"] == "Problem")
+    unknowns = np.logical_and(data["gender"] == "Unknown",
+                              data["status"] == "Problem")
     tmp, = ax.plot(data["chr23"][unknowns], data["chr24"][unknowns], ">", ms=6,
                    mec="#000000", mfc="#555555")
     plot_object.append(tmp)
@@ -493,7 +493,7 @@ def read_summarized_intensities(prefix):
                     data.append((sampleID, chr23, chr24, gender, status))
 
     # Creating the data structure
-    data = npy.array(
+    data = np.array(
         data,
         dtype=[("sampleID", "a{}".format(max([len(i[0]) for i in data]))),
                ("chr23", float), ("chr24", float),
@@ -627,7 +627,7 @@ def read_intensities(file_name, needed_markers_chr, needed_samples_gender,
             msg = "0 marker on chr23 or chr24"
             raise ProgramError(msg)
 
-    data = npy.array(
+    data = np.array(
         data,
         dtype=[("sampleID", "a{}".format(max([len(i[0]) for i in data]))),
                ("chr23", float),

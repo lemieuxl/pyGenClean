@@ -20,7 +20,7 @@ import sys
 import logging
 import argparse
 
-import numpy as npy
+import numpy as np
 
 from .. import __version__
 from . import createRowFromPlinkSpacedOutput
@@ -267,7 +267,7 @@ def extractData(fileName, populations, population_order, xaxis, yaxis):
                 c1[population_order.index(curLabel)].append(currC1)
                 c2[population_order.index(curLabel)].append(currC2)
 
-    return (npy.array(c1), npy.array(c2)), population_order
+    return (np.array(c1), np.array(c2)), population_order
 
 
 def checkArgs(args):

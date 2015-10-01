@@ -24,7 +24,7 @@ import argparse
 import subprocess
 from collections import defaultdict
 
-import numpy as npy
+import numpy as np
 
 from .. import __version__
 from ..PlinkUtils import createRowFromPlinkSpacedOutput
@@ -171,13 +171,13 @@ def plot_related_data(x, y, code, ylabel, fileName, options):
     # The legend
     prop = mpl.font_manager.FontProperties(size=8)
     leg = ax.legend([c1, c2, c3, c4, c5],
-                    ["Full sibs (n={})".format(npy.sum(code == "1")),
+                    ["Full sibs (n={})".format(np.sum(code == "1")),
                      ("Half sibs, grand-parent-child or uncle-nephew "
-                      "(n={})".format(npy.sum(code == "2"))),
-                     "Parent-child (n={})".format(npy.sum(code == "3")),
+                      "(n={})".format(np.sum(code == "2"))),
+                     "Parent-child (n={})".format(np.sum(code == "3")),
                      ("Twins or duplicated samples "
-                      "(n={})".format(npy.sum(code == "4"))),
-                     "Unknown (n={})".format(npy.sum(code == "5"))],
+                      "(n={})".format(np.sum(code == "4"))),
+                     "Unknown (n={})".format(np.sum(code == "5"))],
                     loc="best", numpoints=1, fancybox=True, prop=prop)
     leg.get_frame().set_alpha(0.5)
 
@@ -365,7 +365,7 @@ def extractRelatedIndividuals(fileName, outPrefix, ibs2_ratio_threshold):
         return None
 
     # Creating the numpy array if there are related samples
-    data = npy.array(data, dtype=[
+    data = np.array(data, dtype=[
         ("IBS2_RATIO", float),
         ("Z1", float),
         ("Z2", float),
