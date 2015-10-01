@@ -110,7 +110,8 @@ def extractSignificantSNPs(prefix):
         msg = "%(outputFileName)s: can't write file" % locals()
         raise ProgramError(msg)
 
-    print >>outputFile, "\n".join(snpNames)
+    if len(snpNames) > 0:
+        print >>outputFile, "\n".join(snpNames)
 
     # Closing the file
     outputFile.close()

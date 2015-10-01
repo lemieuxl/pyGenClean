@@ -109,7 +109,9 @@ def main(argString=None):
         )
         try:
             with open(file_name, 'w') as output_file:
-                print >>output_file, "\n".join(hwe_snps - custom_snps)
+                differences = hwe_snps - custom_snps
+                if len(differences) > 0:
+                    print >>output_file, "\n".join(differences)
         except IOError:
             msg = "{}: can't write file".format(file_name)
             raise ProgramError(msg)
