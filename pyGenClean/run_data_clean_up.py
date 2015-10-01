@@ -370,7 +370,7 @@ def run_duplicated_samples(in_prefix, in_type, out_prefix, base_dir, options):
                             "s" if len(not_good_still) > 1 else "",
                             "were" if len(not_good_still) > 1 else "was",
                             "were" if len(not_good_still) > 1 else "was",
-                            r"~\ref{" + table_label + "}"
+                            r"~\ref{" + table_label + "}",
                         )
                     )
                     print >>o_file, latex_template.wrap_lines(text)
@@ -656,7 +656,7 @@ def run_duplicated_snps(in_prefix, in_type, out_prefix, base_dir, options):
                          "{nb:,d}\t+{nb:,d}".format(nb=len(not_good_still)))
         print >>o_file, ("Problematic markers not chosen\t"
                          "{nb:,d}\t+{nb:,d}".format(
-                            nb=len(problematic_markers - chosen_markers)
+                            nb=len(problematic_markers - chosen_markers),
                          ))
         print >>o_file, ("Final number of excluded markers\t"
                          "{nb:,d}".format(nb=len(removed_markers)))
@@ -872,8 +872,9 @@ def run_sample_missingness(in_prefix, in_type, out_prefix, base_dir, options):
                         latex_template.texttt("mind"),
                         mind_value,
                         latex_template.textit("i.e."),
-                        mind_value, nb_samples,
-                        "s" if nb_samples > 1 else ""
+                        mind_value,
+                        nb_samples,
+                        "s" if nb_samples > 1 else "",
                         "were" if nb_samples > 1 else "was",
                     ))
             print >>o_file, latex_template.wrap_lines(text)
