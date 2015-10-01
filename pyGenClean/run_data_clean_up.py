@@ -341,7 +341,7 @@ def run_duplicated_samples(in_prefix, in_type, out_prefix, base_dir, options):
             if len(duplicated_count) > 0:
                 text = (
                     "While merging duplicates, a total of {:,d} genotype{} {} "
-                    "zeroed out. A total of {:,d} sample{} {} found to not be "
+                    "zeroed out. A total of {:,d} sample{} {} found to be not "
                     "good enough for duplicate completion.".format(
                         nb_zeroed_out,
                         "s" if nb_zeroed_out > 1 else "",
@@ -596,7 +596,7 @@ def run_duplicated_snps(in_prefix, in_type, out_prefix, base_dir, options):
             if len(duplicated_count) > 0:
                 text = (
                     "While merging duplicates, a total of {:,d} genotype{} {} "
-                    "zeroed out. A total of {:,d} marker{} {} found to not be "
+                    "zeroed out. A total of {:,d} marker{} {} found to be not "
                     "good enough for duplicate completion.".format(
                         nb_zeroed_out,
                         "s" if nb_zeroed_out > 1 else "",
