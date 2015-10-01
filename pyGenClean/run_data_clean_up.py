@@ -384,7 +384,7 @@ def run_duplicated_samples(in_prefix, in_type, out_prefix, base_dir, options):
                 table_caption = (
                     "Summary of the {:,d} duplicated sample{}. The number of "
                     "duplicates and the total number of zeroed out genotypes "
-                    "are show.".format(
+                    "are shown.".format(
                         len(duplicated_count),
                         "s" if len(duplicated_count) > 1 else "",
                     )
