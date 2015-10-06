@@ -1157,12 +1157,8 @@ def run_sex_check(in_prefix, in_type, out_prefix, base_dir, options):
         for line in i_file:
             nb_problems += 1
 
-            # Sanitizing
+            # Creating the row
             row = line.rstrip("\r\n").split("\t")
-            for col in ("FID", "IID"):
-                row[header[col]] = latex_template.sanitize_tex(
-                    row[header[col]]
-                )
 
             # Counting
             if row[header["SNPSEX"]] == "0":
@@ -1170,7 +1166,10 @@ def run_sex_check(in_prefix, in_type, out_prefix, base_dir, options):
             else:
                 nb_discordant += 1
 
-            table.append(row)
+            table.append([
+                latex_template.sanitize_tex(row[header[name]])
+                for name in ("FID", "IID", "PEDSEX", "SNPSEX", "STATUS", "F")
+            ])
             table[-1].append(
                 hetero.get((row[header["FID"]], row[header["IID"]]), "N/A"),
             )
