@@ -1214,7 +1214,7 @@ class ProgramError(Exception):
 
 # The parser object
 pretty_name = "Ethnicity"
-desc = "Checks samples' ethnicity using reference populations and IBS."
+desc = "Checks sample's ethnicity using reference populations and IBS."
 long_desc = ("The script uses pairwise IBS matrix as a distance metric to "
              "identify cryptic relatedness among samples and sample outliers "
              "by multi-dimensional scaling (MDS).")
