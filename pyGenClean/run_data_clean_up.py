@@ -1982,6 +1982,47 @@ def run_check_ethnicity(in_prefix, in_type, out_prefix, base_dir, options):
                     ),
                 )
 
+            # Adding the screeplot if it exists
+            fig = script_prefix + ".smartpca.scree_plot.png"
+            if os.path.isfile(fig):
+                # Getting the paths
+                graphics_path, path = os.path.split(fig)
+                graphics_path = os.path.abspath(graphics_path)
+
+                # Getting the required template
+                float_template = latex_template.jinja2_env.get_template(
+                    "float_template.tex",
+                )
+                graphic_template = latex_template.jinja2_env.get_template(
+                    "graphics_template.tex",
+                )
+
+                # The label
+                label = script_prefix.replace("/", "_") + "_screeplot"
+
+                text = (
+                    r"Figure~\ref{" + label + "} shows the scree plot for the "
+                    "principal components of the MDS analysis."
+                )
+                print >>o_file, latex_template.wrap_lines(text)
+
+                # Printing
+                caption = (
+                    "Scree plot for the principal components of the MDS "
+                    "analysis."
+                )
+                print >>o_file, float_template.render(
+                    float_type="figure",
+                    float_placement="H",
+                    float_caption=caption,
+                    float_label=label,
+                    float_content=graphic_template.render(
+                        width=r"0.8\textwidth",
+                        graphics_path=graphics_path + "/",
+                        path=latex_template.sanitize_fig_name(path),
+                    ),
+                )
+
     except IOError:
         msg = "{}: cannot write LaTeX summary".format(latex_file)
         raise ProgramError(msg)
