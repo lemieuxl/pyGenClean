@@ -1413,62 +1413,37 @@ def run_plate_bias(in_prefix, in_type, out_prefix, base_dir, options):
         msg = "plate_bias: {}".format(e)
         raise ProgramError(msg)
 
-    # Reading the MAF before hand
-    maf = {}
-    with open(script_prefix + ".significant_SNPs.frq", "r") as i_file:
+    # The name of the summary file
+    filename = script_prefix + ".significant_SNPs.summary"
+    if not os.path.isfile(filename):
+        raise ProgramError("{}: no such file".format(filename))
+
+    # Getting the number of each plate
+    plate_counter = None
+    with open(filename, "r") as i_file:
         header = {
             name: i for i, name in
-            enumerate(createRowFromPlinkSpacedOutput(i_file.readline()))
+            enumerate(i_file.readline().rstrip("\r\n").split("\t"))
         }
-        for required_col in ("CHR", "SNP", "MAF"):
-            if required_col not in header:
-                msg = "{}: missing column {}".format(
-                    script_prefix + ".significant_SNPs.frq",
-                    required_col,
-                )
-                raise ProgramError(msg)
+        if "plate" not in header:
+            msg = "{}: missing column plate".format(filename)
+            raise ProgramError(msg)
 
-        for line in i_file:
-            row = createRowFromPlinkSpacedOutput(line)
-            marker_id = row[header["SNP"]]
-            maf[(row[header["CHR"]], row[header["SNP"]])] = row[header["MAF"]]
-
-    # Reading the p values
-    table = [["chrom", "pos", "name", "maf", "p", "odds", "plate"]]
-    for filename in glob(script_prefix + "*.fisher"):
-        plate_name = re.search(
-            r"/plate_bias\.(\S+)\.assoc\.fisher$",
-            filename,
+        # Counting the number of markers for each plate
+        plate_counter = Counter(
+            line.rstrip("\r\n").split("\t")[header["plate"]] for line in i_file
         )
-        if plate_name:
-            plate_name = latex_template.sanitize_tex(plate_name.group(1))
-        else:
-            plate_name = "unknown"
 
-        with open(filename, "r") as i_file:
-            header = {
-                name: i for i, name in
-                enumerate(createRowFromPlinkSpacedOutput(i_file.readline()))
-            }
-            for required_col in ["CHR", "SNP", "BP", "P", "OR"]:
-                if required_col not in header:
-                    msg = "{}: missing column {}".format(filename,
-                                                         required_col)
-                    raise ProgramError(msg)
+    # Creating the table
+    table = [["plate name", "number of markers"]]
+    for plate_name, number in plate_counter.most_common():
+        table.append([
+            latex_template.sanitize_tex(plate_name),
+            "{:,d}".format(number),
+        ])
 
-            for line in i_file:
-                row = createRowFromPlinkSpacedOutput(line)
-
-                table.append([
-                    row[header["CHR"]],
-                    row[header["BP"]],
-                    latex_template.sanitize_tex(row[header["SNP"]]),
-                    maf.get((row[header["CHR"]], row[header["SNP"]]), "N/A"),
-                    latex_template.format_numbers(row[header["P"]]),
-                    row[header["OR"]],
-                    plate_name,
-                ])
-    nb_markers = len(table) - 1
+    # the number of markers
+    nb_markers = sum(plate_counter.values())
 
     # Getting the p value threshold
     p_threshold = str(plate_bias.parser.get_default("pfilter"))
@@ -1508,10 +1483,10 @@ def run_plate_bias(in_prefix, in_type, out_prefix, base_dir, options):
                 # The table caption
                 table_caption = (
                     "Summary of the plate bias analysis performed by Plink. "
-                    "Only significant marker{} {} shown (threshold of "
-                    "{}).".format(
+                    "For each plate, the number of significant marker{} is "
+                    "shown (threshold of {}). The plates are sorted according "
+                    "to the total number of significant results.".format(
                         "s" if nb_markers > 1 else "",
-                        "are" if nb_markers > 1 else "is",
                         latex_template.format_numbers(p_threshold),
                     )
                 )
@@ -1519,13 +1494,10 @@ def run_plate_bias(in_prefix, in_type, out_prefix, base_dir, options):
                     table_caption=table_caption,
                     table_label=table_label,
                     nb_col=len(table[1]),
-                    col_alignments="rrlrrrl",
-                    text_size="scriptsize",
+                    col_alignments="lr",
+                    text_size="normalsize",
                     header_data=zip(table[0], [1 for i in table[0]]),
-                    tabular_data=sorted(
-                        table[1:],
-                        key=lambda item: (int(item[0]), int(item[1])),
-                    ),
+                    tabular_data=table[1:],
                 )
 
     except IOError:
