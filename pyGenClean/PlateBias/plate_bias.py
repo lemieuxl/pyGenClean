@@ -16,11 +16,13 @@
 
 
 import os
+import re
 import sys
 import glob
 import logging
 import argparse
 import subprocess
+from collections import namedtuple
 
 from .. import __version__
 from ..PlinkUtils import createRowFromPlinkSpacedOutput
@@ -60,11 +62,48 @@ def main(argString=None):
 
     # Extract significant SNPs
     logger.info("Extracting significant SNPs")
-    extractSignificantSNPs(args.out)
+    assocResults = extractSignificantSNPs(args.out)
 
     # Remove significant SNPs using plink
     logger.info("Computing frequency of significant SNPs")
-    computeFrequencyOfSignificantSNPs(args)
+    maf = computeFrequencyOfSignificantSNPs(args)
+
+    # Create the final summary file
+    logger.info("Creating the summary file")
+    createSummaryFile(assocResults, maf, args.out)
+
+
+def createSummaryFile(results, maf, prefix):
+    """Creat the final summary file containing plate bias results.
+
+    :param results: the list of all the significant results.
+    :param maf: the minor allele frequency of the significant results.
+    :param prefix: the prefix of all the files.
+
+    :type results: list
+    :type maf: dict
+    :type prefix: str
+
+    """
+    o_filename = prefix + ".significant_SNPs.summary"
+    try:
+        with open(o_filename, "w") as o_file:
+            print >>o_file, "\t".join(("chrom", "pos", "name", "maf", "p",
+                                       "odds", "plate"))
+            for row in results:
+                print >>o_file, "\t".join((
+                    row.chrom,
+                    row.pos,
+                    row.name,
+                    maf.get(row.name, "N/A"),
+                    row.p,
+                    row.odds,
+                    row.plate,
+                ))
+
+    except IOError:
+        msg = "{}: cannot write file".format(o_filename)
+        raise ProgramError(msg)
 
 
 def extractSignificantSNPs(prefix):
@@ -79,10 +118,20 @@ def extractSignificantSNPs(prefix):
     containing those significant markers.
 
     """
+    # The list of all assoc files
     fileNames = glob.glob(prefix + ".*.assoc.fisher")
 
+    # The object to save an assoc row
+    AssocRow = namedtuple("AssocRow",
+                          ["chrom", "pos", "name", "p", "odds", "plate"])
+
     snpNames = set()
+    assocResults = []
     for fileName in fileNames:
+        # Getting the plate name
+        plateName = re.search(r"/plate_bias\.(\S+)\.assoc\.fisher$", fileName)
+        plateName = plateName.group(1) if plateName else "unknown"
+
         try:
             with open(fileName, 'r') as inputFile:
                 headerIndex = None
@@ -94,9 +143,26 @@ def extractSignificantSNPs(prefix):
                         headerIndex = dict([
                             (row[i], i) for i in xrange(len(row))
                         ])
+                        for name in ("CHR", "SNP", "BP", "P", "OR"):
+                            if name not in headerIndex:
+                                msg = "{}: missing column {}".format(
+                                    fileName,
+                                    name,
+                                )
+                                raise ProgramError(msg)
+
                     else:
                         snpName = row[headerIndex["SNP"]]
                         snpNames.add(snpName)
+                        assocResults.append(AssocRow(
+                            chrom=row[headerIndex["CHR"]],
+                            pos=row[headerIndex["BP"]],
+                            name=snpName,
+                            p=row[headerIndex["P"]],
+                            odds=row[headerIndex["OR"]],
+                            plate=plateName,
+                        ))
+
         except IOError:
             msg = "%(fileName)s: no such file" % locals()
             raise ProgramError(msg)
@@ -116,6 +182,8 @@ def extractSignificantSNPs(prefix):
     # Closing the file
     outputFile.close()
 
+    return assocResults
+
 
 def computeFrequencyOfSignificantSNPs(options):
     """Computes the frequency of the significant markers.
@@ -133,6 +201,27 @@ def computeFrequencyOfSignificantSNPs(options):
                     options.out + ".significant_SNPs.txt", "--freq", "--out",
                     options.out + ".significant_SNPs"]
     runCommand(plinkCommand)
+
+    # Reading the frequency file
+    maf = {}
+    with open(options.out + ".significant_SNPs.frq", "r") as i_file:
+        header = {
+            name: i for i, name in
+            enumerate(createRowFromPlinkSpacedOutput(i_file.readline()))
+        }
+        for required_col in ("SNP", "MAF"):
+            if required_col not in header:
+                msg = "{}: missing column {}".format(
+                    script_prefix + ".significant_SNPs.frq",
+                    required_col,
+                )
+                raise ProgramError(msg)
+
+        for line in i_file:
+            row = createRowFromPlinkSpacedOutput(line)
+            maf[row[header["SNP"]]] = row[header["MAF"]]
+
+    return maf
 
 
 def executePlateBiasAnalysis(options):
