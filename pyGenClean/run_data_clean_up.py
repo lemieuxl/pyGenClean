@@ -1705,6 +1705,15 @@ def run_find_related_samples(in_prefix, in_type, out_prefix, base_dir,
         for line in i_file:
             nb_markers_ibs += 1
 
+    # Reading the merged related individuals file
+    table = []
+    with open(script_prefix + ".merged_related_individuals", "r") as i_file:
+        for line in i_file:
+            table.append([
+                latex_template.sanitize_tex(item)
+                for item in line.rstrip("\r\n").split("\t")
+            ])
+
     # We write a LaTeX summary
     latex_file = os.path.join(script_prefix + ".summary.tex")
     try:
@@ -1743,11 +1752,20 @@ def run_find_related_samples(in_prefix, in_type, out_prefix, base_dir,
             # Adding the second figure (if present)
             fig_2 = script_prefix + ".related_individuals_z2.png"
             fig_2_label = script_prefix.replace("/", "_") + "_z2"
-            if os.path.isfile(fig_1):
+            if os.path.isfile(fig_2):
                 text = (
                     r"Figure~\ref{" + fig_2_label + "} shows $Z_2$ versus "
                     r"$IBS2_{ratio}^\ast$ for all related samples found by "
                     r"Plink."
+                )
+                print >>o_file, latex_template.wrap_lines(text)
+
+            if len(table) > 1:
+                # There is data, so we add
+                table_label = script_prefix.replace("/", "_") + "_related"
+                text = (
+                    r"Table~\ref{" + table_label + "} lists the related "
+                    "sample pairs with estimated relationship."
                 )
                 print >>o_file, latex_template.wrap_lines(text)
 
@@ -1784,6 +1802,29 @@ def run_find_related_samples(in_prefix, in_type, out_prefix, base_dir,
                             path=latex_template.sanitize_fig_name(path),
                         ),
                     )
+
+            # Adding the table
+            if len(table) > 1:
+                # Getting the template
+                longtable_template = latex_template.jinja2_env.get_template(
+                    "longtable_template.tex",
+                )
+
+                # The table caption
+                table_caption = (
+                    "List of all related samples with estimated relationship. "
+                    "Sample pairs are grouped according to their estimated "
+                    "family (the index column)."
+                )
+                print >>o_file, longtable_template.render(
+                    table_caption=table_caption,
+                    table_label=table_label,
+                    nb_col=len(table[1]),
+                    col_alignments="rlllll",
+                    text_size="scriptsize",
+                    header_data=zip(table[0], [1 for i in table[0]]),
+                    tabular_data=table[1:],
+                )
 
     except IOError:
         msg = "{}: cannot write LaTeX summary".format(latex_file)
