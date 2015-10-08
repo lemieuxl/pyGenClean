@@ -1442,8 +1442,11 @@ def run_plate_bias(in_prefix, in_type, out_prefix, base_dir, options):
             "{:,d}".format(number),
         ])
 
-    # the number of markers
-    nb_markers = sum(plate_counter.values())
+    # The number of unique markers
+    filename = script_prefix + ".significant_SNPs.txt"
+    nb_markers = None
+    with open(filename, "r") as i_file:
+        nb_markers = len({line.rstrip("\r\n") for line in i_file})
 
     # Getting the p value threshold
     p_threshold = str(plate_bias.parser.get_default("pfilter"))
@@ -1457,8 +1460,8 @@ def run_plate_bias(in_prefix, in_type, out_prefix, base_dir, options):
             print >>o_file, latex_template.subsection(plate_bias.pretty_name)
             text = (
                 "After performing the plate bias analysis using Plink, a "
-                "total of {:,d} marker{} had a significant result ({} a value "
-                "less than {}).".format(
+                "total of {:,d} unique marker{} had a significant result "
+                "({} a value less than {}).".format(
                     nb_markers,
                     "s" if nb_markers > 1 else "",
                     r"\textit{i.e.}",
