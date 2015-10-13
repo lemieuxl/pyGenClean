@@ -8,8 +8,11 @@ Output Files
 
 Describe the output files here.
 
-The Code
---------
 
-.. automodule:: pyGenClean.Misc.compare_gold_standard
-    :members:
+The algorithm
+-------------
+
+For more information about the actual algorithms and source codes, refer to the
+following pages.
+
+* :py:mod:`pyGenClean.Misc.compare_gold_standard`
