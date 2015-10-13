@@ -84,16 +84,17 @@ def main():
     args = parse_args()
     check_args(args)
 
-    # The directory name
-    dirname = "data_clean_up."
-    dirname += datetime.datetime.today().strftime("%Y-%m-%d_%H.%M.%S")
-    while os.path.isdir(dirname):
-        time.sleep(1)
-        dirname = "data_clean_up."
-        dirname += datetime.datetime.today().strftime("%Y-%m-%d_%H.%M.%S")
-
-    # Creating the output directory
-    os.mkdir(dirname)
+#    # The directory name
+#    dirname = "data_clean_up."
+#    dirname += datetime.datetime.today().strftime("%Y-%m-%d_%H.%M.%S")
+#    while os.path.isdir(dirname):
+#        time.sleep(1)
+#        dirname = "data_clean_up."
+#        dirname += datetime.datetime.today().strftime("%Y-%m-%d_%H.%M.%S")
+#
+#    # Creating the output directory
+#    os.mkdir(dirname)
+    dirname = "data_clean_up.2015-10-09_08.00.25"
 
     # Configuring the root logger
     add_file_handler_to_root(os.path.join(dirname, "pyGenClean.log"))
@@ -231,7 +232,6 @@ def main():
         except IOError:
             msg = "{}: cannot write summary".format(dirname)
             raise ProgramError(msg)
-
 
     # We create the automatic report
     logger.info("Generating automatic report")
@@ -1069,8 +1069,8 @@ def run_sex_check(in_prefix, in_type, out_prefix, base_dir, options):
         and its type.
 
     """
-    # Creating the output directory
-    os.mkdir(out_prefix)
+#    # Creating the output directory
+#    os.mkdir(out_prefix)
 
     # We know we need a bfile
     required_type = "bfile"
@@ -1082,12 +1082,12 @@ def run_sex_check(in_prefix, in_type, out_prefix, base_dir, options):
     options += ["--{}".format(required_type), in_prefix,
                 "--out", script_prefix]
 
-    # We run the script
-    try:
-        sex_check.main(options)
-    except sex_check.ProgramError as e:
-        msg = "sex_check {}".format(e)
-        raise ProgramError(msg)
+#    # We run the script
+#    try:
+#        sex_check.main(options)
+#    except sex_check.ProgramError as e:
+#        msg = "sex_check {}".format(e)
+#        raise ProgramError(msg)
 
     # Reading the hetero file on X
     hetero = {}
@@ -1682,8 +1682,8 @@ def run_find_related_samples(in_prefix, in_type, out_prefix, base_dir,
         input file prefix and its type.
 
     """
-    # Creating the output directory
-    os.mkdir(out_prefix)
+#    # Creating the output directory
+#    os.mkdir(out_prefix)
 
     # We know we need bfile
     required_type = "bfile"
@@ -1705,12 +1705,12 @@ def run_find_related_samples(in_prefix, in_type, out_prefix, base_dir,
     if "--indep-pairwise" in options:
         r2_value = options[options.index("--indep-pairwise") + 3]
 
-    # We run the script
-    try:
-        find_related_samples.main(options)
-    except find_related_samples.ProgramError as e:
-        msg = "find_related_samples: {}".format(e)
-        raise ProgramError(msg)
+#    # We run the script
+#    try:
+#        find_related_samples.main(options)
+#    except find_related_samples.ProgramError as e:
+#        msg = "find_related_samples: {}".format(e)
+#        raise ProgramError(msg)
 
     # Reading the file containing all samples that are related
     #   - ibs.related_individuals
@@ -1927,8 +1927,8 @@ def run_check_ethnicity(in_prefix, in_type, out_prefix, base_dir, options):
         prefix and its type.
 
     """
-    # Creating the output directory
-    os.mkdir(out_prefix)
+#    # Creating the output directory
+#    os.mkdir(out_prefix)
 
     # We know we need bfile
     required_type = "bfile"
@@ -1940,12 +1940,12 @@ def run_check_ethnicity(in_prefix, in_type, out_prefix, base_dir, options):
     options += ["--{}".format(required_type), in_prefix,
                 "--out", script_prefix]
 
-    # We run the script
-    try:
-        check_ethnicity.main(options)
-    except check_ethnicity.ProgramError as e:
-        msg = "check_ethnicity: {}".format(e)
-        raise ProgramError(msg)
+#    # We run the script
+#    try:
+#        check_ethnicity.main(options)
+#    except check_ethnicity.ProgramError as e:
+#        msg = "check_ethnicity: {}".format(e)
+#        raise ProgramError(msg)
 
     # Getting the multiplier value
     multiplier = check_ethnicity.parser.get_default("multiplier")
@@ -1957,10 +1957,16 @@ def run_check_ethnicity(in_prefix, in_type, out_prefix, base_dir, options):
     if "--outliers-of" in options:
         outliers_of = options[options.index("--outliers-of") + 1]
 
+    # Was the reference populations required?
+    skip_ref_pops = "--skip-ref-pops" in options
+
     # Computing the number of outliers
     outliers = None
-    with open(script_prefix + ".outliers", "r") as i_file:
-        outliers = {tuple(line.rstrip("\r\n").split("\t")) for line in i_file}
+    if not skip_ref_pops:
+        with open(filename, "r") as i_file:
+            outliers = {
+                tuple(line.rstrip("\r\n").split("\t")) for line in i_file
+            }
 
     # Computing the number of markers used
     nb_markers_mds = 0
@@ -1976,17 +1982,28 @@ def run_check_ethnicity(in_prefix, in_type, out_prefix, base_dir, options):
             print >>o_file, latex_template.subsection(
                 check_ethnicity.pretty_name,
             )
-            text = (
-                "Using {:,d} marker{} and a multiplier of {}, there was a "
-                "total of {:,d} outlier{} of the {} population.".format(
-                    nb_markers_mds,
-                    "s" if nb_markers_mds > 1 else "",
-                    multiplier,
-                    len(outliers),
-                    "s" if len(outliers) > 1 else "",
-                    outliers_of,
+            text = None
+            if skip_ref_pops:
+                text = (
+                    "Principal components analysis was performed using {:,d} "
+                    "marker{} on the study dataset only.".format(
+                        nb_markers_mds,
+                        "s" if nb_markers_mds > 1 else "",
+                    )
                 )
-            )
+
+            else:
+                text = (
+                    "Using {:,d} marker{} and a multiplier of {}, there was a "
+                    "total of {:,d} outlier{} of the {} population.".format(
+                        nb_markers_mds,
+                        "s" if nb_markers_mds > 1 else "",
+                        multiplier,
+                        len(outliers),
+                        "s" if len(outliers) > 1 else "",
+                        outliers_of,
+                    )
+                )
             print >>o_file, latex_template.wrap_lines(text)
 
             # Adding the figure if it exists
@@ -2093,8 +2110,9 @@ def run_check_ethnicity(in_prefix, in_type, out_prefix, base_dir, options):
         print >>o_file, "# {}".format(script_prefix)
         print >>o_file, ("Number of markers used for MDS analysis\t"
                          "{:,d}".format(nb_markers_mds))
-        print >>o_file, ("Number of {} outliers\t"
-                         "{:,d}".format(outliers_of, len(outliers)))
+        if not skip_ref_pops:
+            print >>o_file, ("Number of {} outliers\t"
+                             "{:,d}".format(outliers_of, len(outliers)))
         print >>o_file, "---"
 
     # We know this step doesn't produce an new data set, so we return the old
