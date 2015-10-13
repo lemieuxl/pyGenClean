@@ -84,16 +84,17 @@ def main():
     args = parse_args()
     check_args(args)
 
-    # The directory name
-    dirname = "data_clean_up."
-    dirname += datetime.datetime.today().strftime("%Y-%m-%d_%H.%M.%S")
-    while os.path.isdir(dirname):
-        time.sleep(1)
-        dirname = "data_clean_up."
-        dirname += datetime.datetime.today().strftime("%Y-%m-%d_%H.%M.%S")
-
-    # Creating the output directory
-    os.mkdir(dirname)
+#    # The directory name
+#    dirname = "data_clean_up."
+#    dirname += datetime.datetime.today().strftime("%Y-%m-%d_%H.%M.%S")
+#    while os.path.isdir(dirname):
+#        time.sleep(1)
+#        dirname = "data_clean_up."
+#        dirname += datetime.datetime.today().strftime("%Y-%m-%d_%H.%M.%S")
+#
+#    # Creating the output directory
+#    os.mkdir(dirname)
+    dirname = "data_clean_up.2015-10-09_08.00.25"
 
     # Configuring the root logger
     add_file_handler_to_root(os.path.join(dirname, "pyGenClean.log"))
@@ -161,6 +162,7 @@ def main():
     steps = []
     descriptions = []
     long_descriptions = []
+    graphic_paths = []
     for number in order:
         # Getting the script name and its options
         script_name, options = conf[number]
@@ -177,19 +179,24 @@ def main():
         logger.info("  - Using {} as prefix for input "
                     "files".format(current_in))
         logger.info("  - Results will be in [ {} ]".format(output_prefix))
-        current_in, current_in_type, summary, desc, l_desc = function_to_use(
-            current_in,
-            current_in_type,
-            output_prefix,
-            dirname,
-            options,
+
+        # Executing the function
+        r_values = function_to_use(
+            in_prefix=current_in,
+            in_type=current_in_type,
+            out_prefix=output_prefix,
+            base_dir=dirname,
+            options=options,
         )
+        current_in, current_in_type, summary, desc, l_desc, graphs = r_values
 
         # Saving what's necessary for the LaTeX report
         latex_summaries.append(summary)
         steps.append(script_name)
         descriptions.append(desc)
         long_descriptions.append(l_desc)
+        if graphs is not None:
+            graphic_paths.extend(graphs)
 
     # Counting the final number of samples and markers
     logger.info("Counting final number of samples and markers")
@@ -214,6 +221,19 @@ def main():
             else:
                 print >>o_file, current_in + s
 
+    # Generating the graphics paths file
+    graphic_paths_fn = None
+    if len(graphic_paths) > 0:
+        try:
+            graphic_paths_fn = os.path.join(dirname, "graphic_paths.txt")
+            with open(graphic_paths_fn, "w") as o_file:
+                for path in graphic_paths:
+                    print >>o_file, path
+        except IOError:
+            msg = "{}: cannot write summary".format(dirname)
+            raise ProgramError(msg)
+
+
     # We create the automatic report
     logger.info("Generating automatic report")
     report_name = os.path.join(dirname, "automatic_report.tex")
@@ -223,6 +243,7 @@ def main():
         project_name=args.report_number,
         steps=steps,
         descriptions=descriptions,
+        graphic_paths_fn=graphic_paths_fn,
         long_descriptions=long_descriptions,
         summaries=latex_summaries,
         background=args.report_background,
@@ -353,7 +374,11 @@ def run_duplicated_samples(in_prefix, in_type, out_prefix, base_dir, options):
                 )
                 print >>o_file, latex_template.wrap_lines(text)
 
-                table_label = script_prefix.replace("/", "_") + "_dup_samples"
+                table_label = re.sub(
+                    r"[/\\]",
+                    "_",
+                    script_prefix,
+                ) + "_dup_samples"
                 text = (
                     r"Table~\ref{" + table_label + "} summarizes the number "
                     "of each duplicated sample with some characteristics."
@@ -450,7 +475,7 @@ def run_duplicated_samples(in_prefix, in_type, out_prefix, base_dir, options):
 
     # We know this step does produce a new data set (tfile), so we return it
     return (os.path.join(out_prefix, "dup_samples.final"), "tfile", latex_file,
-            duplicated_samples.desc, duplicated_samples.long_desc)
+            duplicated_samples.desc, duplicated_samples.long_desc, None)
 
 
 def run_duplicated_snps(in_prefix, in_type, out_prefix, base_dir, options):
@@ -664,7 +689,7 @@ def run_duplicated_snps(in_prefix, in_type, out_prefix, base_dir, options):
 
     # We know this step does produce a new data set (tfile), so we return it
     return (os.path.join(out_prefix, "dup_snps.final"), "tfile", latex_file,
-            duplicated_snps.desc, duplicated_snps.long_desc)
+            duplicated_snps.desc, duplicated_snps.long_desc, None)
 
 
 def run_noCall_hetero_snps(in_prefix, in_type, out_prefix, base_dir, options):
@@ -776,7 +801,8 @@ def run_noCall_hetero_snps(in_prefix, in_type, out_prefix, base_dir, options):
     # We know this step does produce a new data set (tfile), so we return it
     # along with the report name
     return (os.path.join(out_prefix, "clean_noCall_hetero"), "tfile",
-            latex_file, noCall_hetero_snps.desc, noCall_hetero_snps.long_desc)
+            latex_file, noCall_hetero_snps.desc, noCall_hetero_snps.long_desc,
+            None)
 
 
 def run_sample_missingness(in_prefix, in_type, out_prefix, base_dir, options):
@@ -895,7 +921,7 @@ def run_sample_missingness(in_prefix, in_type, out_prefix, base_dir, options):
 
     # We know this step does produce a new data set (bfile), so we return it
     return (os.path.join(out_prefix, "clean_mind"), "bfile", latex_file, desc,
-            long_description)
+            long_description, None)
 
 
 def run_snp_missingness(in_prefix, in_type, out_prefix, base_dir, options):
@@ -1011,7 +1037,7 @@ def run_snp_missingness(in_prefix, in_type, out_prefix, base_dir, options):
 
     # We know this step does produce a new data set (bfile), so we return it
     return (os.path.join(out_prefix, "clean_geno"), "bfile", latex_file, desc,
-            long_description)
+            long_description, None)
 
 
 def run_sex_check(in_prefix, in_type, out_prefix, base_dir, options):
@@ -1044,8 +1070,8 @@ def run_sex_check(in_prefix, in_type, out_prefix, base_dir, options):
         and its type.
 
     """
-    # Creating the output directory
-    os.mkdir(out_prefix)
+#    # Creating the output directory
+#    os.mkdir(out_prefix)
 
     # We know we need a bfile
     required_type = "bfile"
@@ -1057,12 +1083,12 @@ def run_sex_check(in_prefix, in_type, out_prefix, base_dir, options):
     options += ["--{}".format(required_type), in_prefix,
                 "--out", script_prefix]
 
-    # We run the script
-    try:
-        sex_check.main(options)
-    except sex_check.ProgramError as e:
-        msg = "sex_check {}".format(e)
-        raise ProgramError(msg)
+#    # We run the script
+#    try:
+#        sex_check.main(options)
+#    except sex_check.ProgramError as e:
+#        msg = "sex_check {}".format(e)
+#        raise ProgramError(msg)
 
     # Reading the hetero file on X
     hetero = {}
@@ -1189,6 +1215,7 @@ def run_sex_check(in_prefix, in_type, out_prefix, base_dir, options):
 
     # We write a LaTeX summary
     latex_file = os.path.join(script_prefix + ".summary.tex")
+    graphics_paths = []
     try:
         with open(latex_file, "w") as o_file:
             print >>o_file, latex_template.subsection(sex_check.pretty_name)
@@ -1211,7 +1238,11 @@ def run_sex_check(in_prefix, in_type, out_prefix, base_dir, options):
 
             if nb_problems > 0:
                 # The label and text for the table
-                table_label = (script_prefix + "_problems").replace("/", "_")
+                table_label = re.sub(
+                    r"[/\\]",
+                    "_",
+                    script_prefix,
+                ) + "_problems"
                 text = (
                     r"Table~\ref{" + table_label + "} summarizes the gender "
                     "problems encountered during the analysis."
@@ -1249,17 +1280,17 @@ def run_sex_check(in_prefix, in_type, out_prefix, base_dir, options):
                 )
 
                 # Adding the figure
+                figure_label = re.sub(r"[/\\]", "_", script_prefix)
                 text = (
-                    r"Figure~\ref{" + script_prefix.replace("/", "_") + "} "
-                    r"shows the $\bar{y}$ intensities versus the $\bar{x}$ "
-                    "intensities for each samples. Problematic samples are "
-                    "shown using triangles."
+                    r"Figure~\ref{" + figure_label + r"} shows the $\bar{y}$ "
+                    r"intensities versus the $\bar{x}$ intensities for each "
+                    "samples. Problematic samples are shown using triangles."
                 )
                 print >>o_file, latex_template.wrap_lines(text)
 
                 # Getting the paths
                 graphics_path, path = os.path.split(script_prefix + ".png")
-                graphics_path = os.path.abspath(graphics_path)
+                graphics_path = os.path.relpath(graphics_path, base_dir)
 
                 print >>o_file, float_template.render(
                     float_type="figure",
@@ -1270,13 +1301,14 @@ def run_sex_check(in_prefix, in_type, out_prefix, base_dir, options):
                                   "red. Triangles show problematic samples "
                                   "(green for males, mauve for females). "
                                   "Unknown gender are shown in gray.",
-                    float_label=script_prefix.replace("/", "_"),
+                    float_label=figure_label,
                     float_content=graphic_template.render(
                         width=r"0.8\textwidth",
-                        graphics_path=graphics_path + "/",
                         path=latex_template.sanitize_fig_name(path),
                     ),
                 )
+                # Adding the path where the graphic is
+                graphics_paths.append(graphics_path)
 
             # If there is a 'sexcheck.LRR_BAF' directory, then there are LRR
             # and BAF plots.
@@ -1299,9 +1331,12 @@ def run_sex_check(in_prefix, in_type, out_prefix, base_dir, options):
 
                     # Getting the labels
                     labels = [
-                        (script_prefix + "_baf_lrr_" +
-                         os.path.splitext(sample)[0]).replace("/", "_")
-                        for sample in sample_ids
+                        re.sub(
+                            r"[/\\]",
+                            "_",
+                            script_prefix + "_baf_lrr_" +
+                            os.path.splitext(sample)[0],
+                        ) for sample in sample_ids
                     ]
 
                     fig_1 = labels[0]
@@ -1325,7 +1360,8 @@ def run_sex_check(in_prefix, in_type, out_prefix, base_dir, options):
 
                         # Getting the paths
                         graphics_path, path = os.path.split(figure)
-                        graphics_path = os.path.abspath(graphics_path)
+                        graphics_path = os.path.relpath(graphics_path,
+                                                        base_dir)
 
                         caption = (
                             "Plots showing the log R ratio and the B allele "
@@ -1340,10 +1376,11 @@ def run_sex_check(in_prefix, in_type, out_prefix, base_dir, options):
                             float_label=label,
                             float_content=graphic_template.render(
                                 width=r"\textwidth",
-                                graphics_path=graphics_path + "/",
                                 path=latex_template.sanitize_fig_name(path),
                             ),
                         )
+                # Adding the path where the graphic is
+                graphics_paths.append(graphics_path)
 
     except IOError:
         msg = "{}: cannot write LaTeX summary".format(latex_file)
@@ -1360,7 +1397,7 @@ def run_sex_check(in_prefix, in_type, out_prefix, base_dir, options):
     # We know this step does not produce a new data set, so we return the
     # original one
     return (in_prefix, required_type, latex_file, sex_check.desc,
-            sex_check.long_desc)
+            sex_check.long_desc, graphics_paths)
 
 
 def run_plate_bias(in_prefix, in_type, out_prefix, base_dir, options):
@@ -1471,7 +1508,11 @@ def run_plate_bias(in_prefix, in_type, out_prefix, base_dir, options):
             print >>o_file, latex_template.wrap_lines(text)
 
             if nb_markers > 0:
-                table_label = script_prefix.replace("/", "_") + "_plate_bias"
+                table_label = re.sub(
+                    r"[/\\]",
+                    "_",
+                    script_prefix,
+                ) + "_plate_bias"
                 text = (
                     r"Table~\ref{" + table_label + "} summarizes the plate "
                     "bias results."
@@ -1517,7 +1558,7 @@ def run_plate_bias(in_prefix, in_type, out_prefix, base_dir, options):
     # We know this step doesn't produce an new data set, so we return the old
     # prefix and the old in_type
     return (in_prefix, required_type, latex_file, plate_bias.desc,
-            plate_bias.long_desc)
+            plate_bias.long_desc, None)
 
 
 def run_remove_heterozygous_haploid(in_prefix, in_type, out_prefix, base_dir,
@@ -1607,7 +1648,7 @@ def run_remove_heterozygous_haploid(in_prefix, in_type, out_prefix, base_dir,
     # We know this step produces an new data set (bfile), so we return it
     return (os.path.join(out_prefix, "without_hh_genotypes"), "bfile",
             latex_file, remove_heterozygous_haploid.desc,
-            remove_heterozygous_haploid.long_desc)
+            remove_heterozygous_haploid.long_desc, None)
 
 
 def run_find_related_samples(in_prefix, in_type, out_prefix, base_dir,
@@ -1642,8 +1683,8 @@ def run_find_related_samples(in_prefix, in_type, out_prefix, base_dir,
         input file prefix and its type.
 
     """
-    # Creating the output directory
-    os.mkdir(out_prefix)
+#    # Creating the output directory
+#    os.mkdir(out_prefix)
 
     # We know we need bfile
     required_type = "bfile"
@@ -1665,12 +1706,12 @@ def run_find_related_samples(in_prefix, in_type, out_prefix, base_dir,
     if "--indep-pairwise" in options:
         r2_value = options[options.index("--indep-pairwise") + 3]
 
-    # We run the script
-    try:
-        find_related_samples.main(options)
-    except find_related_samples.ProgramError as e:
-        msg = "find_related_samples: {}".format(e)
-        raise ProgramError(msg)
+#    # We run the script
+#    try:
+#        find_related_samples.main(options)
+#    except find_related_samples.ProgramError as e:
+#        msg = "find_related_samples: {}".format(e)
+#        raise ProgramError(msg)
 
     # Reading the file containing all samples that are related
     #   - ibs.related_individuals
@@ -1719,6 +1760,7 @@ def run_find_related_samples(in_prefix, in_type, out_prefix, base_dir,
 
     # We write a LaTeX summary
     latex_file = os.path.join(script_prefix + ".summary.tex")
+    graphics_paths = []
     try:
         with open(latex_file, "w") as o_file:
             print >>o_file, latex_template.subsection(
@@ -1743,7 +1785,7 @@ def run_find_related_samples(in_prefix, in_type, out_prefix, base_dir,
 
             # Adding the first figure (if present)
             fig_1 = script_prefix + ".related_individuals_z1.png"
-            fig_1_label = script_prefix.replace("/", "_") + "_z1"
+            fig_1_label = re.sub(r"[/\\]", "_", script_prefix) + "_z1"
             if os.path.isfile(fig_1):
                 text = (
                     r"Figure~\ref{" + fig_1_label + "} shows $Z_1$ versus "
@@ -1754,7 +1796,7 @@ def run_find_related_samples(in_prefix, in_type, out_prefix, base_dir,
 
             # Adding the second figure (if present)
             fig_2 = script_prefix + ".related_individuals_z2.png"
-            fig_2_label = script_prefix.replace("/", "_") + "_z2"
+            fig_2_label = re.sub(r"[/\\]", "_", script_prefix) + "_z2"
             if os.path.isfile(fig_2):
                 text = (
                     r"Figure~\ref{" + fig_2_label + "} shows $Z_2$ versus "
@@ -1765,7 +1807,7 @@ def run_find_related_samples(in_prefix, in_type, out_prefix, base_dir,
 
             if len(table) > 1:
                 # There is data, so we add
-                table_label = script_prefix.replace("/", "_") + "_related"
+                table_label = re.sub(r"[/\\]", "_", script_prefix) + "_related"
                 text = (
                     r"Table~\ref{" + table_label + "} lists the related "
                     "sample pairs with estimated relationship."
@@ -1787,7 +1829,7 @@ def run_find_related_samples(in_prefix, in_type, out_prefix, base_dir,
                 if os.path.isfile(fig):
                     # Getting the paths
                     graphics_path, path = os.path.split(fig)
-                    graphics_path = os.path.abspath(graphics_path)
+                    graphics_path = os.path.relpath(graphics_path, base_dir)
 
                     # Printing
                     caption = (
@@ -1801,10 +1843,11 @@ def run_find_related_samples(in_prefix, in_type, out_prefix, base_dir,
                         float_label=label,
                         float_content=graphic_template.render(
                             width=r"0.8\textwidth",
-                            graphics_path=graphics_path + "/",
                             path=latex_template.sanitize_fig_name(path),
                         ),
                     )
+                    # Adding the path where the graphic is
+                    graphics_paths.append(graphics_path)
 
             # Adding the table
             if len(table) > 1:
@@ -1852,7 +1895,7 @@ def run_find_related_samples(in_prefix, in_type, out_prefix, base_dir,
     # We know this step doesn't produce an new data set, so we return the old
     # prefix and the old in_type
     return (in_prefix, required_type, latex_file, find_related_samples.desc,
-            long_description)
+            long_description, graphics_paths)
 
 
 def run_check_ethnicity(in_prefix, in_type, out_prefix, base_dir, options):
@@ -1885,8 +1928,8 @@ def run_check_ethnicity(in_prefix, in_type, out_prefix, base_dir, options):
         prefix and its type.
 
     """
-    # Creating the output directory
-    os.mkdir(out_prefix)
+#    # Creating the output directory
+#    os.mkdir(out_prefix)
 
     # We know we need bfile
     required_type = "bfile"
@@ -1898,12 +1941,12 @@ def run_check_ethnicity(in_prefix, in_type, out_prefix, base_dir, options):
     options += ["--{}".format(required_type), in_prefix,
                 "--out", script_prefix]
 
-    # We run the script
-    try:
-        check_ethnicity.main(options)
-    except check_ethnicity.ProgramError as e:
-        msg = "check_ethnicity: {}".format(e)
-        raise ProgramError(msg)
+#    # We run the script
+#    try:
+#        check_ethnicity.main(options)
+#    except check_ethnicity.ProgramError as e:
+#        msg = "check_ethnicity: {}".format(e)
+#        raise ProgramError(msg)
 
     # Getting the multiplier value
     multiplier = check_ethnicity.parser.get_default("multiplier")
@@ -1928,6 +1971,7 @@ def run_check_ethnicity(in_prefix, in_type, out_prefix, base_dir, options):
 
     # We write a LaTeX summary
     latex_file = os.path.join(script_prefix + ".summary.tex")
+    graphics_paths = []
     try:
         with open(latex_file, "w") as o_file:
             print >>o_file, latex_template.subsection(
@@ -1951,7 +1995,7 @@ def run_check_ethnicity(in_prefix, in_type, out_prefix, base_dir, options):
             if os.path.isfile(fig):
                 # Getting the paths
                 graphics_path, path = os.path.split(fig)
-                graphics_path = os.path.abspath(graphics_path)
+                graphics_path = os.path.relpath(graphics_path, base_dir)
 
                 # Getting the required template
                 float_template = latex_template.jinja2_env.get_template(
@@ -1962,7 +2006,7 @@ def run_check_ethnicity(in_prefix, in_type, out_prefix, base_dir, options):
                 )
 
                 # The label
-                label = script_prefix.replace("/", "_") + "_outliers"
+                label = re.sub(r"[/\\]", "_", script_prefix) + "_outliers"
 
                 text = (
                     r"Figure~\ref{" + label + "} shows the first two "
@@ -1993,17 +2037,18 @@ def run_check_ethnicity(in_prefix, in_type, out_prefix, base_dir, options):
                     float_label=label,
                     float_content=graphic_template.render(
                         width=r"0.8\textwidth",
-                        graphics_path=graphics_path + "/",
                         path=latex_template.sanitize_fig_name(path),
                     ),
                 )
+                # Adding the path where the graphic is
+                graphics_paths.append(graphics_path)
 
             # Adding the screeplot if it exists
             fig = script_prefix + ".smartpca.scree_plot.png"
             if os.path.isfile(fig):
                 # Getting the paths
                 graphics_path, path = os.path.split(fig)
-                graphics_path = os.path.abspath(graphics_path)
+                graphics_path = os.path.relpath(graphics_path, base_dir)
 
                 # Getting the required template
                 float_template = latex_template.jinja2_env.get_template(
@@ -2014,7 +2059,7 @@ def run_check_ethnicity(in_prefix, in_type, out_prefix, base_dir, options):
                 )
 
                 # The label
-                label = script_prefix.replace("/", "_") + "_screeplot"
+                label = re.sub(r"[/\\]", "_", script_prefix) + "_screeplot"
 
                 text = (
                     r"Figure~\ref{" + label + "} shows the scree plot for the "
@@ -2034,10 +2079,11 @@ def run_check_ethnicity(in_prefix, in_type, out_prefix, base_dir, options):
                     float_label=label,
                     float_content=graphic_template.render(
                         width=r"0.8\textwidth",
-                        graphics_path=graphics_path + "/",
                         path=latex_template.sanitize_fig_name(path),
                     ),
                 )
+                # Adding the path where the graphic is
+                graphics_paths.append(graphics_path)
 
     except IOError:
         msg = "{}: cannot write LaTeX summary".format(latex_file)
@@ -2055,7 +2101,7 @@ def run_check_ethnicity(in_prefix, in_type, out_prefix, base_dir, options):
     # We know this step doesn't produce an new data set, so we return the old
     # prefix and the old in_type
     return (in_prefix, required_type, latex_file, check_ethnicity.desc,
-            check_ethnicity.long_desc)
+            check_ethnicity.long_desc, graphics_paths)
 
 
 def run_flag_maf_zero(in_prefix, in_type, out_prefix, base_dir, options):
@@ -2148,7 +2194,7 @@ def run_flag_maf_zero(in_prefix, in_type, out_prefix, base_dir, options):
     # We know this step doesn't produce an new data set, so we return the old
     # prefix and the old in_type
     return (in_prefix, required_type, latex_file, flag_maf_zero.desc,
-            flag_maf_zero.long_desc)
+            flag_maf_zero.long_desc, None)
 
 
 def run_flag_hw(in_prefix, in_type, out_prefix, base_dir, options):
@@ -2278,7 +2324,7 @@ def run_flag_hw(in_prefix, in_type, out_prefix, base_dir, options):
     # We know this step doesn't produce an new data set, so we return the old
     # prefix and the old in_type
     return (in_prefix, required_type, latex_file, flag_hw.desc,
-            flag_hw.long_desc)
+            flag_hw.long_desc, None)
 
 
 def run_compare_gold_standard(in_prefix, in_type, out_prefix, base_dir,
@@ -2347,7 +2393,7 @@ def run_compare_gold_standard(in_prefix, in_type, out_prefix, base_dir,
     # We know this step doesn't produce an new data set, so we return the old
     # prefix and the old in_type
     return (in_prefix, required_type, latex_file, compare_gold_standard.desc,
-            compare_gold_standard.long_desc)
+            compare_gold_standard.long_desc, None)
 
 
 def run_subset_data(in_prefix, in_type, out_prefix, base_dir, options):
@@ -2687,7 +2733,7 @@ def run_subset_data(in_prefix, in_type, out_prefix, base_dir, options):
 
     # We know this step does produce a new data set (bfile), so we return it
     return (os.path.join(out_prefix, "subset"), required_type, latex_file,
-            subset_data.desc, subset_data.long_desc)
+            subset_data.desc, subset_data.long_desc, None)
 
 
 def run_command(command):

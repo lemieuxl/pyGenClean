@@ -16,6 +16,7 @@
 
 
 import os
+import re
 from datetime import datetime
 
 from . import utils as latex
@@ -53,6 +54,7 @@ def create_report(outdirname, report_filename, **kwargs):
     assert "final_nb_samples" in kwargs
     assert "final_files" in kwargs
     assert "plink_version" in kwargs
+    assert "graphic_paths_fn" in kwargs
 
     # Formatting the background section
     background_section = _format_background(kwargs["background"])
@@ -82,7 +84,7 @@ def create_report(outdirname, report_filename, **kwargs):
         full_path = os.path.abspath(name)
         if os.path.isfile(full_path):
             rel_path = os.path.relpath(full_path, outdirname)
-            result_summaries.append(rel_path)
+            result_summaries.append(re.sub(r"\\", "/", rel_path))
 
     # Reading the initial_files file
     initial_files = None
@@ -125,6 +127,15 @@ def create_report(outdirname, report_filename, **kwargs):
     # Getting the data
     today = datetime.today()
 
+    # Reading the graphics path
+    graphic_paths = []
+    if kwargs["graphic_paths_fn"] is not None:
+        with open(kwargs["graphic_paths_fn"], "r") as i_file:
+            graphic_paths = [
+                re.sub(r"\\", "/", path) + ("" if path.endswith("/") else "/")
+                for path in i_file.read().splitlines()
+            ]
+
     try:
         with open(report_filename, "w") as i_file:
             # Rendering the template
@@ -151,6 +162,7 @@ def create_report(outdirname, report_filename, **kwargs):
                 final_files=final_files,
                 final_nb_samples=kwargs["final_nb_samples"],
                 final_nb_markers=kwargs["final_nb_markers"],
+                graphic_paths=graphic_paths,
             )
 
     except IOError:
