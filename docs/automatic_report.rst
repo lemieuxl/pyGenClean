@@ -3,8 +3,8 @@
 Automatic Report
 ****************
 
-The :py:mod:`pyGenClean` module creates an automatic report using
-:math:`\LaTeX`. Each of the output directory will contain a final report (named
+The :py:mod:`pyGenClean` module creates an automatic report using *LaTeX*. Each
+of the output directory will contain a final report (named
 ``automatic_report.tex``). The report, once compiled into the PDF format,
 includes various quality metrics. To compile the report, perform the following
 commands:
