@@ -1266,7 +1266,7 @@ def run_sex_check(in_prefix, in_type, out_prefix, base_dir, options):
                     text_size="scriptsize",
                     header_data=zip(table[0], [1 for i in table[0]]),
                     tabular_data=sorted(
-                        table[1:],
+                        sorted(table[1:], key=lambda item: item[1]),
                         key=lambda item: (item[0], item[1]),
                     ),
                 )
@@ -1315,7 +1315,8 @@ def run_sex_check(in_prefix, in_type, out_prefix, base_dir, options):
                 figures = glob(
                     os.path.join(script_prefix + ".LRR_BAF", "*.png"),
                 )
-                if len(figures):
+
+                if len(figures) > 0:
                     # Getting the sample IDs
                     sample_ids = [
                         re.search(
@@ -1327,6 +1328,12 @@ def run_sex_check(in_prefix, in_type, out_prefix, base_dir, options):
                         "unknown sample" if not sample else sample.group(1)
                         for sample in sample_ids
                     ]
+
+                    # Sorting according to sample IDs
+                    sorted_indexes = sorted(range(len(figures)),
+                                            key=figures.__getitem__)
+                    figures = [figures[i] for i in sorted_indexes]
+                    sample_ids = [sample_ids[i] for i in sorted_indexes]
 
                     # Getting the labels
                     labels = [
