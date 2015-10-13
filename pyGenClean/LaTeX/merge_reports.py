@@ -129,18 +129,18 @@ def merge_required_files(dirnames, out_dir):
                 o_file.write(i_file.read())
 
     # Merging the graphic paths file
-    graphic_paths = []
+    graphic_paths = set()
     for dn in dirnames:
         fn = os.path.join(dn, "graphic_paths.txt")
         if os.path.isfile(fn):
             with open(fn, "r") as i_file:
-                graphic_paths.extend([
+                graphic_paths.update({
                     os.path.join(dn, path)
                     for path in i_file.read().splitlines()
-                ])
+                })
     if len(graphic_paths) > 0:
         with open(os.path.join(out_dir, "graphic_paths.txt"), "w") as o_file:
-            for path in graphic_paths:
+            for path in sorted(graphic_paths):
                 print >>o_file, os.path.relpath(path, out_dir)
 
 
