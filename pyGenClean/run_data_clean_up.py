@@ -84,17 +84,16 @@ def main():
     args = parse_args()
     check_args(args)
 
-#    # The directory name
-#    dirname = "data_clean_up."
-#    dirname += datetime.datetime.today().strftime("%Y-%m-%d_%H.%M.%S")
-#    while os.path.isdir(dirname):
-#        time.sleep(1)
-#        dirname = "data_clean_up."
-#        dirname += datetime.datetime.today().strftime("%Y-%m-%d_%H.%M.%S")
-#
-#    # Creating the output directory
-#    os.mkdir(dirname)
-    dirname = "data_clean_up.2015-10-09_08.00.25"
+    # The directory name
+    dirname = "data_clean_up."
+    dirname += datetime.datetime.today().strftime("%Y-%m-%d_%H.%M.%S")
+    while os.path.isdir(dirname):
+        time.sleep(1)
+        dirname = "data_clean_up."
+        dirname += datetime.datetime.today().strftime("%Y-%m-%d_%H.%M.%S")
+
+    # Creating the output directory
+    os.mkdir(dirname)
 
     # Configuring the root logger
     add_file_handler_to_root(os.path.join(dirname, "pyGenClean.log"))
@@ -1070,8 +1069,8 @@ def run_sex_check(in_prefix, in_type, out_prefix, base_dir, options):
         and its type.
 
     """
-#    # Creating the output directory
-#    os.mkdir(out_prefix)
+    # Creating the output directory
+    os.mkdir(out_prefix)
 
     # We know we need a bfile
     required_type = "bfile"
@@ -1083,12 +1082,12 @@ def run_sex_check(in_prefix, in_type, out_prefix, base_dir, options):
     options += ["--{}".format(required_type), in_prefix,
                 "--out", script_prefix]
 
-#    # We run the script
-#    try:
-#        sex_check.main(options)
-#    except sex_check.ProgramError as e:
-#        msg = "sex_check {}".format(e)
-#        raise ProgramError(msg)
+    # We run the script
+    try:
+        sex_check.main(options)
+    except sex_check.ProgramError as e:
+        msg = "sex_check {}".format(e)
+        raise ProgramError(msg)
 
     # Reading the hetero file on X
     hetero = {}
@@ -1683,8 +1682,8 @@ def run_find_related_samples(in_prefix, in_type, out_prefix, base_dir,
         input file prefix and its type.
 
     """
-#    # Creating the output directory
-#    os.mkdir(out_prefix)
+    # Creating the output directory
+    os.mkdir(out_prefix)
 
     # We know we need bfile
     required_type = "bfile"
@@ -1706,12 +1705,12 @@ def run_find_related_samples(in_prefix, in_type, out_prefix, base_dir,
     if "--indep-pairwise" in options:
         r2_value = options[options.index("--indep-pairwise") + 3]
 
-#    # We run the script
-#    try:
-#        find_related_samples.main(options)
-#    except find_related_samples.ProgramError as e:
-#        msg = "find_related_samples: {}".format(e)
-#        raise ProgramError(msg)
+    # We run the script
+    try:
+        find_related_samples.main(options)
+    except find_related_samples.ProgramError as e:
+        msg = "find_related_samples: {}".format(e)
+        raise ProgramError(msg)
 
     # Reading the file containing all samples that are related
     #   - ibs.related_individuals
@@ -1928,8 +1927,8 @@ def run_check_ethnicity(in_prefix, in_type, out_prefix, base_dir, options):
         prefix and its type.
 
     """
-#    # Creating the output directory
-#    os.mkdir(out_prefix)
+    # Creating the output directory
+    os.mkdir(out_prefix)
 
     # We know we need bfile
     required_type = "bfile"
@@ -1941,12 +1940,12 @@ def run_check_ethnicity(in_prefix, in_type, out_prefix, base_dir, options):
     options += ["--{}".format(required_type), in_prefix,
                 "--out", script_prefix]
 
-#    # We run the script
-#    try:
-#        check_ethnicity.main(options)
-#    except check_ethnicity.ProgramError as e:
-#        msg = "check_ethnicity: {}".format(e)
-#        raise ProgramError(msg)
+    # We run the script
+    try:
+        check_ethnicity.main(options)
+    except check_ethnicity.ProgramError as e:
+        msg = "check_ethnicity: {}".format(e)
+        raise ProgramError(msg)
 
     # Getting the multiplier value
     multiplier = check_ethnicity.parser.get_default("multiplier")
