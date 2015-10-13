@@ -19,6 +19,8 @@ import re
 import tempfile
 from subprocess import Popen, PIPE
 
+from ..pipeline_error import ProgramError
+
 
 def createRowFromPlinkSpacedOutput(line):
     """Remove leading spaces and change spaces to tabs.
