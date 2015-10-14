@@ -258,10 +258,23 @@ def parseArgs(argString=None):  # pragma: no cover
               :py:mod:`argparse` module. It contains the values of the
               different options.
 
-    =========== ====== ==========================================
-      Options    Type                Description
-    =========== ====== ==========================================
-    =========== ====== ==========================================
+    =============== ====== ====================================================
+        Options      Type                       Description
+    =============== ====== ====================================================
+
+    ``--bfile``     string The input file prefix (will find the plink binary
+                           files by appending the prefix to the .bim, .bed and
+                           .fam files, respectively).
+    ``--raw-dir``   string Directory containing the raw data (one file per
+                           sample, where the name of the file (minus the
+                           extension) is the sample identification number.
+    ``--colsample`` string The sample column.
+    ``--colmarker`` string The marker column.
+    ``--colbaf``    string The B allele frequency column.
+    ``--colab1``    string The AB Allele 1 column.
+    ``--colab2``    string The AB Allele 2 column.
+    ``--out``       string The prefix of the output files.
+    =============== ====== ====================================================
 
     .. note::
         No option check is done here (except for the one automatically done by
@@ -313,7 +326,7 @@ group = parser.add_argument_group("Input File")
 group.add_argument("--bfile", type=str, metavar="FILE", required=True,
                    help=("The input file prefix (will find the plink binary "
                          "files by appending the prefix to the .bim, .bed and "
-                         ".fam files, respectively."))
+                         ".fam files, respectively)."))
 
 group = parser.add_argument_group("Raw Data")
 group.add_argument("--raw-dir", type=str, metavar="DIR", required=True,
@@ -336,7 +349,7 @@ group.add_argument("--colab1", type=str, metavar="COL",
                    help="The AB Allele 1 column. [default: %(default)s]")
 group.add_argument("--colab2", type=str, metavar="COL",
                    default="Allele2 - AB",
-                   help="The AB Allele 2 column [default: %(default)s]")
+                   help="The AB Allele 2 column. [default: %(default)s]")
 
 # The OUTPUT files
 group = parser.add_argument_group("Output File")
