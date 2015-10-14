@@ -58,9 +58,9 @@ def main(argString=None):
     logger.info("Creating extraction list (autosome only)")
     create_extraction_file(args.bfile + ".bim", args.out)
 
-#    # Run plink
-#    logger.info("Computing frequency using Plink")
-#    run_plink(args.bfile, args.out, args.out + ".to_extract")
+    # Run plink
+    logger.info("Computing frequency using Plink")
+    run_plink(args.bfile, args.out, args.out + ".to_extract")
 
     # Run bafRegress
     logger.info("Running bafRegress")
