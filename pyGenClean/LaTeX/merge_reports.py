@@ -88,7 +88,7 @@ def order_qc_dir(dirnames):
     """
     return sorted(
         dirnames, key=lambda dn: time.strptime(
-            os.path.basename(dn)[14:],
+            os.path.basename(dn.rstrip("/"))[14:],
             "%Y-%m-%d_%H.%M.%S",
         )
     )
@@ -306,7 +306,7 @@ def checkArgs(args):
             raise ProgramError("{}: no such directory".format(dn))
 
         # Checking that this is a directory created from pyGenClean
-        if not os.path.basename(dn).startswith("data_clean_up."):
+        if not os.path.basename(dn.rstrip("/")).startswith("data_clean_up."):
             raise ProgramError("{}: not a pyGenClean directory".format(dn))
 
         # Checking that each directory contains the required files
