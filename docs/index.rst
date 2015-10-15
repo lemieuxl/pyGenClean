@@ -33,38 +33,40 @@ operating systems. Its usage is shown below:
 
 .. code-block:: console
 
-   $ run_pyGenClean --help
-   usage: run_pyGenClean [-h] [-v] [--bfile FILE] [--tfile FILE] [--file FILE]
-                         [--report-author AUTHOR] [--report-number NUMBER]
-                         [--report-background BACKGROUND] --conf FILE
+    $ run_pyGenClean --help
+    usage: run_pyGenClean [-h] [-v] [--bfile FILE] [--tfile FILE] [--file FILE]
+                          [--report-title TITLE] [--report-author AUTHOR]
+                          [--report-number NUMBER]
+                          [--report-background BACKGROUND] --conf FILE
 
-   Runs the data clean up (version 1.7.0).
+    Runs the data clean up (pyGenClean version 1.7.1).
 
-   optional arguments:
-     -h, --help            show this help message and exit
-     -v, --version         show program's version number and exit
+    optional arguments:
+      -h, --help            show this help message and exit
+      -v, --version         show program's version number and exit
 
-   Input File:
-     --bfile FILE          The input file prefix (will find the plink binary
-                           files by appending the prefix to the .bim, .bed and
-                           .fam files, respectively).
-     --tfile FILE          The input file prefix (will find the plink transposed
-                           files by appending the prefix to the .tped and .tfam
-                           files, respectively).
-     --file FILE           The input file prefix (will find the plink files by
-                           appending the prefix to the .ped and .fam files).
+    Input File:
+      --bfile FILE          The input file prefix (will find the plink binary
+                            files by appending the prefix to the .bim, .bed and
+                            .fam files, respectively).
+      --tfile FILE          The input file prefix (will find the plink transposed
+                            files by appending the prefix to the .tped and .tfam
+                            files, respectively).
+      --file FILE           The input file prefix (will find the plink files by
+                            appending the prefix to the .ped and .fam files).
 
-   Report Options:
-     --report-author AUTHOR
-                           The current project number. [default: pyGenClean]
-     --report-number NUMBER
-                           The current project author. [default: Simple Project]
-     --report-background BACKGROUND
-                           Text of file containing the background section of the
-                           report.
+    Report Options:
+      --report-title TITLE  The report title. [default: Genetic Data Clean Up]
+      --report-author AUTHOR
+                            The current project number. [default: pyGenClean]
+      --report-number NUMBER
+                            The current project author. [default: Simple Project]
+      --report-background BACKGROUND
+                            Text of file containing the background section of the
+                            report.
 
-   Configuration File:
-     --conf FILE           The parameter file for the data clean up.
+    Configuration File:
+      --conf FILE           The parameter file for the data clean up.
 
 
 The tool consists of multiple standalone scripts that are linked together via a
@@ -200,6 +202,7 @@ files (with all available parameters) are given.
     protocol
     configuration_files
     how_to_run
+    automatic_report
 
 
 The algorithm
@@ -211,7 +214,7 @@ following section:
 .. toctree::
     :maxdepth: 1
 
-    data_clean_up_module
+    module_content/modules
     duplicated_samples
     duplicated_markers
     clean_noCall_hetero_snps

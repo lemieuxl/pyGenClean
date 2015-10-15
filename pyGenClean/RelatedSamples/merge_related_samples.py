@@ -22,6 +22,8 @@ import random
 import logging
 import argparse
 
+from .. import __version__
+
 
 logger = logging.getLogger("merge_related_samples")
 
@@ -248,8 +250,11 @@ class ProgramError(Exception):
 
 
 # The parser object
-desc = """Merges related samples according to IBS."""
+desc = "Merges related samples according to IBS."
+long_desc = None
 parser = argparse.ArgumentParser(description=desc)
+parser.add_argument("-v", "--version", action="version",
+                    version="pyGenClean version {}".format(__version__))
 
 # The INPUT files
 group = parser.add_argument_group("Input File")

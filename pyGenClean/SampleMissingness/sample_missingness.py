@@ -21,6 +21,8 @@ import logging
 import argparse
 import subprocess
 
+from .. import __version__
+
 
 logger = logging.getLogger("sample_missingness")
 
@@ -172,8 +174,12 @@ class ProgramError(Exception):
 
 # The parser object
 pretty_name = "Sample missingness"
-desc = """Computes sample missingness using Plink."""
+desc = "Computes sample missingness using Plink."
+long_desc = ("The script identifies poorly performing DNA samples with a "
+             r"genome-wide genotyping success rate $<{success_rate}$\%.")
 parser = argparse.ArgumentParser(description=desc)
+parser.add_argument("-v", "--version", action="version",
+                    version="pyGenClean version {}".format(__version__))
 
 # The INPUT files
 group = parser.add_argument_group("Input File")

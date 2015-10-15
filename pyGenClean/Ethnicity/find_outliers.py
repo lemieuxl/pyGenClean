@@ -20,8 +20,9 @@ import sys
 import logging
 import argparse
 
-import numpy as npy
+import numpy as np
 
+from .. import __version__
 from ..PlinkUtils import createRowFromPlinkSpacedOutput as create_row
 
 
@@ -160,7 +161,7 @@ def find_outliers(mds, centers, center_info, ref_pop, options):
     from sklearn.metrics.pairwise import euclidean_distances
 
     # Formatting the data
-    data = npy.array(zip(mds["c1"], mds["c2"]))
+    data = np.array(zip(mds["c1"], mds["c2"]))
 
     # Configuring and running the KMeans
     k_means = KMeans(init=centers, n_clusters=3, n_init=1)
@@ -236,14 +237,14 @@ def find_outliers(mds, centers, center_info, ref_pop, options):
         distances = euclidean_distances(subset_data, centers[label])
 
         # Finding the outliers (that are not in the reference populations
-        sigma = npy.sqrt(npy.true_divide(npy.sum(distances ** 2),
-                                         len(distances) - 1))
-        outliers = npy.logical_and(
+        sigma = np.sqrt(np.true_divide(np.sum(distances ** 2),
+                                       len(distances) - 1))
+        outliers = np.logical_and(
             (distances > options.multiplier * sigma).flatten(),
             subset_mds != ref_pop_name[label],
         )
         logger.info("  - {} outliers for the {} cluster".format(
-            npy.sum(outliers),
+            np.sum(outliers),
             ref_pop_name[label],
         ))
 
@@ -269,8 +270,8 @@ def find_outliers(mds, centers, center_info, ref_pop, options):
             # This is the population we want, hence only the real outliers are
             # outliers (we don't include the reference population)
             outlier_mds = subset_mds[
-                npy.logical_and(subset_mds["pop"] != ref_pop_name[label],
-                                outliers)
+                np.logical_and(subset_mds["pop"] != ref_pop_name[label],
+                               outliers)
             ]
 
             # Plotting the outliers
@@ -281,11 +282,11 @@ def find_outliers(mds, centers, center_info, ref_pop, options):
 
             # Plotting the not outliers
             plot_not_outliers, = axe_outliers.plot(
-                subset_mds["c1"][npy.logical_and(
+                subset_mds["c1"][np.logical_and(
                         ~outliers,
                         subset_mds["pop"] != ref_pop_name[label]
                 )],
-                subset_mds["c2"][npy.logical_and(
+                subset_mds["c2"][np.logical_and(
                     ~outliers,
                     subset_mds["pop"] != ref_pop_name[label]
                 )],
@@ -379,11 +380,11 @@ def find_ref_centers(mds):
     asn_mds = mds[mds["pop"] == "JPT-CHB"]
 
     # Computing the centers
-    centers = [[npy.mean(ceu_mds["c1"]), npy.mean(ceu_mds["c2"])],
-               [npy.mean(yri_mds["c1"]), npy.mean(yri_mds["c2"])],
-               [npy.mean(asn_mds["c1"]), npy.mean(asn_mds["c2"])]]
+    centers = [[np.mean(ceu_mds["c1"]), np.mean(ceu_mds["c2"])],
+               [np.mean(yri_mds["c1"]), np.mean(yri_mds["c2"])],
+               [np.mean(asn_mds["c1"]), np.mean(asn_mds["c2"])]]
 
-    return npy.array(centers), {"CEU": 0, "YRI": 1, "JPT-CHB": 2}
+    return np.array(centers), {"CEU": 0, "YRI": 1, "JPT-CHB": 2}
 
 
 def read_mds_file(file_name, c1, c2, pops):
@@ -443,10 +444,10 @@ def read_mds_file(file_name, c1, c2, pops):
                 max_iid = len(sample_id[1])
 
     # Creating the numpy array
-    mds = npy.array(mds, dtype=[("fid", "a{}".format(max_fid)),
-                                ("iid", "a{}".format(max_iid)),
-                                ("c1", float), ("c2", float),
-                                ("pop", "a7")])
+    mds = np.array(mds, dtype=[("fid", "a{}".format(max_fid)),
+                               ("iid", "a{}".format(max_iid)),
+                               ("c1", float), ("c2", float),
+                               ("pop", "a7")])
 
     return mds
 
@@ -545,13 +546,15 @@ def parseArgs(argString=None):  # pragma: no cover
                                  :py:mod:`pyGenClean.Ethnicity.check_ethnicity`
                                  module.
     ``--format``          string The output file format (png, ps, or pdf.
-    ``--out``             string The prefix of the output files.
     ``--outliers-of``     string Finds the outliers of this population.
     ``--multiplier``      float  To find the outliers, we look for more than
                                  :math:`x` times the cluster standard
                                  deviation.
     ``--xaxis``           string The component to use for the X axis.
     ``--yaxis``           string The component to use for the Y axis.
+    ``--format``          string The output file format (png, ps, or pdf
+                                 formats are available).
+    ``--out``             string The prefix of the output files.
     ===================== ====== ==============================================
 
     .. note::
@@ -617,8 +620,11 @@ class ProgramError(Exception):
         return self.message
 
 # The parser object
-desc = """Finds outliers in SOURCE from CEU samples."""
+desc = "Finds outliers in SOURCE from CEU samples."
+long_desc = None
 parser = argparse.ArgumentParser(description=desc)
+parser.add_argument("-v", "--version", action="version",
+                    version="pyGenClean version {}".format(__version__))
 
 
 # The INPUT files

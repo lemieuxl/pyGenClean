@@ -20,9 +20,14 @@ import sys
 import logging
 import argparse
 
+from .. import __version__
 
-desc = """Compare BIM file"""
+
+desc = "Compares BIM file."
+long_desc = None
 parser = argparse.ArgumentParser(description=desc)
+parser.add_argument("-v", "--version", action="version",
+                    version="pyGenClean version {}".format(__version__))
 
 
 logger = logging.getLogger("compare_bim")
@@ -97,7 +102,9 @@ def compareSNPs(before, after, outFileName):
     # Printing the SNPs
     try:
         with open(outFileName, "w") as outputFile:
-            print >>outputFile, "\n".join(before - after)
+            differences = before - after
+            if len(differences) > 0:
+                print >>outputFile, "\n".join(differences)
     except IOError:
         msg = "%(outFileName)s: can't write to file" % locals()
         raise ProgramError(msg)

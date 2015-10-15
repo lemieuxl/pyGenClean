@@ -8,17 +8,18 @@ The usage of the standalone module is shown below:
 .. code-block:: console
 
     $ pyGenClean_sex_check --help
-    usage: pyGenClean_sex_check [-h] --bfile FILE [--femaleF FLOAT]
+    usage: pyGenClean_sex_check [-h] [-v] --bfile FILE [--femaleF FLOAT]
                                 [--maleF FLOAT] [--nbChr23 INT] [--gender-plot]
                                 [--sex-chr-intensities FILE]
                                 [--gender-plot-format FORMAT] [--lrr-baf]
                                 [--lrr-baf-raw-dir DIR] [--lrr-baf-format FORMAT]
                                 [--out FILE]
 
-    Check sex using Plink
+    Check sample's gender using Plink.
 
     optional arguments:
       -h, --help            show this help message and exit
+      -v, --version         show program's version number and exit
 
     Input File:
       --bfile FILE          The input file prefix (will find the Plink binary
@@ -55,6 +56,7 @@ The usage of the standalone module is shown below:
     Output File:
       --out FILE            The prefix of the output files (which will be a Plink
                             binary file. [default: sexcheck]
+
 
 Input Files
 -----------
@@ -215,7 +217,7 @@ clean up pipeline, using its results and this following standalone script:
 .. code-block:: console
 
     $ pyGenClean_gender_plot --help
-    usage: pyGenClean_gender_plot [-h] --bfile FILE [--intensities FILE]
+    usage: pyGenClean_gender_plot [-h] [-v] --bfile FILE [--intensities FILE]
                                   [--summarized-intensities FILE] --sex-problems
                                   FILE [--format FORMAT] [--xlabel STRING]
                                   [--ylabel STRING] [--out FILE]
@@ -224,6 +226,7 @@ clean up pipeline, using its results and this following standalone script:
 
     optional arguments:
       -h, --help            show this help message and exit
+      -v, --version         show program's version number and exit
 
     Input File:
       --bfile FILE          The plink binary file containing information about
@@ -252,6 +255,7 @@ clean up pipeline, using its results and this following standalone script:
     Output File:
       --out FILE            The prefix of the output files (which will be a Plink
                             binary file. [default: sexcheck]
+
 
 The log R ratio (LRR) for a sample is the log ratio of the normalized R value
 for the marker divided by the expected normalized R value. Hence, a value of 0
@@ -284,7 +288,7 @@ clean up pipeline, using this following standalone script:
 .. code-block:: console
 
     $ pyGenClean_baf_lrr_plot --help
-    usage: pyGenClean_baf_lrr_plot [-h] --problematic-samples FILE
+    usage: pyGenClean_baf_lrr_plot [-h] [-v] --problematic-samples FILE
                                    [--use-full-ids] [--full-ids-delimiter CHAR]
                                    --raw-dir DIR [--format FORMAT] [--out FILE]
 
@@ -292,6 +296,7 @@ clean up pipeline, using this following standalone script:
 
     optional arguments:
       -h, --help            show this help message and exit
+      -v, --version         show program's version number and exit
 
     Input File:
       --problematic-samples FILE
@@ -313,31 +318,14 @@ clean up pipeline, using this following standalone script:
 
     Output File:
       --out FILE            The prefix of the output files. [default: sexcheck]
-    
+
 
 The Algorithm
 -------------
 
-For more information about the actual algorithms and source codes (the
-:py:mod:`pyGenClean.SexCheck.sex_check`,
-:py:mod:`pyGenClean.SexCheck.gender_plot` and
-:py:mod:`pyGenClean.SexCheck.baf_lrr_plot` modules), refer to the following
-sections.
+For more information about the actual algorithms and source codes, refer to the
+following pages.
 
-pyGenClean.SexCheck.sex_check
-.............................
-
-.. automodule:: pyGenClean.SexCheck.sex_check
-    :members:
-
-pyGenClean.SexCheck.gender_plot
-...............................
-
-.. automodule:: pyGenClean.SexCheck.gender_plot
-    :members:
-
-pyGenClean.SexCheck.baf_lrr_plot
-................................
-
-.. automodule:: pyGenClean.SexCheck.baf_lrr_plot
-    :members:
+* :py:mod:`pyGenClean.SexCheck.sex_check`
+* :py:mod:`pyGenClean.SexCheck.gender_plot`
+* :py:mod:`pyGenClean.SexCheck.baf_lrr_plot`

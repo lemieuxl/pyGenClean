@@ -21,11 +21,12 @@ import logging
 import argparse
 import subprocess
 
-import numpy as npy
+import numpy as np
 
 from .import gender_plot
 from . import baf_lrr_plot
 
+from .. import __version__
 from ..PlinkUtils import createRowFromPlinkSpacedOutput
 
 
@@ -235,10 +236,10 @@ def computeNoCall(fileName):
                 row = line.rstrip("\r\n").split(" ")
                 if i != 0:
                     # This is data
-                    genotypes = npy.array(row[6:])
+                    genotypes = np.array(row[6:])
 
                     nbMarker = len(genotypes)
-                    nbNA = len(npy.where(genotypes == "NA")[0])
+                    nbNA = len(np.where(genotypes == "NA")[0])
 
                     toPrint.append((row[0], row[1], row[4], str(nbMarker),
                                     str(nbNA)))
@@ -283,11 +284,11 @@ def computeHeteroPercentage(fileName):
                 row = line.rstrip("\r\n").split(" ")
                 if i != 0:
                     # This is data
-                    genotypes = npy.array(row[6:])
-                    genotypes = genotypes[npy.where(genotypes != "NA")]
+                    genotypes = np.array(row[6:])
+                    genotypes = genotypes[np.where(genotypes != "NA")]
 
                     nbMarker = len(genotypes)
-                    nbHetero = len(npy.where(genotypes == "1")[0])
+                    nbHetero = len(np.where(genotypes == "1")[0])
                     percentHetero = -9999
                     if nbMarker != 0:
                         percentHetero = nbHetero / float(nbMarker)
@@ -626,8 +627,13 @@ class ProgramError(Exception):
 
 # The parser object
 pretty_name = "Gender check"
-desc = """Check sample's gender using Plink."""
+desc = "Check sample's gender using Plink."
+long_desc = ("The script identifies any individual with discrepancies between "
+             "phenotype and genotype data for sex. Individuals with sex error "
+             "are to be investigated.")
 parser = argparse.ArgumentParser(description=desc)
+parser.add_argument("-v", "--version", action="version",
+                    version="pyGenClean version {}".format(__version__))
 
 # The INPUT files
 group = parser.add_argument_group("Input File")

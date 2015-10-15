@@ -168,11 +168,14 @@ def wrap_lines(content, length=80):
     return "\n".join(textwrap.wrap(content, length, break_long_words=False))
 
 
-def format_numbers(number):
+def format_numbers(number, prefix=""):
     """Formats number in the scientific notation for LaTeX.
 
     :param number: the number to format.
+    :param prefix: a prefix to add before the number (e.g. "p < ").
+
     :type number: str
+    :type prefix: str
 
     :returns: a string containing the scientific notation of the number.
     :rtype: str
@@ -183,13 +186,16 @@ def format_numbers(number):
 
     # Nothing matched
     if not r:
-        return number
+        if prefix != "":
+            return "$" + prefix + number + "$"
+        else:
+            return number
 
     # Getting the coefficient and the exponent
     coefficient = r.group(1)
     exponent = int(r.group(2))
 
-    return "$" + coefficient + r"\times 10^{" + str(exponent) + "}$"
+    return "$" + prefix + coefficient + r"\times 10^{" + str(exponent) + "}$"
 
 
 def sanitize_fig_name(name):
@@ -219,7 +225,7 @@ def sanitize_tex(original_text):
 
     Text is sanitized by following these steps:
 
-    1. Replaces ``\\\\`` by ``\\textbackslash``
+    1. Replaces ``\\` by ``\\textbackslash``
     2. Escapes certain characters (such as ``$``, ``%``, ``_``, ``}``, ``{``,
        ``&`` and ``#``) by adding a backslash (*e.g.* from ``&`` to ``\\&``).
     3. Replaces special characters such as ``~`` by the LaTeX equivalent

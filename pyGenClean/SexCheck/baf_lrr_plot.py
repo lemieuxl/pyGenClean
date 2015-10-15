@@ -21,7 +21,9 @@ import gzip
 import logging
 import argparse
 
-import numpy as npy
+import numpy as np
+
+from .. import __version__
 
 
 logger = logging.getLogger("baf_llr_plot")
@@ -241,8 +243,8 @@ def plot_baf_lrr(file_names, options):
                 data.append((chromosome, position, lrr, baf))
 
         # Creating the numpy array
-        data = npy.array(data, dtype=[("chr", "a1"), ("pos", int),
-                                      ("lrr", float), ("baf", float)])
+        data = np.array(data, dtype=[("chr", "a1"), ("pos", int),
+                                     ("lrr", float), ("baf", float)])
 
         # Creating the figure and axes
         fig, axes = plt.subplots(2, 2, figsize=(20, 8))
@@ -391,9 +393,10 @@ class ProgramError(Exception):
         return self.message
 
 # The parser object
-desc = """Plots the BAF and LRR of problematic samples."""
+desc = "Plots the BAF and LRR of problematic samples."
 parser = argparse.ArgumentParser(description=desc)
-
+parser.add_argument("-v", "--version", action="version",
+                    version="pyGenClean version {}".format(__version__))
 
 # The INPUT files
 group = parser.add_argument_group("Input File")

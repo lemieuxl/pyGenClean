@@ -5,7 +5,7 @@ This table summurized  information available from output files produced by
 *pyGenClean* during the data clean up procedure. Numbers correspond to number of
 lines in output files see :ref:`proposed_protocol_label` for details. Only
 removed SNPs and IDs are indicated in the column SNPs and IDs, flagged SNPs or
-IDs are present in the :math:`n` column. 
+IDs are present in the :math:`n` column.
 
 .. tabularcolumns:: p{11.5cm}rrr
 .. _result_summary_table:

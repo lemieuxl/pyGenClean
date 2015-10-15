@@ -16,6 +16,7 @@
 
 
 import os
+import re
 from datetime import datetime
 
 from . import utils as latex
@@ -36,26 +37,24 @@ def create_report(outdirname, report_filename, **kwargs):
     # Checking the required variables
     if "steps" in kwargs:
         assert "descriptions" in kwargs
+        assert "long_descriptions" in kwargs
         assert "steps_filename" not in kwargs
     else:
         assert "steps_filename" in kwargs
         assert "descriptions" not in kwargs
+        assert "long_descriptions" not in kwargs
     assert "summaries" in kwargs
     assert "background" in kwargs
     assert "project_name" in kwargs
     assert "summary_fn" in kwargs
+    assert "report_title" in kwargs
     assert "report_author" in kwargs
     assert "initial_files" in kwargs
     assert "final_nb_markers" in kwargs
     assert "final_nb_samples" in kwargs
     assert "final_files" in kwargs
-
-    # Getting the required information
-    project_name = kwargs["project_name"]
-    prog_version = ".".join(pygenclean_version)
-    summaries = kwargs["summaries"]
-    summary_fn = kwargs["summary_fn"]
-    report_author = kwargs["report_author"]
+    assert "plink_version" in kwargs
+    assert "graphic_paths_fn" in kwargs
 
     # Formatting the background section
     background_section = _format_background(kwargs["background"])
@@ -67,19 +66,25 @@ def create_report(outdirname, report_filename, **kwargs):
     else:
         steps_filename = os.path.join(outdirname, "steps_summary.tex")
         with open(steps_filename, "w") as o_file:
-            for step, desc in zip(kwargs["steps"], kwargs["descriptions"]):
+            zipped = zip(kwargs["steps"], kwargs["descriptions"],
+                         kwargs["long_descriptions"])
+            for step, desc, long_desc in zipped:
+                if desc.endswith("."):
+                    desc = desc[:-1]
                 step = step.replace("_", r"\_")
                 to_print = latex.item(desc)
-                to_print += " ({})".format(latex.texttt(step))
+                to_print += " ({}).".format(latex.texttt(step))
+                if long_desc is not None:
+                    to_print += " " + long_desc
                 print >>o_file, latex.wrap_lines(to_print) + "\n"
 
     # Adding the content of the results section
     result_summaries = []
-    for name in summaries:
+    for name in kwargs["summaries"]:
         full_path = os.path.abspath(name)
         if os.path.isfile(full_path):
             rel_path = os.path.relpath(full_path, outdirname)
-            result_summaries.append(rel_path)
+            result_summaries.append(re.sub(r"\\", "/", rel_path))
 
     # Reading the initial_files file
     initial_files = None
@@ -122,11 +127,20 @@ def create_report(outdirname, report_filename, **kwargs):
     # Getting the data
     today = datetime.today()
 
+    # Reading the graphics path
+    graphic_paths = []
+    if kwargs["graphic_paths_fn"] is not None:
+        with open(kwargs["graphic_paths_fn"], "r") as i_file:
+            graphic_paths = [
+                re.sub(r"\\", "/", path) + ("" if path.endswith("/") else "/")
+                for path in i_file.read().splitlines()
+            ]
+
     try:
         with open(report_filename, "w") as i_file:
             # Rendering the template
             print >>i_file, main_template.render(
-                project_name=project_name,
+                project_name=latex.sanitize_tex(kwargs["project_name"]),
                 month=today.strftime("%B"),
                 day=today.day,
                 year=today.year,
@@ -134,18 +148,21 @@ def create_report(outdirname, report_filename, **kwargs):
                 result_summaries=result_summaries,
                 bibliography_content=biblio_entry,
                 pygenclean_version=pygenclean_version,
+                plink_version=kwargs["plink_version"],
                 steps_filename=os.path.basename(steps_filename),
                 final_results=_create_summary_table(
-                    summary_fn,
+                    kwargs["summary_fn"],
                     latex.jinja2_env.get_template("summary_table.tex"),
                     nb_samples=kwargs["final_nb_samples"],
                     nb_markers=kwargs["final_nb_markers"],
                 ),
-                report_author=report_author,
+                report_title=latex.sanitize_tex(kwargs["report_title"]),
+                report_author=latex.sanitize_tex(kwargs["report_author"]),
                 initial_files=initial_files,
                 final_files=final_files,
                 final_nb_samples=kwargs["final_nb_samples"],
                 final_nb_markers=kwargs["final_nb_markers"],
+                graphic_paths=graphic_paths,
             )
 
     except IOError:
@@ -235,7 +252,7 @@ def _create_summary_table(fn, template, nb_samples, nb_markers):
                 if data["header"].endswith("/subset"):
                     tmp[0] = r"\path{" + tmp[0] + "}"
                 elif data["header"].endswith("/flag_hw"):
-                    tmp[0] = latex.format_numbers(tmp[0])
+                    tmp[0] = latex.format_numbers(tmp[0], prefix="p < ")
                 else:
                     tmp = map(latex.sanitize_tex, tmp)
                     if tmp[0].startswith("x"):

@@ -21,6 +21,7 @@ import logging
 import argparse
 import subprocess
 
+from .. import __version__
 from ..PlinkUtils import createRowFromPlinkSpacedOutput
 
 
@@ -235,8 +236,12 @@ class ProgramError(Exception):
 
 # The parser object
 pretty_name = "MAF flagging"
-desc = """Flag SNPs with MAF of 0."""
+desc = "Flags SNPs with MAF of 0."
+long_desc = ("The script flags markers with a minor allele frequency of 0 "
+             r"\textit{i.e} monomorphic markers).")
 parser = argparse.ArgumentParser(description=desc)
+parser.add_argument("-v", "--version", action="version",
+                    version="pyGenClean version {}".format(__version__))
 
 # The INPUT files
 group = parser.add_argument_group("Input File")

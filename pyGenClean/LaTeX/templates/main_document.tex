@@ -102,8 +102,17 @@
 
 \begin{document}
 
+\BLOCK{ if graphic_paths|length > 0 }
+% The graphics path
+\graphicspath{
+\BLOCK{ for path in graphic_paths }
+    {\VAR{ path }}
+\BLOCK{ endfor }
+}
+\BLOCK{ endif }
+
 % The title page
-\title{Genetic Data Clean Up}
+\title{\VAR{ report_title }}
 \subtitle{\ProjectName}
 \author{\VAR{ report_author }}
 \date{\VAR{ month } \engordnumber{\VAR{ day }}, \VAR{ year }}
@@ -113,6 +122,7 @@
 \microtypesetup{protrusion=false} % disables protrusion locally in the document
 \tableofcontents{}
 \listoffigures{}
+\listoftables{}
 \microtypesetup{protrusion=true} % enables protrusion
 \clearpage
 \newpage
@@ -122,9 +132,10 @@
 
 
 \section{Methods}
-Plink was used for the data cleanup procedure. The automated script
-\texttt{pyGenClean} version \VAR{ pygenclean_version }~\cite{pyGenClean} was
-used to launch the analysis. The following files were used as input.
+The automated script \texttt{pyGenClean} version
+\VAR{ pygenclean_version }~\cite{pyGenClean} was used to launch the analysis.
+Plink version \VAR{ plink_version }~\cite{plink} was used for the data cleanup
+procedure. The following files were used as input.
 
 \begin{itemize}
 \BLOCK{ for fn in initial_files }
@@ -166,6 +177,10 @@ available for downstream analysis.
 \item \path{\VAR{ fn }}
 \BLOCK{ endfor }
 \end{itemize}
+
+For a list of markers and samples that were excluded during the data clean up
+procedure, refer to the files \path{excluded_markers.txt} and
+\path{excluded_samples.txt}, respectively.
 
 \begin{thebibliography}{9}
 \VAR{ bibliography_content }

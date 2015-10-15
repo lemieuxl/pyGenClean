@@ -21,6 +21,7 @@ import logging
 import argparse
 import subprocess
 
+from .. import __version__
 from ..PlinkUtils import compare_bim as CompareBIM
 
 
@@ -199,8 +200,12 @@ class ProgramError(Exception):
 
 # The parser object
 pretty_name = "Marker missingness"
-desc = """Computes marker missingness using Plink."""
+desc = "Computes marker missingness using Plink."
+long_desc = ("The script identifies poorly performing markers with genotyping "
+             r"succes rate $<{success_rate}$\%.")
 parser = argparse.ArgumentParser(description=desc)
+parser.add_argument("-v", "--version", action="version",
+                    version="pyGenClean version {}".format(__version__))
 
 # The INPUT files
 group = parser.add_argument_group("Input File")

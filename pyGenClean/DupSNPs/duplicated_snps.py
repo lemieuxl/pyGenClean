@@ -26,8 +26,9 @@ import argparse
 import subprocess
 from collections import defaultdict
 
-import numpy as npy
+import numpy as np
 
+from .. import __version__
 from ..PlinkUtils import createRowFromPlinkSpacedOutput
 
 
@@ -323,14 +324,14 @@ def createAndCleanTPED(tped, tfam, snps, prefix, chosenSNPs, completion,
 
         # Getting the completion
         completionToRemove = set(
-            npy.where(completion[indexes] < completionT)[0]
+            np.where(completion[indexes] < completionT)[0]
         )
         for k in completionToRemove:
             notGoodEnoughSnps.add((snpInfo[indexes][k, 1], "completion"))
 
         # Getting the concordance
         concordanceToRemove = set(
-            npy.where(concordance[snpID] < concordanceT)[0]
+            np.where(concordance[snpID] < concordanceT)[0]
         )
         for k in concordanceToRemove:
             notGoodEnoughSnps.add((snpInfo[indexes][k, 1], "concordance"))
@@ -361,9 +362,9 @@ def createAndCleanTPED(tped, tfam, snps, prefix, chosenSNPs, completion,
             # We need to remove the no call and keep the unique genotypes
             curGenotypes = genotypes[indexesToKeep, sampleIndex]
             cleanedCurGenotypes = curGenotypes[
-                npy.where(curGenotypes != "0 0")
+                np.where(curGenotypes != "0 0")
             ]
-            uniqueCleanedCurGenotypes = npy.unique(cleanedCurGenotypes)
+            uniqueCleanedCurGenotypes = np.unique(cleanedCurGenotypes)
 
             # Checking the number of unique genotypes
             toComplete = False
@@ -485,7 +486,7 @@ def chooseBestSnps(tped, snps, trueCompletion, trueConcordance, prefix):
         raise ProgramError(msg)
 
     # Computing the completion
-    completion = npy.true_divide(trueCompletion[0], trueCompletion[1])
+    completion = np.true_divide(trueCompletion[0], trueCompletion[1])
 
     # For each duplicated SNPs
     chosenIndexes = {}
@@ -495,22 +496,22 @@ def chooseBestSnps(tped, snps, trueCompletion, trueConcordance, prefix):
         currCompletion = completion[indexes]
 
         # Sorting those completion
-        sortedCompletionInsexes = npy.argsort(currCompletion)
+        sortedCompletionInsexes = np.argsort(currCompletion)
 
         # Getting the concordance
-        concordance = npy.true_divide(trueConcordance[snp][0],
-                                      trueConcordance[snp][1])
+        concordance = np.true_divide(trueConcordance[snp][0],
+                                     trueConcordance[snp][1])
 
         currConcordance = [[] for i in xrange(len(indexes))]
         for i in xrange(len(indexes)):
             indexToKeep = list(set(range(len(indexes))) - set([i]))
-            currConcordance[i] = npy.mean(concordance[i, indexToKeep])
-        currConcordance = npy.array(currConcordance)
+            currConcordance[i] = np.mean(concordance[i, indexToKeep])
+        currConcordance = np.array(currConcordance)
         if snp not in snpConcordance:
             snpConcordance[snp] = currConcordance
 
         # Sorting the concordance
-        sortedConcordanceIndexes = npy.argsort(currConcordance)
+        sortedConcordanceIndexes = np.argsort(currConcordance)
 
         # Trying to find the best duplicate to keep
         nbToCheck = 1
@@ -526,10 +527,10 @@ def chooseBestSnps(tped, snps, trueCompletion, trueConcordance, prefix):
 
             # Getting the indexes to consider
             completionToConsider = set(
-                npy.where(currCompletion >= completionValue)[0]
+                np.where(currCompletion >= completionValue)[0]
             )
             concordanceToConsider = set(
-                npy.where(currConcordance >= concordanceValue)[0]
+                np.where(currConcordance >= concordanceValue)[0]
             )
 
             # Getting the intersection of the indexes
@@ -713,11 +714,11 @@ def printConcordance(concordance, prefix, tped, snps):
         )
 
         # Doing the division
-        true_concordance = npy.true_divide(concordance[snpID][0],
-                                           concordance[snpID][1])
+        true_concordance = np.true_divide(concordance[snpID][0],
+                                          concordance[snpID][1])
 
         output = StringIO.StringIO()
-        npy.savetxt(output, true_concordance, delimiter="\t", fmt="%.8f")
+        np.savetxt(output, true_concordance, delimiter="\t", fmt="%.8f")
         print >>outFile, output.getvalue().rstrip("\r\n")
 
     outFile.close()
@@ -779,7 +780,7 @@ def printProblems(completion, concordance, tped, snps, frequencies, prefix,
 
     """
 
-    completionPercentage = npy.true_divide(completion[0], completion[1])
+    completionPercentage = np.true_divide(completion[0], completion[1])
 
     outSummary = None
     try:
@@ -814,7 +815,7 @@ def printProblems(completion, concordance, tped, snps, frequencies, prefix,
             alleles = set()
             otherAlleles = set()
             status = []
-            for genotype in npy.unique(tped[index, 4:]):
+            for genotype in np.unique(tped[index, 4:]):
                 alleles |= set(genotype.split(" "))
             if "0" in alleles:
                 alleles.remove("0")
@@ -826,7 +827,7 @@ def printProblems(completion, concordance, tped, snps, frequencies, prefix,
                 otherSnpFreq, otherMafAlleles = frequencies[otherSnpName]
 
                 # Checking the alleles
-                for genotype in npy.unique(tped[otherIndex, 4:]):
+                for genotype in np.unique(tped[otherIndex, 4:]):
                     otherAlleles |= set(genotype.split(" "))
                 if "0" in otherAlleles:
                     otherAlleles.remove("0")
@@ -884,11 +885,11 @@ def printProblems(completion, concordance, tped, snps, frequencies, prefix,
 
             # The concordance
             indexToKeep = list(set(range(len(indexes))) - set([i]))
-            currConcordance = npy.true_divide(
+            currConcordance = np.true_divide(
                 concordance[snpID][0][i, indexToKeep],
                 concordance[snpID][1][i, indexToKeep],
             )
-            currConcordance = npy.mean(currConcordance)
+            currConcordance = np.mean(currConcordance)
             toPrint.append("%.8f" % currConcordance)
             print >>outSummary, "\t".join(toPrint)
 
@@ -971,22 +972,22 @@ def computeStatistics(tped, tfam, snps):
 
     """
     # The completion data type
-    completion = npy.array([[0 for i in xrange(len(tped))],
-                            [0 for i in xrange(len(tped))]])
+    completion = np.array([[0 for i in xrange(len(tped))],
+                           [0 for i in xrange(len(tped))]])
 
     # The concordance data type
     concordance = {}
     for snpID in snps.keys():
         nbDup = len(snps[snpID])
         concordance[snpID] = [
-            npy.asmatrix(npy.zeros((nbDup, nbDup), dtype=int)),
-            npy.asmatrix(npy.zeros((nbDup, nbDup), dtype=int))
+            np.asmatrix(np.zeros((nbDup, nbDup), dtype=int)),
+            np.asmatrix(np.zeros((nbDup, nbDup), dtype=int))
         ]
 
     # The women and the no sex
-    menIndex = npy.where(tfam[:, 4] == "1")
-    womenIndex = npy.where(tfam[:, 4] == "2")
-    noSexIndex = npy.where(tfam[:, 4] == "0")
+    menIndex = np.where(tfam[:, 4] == "1")
+    womenIndex = np.where(tfam[:, 4] == "2")
+    noSexIndex = np.where(tfam[:, 4] == "0")
 
     for snpID, indexes in snps.iteritems():
         nbDup = len(indexes)
@@ -997,37 +998,37 @@ def computeStatistics(tped, tfam, snps):
 #             # Remove the heterozygous men
 #             menToRemove = getIndexOfHeteroMen(currGenotypes, menIndex)
 #             # Remove the women and the no sex
-#             currGenotypes = npy.delete(currGenotypes,
-#                                        npy.hstack((womenIndex, noSexIndex,
+#             currGenotypes = np.delete(currGenotypes,
+#                                        np.hstack((womenIndex, noSexIndex,
 #                                                    menToRemove)), 1)
 #         elif chromosome == "23":
 #             # Remove the heterozygous men
 #             menToRemove = getIndexOfHeteroMen(currGenotypes, menIndex)
 #             # Remove the no sex
-#             currGenotypes = npy.delete(currGenotypes,
-#                                        npy.hstack((noSexIndex, menToRemove)),
+#             currGenotypes = np.delete(currGenotypes,
+#                                        np.hstack((noSexIndex, menToRemove)),
 #                                        1)
 
         for i in xrange(nbDup):
             # Compute completion here
             completion[0][indexes[i]] = len(
-                npy.where(currGenotypes[i] != "0 0")[0]
+                np.where(currGenotypes[i] != "0 0")[0]
             )
             completion[1][indexes[i]] = len(currGenotypes[i])
             for j in xrange(i+1, nbDup):
                 # Compute concordance here
                 # Removing samples with at least one null genotype
-                nullGenotypeIndexes = npy.where(
-                    npy.any(currGenotypes[[i, j]] == "0 0", 0)
+                nullGenotypeIndexes = np.where(
+                    np.any(currGenotypes[[i, j]] == "0 0", 0)
                 )
-                subGenotypes = npy.delete(
+                subGenotypes = np.delete(
                     currGenotypes,
                     nullGenotypeIndexes,
                     1,
                 )
 
                 # Finding the errors in the subseted genotypes
-                errorIndexes = npy.where(subGenotypes[i] != subGenotypes[j])[0]
+                errorIndexes = np.where(subGenotypes[i] != subGenotypes[j])[0]
                 nbDiff = len(errorIndexes)
 
                 for k in errorIndexes:
@@ -1088,7 +1089,7 @@ def getIndexOfHeteroMen(genotypes, menIndex):
     toRemove = list(toRemove)
     toRemove.sort()
 
-    return (npy.array(toRemove, dtype=int),)
+    return (np.array(toRemove, dtype=int),)
 
 
 def flipGenotype(genotype):
@@ -1206,7 +1207,7 @@ def processTPED(uniqueSNPs, mapF, fileName, tfam, prefix):
               "file" % locals()
         raise ProgramError(msg)
 
-    tped = npy.array(tped)
+    tped = np.array(tped)
 
     return tped, updatedSNPs
 
@@ -1265,7 +1266,7 @@ def readTFAM(fileName):
             tuple(i.rstrip("\r\n").split("\t")) for i in inputFile.readlines()
         ]
 
-    tfam = npy.array(tfam)
+    tfam = np.array(tfam)
 
     return tfam
 
@@ -1292,18 +1293,18 @@ def readMAP(fileName, prefix):
         ]
 
     # Test for uniqueness of names
-    marker_names = npy.array([i[1] for i in mapF])
-    nb_with_same_name = len(marker_names) - len(npy.unique(marker_names))
+    marker_names = np.array([i[1] for i in mapF])
+    nb_with_same_name = len(marker_names) - len(np.unique(marker_names))
     if nb_with_same_name > 0:
         logger.info("  - {} markers with same name".format(nb_with_same_name))
-        u, indices = npy.unique(marker_names, return_index=True)
-        duplicated_indices = npy.setdiff1d(npy.arange(len(marker_names)),
-                                           indices)
-        duplicated_indices = npy.in1d(marker_names,
-                                      marker_names[duplicated_indices])
-        marker_chr_pos = npy.array([(i[0], i[3]) for i in mapF],
-                                   dtype=[("chr", int),
-                                          ("pos", int)])[duplicated_indices]
+        u, indices = np.unique(marker_names, return_index=True)
+        duplicated_indices = np.setdiff1d(np.arange(len(marker_names)),
+                                          indices)
+        duplicated_indices = np.in1d(marker_names,
+                                     marker_names[duplicated_indices])
+        marker_chr_pos = np.array([(i[0], i[3]) for i in mapF],
+                                  dtype=[("chr", int),
+                                         ("pos", int)])[duplicated_indices]
         marker_names = marker_names[duplicated_indices]
         try:
             duplicated_marker_names = open(prefix + ".duplicated_marker_names",
@@ -1428,8 +1429,16 @@ class ProgramError(Exception):
 
 # The parser object
 pretty_name = "Duplicated markers"
-desc = """Extract and work with duplicated markers."""
+desc = "Extracts and merges duplicated markers."
+long_desc = ("The script searches for duplicated markers according to "
+             "chromosomal location. It then evaluates concordance, completion "
+             "rate, allele calls and minor allele frequency (MAF). The script "
+             "keeps markers with different allele calls or with different "
+             "MAF. If thresholds are met, the script merges and completes the "
+             "genotypes.")
 parser = argparse.ArgumentParser(description=desc)
+parser.add_argument("-v", "--version", action="version",
+                    version="pyGenClean version {}".format(__version__))
 
 # The INPUT files
 group = parser.add_argument_group("Input File")

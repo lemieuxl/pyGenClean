@@ -1,3 +1,5 @@
+.. _dup_samples_label:
+
 Duplicated Samples Module
 =========================
 
@@ -6,15 +8,16 @@ The usage of the standalone module is shown below:
 .. code-block:: console
 
     $ pyGenClean_duplicated_samples --help
-    usage: pyGenClean_duplicated_samples [-h] --tfile FILE
+    usage: pyGenClean_duplicated_samples [-h] [-v] --tfile FILE
                                          [--sample-completion-threshold FLOAT]
                                          [--sample-concordance-threshold FLOAT]
                                          [--out FILE]
 
-    Extract and work with duplicated samples.
+    Extracts and merges duplicated samples.
 
     optional arguments:
       -h, --help            show this help message and exit
+      -v, --version         show program's version number and exit
 
     Input File:
       --tfile FILE          The input file prefix (will find the tped and tfam
@@ -35,6 +38,7 @@ The usage of the standalone module is shown below:
 
     Output File:
       --out FILE            The prefix of the output files. [default: dup_samples]
+
 
 Input Files
 -----------
@@ -149,12 +153,7 @@ the output prefix shown is the one by default [*i.e.* dup_samples]):
 The Algorithm
 -------------
 
-For more information about the actual algorithms and source codes (the
-:py:mod:`pyGenClean.DupSamples.duplicated_samples` module), refer to the
-following sections.
+For more information about the actual algorithms and source codes, refer to the
+following page.
 
-pyGenClean.DupSamples.duplicated_samples
-........................................
-
-.. automodule:: pyGenClean.DupSamples.duplicated_samples
-    :members:
+* :py:mod:`pyGenClean.DupSamples.duplicated_samples`

@@ -26,13 +26,13 @@ Preprocessing Steps
     each sample must be provided using the option ``--loop-assoc`` in the
     configuration file. The following columns are required (in order, without a
     header):
-    
+
         *   the family identification;
         *   the individual identification;
         *   and the plate identification.
-    
+
 *   Produce parameter files (see the :ref:`config_files` for details about
-    parameter file). 
+    parameter file).
 
 *   To launch the analysis consult the section :ref:`how_ro_run`.
 
@@ -43,7 +43,7 @@ Duplicated Samples Module
 =========================
 
 .. note::
-   
+
     **Input files:**
 
     *   PLINK transposed pedfiles from the :ref:`preprocessing_label`.
@@ -125,7 +125,7 @@ Duplicated Markers Module
     *   ``subset.bed``
     *   ``subset.bim``
     *   ``subset.fam``
-     
+
 1.  Examine the log to confirm options used and to detect any problems occurring
     while running the script
 
@@ -138,7 +138,7 @@ Duplicated Markers Module
     ``dup_snps.removed_duplicates``. Number of lines in this file corresponds to
     number of SNPs merged. SNPs not merged and reasons why (*e.g.*
     ``homo_hetero``, ``diff_frequency``, ``homo_flip``, etc.) are present in
-    file ``dup_snps.problems``. 
+    file ``dup_snps.problems``.
 
 4.  SNPs with concordance rate below the threshold are present in
     ``dup_snps.not_good_enough``. To have the list of those SNPs:
@@ -242,7 +242,7 @@ Marker Missingness Module
     *   ``clean_mind.bed``
     *   ``clean_mind.bim``
     *   ``clean_mind.fam``
-    
+
 1.  Examine the log to confirm options used and to detect any problems occurring
     while running the script.
 
@@ -297,7 +297,7 @@ Sex Check Module
 2.  Examine PLINK's log file to detect any problem at this step.
 
 3.  Examine ``sexcheck.list_problem_sex``, it contains all individuals
-    identified by PLINK as having gender problem. 
+    identified by PLINK as having gender problem.
 
 4.  Examine ``sexcheck.chr23_recodeA.raw.hetero`` to determine heterozygosity on
     the X chromosome of problematic samples. Consanguineous females may have low
@@ -409,7 +409,7 @@ Related Samples Module
     while running the script.
 
 2.  File ``ibs.pruning_0.1.prune.in`` contains the list of uncorrelated SNPs
-    used for the IBS analysis 
+    used for the IBS analysis
 
 3.  Examine ``ibs.related_individuals_z1.png`` and
     ``ibs.related_individuals_z2.png`` to detect if there are samples in the
@@ -489,9 +489,9 @@ Ethnicity Module
 
 2.  File ``ethnic.ibs.pruning_0.1.prune.in`` contains the list of uncorrelated
     SNPs used for the MDS analysis.
-    
+
 3.  File ``ethnic.mds.mds`` contains the list of principale components as
-    calculated by PLINK.             
+    calculated by PLINK.
 
 4.  Examine ``ethnicity.mds.png``, ``ethnicity.before.png``,
     ``ethnicity.after.png`` and ``ethnicity.outliers.png`` to detect samples
@@ -645,7 +645,7 @@ Hardy Weinberg Equilibrium Module
 
 3.  The files ``flag_hw.snp_flag_threshold_Bonferroni`` and
     ``flag_hw.snp_flag_threshold_1e-4`` contain  lists of SNPs with P value
-    below Bonferroni and below :math:`1 \times 10^{-4}` threshold, respectively. 
+    below Bonferroni and below :math:`1 \times 10^{-4}` threshold, respectively.
 
 The markers are only flagged using this module. If you want to remove those
 markers, have a look at the :ref:`fifth_subset_label`.

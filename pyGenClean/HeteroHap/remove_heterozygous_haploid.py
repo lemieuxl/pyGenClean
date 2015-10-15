@@ -21,6 +21,8 @@ import logging
 import argparse
 import subprocess
 
+from .. import __version__
+
 
 logger = logging.getLogger("remove_heterozygous_haploid")
 
@@ -146,8 +148,11 @@ class ProgramError(Exception):
 
 # The parser object
 pretty_name = "Heterozygous haploid"
-desc = """Removes heterozygous haploid genotypes."""
+desc = "Removes heterozygous haploid genotypes."
+long_desc = "The script sets heterozygous haploid genotypes to missing."
 parser = argparse.ArgumentParser(description=desc)
+parser.add_argument("-v", "--version", action="version",
+                    version="pyGenClean version {}".format(__version__))
 
 # The INPUT files
 group = parser.add_argument_group("Input File")

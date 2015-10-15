@@ -24,7 +24,9 @@ import argparse
 import StringIO
 from collections import defaultdict
 
-import numpy as npy
+import numpy as np
+
+from .. import __version__
 
 
 logger = logging.getLogger("duplicated_samples")
@@ -329,16 +331,16 @@ def createAndCleanTPED(tped, tfam, samples, oldSamples, chosenSamples,
     concordanceSampleID = {}
     for sampleID, indexes in samples.iteritems():
         # Checking the completion
-        completionToKeep = npy.where(completion[indexes] >= completionT)[0]
-        completionToRemove = npy.where(completion[indexes] < completionT)[0]
+        completionToKeep = np.where(completion[indexes] >= completionT)[0]
+        completionToRemove = np.where(completion[indexes] < completionT)[0]
         for k in completionToRemove:
             notGoodEnoughSamples[(str(oldSamples[sampleID][k]+1),
                                   str(indexes[k]+1), sampleID[0],
                                   sampleID[1])].add("completion")
 
         # Checking the concordance
-        concordanceToKeep = npy.where(concordance[sampleID] >= concordanceT)[0]
-        concordanceToRemove = npy.where(
+        concordanceToKeep = np.where(concordance[sampleID] >= concordanceT)[0]
+        concordanceToRemove = np.where(
             concordance[sampleID] < concordanceT
         )[0]
         for k in concordanceToRemove:
@@ -362,14 +364,14 @@ def createAndCleanTPED(tped, tfam, samples, oldSamples, chosenSamples,
             curGenotypes = curSNPgenotypes[indexes]
 
             # Subsetting for the good completion and concordance
-            curGenotypes = curGenotypes[npy.intersect1d(concordanceToKeep,
-                                                        completionToKeep)]
+            curGenotypes = curGenotypes[np.intersect1d(concordanceToKeep,
+                                                       completionToKeep)]
 
             # Removing the no call from the genotypes
-            cleanedCurGenotype = curGenotypes[npy.where(curGenotypes != "0 0")]
+            cleanedCurGenotype = curGenotypes[np.where(curGenotypes != "0 0")]
 
             # Checking the number of unique genotypes
-            uniqueGenotypes = npy.unique(cleanedCurGenotype)
+            uniqueGenotypes = np.unique(cleanedCurGenotype)
 
             # Checking the number of unique genotypes (except 0 0)
             if len(uniqueGenotypes) > 1:
@@ -408,9 +410,9 @@ def createAndCleanTPED(tped, tfam, samples, oldSamples, chosenSamples,
     notGoodEnoughFile.close()
 
     # Getting the indexes to keep
-    sampleToKeep = npy.array(chosenSamples.values()) + 4
+    sampleToKeep = np.array(chosenSamples.values()) + 4
     sampleToKeep.sort()
-    toKeep = npy.append(npy.array(range(4)), sampleToKeep)
+    toKeep = np.append(np.array(range(4)), sampleToKeep)
 
     # Subsetting the tped
     newTPED = tped[:, toKeep]
@@ -420,7 +422,7 @@ def createAndCleanTPED(tped, tfam, samples, oldSamples, chosenSamples,
     for sampleID, indexes in oldSamples.iteritems():
         i = samples[sampleID].index(chosenSamples[sampleID])
         toKeep.append(indexes[i])
-    toKeep = npy.array(toKeep)
+    toKeep = np.array(toKeep)
     toKeep.sort()
 
     # Subsetting the tfam
@@ -494,20 +496,20 @@ def chooseBestDuplicates(tped, samples, oldSamples, completion,
         currCompletion = completion[indexes]
 
         # Sorting those completion
-        sortedCompletionIndexes = npy.argsort(currCompletion)
+        sortedCompletionIndexes = np.argsort(currCompletion)
 
         # Getting the concordance
         concordance = concordance_all[sample]
         currConcordance = [[] for i in xrange(len(indexes))]
         for i in xrange(len(indexes)):
             indexToKeep = list(set(range(len(indexes))) - set([i]))
-            currConcordance[i] = npy.mean(concordance[i, indexToKeep])
-        currConcordance = npy.array(currConcordance)
+            currConcordance[i] = np.mean(concordance[i, indexToKeep])
+        currConcordance = np.array(currConcordance)
         if sample not in sampleConcordance:
             sampleConcordance[sample] = currConcordance
 
         # Sorting the concordance
-        sortedConcordanceIndexes = npy.argsort(currConcordance)
+        sortedConcordanceIndexes = np.argsort(currConcordance)
 
         # Trying to find the best duplicate to keep
         nbToCheck = 1
@@ -523,10 +525,10 @@ def chooseBestDuplicates(tped, samples, oldSamples, completion,
 
             # Getting the indexes to consider
             completionToConsider = set(
-                npy.where(currCompletion >= completionValue)[0]
+                np.where(currCompletion >= completionValue)[0]
             )
             concordanceToConsider = set(
-                npy.where(currConcordance >= concordanceValue)[0])
+                np.where(currConcordance >= concordanceValue)[0])
 
             # Getting the intersection of the indexes
             toConsider = concordanceToConsider & completionToConsider
@@ -646,17 +648,17 @@ def printConcordance(concordance, prefix):
 
         # Doing the division
         none_zero = concordance[key][1] != 0
-        true_concordance = npy.zeros(npy.multiply(*concordance[key][1].shape))
-        true_concordance[npy.ravel(none_zero)] = npy.true_divide(
+        true_concordance = np.zeros(np.multiply(*concordance[key][1].shape))
+        true_concordance[np.ravel(none_zero)] = np.true_divide(
             concordance[key][0][none_zero],
             concordance[key][1][none_zero],
         )
         true_concordance.shape = concordance[key][1].shape
-        true_concordance = npy.asmatrix(true_concordance)
+        true_concordance = np.asmatrix(true_concordance)
         concordance_percentage[key] = true_concordance
 
         output = StringIO.StringIO()
-        npy.savetxt(output, true_concordance, delimiter="\t", fmt="%.8f")
+        np.savetxt(output, true_concordance, delimiter="\t", fmt="%.8f")
         print >>outFile, output.getvalue().rstrip("\r\n")
 
     outFile.close()
@@ -689,9 +691,9 @@ def printStatistics(completion, concordance, tpedSamples, oldSamples, prefix):
     """
 
     # Compute the completion percentage on none zero values
-    none_zero_indexes = npy.where(completion[1] != 0)
-    completionPercentage = npy.zeros(len(completion[0]), dtype=float)
-    completionPercentage[none_zero_indexes] = npy.true_divide(
+    none_zero_indexes = np.where(completion[1] != 0)
+    completionPercentage = np.zeros(len(completion[0]), dtype=float)
+    completionPercentage[none_zero_indexes] = np.true_divide(
         completion[0, none_zero_indexes],
         completion[1, none_zero_indexes],
     )
@@ -722,19 +724,19 @@ def printStatistics(completion, concordance, tpedSamples, oldSamples, prefix):
 
             # The concordance (not on total values = 0)
             indexToKeep = list(set(range(len(indexes))) - set([i]))
-            values = npy.ravel(
-                npy.asarray(concordance[sampleID][0][i, indexToKeep])
+            values = np.ravel(
+                np.asarray(concordance[sampleID][0][i, indexToKeep])
             )
-            total_values = npy.ravel(
-                npy.asarray(concordance[sampleID][1][i, indexToKeep])
+            total_values = np.ravel(
+                np.asarray(concordance[sampleID][1][i, indexToKeep])
             )
-            currConcordance = npy.zeros(len(indexToKeep), dtype=float)
-            none_zero_indexes = npy.where(total_values != 0)
-            currConcordance[none_zero_indexes] = npy.true_divide(
+            currConcordance = np.zeros(len(indexToKeep), dtype=float)
+            none_zero_indexes = np.where(total_values != 0)
+            currConcordance[none_zero_indexes] = np.true_divide(
                 values[none_zero_indexes],
                 total_values[none_zero_indexes],
             )
-            currConcordance = npy.mean(currConcordance)
+            currConcordance = np.mean(currConcordance)
             toPrint.append("%.8f" % currConcordance)
             print >>outputFile, "\t".join(toPrint)
 
@@ -827,16 +829,16 @@ def computeStatistics(tped, tfam, samples, oldSamples, prefix):
                                    "dupIndex_2", "genotype_1", "genotype_2"])
 
     # The completion data type
-    completion = npy.array([[0 for i in xrange(len(tped[0][4:]))],
-                            [0 for i in xrange(len(tped[0][4:]))]])
+    completion = np.array([[0 for i in xrange(len(tped[0][4:]))],
+                           [0 for i in xrange(len(tped[0][4:]))]])
 
     # The concordance data type
     concordance = {}
     for sampleID in samples.keys():
         nbDup = len(samples[sampleID])
         concordance[sampleID] = [
-            npy.asmatrix(npy.zeros((nbDup, nbDup), dtype=int)),
-            npy.asmatrix(npy.zeros((nbDup, nbDup), dtype=int)),
+            np.asmatrix(np.zeros((nbDup, nbDup), dtype=int)),
+            np.asmatrix(np.zeros((nbDup, nbDup), dtype=int)),
         ]
 
     #####################################################################
@@ -978,7 +980,7 @@ def processTPED(uniqueSamples, duplicatedSamples, fileName, prefix):
             newPositions[i] = dI.index(pos)
         updatedSamples[sampleID] = newPositions
 
-    tped = npy.array(tped)
+    tped = np.array(tped)
 
     return tped, updatedSamples
 
@@ -1056,7 +1058,7 @@ def readTFAM(fileName):
             tuple(i.rstrip("\r\n").split("\t")) for i in inputFile.readlines()
         ]
 
-    tfam = npy.array(tfam)
+    tfam = np.array(tfam)
 
     return tfam
 
@@ -1158,8 +1160,13 @@ class ProgramError(Exception):
 
 # The parser object
 pretty_name = "Duplicated samples"
-desc = """Extract and work with duplicated samples."""
+desc = "Extracts and merges duplicated samples."
+long_desc = ("The script evaluates concordance and completion rate. If the "
+             "thresholds are met, the script merges and completes the "
+             "genotypes.")
 parser = argparse.ArgumentParser(description=desc)
+parser.add_argument("-v", "--version", action="version",
+                    version="pyGenClean version {}".format(__version__))
 
 # The INPUT files
 group = parser.add_argument_group("Input File")

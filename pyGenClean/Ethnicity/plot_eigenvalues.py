@@ -25,6 +25,8 @@ import numpy as np
 
 import matplotlib as mpl
 
+from .. import __version__
+
 
 logger = logging.getLogger("plot_eigenvalues")
 
@@ -180,13 +182,13 @@ def parse_args(argString=None):
               :py:mod:`argparse` module. It contains the values of the
               different options.
 
-    =========   ======  ================================
-     Options     Type             Description
-    =========   ======  ================================
-    `--evec`    string  The EVEC file from EIGENSOFT
-    `--title`   string  The main title of the scree plot
-    `--out`     string  The name of the output file
-    =========   ======  ================================
+    ====================== ====== ================================
+            Options         Type            Description
+    ====================== ====== ================================
+    ``--evec``             string The EVEC file from EIGENSOFT
+    ``--scree-plot-title`` string The main title of the scree plot
+    ``--out``              string The name of the output file
+    ====================== ====== ================================
 
     .. note::
         No option check is done here (except for the one automatically done by
@@ -239,8 +241,11 @@ class ProgramError(Exception):
 
 
 # The parser object
-desc = """Plots eigenvalues"""
+desc = "Plots eigenvalues"
+long_desc = None
 parser = argparse.ArgumentParser(description=desc)
+parser.add_argument("-v", "--version", action="version",
+                    version="pyGenClean version {}".format(__version__))
 
 # The input files
 group = parser.add_argument_group("Input File")

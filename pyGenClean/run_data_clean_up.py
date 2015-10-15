@@ -27,7 +27,7 @@ import itertools
 import subprocess
 import ConfigParser
 from glob import glob
-from collections import namedtuple, Counter
+from collections import namedtuple, Counter, defaultdict
 
 from . import __version__, add_file_handler_to_root
 
@@ -52,6 +52,7 @@ from .LaTeX import utils as latex_template
 from .LaTeX.merge_reports import add_custom_options as report_options
 
 from .PlinkUtils import subset_data
+from .PlinkUtils import get_plink_version
 from .PlinkUtils import createRowFromPlinkSpacedOutput
 
 
@@ -97,27 +98,29 @@ def main():
     # Configuring the root logger
     add_file_handler_to_root(os.path.join(dirname, "pyGenClean.log"))
 
-    logger.info("Data Clean Up version {}".format(__version__))
+    logger.info("pyGenClean version {}".format(__version__))
+    plink_version = get_plink_version()
+    logger.info("Using Plink version {}".format(plink_version))
 
     # Reading the configuration file
     logger.info("Reading configuration file [ {} ]".format(args.conf))
     order, conf = read_config_file(args.conf)
 
     # Executing the data clean up
-    current_input = None
-    current_input_type = None
+    current_in = None
+    current_in_type = None
     suffixes = None
     if args.tfile is not None:
-        current_input = args.tfile
-        current_input_type = "tfile"
+        current_in = args.tfile
+        current_in_type = "tfile"
         suffixes = (".tped", ".tfam")
     elif args.bfile is not None:
-        current_input = args.bfile
-        current_input_type = "bfile"
+        current_in = args.bfile
+        current_in_type = "bfile"
         suffixes = (".bed", ".bim", ".fam")
     else:
-        current_input = args.file
-        current_input_type = "file"
+        current_in = args.file
+        current_in_type = "file"
         suffixes = (".ped", ".map")
 
     # Creating the excluded files
@@ -128,7 +131,7 @@ def main():
             pass
         with open(os.path.join(dirname, "initial_files.txt"), "w") as o_file:
             for s in suffixes:
-                print >>o_file, current_input + s
+                print >>o_file, current_in + s
 
     except IOError:
         msg = "{}: cannot write summary".format(dirname)
@@ -136,8 +139,8 @@ def main():
 
     # Counting the number of markers and samples in the datafile
     logger.info("Counting initial number of samples and markers")
-    nb_markers, nb_samples = count_markers_samples(current_input,
-                                                   current_input_type)
+    nb_markers, nb_samples = count_markers_samples(current_in,
+                                                   current_in_type)
     logger.info("  - {:,d} samples".format(nb_samples))
     logger.info("  - {:,d} markers".format(nb_markers))
 
@@ -157,6 +160,8 @@ def main():
     latex_summaries = []
     steps = []
     descriptions = []
+    long_descriptions = []
+    graphic_paths = set()
     for number in order:
         # Getting the script name and its options
         script_name, options = conf[number]
@@ -171,33 +176,39 @@ def main():
         # Executing the function
         logger.info("Running {} {}".format(number, script_name))
         logger.info("  - Using {} as prefix for input "
-                    "files".format(current_input))
+                    "files".format(current_in))
         logger.info("  - Results will be in [ {} ]".format(output_prefix))
-        current_input, current_input_type, summary, desc = function_to_use(
-            current_input,
-            current_input_type,
-            output_prefix,
-            dirname,
-            options,
+
+        # Executing the function
+        r_values = function_to_use(
+            in_prefix=current_in,
+            in_type=current_in_type,
+            out_prefix=output_prefix,
+            base_dir=dirname,
+            options=options,
         )
+        current_in, current_in_type, summary, desc, l_desc, graphs = r_values
 
         # Saving what's necessary for the LaTeX report
         latex_summaries.append(summary)
         steps.append(script_name)
         descriptions.append(desc)
+        long_descriptions.append(l_desc)
+        if graphs is not None:
+            graphic_paths.update(graphs)
 
     # Counting the final number of samples and markers
     logger.info("Counting final number of samples and markers")
-    nb_markers, nb_samples = count_markers_samples(current_input,
-                                                   current_input_type)
+    nb_markers, nb_samples = count_markers_samples(current_in,
+                                                   current_in_type)
     logger.info("  - {:,d} samples".format(nb_samples))
     logger.info("  - {:,d} markers".format(nb_markers))
 
     # Getting the final suffixes
     suffixes = None
-    if current_input_type == "tfile":
+    if current_in_type == "tfile":
         suffixes = ((".tped", nb_markers), (".tfam", nb_samples))
-    elif current_input_type == "bfile":
+    elif current_in_type == "bfile":
         suffixes = ((".bed", None), (".bim", nb_markers), (".fam", nb_samples))
     else:
         suffixes = ((".ped", nb_samples), (".map", nb_markers))
@@ -205,9 +216,21 @@ def main():
     with open(os.path.join(dirname, "final_files.txt"), "w") as o_file:
         for s, nb in suffixes:
             if nb:
-                print >>o_file, current_input + s + "\t{:,d}".format(nb)
+                print >>o_file, current_in + s + "\t{:,d}".format(nb)
             else:
-                print >>o_file, current_input + s
+                print >>o_file, current_in + s
+
+    # Generating the graphics paths file
+    graphic_paths_fn = None
+    if len(graphic_paths) > 0:
+        try:
+            graphic_paths_fn = os.path.join(dirname, "graphic_paths.txt")
+            with open(graphic_paths_fn, "w") as o_file:
+                for path in sorted(graphic_paths):
+                    print >>o_file, path
+        except IOError:
+            msg = "{}: cannot write summary".format(dirname)
+            raise ProgramError(msg)
 
     # We create the automatic report
     logger.info("Generating automatic report")
@@ -218,14 +241,18 @@ def main():
         project_name=args.report_number,
         steps=steps,
         descriptions=descriptions,
+        graphic_paths_fn=graphic_paths_fn,
+        long_descriptions=long_descriptions,
         summaries=latex_summaries,
         background=args.report_background,
         summary_fn=os.path.join(dirname, "results_summary.txt"),
+        report_title=args.report_title,
         report_author=args.report_author,
         initial_files=os.path.join(dirname, "initial_files.txt"),
         final_files=os.path.join(dirname, "final_files.txt"),
         final_nb_markers="{:,d}".format(nb_markers),
         final_nb_samples="{:,d}".format(nb_samples),
+        plink_version=plink_version,
     )
 
 
@@ -275,36 +302,41 @@ def run_duplicated_samples(in_prefix, in_type, out_prefix, base_dir, options):
         raise ProgramError(msg)
 
     # Reading the number of duplicated samples
-    duplicated_count = None
-    with open(script_prefix + ".duplicated_samples.tfam", "r") as i_file:
-        duplicated_count = Counter([
-            tuple(createRowFromPlinkSpacedOutput(line)[:2]) for line in i_file
-        ])
+    duplicated_count = defaultdict(int)
+    if os.path.isfile(script_prefix + ".duplicated_samples.tfam"):
+        with open(script_prefix + ".duplicated_samples.tfam", "r") as i_file:
+            duplicated_count = Counter([
+                tuple(createRowFromPlinkSpacedOutput(line)[:2])
+                for line in i_file
+            ])
 
     # Counting the number of zeroed out genotypes per duplicated sample
-    zeroed_out = None
-    with open(script_prefix + ".zeroed_out", "r") as i_file:
-        zeroed_out = Counter([
-            tuple(line.rstrip("\r\n").split("\t")[:2])
-            for line in i_file.read().splitlines()[1:]
-        ])
+    zeroed_out = defaultdict(int)
+    if os.path.isfile(script_prefix + ".zeroed_out"):
+        with open(script_prefix + ".zeroed_out", "r") as i_file:
+            zeroed_out = Counter([
+                tuple(line.rstrip("\r\n").split("\t")[:2])
+                for line in i_file.read().splitlines()[1:]
+            ])
     nb_zeroed_out = sum(zeroed_out.values())
 
     # Checking the not good enough samples
-    not_good_enough = None
-    with open(script_prefix + ".not_good_enough", "r") as i_file:
-        not_good_enough = {
-            tuple(line.rstrip("\r\n").split("\t")[:4])
-            for line in i_file.read().splitlines()[1:]
-        }
+    not_good_enough = set()
+    if os.path.isfile(script_prefix + ".not_good_enough"):
+        with open(script_prefix + ".not_good_enough", "r") as i_file:
+            not_good_enough = {
+                tuple(line.rstrip("\r\n").split("\t")[:4])
+                for line in i_file.read().splitlines()[1:]
+            }
 
     # Checking which samples were chosen
-    chosen_sample = None
-    with open(script_prefix + ".chosen_samples.info", "r") as i_file:
-        chosen_sample = {
-            tuple(line.rstrip("\r\n").split("\t"))
-            for line in i_file.read().splitlines()[1:]
-        }
+    chosen_sample = set()
+    if os.path.isfile(script_prefix + ".chosen_samples.info"):
+        with open(script_prefix + ".chosen_samples.info", "r") as i_file:
+            chosen_sample = {
+                tuple(line.rstrip("\r\n").split("\t"))
+                for line in i_file.read().splitlines()[1:]
+            }
 
     # Finding if some 'not_good_enough' samples were chosen
     not_good_still = {s[2:] for s in chosen_sample & not_good_enough}
@@ -328,7 +360,7 @@ def run_duplicated_samples(in_prefix, in_type, out_prefix, base_dir, options):
             if len(duplicated_count) > 0:
                 text = (
                     "While merging duplicates, a total of {:,d} genotype{} {} "
-                    "zeroed out. A total of {:,d} sample{} {} found to not be "
+                    "zeroed out. A total of {:,d} sample{} {} found to be not "
                     "good enough for duplicate completion.".format(
                         nb_zeroed_out,
                         "s" if nb_zeroed_out > 1 else "",
@@ -340,7 +372,11 @@ def run_duplicated_samples(in_prefix, in_type, out_prefix, base_dir, options):
                 )
                 print >>o_file, latex_template.wrap_lines(text)
 
-                table_label = script_prefix.replace("/", "_") + "_dup_samples"
+                table_label = re.sub(
+                    r"[/\\]",
+                    "_",
+                    script_prefix,
+                ) + "_dup_samples"
                 text = (
                     r"Table~\ref{" + table_label + "} summarizes the number "
                     "of each duplicated sample with some characteristics."
@@ -357,7 +393,7 @@ def run_duplicated_samples(in_prefix, in_type, out_prefix, base_dir, options):
                             "s" if len(not_good_still) > 1 else "",
                             "were" if len(not_good_still) > 1 else "was",
                             "were" if len(not_good_still) > 1 else "was",
-                            r"~\ref{" + table_label + "}"
+                            r"~\ref{" + table_label + "}",
                         )
                     )
                     print >>o_file, latex_template.wrap_lines(text)
@@ -371,7 +407,7 @@ def run_duplicated_samples(in_prefix, in_type, out_prefix, base_dir, options):
                 table_caption = (
                     "Summary of the {:,d} duplicated sample{}. The number of "
                     "duplicates and the total number of zeroed out genotypes "
-                    "are show.".format(
+                    "are shown.".format(
                         len(duplicated_count),
                         "s" if len(duplicated_count) > 1 else "",
                     )
@@ -421,7 +457,10 @@ def run_duplicated_samples(in_prefix, in_type, out_prefix, base_dir, options):
     with open(os.path.join(base_dir, "results_summary.txt"), "a") as o_file:
         print >>o_file, "# {}".format(script_prefix)
         counter = Counter(duplicated_count.values()).most_common()
-        print >>o_file, "Number of replicated samples"
+        if counter:
+            print >>o_file, "Number of replicated samples"
+        else:
+            print >>o_file, "Number of replicated samples\t0"
         for rep_type, rep_count in counter:
             print >>o_file, "  - x{}\t{:,d}\t\t-{:,d}".format(
                 rep_type,
@@ -434,7 +473,7 @@ def run_duplicated_samples(in_prefix, in_type, out_prefix, base_dir, options):
 
     # We know this step does produce a new data set (tfile), so we return it
     return (os.path.join(out_prefix, "dup_samples.final"), "tfile", latex_file,
-            duplicated_samples.desc)
+            duplicated_samples.desc, duplicated_samples.long_desc, None)
 
 
 def run_duplicated_snps(in_prefix, in_type, out_prefix, base_dir, options):
@@ -505,54 +544,60 @@ def run_duplicated_snps(in_prefix, in_type, out_prefix, base_dir, options):
         raise ProgramError(msg)
 
     # Reading the number of duplicated markers
-    duplicated_count = None
-    with open(script_prefix + ".duplicated_snps.tped", "r") as i_file:
-        duplicated_count = Counter(
-            (i[0], i[3]) for i in [
-                tuple(createRowFromPlinkSpacedOutput(line)[:4])
-                for line in i_file
-            ]
-        )
+    duplicated_count = defaultdict(int)
+    if os.path.isfile(script_prefix + ".duplicated_snps.tped"):
+        with open(script_prefix + ".duplicated_snps.tped", "r") as i_file:
+            duplicated_count = Counter(
+                (i[0], i[3]) for i in [
+                    tuple(createRowFromPlinkSpacedOutput(line)[:4])
+                    for line in i_file
+                ]
+            )
 
     # Counting the number of zeroed out genotypes per duplicated markers
-    zeroed_out = None
-    with open(script_prefix + ".zeroed_out", "r") as i_file:
-        zeroed_out = Counter([
-            tuple(line.rstrip("\r\n").split("\t")[:2])
-            for line in i_file.read().splitlines()[1:]
-        ])
+    zeroed_out = defaultdict(int)
+    if os.path.isfile(script_prefix + ".zeroed_out"):
+        with open(script_prefix + ".zeroed_out", "r") as i_file:
+            zeroed_out = Counter([
+                tuple(line.rstrip("\r\n").split("\t")[:2])
+                for line in i_file.read().splitlines()[1:]
+            ])
     nb_zeroed_out = sum(zeroed_out.values())
 
     # Checking the not good enough markers
-    not_good_enough = None
-    with open(script_prefix + ".not_good_enough", "r") as i_file:
-        not_good_enough = {
-            line.rstrip("\r\n").split("\t")[0]
-            for line in i_file.read().splitlines()[1:]
-        }
+    not_good_enough = set()
+    if os.path.isfile(script_prefix + ".not_good_enough"):
+        with open(script_prefix + ".not_good_enough", "r") as i_file:
+            not_good_enough = {
+                line.rstrip("\r\n").split("\t")[0]
+                for line in i_file.read().splitlines()[1:]
+            }
 
     # Checking which markers were chosen
-    chosen_markers = None
-    with open(script_prefix + ".chosen_snps.info", "r") as i_file:
-        chosen_markers = set(i_file.read().splitlines())
+    chosen_markers = set()
+    if os.path.isfile(script_prefix + ".chosen_snps.info"):
+        with open(script_prefix + ".chosen_snps.info", "r") as i_file:
+            chosen_markers = set(i_file.read().splitlines())
 
     # Finding if some 'not_good_enough' samples were chosen
     not_good_still = chosen_markers & not_good_enough
 
     # Adding the 'not chosen markers' to the list of excluded markers
-    removed_markers = None
+    removed_markers = set()
     o_filename = os.path.join(base_dir, "excluded_markers.txt")
-    with open(script_prefix + ".removed_duplicates", "r") as i_file:
-        removed_markers = set(i_file.read().splitlines())
-        with open(o_filename, "a") as o_file:
-            for marker_id in removed_markers:
-                print >>o_file, marker_id + "\t" + "removed duplicate"
+    if os.path.isfile(script_prefix + ".removed_duplicates"):
+        with open(script_prefix + ".removed_duplicates", "r") as i_file:
+            removed_markers = set(i_file.read().splitlines())
+            with open(o_filename, "a") as o_file:
+                for marker_id in removed_markers:
+                    print >>o_file, marker_id + "\t" + "removed duplicate"
 
     # Reading the markers with problem
     problematic_markers = set()
-    with open(script_prefix + ".problems", "r") as i_file:
-        for markers in i_file.read().splitlines()[1:]:
-            problematic_markers |= set(markers.split("\t")[2].split(";"))
+    if os.path.isfile(script_prefix + ".problems"):
+        with open(script_prefix + ".problems", "r") as i_file:
+            for markers in i_file.read().splitlines()[1:]:
+                problematic_markers |= set(markers.split("\t")[2].split(";"))
 
     # We create a LaTeX summary
     latex_file = os.path.join(script_prefix + ".summary.tex")
@@ -574,7 +619,7 @@ def run_duplicated_snps(in_prefix, in_type, out_prefix, base_dir, options):
             if len(duplicated_count) > 0:
                 text = (
                     "While merging duplicates, a total of {:,d} genotype{} {} "
-                    "zeroed out. A total of {:,d} marker{} {} found to not be "
+                    "zeroed out. A total of {:,d} marker{} {} found to be not "
                     "good enough for duplicate completion.".format(
                         nb_zeroed_out,
                         "s" if nb_zeroed_out > 1 else "",
@@ -620,7 +665,10 @@ def run_duplicated_snps(in_prefix, in_type, out_prefix, base_dir, options):
     with open(os.path.join(base_dir, "results_summary.txt"), "a") as o_file:
         print >>o_file, "# {}".format(script_prefix)
         counter = Counter(duplicated_count.values()).most_common()
-        print >>o_file, "Number of replicated markers"
+        if counter:
+            print >>o_file, "Number of replicated markers"
+        else:
+            print >>o_file, "Number of replicated markers\t0"
         for rep_type, rep_count in counter:
             print >>o_file, "  - x{}\t{:,d}\t-{:,d}".format(
                 rep_type,
@@ -631,7 +679,7 @@ def run_duplicated_snps(in_prefix, in_type, out_prefix, base_dir, options):
                          "{nb:,d}\t+{nb:,d}".format(nb=len(not_good_still)))
         print >>o_file, ("Problematic markers not chosen\t"
                          "{nb:,d}\t+{nb:,d}".format(
-                            nb=len(problematic_markers - chosen_markers)
+                            nb=len(problematic_markers - chosen_markers),
                          ))
         print >>o_file, ("Final number of excluded markers\t"
                          "{nb:,d}".format(nb=len(removed_markers)))
@@ -639,7 +687,7 @@ def run_duplicated_snps(in_prefix, in_type, out_prefix, base_dir, options):
 
     # We know this step does produce a new data set (tfile), so we return it
     return (os.path.join(out_prefix, "dup_snps.final"), "tfile", latex_file,
-            duplicated_snps.desc)
+            duplicated_snps.desc, duplicated_snps.long_desc, None)
 
 
 def run_noCall_hetero_snps(in_prefix, in_type, out_prefix, base_dir, options):
@@ -721,14 +769,16 @@ def run_noCall_hetero_snps(in_prefix, in_type, out_prefix, base_dir, options):
                 noCall_hetero_snps.pretty_name,
             )
             text = (
-                "After scrutiny, {:,d} marker{} were excluded from the "
+                "After scrutiny, {:,d} marker{} {} excluded from the "
                 "dataset because of a call rate of 0. Also, {:,d} marker{} "
-                "were excluded from the dataset because all samples were "
+                "{} excluded from the dataset because all samples were "
                 "heterozygous (excluding the mitochondrial "
                 "chromosome)".format(nb_all_failed,
-                                     "s" if nb_all_failed > 0 else "",
+                                     "s" if nb_all_failed > 1 else "",
+                                     "were" if nb_all_failed > 1 else "was",
                                      nb_all_hetero,
-                                     "s" if nb_all_hetero > 0 else "")
+                                     "s" if nb_all_hetero > 1 else "",
+                                     "were" if nb_all_hetero > 1 else "was")
             )
             print >>o_file, latex_template.wrap_lines(text, 80)
 
@@ -749,7 +799,8 @@ def run_noCall_hetero_snps(in_prefix, in_type, out_prefix, base_dir, options):
     # We know this step does produce a new data set (tfile), so we return it
     # along with the report name
     return (os.path.join(out_prefix, "clean_noCall_hetero"), "tfile",
-            latex_file, noCall_hetero_snps.desc)
+            latex_file, noCall_hetero_snps.desc, noCall_hetero_snps.long_desc,
+            None)
 
 
 def run_sample_missingness(in_prefix, in_type, out_prefix, base_dir, options):
@@ -809,9 +860,12 @@ def run_sample_missingness(in_prefix, in_type, out_prefix, base_dir, options):
         # Since we already run the script, we know that the mind option is a
         # valid float
         mind_value = options[options.index("--mind") + 1]
-    if desc[-1] == ".":
+    if desc.endswith("."):
         desc = desc[:-1] + r" (${}={}$).".format(latex_template.texttt("mind"),
                                                  mind_value)
+    long_description = sample_missingness.long_desc.format(
+        success_rate="{:.1f}".format((1-float(mind_value)) * 100),
+    )
 
     # We want to save in a file the samples that were removed
     # There is one file to look at, which contains only one row, the name of
@@ -837,12 +891,16 @@ def run_sample_missingness(in_prefix, in_type, out_prefix, base_dir, options):
                 sample_missingness.pretty_name,
             )
             text = ("Using a {} threshold of {} ({} keeping only samples with "
-                    r"a missing rate $\leq {}$), {:,d} sample{} were excluded "
-                    "from the dataset.".format(latex_template.texttt("mind"),
-                                               mind_value,
-                                               latex_template.textit("i.e."),
-                                               mind_value, nb_samples,
-                                               "s" if nb_samples > 0 else ""))
+                    r"a missing rate $\leq {}$), {:,d} sample{} {} excluded "
+                    "from the dataset.".format(
+                        latex_template.texttt("mind"),
+                        mind_value,
+                        latex_template.textit("i.e."),
+                        mind_value,
+                        nb_samples,
+                        "s" if nb_samples > 1 else "",
+                        "were" if nb_samples > 1 else "was",
+                    ))
             print >>o_file, latex_template.wrap_lines(text)
 
     except IOError:
@@ -852,15 +910,16 @@ def run_sample_missingness(in_prefix, in_type, out_prefix, base_dir, options):
     # Writing the summary results
     with open(os.path.join(base_dir, "results_summary.txt"), "a") as o_file:
         print >>o_file, "# {}".format(script_prefix)
-        print >>o_file, ("Number of samples with call rate less or equal to "
-                         "{t}\t{nb:,d}\t\t-{nb:,d}".format(
+        print >>o_file, ("Number of samples with missing rate less or equal "
+                         "to {t}\t{nb:,d}\t\t-{nb:,d}".format(
                             t=mind_value,
                             nb=nb_samples,
                          ))
         print >>o_file, "---"
 
     # We know this step does produce a new data set (bfile), so we return it
-    return os.path.join(out_prefix, "clean_mind"), "bfile", latex_file, desc
+    return (os.path.join(out_prefix, "clean_mind"), "bfile", latex_file, desc,
+            long_description, None)
 
 
 def run_snp_missingness(in_prefix, in_type, out_prefix, base_dir, options):
@@ -916,9 +975,12 @@ def run_snp_missingness(in_prefix, in_type, out_prefix, base_dir, options):
         # Since we already run the script, we know that the mind option is a
         # valid float
         geno_value = options[options.index("--geno") + 1]
-    if desc[-1] == ".":
-        desc = desc[:-1] + r" (${}={}$).".format(latex_template.texttt("mind"),
+    if desc.endswith("."):
+        desc = desc[:-1] + r" (${}={}$).".format(latex_template.texttt("geno"),
                                                  geno_value)
+    long_description = sample_missingness.long_desc.format(
+        success_rate="{:.1f}".format((1-float(geno_value)) * 100),
+    )
 
     # We want to save in a file the samples that were removed
     # There is one file to look at, which contains only one row, the name of
@@ -946,12 +1008,15 @@ def run_snp_missingness(in_prefix, in_type, out_prefix, base_dir, options):
                 snp_missingness.pretty_name,
             )
             text = ("Using a {} threshold of {} ({} keeping only markers with "
-                    r"a missing rate $\leq {}$), {:,d} marker{} were excluded "
-                    "from the dataset.".format(latex_template.texttt("geno"),
-                                               geno_value,
-                                               latex_template.textit("i.e."),
-                                               geno_value, nb_markers,
-                                               "s" if nb_markers > 0 else ""))
+                    r"a missing rate $\leq {}$), {:,d} marker{} {} excluded "
+                    "from the dataset.".format(
+                        latex_template.texttt("geno"),
+                        geno_value,
+                        latex_template.textit("i.e."),
+                        geno_value, nb_markers,
+                        "s" if nb_markers > 1 else "",
+                        "were" if nb_markers > 1 else "was",
+                    ))
             print >>o_file, latex_template.wrap_lines(text)
 
     except IOError:
@@ -961,15 +1026,16 @@ def run_snp_missingness(in_prefix, in_type, out_prefix, base_dir, options):
     # Writing the summary results
     with open(os.path.join(base_dir, "results_summary.txt"), "a") as o_file:
         print >>o_file, "# {}".format(script_prefix)
-        print >>o_file, ("Number of markers with call rate less or equal to "
-                         "{t}\t{nb:,d}\t-{nb:,d}".format(
+        print >>o_file, ("Number of markers with missing rate less or equal "
+                         "to {t}\t{nb:,d}\t-{nb:,d}".format(
                             t=geno_value,
                             nb=nb_markers,
                          ))
         print >>o_file, "---"
 
     # We know this step does produce a new data set (bfile), so we return it
-    return os.path.join(out_prefix, "clean_geno"), "bfile", latex_file, desc
+    return (os.path.join(out_prefix, "clean_geno"), "bfile", latex_file, desc,
+            long_description, None)
 
 
 def run_sex_check(in_prefix, in_type, out_prefix, base_dir, options):
@@ -1115,12 +1181,8 @@ def run_sex_check(in_prefix, in_type, out_prefix, base_dir, options):
         for line in i_file:
             nb_problems += 1
 
-            # Sanitizing
+            # Creating the row
             row = line.rstrip("\r\n").split("\t")
-            for col in ("FID", "IID"):
-                row[header[col]] = latex_template.sanitize_tex(
-                    row[header[col]]
-                )
 
             # Counting
             if row[header["SNPSEX"]] == "0":
@@ -1128,7 +1190,10 @@ def run_sex_check(in_prefix, in_type, out_prefix, base_dir, options):
             else:
                 nb_discordant += 1
 
-            table.append(row)
+            table.append([
+                latex_template.sanitize_tex(row[header[name]])
+                for name in ("FID", "IID", "PEDSEX", "SNPSEX", "STATUS", "F")
+            ])
             table[-1].append(
                 hetero.get((row[header["FID"]], row[header["IID"]]), "N/A"),
             )
@@ -1148,6 +1213,7 @@ def run_sex_check(in_prefix, in_type, out_prefix, base_dir, options):
 
     # We write a LaTeX summary
     latex_file = os.path.join(script_prefix + ".summary.tex")
+    graphics_paths = set()
     try:
         with open(latex_file, "w") as o_file:
             print >>o_file, latex_template.subsection(sex_check.pretty_name)
@@ -1170,7 +1236,11 @@ def run_sex_check(in_prefix, in_type, out_prefix, base_dir, options):
 
             if nb_problems > 0:
                 # The label and text for the table
-                table_label = (script_prefix + "_problems").replace("/", "_")
+                table_label = re.sub(
+                    r"[/\\]",
+                    "_",
+                    script_prefix,
+                ) + "_problems"
                 text = (
                     r"Table~\ref{" + table_label + "} summarizes the gender "
                     "problems encountered during the analysis."
@@ -1195,7 +1265,7 @@ def run_sex_check(in_prefix, in_type, out_prefix, base_dir, options):
                     text_size="scriptsize",
                     header_data=zip(table[0], [1 for i in table[0]]),
                     tabular_data=sorted(
-                        table[1:],
+                        sorted(table[1:], key=lambda item: item[1]),
                         key=lambda item: (item[0], item[1]),
                     ),
                 )
@@ -1208,17 +1278,17 @@ def run_sex_check(in_prefix, in_type, out_prefix, base_dir, options):
                 )
 
                 # Adding the figure
+                figure_label = re.sub(r"[/\\]", "_", script_prefix)
                 text = (
-                    r"Figure~\ref{" + script_prefix.replace("/", "_") + "} "
-                    r"shows the $\bar{y}$ intensities versus the $\bar{x}$ "
-                    "intensities for each samples. Problematic samples are "
-                    "shown using triangles."
+                    r"Figure~\ref{" + figure_label + r"} shows the $\bar{y}$ "
+                    r"intensities versus the $\bar{x}$ intensities for each "
+                    "samples. Problematic samples are shown using triangles."
                 )
                 print >>o_file, latex_template.wrap_lines(text)
 
                 # Getting the paths
                 graphics_path, path = os.path.split(script_prefix + ".png")
-                graphics_path = os.path.abspath(graphics_path)
+                graphics_path = os.path.relpath(graphics_path, base_dir)
 
                 print >>o_file, float_template.render(
                     float_type="figure",
@@ -1229,13 +1299,14 @@ def run_sex_check(in_prefix, in_type, out_prefix, base_dir, options):
                                   "red. Triangles show problematic samples "
                                   "(green for males, mauve for females). "
                                   "Unknown gender are shown in gray.",
-                    float_label=script_prefix.replace("/", "_"),
+                    float_label=figure_label,
                     float_content=graphic_template.render(
                         width=r"0.8\textwidth",
-                        graphics_path=graphics_path + "/",
                         path=latex_template.sanitize_fig_name(path),
                     ),
                 )
+                # Adding the path where the graphic is
+                graphics_paths.add(graphics_path)
 
             # If there is a 'sexcheck.LRR_BAF' directory, then there are LRR
             # and BAF plots.
@@ -1243,7 +1314,8 @@ def run_sex_check(in_prefix, in_type, out_prefix, base_dir, options):
                 figures = glob(
                     os.path.join(script_prefix + ".LRR_BAF", "*.png"),
                 )
-                if len(figures):
+
+                if len(figures) > 0:
                     # Getting the sample IDs
                     sample_ids = [
                         re.search(
@@ -1256,11 +1328,20 @@ def run_sex_check(in_prefix, in_type, out_prefix, base_dir, options):
                         for sample in sample_ids
                     ]
 
+                    # Sorting according to sample IDs
+                    sorted_indexes = sorted(range(len(figures)),
+                                            key=figures.__getitem__)
+                    figures = [figures[i] for i in sorted_indexes]
+                    sample_ids = [sample_ids[i] for i in sorted_indexes]
+
                     # Getting the labels
                     labels = [
-                        (script_prefix + "_baf_lrr_" +
-                         os.path.splitext(sample)[0]).replace("/", "_")
-                        for sample in sample_ids
+                        re.sub(
+                            r"[/\\]",
+                            "_",
+                            script_prefix + "_baf_lrr_" +
+                            os.path.splitext(sample)[0],
+                        ) for sample in sample_ids
                     ]
 
                     fig_1 = labels[0]
@@ -1284,7 +1365,8 @@ def run_sex_check(in_prefix, in_type, out_prefix, base_dir, options):
 
                         # Getting the paths
                         graphics_path, path = os.path.split(figure)
-                        graphics_path = os.path.abspath(graphics_path)
+                        graphics_path = os.path.relpath(graphics_path,
+                                                        base_dir)
 
                         caption = (
                             "Plots showing the log R ratio and the B allele "
@@ -1299,10 +1381,11 @@ def run_sex_check(in_prefix, in_type, out_prefix, base_dir, options):
                             float_label=label,
                             float_content=graphic_template.render(
                                 width=r"\textwidth",
-                                graphics_path=graphics_path + "/",
                                 path=latex_template.sanitize_fig_name(path),
                             ),
                         )
+                # Adding the path where the graphic is
+                graphics_paths.add(graphics_path)
 
     except IOError:
         msg = "{}: cannot write LaTeX summary".format(latex_file)
@@ -1318,7 +1401,8 @@ def run_sex_check(in_prefix, in_type, out_prefix, base_dir, options):
 
     # We know this step does not produce a new data set, so we return the
     # original one
-    return in_prefix, required_type, latex_file, sex_check.desc
+    return (in_prefix, required_type, latex_file, sex_check.desc,
+            sex_check.long_desc, graphics_paths)
 
 
 def run_plate_bias(in_prefix, in_type, out_prefix, base_dir, options):
@@ -1371,62 +1455,40 @@ def run_plate_bias(in_prefix, in_type, out_prefix, base_dir, options):
         msg = "plate_bias: {}".format(e)
         raise ProgramError(msg)
 
-    # Reading the MAF before hand
-    maf = {}
-    with open(script_prefix + ".significant_SNPs.frq", "r") as i_file:
+    # The name of the summary file
+    filename = script_prefix + ".significant_SNPs.summary"
+    if not os.path.isfile(filename):
+        raise ProgramError("{}: no such file".format(filename))
+
+    # Getting the number of each plate
+    plate_counter = None
+    with open(filename, "r") as i_file:
         header = {
             name: i for i, name in
-            enumerate(createRowFromPlinkSpacedOutput(i_file.readline()))
+            enumerate(i_file.readline().rstrip("\r\n").split("\t"))
         }
-        for required_col in ("CHR", "SNP", "MAF"):
-            if required_col not in header:
-                msg = "{}: missing column {}".format(
-                    script_prefix + ".significant_SNPs.frq",
-                    required_col,
-                )
-                raise ProgramError(msg)
+        if "plate" not in header:
+            msg = "{}: missing column plate".format(filename)
+            raise ProgramError(msg)
 
-        for line in i_file:
-            row = createRowFromPlinkSpacedOutput(line)
-            marker_id = row[header["SNP"]]
-            maf[(row[header["CHR"]], row[header["SNP"]])] = row[header["MAF"]]
-
-    # Reading the p values
-    table = [["chrom", "pos", "name", "maf", "p", "odds", "plate"]]
-    for filename in glob(script_prefix + "*.fisher"):
-        plate_name = re.search(
-            r"/plate_bias\.(\S+)\.assoc\.fisher$",
-            filename,
+        # Counting the number of markers for each plate
+        plate_counter = Counter(
+            line.rstrip("\r\n").split("\t")[header["plate"]] for line in i_file
         )
-        if plate_name:
-            plate_name = latex_template.sanitize_tex(plate_name.group(1))
-        else:
-            plate_name = "unknown"
 
-        with open(filename, "r") as i_file:
-            header = {
-                name: i for i, name in
-                enumerate(createRowFromPlinkSpacedOutput(i_file.readline()))
-            }
-            for required_col in ["CHR", "SNP", "BP", "P", "OR"]:
-                if required_col not in header:
-                    msg = "{}: missing column {}".format(filename,
-                                                         required_col)
-                    raise ProgramError(msg)
+    # Creating the table
+    table = [["plate name", "number of markers"]]
+    for plate_name, number in plate_counter.most_common():
+        table.append([
+            latex_template.sanitize_tex(plate_name),
+            "{:,d}".format(number),
+        ])
 
-            for line in i_file:
-                row = createRowFromPlinkSpacedOutput(line)
-
-                table.append([
-                    row[header["CHR"]],
-                    row[header["BP"]],
-                    latex_template.sanitize_tex(row[header["SNP"]]),
-                    maf.get((row[header["CHR"]], row[header["SNP"]]), "N/A"),
-                    latex_template.format_numbers(row[header["P"]]),
-                    row[header["OR"]],
-                    plate_name,
-                ])
-    nb_markers = len(table) - 1
+    # The number of unique markers
+    filename = script_prefix + ".significant_SNPs.txt"
+    nb_markers = None
+    with open(filename, "r") as i_file:
+        nb_markers = len({line.rstrip("\r\n") for line in i_file})
 
     # Getting the p value threshold
     p_threshold = str(plate_bias.parser.get_default("pfilter"))
@@ -1440,8 +1502,8 @@ def run_plate_bias(in_prefix, in_type, out_prefix, base_dir, options):
             print >>o_file, latex_template.subsection(plate_bias.pretty_name)
             text = (
                 "After performing the plate bias analysis using Plink, a "
-                "total of {:,d} marker{} had a significant result ({} a value "
-                "less than {}).".format(
+                "total of {:,d} unique marker{} had a significant result "
+                "({} a value less than {}).".format(
                     nb_markers,
                     "s" if nb_markers > 1 else "",
                     r"\textit{i.e.}",
@@ -1451,7 +1513,11 @@ def run_plate_bias(in_prefix, in_type, out_prefix, base_dir, options):
             print >>o_file, latex_template.wrap_lines(text)
 
             if nb_markers > 0:
-                table_label = script_prefix.replace("/", "_") + "_plate_bias"
+                table_label = re.sub(
+                    r"[/\\]",
+                    "_",
+                    script_prefix,
+                ) + "_plate_bias"
                 text = (
                     r"Table~\ref{" + table_label + "} summarizes the plate "
                     "bias results."
@@ -1466,10 +1532,10 @@ def run_plate_bias(in_prefix, in_type, out_prefix, base_dir, options):
                 # The table caption
                 table_caption = (
                     "Summary of the plate bias analysis performed by Plink. "
-                    "Only significant marker{} {} shown (threshold of "
-                    "{}).".format(
+                    "For each plate, the number of significant marker{} is "
+                    "shown (threshold of {}). The plates are sorted according "
+                    "to the total number of significant results.".format(
                         "s" if nb_markers > 1 else "",
-                        "are" if nb_markers > 1 else "is",
                         latex_template.format_numbers(p_threshold),
                     )
                 )
@@ -1477,13 +1543,10 @@ def run_plate_bias(in_prefix, in_type, out_prefix, base_dir, options):
                     table_caption=table_caption,
                     table_label=table_label,
                     nb_col=len(table[1]),
-                    col_alignments="rrlrrrl",
-                    text_size="scriptsize",
+                    col_alignments="lr",
+                    text_size="normalsize",
                     header_data=zip(table[0], [1 for i in table[0]]),
-                    tabular_data=sorted(
-                        table[1:],
-                        key=lambda item: (int(item[0]), int(item[1])),
-                    ),
+                    tabular_data=table[1:],
                 )
 
     except IOError:
@@ -1499,7 +1562,8 @@ def run_plate_bias(in_prefix, in_type, out_prefix, base_dir, options):
 
     # We know this step doesn't produce an new data set, so we return the old
     # prefix and the old in_type
-    return in_prefix, required_type, latex_file, plate_bias.desc
+    return (in_prefix, required_type, latex_file, plate_bias.desc,
+            plate_bias.long_desc, None)
 
 
 def run_remove_heterozygous_haploid(in_prefix, in_type, out_prefix, base_dir,
@@ -1588,7 +1652,8 @@ def run_remove_heterozygous_haploid(in_prefix, in_type, out_prefix, base_dir,
 
     # We know this step produces an new data set (bfile), so we return it
     return (os.path.join(out_prefix, "without_hh_genotypes"), "bfile",
-            latex_file, remove_heterozygous_haploid.desc)
+            latex_file, remove_heterozygous_haploid.desc,
+            remove_heterozygous_haploid.long_desc, None)
 
 
 def run_find_related_samples(in_prefix, in_type, out_prefix, base_dir,
@@ -1636,6 +1701,16 @@ def run_find_related_samples(in_prefix, in_type, out_prefix, base_dir,
     options += ["--{}".format(required_type), in_prefix,
                 "--out", script_prefix]
 
+    # The IBS2 ratio
+    ibs2_ratio = find_related_samples._ibs2_ratio_default
+    if "--ibs2-ratio" in options:
+        ibs2_ratio = options[options.index("--ibs2-ratio") + 1]
+
+    # The indep pairwiase
+    r2_value = find_related_samples._indep_pairwise_r2_default
+    if "--indep-pairwise" in options:
+        r2_value = options[options.index("--indep-pairwise") + 3]
+
     # We run the script
     try:
         find_related_samples.main(options)
@@ -1679,8 +1754,18 @@ def run_find_related_samples(in_prefix, in_type, out_prefix, base_dir,
         for line in i_file:
             nb_markers_ibs += 1
 
+    # Reading the merged related individuals file
+    table = []
+    with open(script_prefix + ".merged_related_individuals", "r") as i_file:
+        for line in i_file:
+            table.append([
+                latex_template.sanitize_tex(item)
+                for item in line.rstrip("\r\n").split("\t")
+            ])
+
     # We write a LaTeX summary
     latex_file = os.path.join(script_prefix + ".summary.tex")
+    graphics_paths = set()
     try:
         with open(latex_file, "w") as o_file:
             print >>o_file, latex_template.subsection(
@@ -1705,7 +1790,7 @@ def run_find_related_samples(in_prefix, in_type, out_prefix, base_dir,
 
             # Adding the first figure (if present)
             fig_1 = script_prefix + ".related_individuals_z1.png"
-            fig_1_label = script_prefix.replace("/", "_") + "_z1"
+            fig_1_label = re.sub(r"[/\\]", "_", script_prefix) + "_z1"
             if os.path.isfile(fig_1):
                 text = (
                     r"Figure~\ref{" + fig_1_label + "} shows $Z_1$ versus "
@@ -1716,12 +1801,21 @@ def run_find_related_samples(in_prefix, in_type, out_prefix, base_dir,
 
             # Adding the second figure (if present)
             fig_2 = script_prefix + ".related_individuals_z2.png"
-            fig_2_label = script_prefix.replace("/", "_") + "_z2"
-            if os.path.isfile(fig_1):
+            fig_2_label = re.sub(r"[/\\]", "_", script_prefix) + "_z2"
+            if os.path.isfile(fig_2):
                 text = (
                     r"Figure~\ref{" + fig_2_label + "} shows $Z_2$ versus "
                     r"$IBS2_{ratio}^\ast$ for all related samples found by "
                     r"Plink."
+                )
+                print >>o_file, latex_template.wrap_lines(text)
+
+            if len(table) > 1:
+                # There is data, so we add
+                table_label = re.sub(r"[/\\]", "_", script_prefix) + "_related"
+                text = (
+                    r"Table~\ref{" + table_label + "} lists the related "
+                    "sample pairs with estimated relationship."
                 )
                 print >>o_file, latex_template.wrap_lines(text)
 
@@ -1740,7 +1834,7 @@ def run_find_related_samples(in_prefix, in_type, out_prefix, base_dir,
                 if os.path.isfile(fig):
                     # Getting the paths
                     graphics_path, path = os.path.split(fig)
-                    graphics_path = os.path.abspath(graphics_path)
+                    graphics_path = os.path.relpath(graphics_path, base_dir)
 
                     # Printing
                     caption = (
@@ -1754,10 +1848,34 @@ def run_find_related_samples(in_prefix, in_type, out_prefix, base_dir,
                         float_label=label,
                         float_content=graphic_template.render(
                             width=r"0.8\textwidth",
-                            graphics_path=graphics_path + "/",
                             path=latex_template.sanitize_fig_name(path),
                         ),
                     )
+                    # Adding the path where the graphic is
+                    graphics_paths.add(graphics_path)
+
+            # Adding the table
+            if len(table) > 1:
+                # Getting the template
+                longtable_template = latex_template.jinja2_env.get_template(
+                    "longtable_template.tex",
+                )
+
+                # The table caption
+                table_caption = (
+                    "List of all related samples with estimated relationship. "
+                    "Sample pairs are grouped according to their estimated "
+                    "family (the index column)."
+                )
+                print >>o_file, longtable_template.render(
+                    table_caption=table_caption,
+                    table_label=table_label,
+                    nb_col=len(table[1]),
+                    col_alignments="rlllll",
+                    text_size="scriptsize",
+                    header_data=zip(table[0], [1 for i in table[0]]),
+                    tabular_data=table[1:],
+                )
 
     except IOError:
         msg = "{}: cannot write LaTeX summary".format(latex_file)
@@ -1772,9 +1890,17 @@ def run_find_related_samples(in_prefix, in_type, out_prefix, base_dir,
                          "{:,d}".format(len(related_samples)))
         print >>o_file, "---"
 
+    # The long description
+    long_description = find_related_samples.long_desc.format(
+        ratio="{ratio}",
+        ratio_value=ibs2_ratio,
+        r_squared=r2_value,
+    )
+
     # We know this step doesn't produce an new data set, so we return the old
     # prefix and the old in_type
-    return in_prefix, required_type, latex_file, find_related_samples.desc
+    return (in_prefix, required_type, latex_file, find_related_samples.desc,
+            long_description, graphics_paths)
 
 
 def run_check_ethnicity(in_prefix, in_type, out_prefix, base_dir, options):
@@ -1837,10 +1963,16 @@ def run_check_ethnicity(in_prefix, in_type, out_prefix, base_dir, options):
     if "--outliers-of" in options:
         outliers_of = options[options.index("--outliers-of") + 1]
 
+    # Was the reference populations required?
+    skip_ref_pops = "--skip-ref-pops" in options
+
     # Computing the number of outliers
     outliers = None
-    with open(script_prefix + ".outliers", "r") as i_file:
-        outliers = {tuple(line.rstrip("\r\n").split("\t")) for line in i_file}
+    if not skip_ref_pops:
+        with open(filename, "r") as i_file:
+            outliers = {
+                tuple(line.rstrip("\r\n").split("\t")) for line in i_file
+            }
 
     # Computing the number of markers used
     nb_markers_mds = 0
@@ -1850,22 +1982,34 @@ def run_check_ethnicity(in_prefix, in_type, out_prefix, base_dir, options):
 
     # We write a LaTeX summary
     latex_file = os.path.join(script_prefix + ".summary.tex")
+    graphics_paths = set()
     try:
         with open(latex_file, "w") as o_file:
             print >>o_file, latex_template.subsection(
                 check_ethnicity.pretty_name,
             )
-            text = (
-                "Using {:,d} marker{} and a multiplier of {}, there was a "
-                "total of {:,d} outlier{} of the {} population.".format(
-                    nb_markers_mds,
-                    "s" if nb_markers_mds > 1 else "",
-                    multiplier,
-                    len(outliers),
-                    "s" if len(outliers) > 1 else "",
-                    outliers_of,
+            text = None
+            if skip_ref_pops:
+                text = (
+                    "Principal components analysis was performed using {:,d} "
+                    "marker{} on the study dataset only.".format(
+                        nb_markers_mds,
+                        "s" if nb_markers_mds > 1 else "",
+                    )
                 )
-            )
+
+            else:
+                text = (
+                    "Using {:,d} marker{} and a multiplier of {}, there was a "
+                    "total of {:,d} outlier{} of the {} population.".format(
+                        nb_markers_mds,
+                        "s" if nb_markers_mds > 1 else "",
+                        multiplier,
+                        len(outliers),
+                        "s" if len(outliers) > 1 else "",
+                        outliers_of,
+                    )
+                )
             print >>o_file, latex_template.wrap_lines(text)
 
             # Adding the figure if it exists
@@ -1873,7 +2017,7 @@ def run_check_ethnicity(in_prefix, in_type, out_prefix, base_dir, options):
             if os.path.isfile(fig):
                 # Getting the paths
                 graphics_path, path = os.path.split(fig)
-                graphics_path = os.path.abspath(graphics_path)
+                graphics_path = os.path.relpath(graphics_path, base_dir)
 
                 # Getting the required template
                 float_template = latex_template.jinja2_env.get_template(
@@ -1884,7 +2028,7 @@ def run_check_ethnicity(in_prefix, in_type, out_prefix, base_dir, options):
                 )
 
                 # The label
-                label = script_prefix.replace("/", "_") + "_outliers"
+                label = re.sub(r"[/\\]", "_", script_prefix) + "_outliers"
 
                 text = (
                     r"Figure~\ref{" + label + "} shows the first two "
@@ -1915,10 +2059,53 @@ def run_check_ethnicity(in_prefix, in_type, out_prefix, base_dir, options):
                     float_label=label,
                     float_content=graphic_template.render(
                         width=r"0.8\textwidth",
-                        graphics_path=graphics_path + "/",
                         path=latex_template.sanitize_fig_name(path),
                     ),
                 )
+                # Adding the path where the graphic is
+                graphics_paths.add(graphics_path)
+
+            # Adding the screeplot if it exists
+            fig = script_prefix + ".smartpca.scree_plot.png"
+            if os.path.isfile(fig):
+                # Getting the paths
+                graphics_path, path = os.path.split(fig)
+                graphics_path = os.path.relpath(graphics_path, base_dir)
+
+                # Getting the required template
+                float_template = latex_template.jinja2_env.get_template(
+                    "float_template.tex",
+                )
+                graphic_template = latex_template.jinja2_env.get_template(
+                    "graphics_template.tex",
+                )
+
+                # The label
+                label = re.sub(r"[/\\]", "_", script_prefix) + "_screeplot"
+
+                text = (
+                    r"Figure~\ref{" + label + "} shows the scree plot for the "
+                    "principal components of the MDS analysis."
+                )
+                print >>o_file, latex_template.wrap_lines(text)
+
+                # Printing
+                caption = (
+                    "Scree plot for the principal components of the MDS "
+                    "analysis."
+                )
+                print >>o_file, float_template.render(
+                    float_type="figure",
+                    float_placement="H",
+                    float_caption=caption,
+                    float_label=label,
+                    float_content=graphic_template.render(
+                        width=r"0.8\textwidth",
+                        path=latex_template.sanitize_fig_name(path),
+                    ),
+                )
+                # Adding the path where the graphic is
+                graphics_paths.add(graphics_path)
 
     except IOError:
         msg = "{}: cannot write LaTeX summary".format(latex_file)
@@ -1929,13 +2116,15 @@ def run_check_ethnicity(in_prefix, in_type, out_prefix, base_dir, options):
         print >>o_file, "# {}".format(script_prefix)
         print >>o_file, ("Number of markers used for MDS analysis\t"
                          "{:,d}".format(nb_markers_mds))
-        print >>o_file, ("Number of {} outliers\t"
-                         "{:,d}".format(outliers_of, len(outliers)))
+        if not skip_ref_pops:
+            print >>o_file, ("Number of {} outliers\t"
+                             "{:,d}".format(outliers_of, len(outliers)))
         print >>o_file, "---"
 
     # We know this step doesn't produce an new data set, so we return the old
     # prefix and the old in_type
-    return in_prefix, required_type, latex_file, check_ethnicity.desc
+    return (in_prefix, required_type, latex_file, check_ethnicity.desc,
+            check_ethnicity.long_desc, graphics_paths)
 
 
 def run_flag_maf_zero(in_prefix, in_type, out_prefix, base_dir, options):
@@ -2027,7 +2216,8 @@ def run_flag_maf_zero(in_prefix, in_type, out_prefix, base_dir, options):
 
     # We know this step doesn't produce an new data set, so we return the old
     # prefix and the old in_type
-    return in_prefix, required_type, latex_file, flag_maf_zero.desc
+    return (in_prefix, required_type, latex_file, flag_maf_zero.desc,
+            flag_maf_zero.long_desc, None)
 
 
 def run_flag_hw(in_prefix, in_type, out_prefix, base_dir, options):
@@ -2156,7 +2346,8 @@ def run_flag_hw(in_prefix, in_type, out_prefix, base_dir, options):
 
     # We know this step doesn't produce an new data set, so we return the old
     # prefix and the old in_type
-    return in_prefix, required_type, latex_file, flag_hw.desc
+    return (in_prefix, required_type, latex_file, flag_hw.desc,
+            flag_hw.long_desc, None)
 
 
 def run_compare_gold_standard(in_prefix, in_type, out_prefix, base_dir,
@@ -2224,7 +2415,8 @@ def run_compare_gold_standard(in_prefix, in_type, out_prefix, base_dir,
 
     # We know this step doesn't produce an new data set, so we return the old
     # prefix and the old in_type
-    return in_prefix, required_type, latex_file, compare_gold_standard.desc
+    return (in_prefix, required_type, latex_file, compare_gold_standard.desc,
+            compare_gold_standard.long_desc, None)
 
 
 def run_subset_data(in_prefix, in_type, out_prefix, base_dir, options):
@@ -2327,12 +2519,13 @@ def run_subset_data(in_prefix, in_type, out_prefix, base_dir, options):
     marker_subset_fn = None
 
     # The samples and markers that were removed
-    removed_samples = None
-    removed_markers = None
+    removed_samples = {}
+    removed_markers = {}
 
     # The set of samples and markers before subset
     samples_before = None
     markers_before = None
+
     # The set of remaining samples and markers after subset
     samples_after = None
     markers_after = None
@@ -2435,7 +2628,7 @@ def run_subset_data(in_prefix, in_type, out_prefix, base_dir, options):
         nb_marker_end = int(nb_marker_end.group(1))
 
     # Checking the number of samples
-    if nb_marker_end != len(markers_after):
+    if (markers_after is not None) and (nb_marker_end != len(markers_after)):
         raise ProgramError("Something went wrong with Plink's subset (numbers "
                            "are different from data and log file)")
     if nb_marker_start - nb_marker_end != len(removed_markers):
@@ -2460,7 +2653,7 @@ def run_subset_data(in_prefix, in_type, out_prefix, base_dir, options):
                         int(nb_sample_end.group(2))
 
     # Checking the number of samples
-    if nb_sample_end != len(samples_after):
+    if (samples_after is not None) and (nb_sample_end != len(samples_after)):
         raise ProgramError("Something went wrong with Plink's subset (numbers "
                            "are different from data and log file)")
     if nb_sample_start - nb_sample_end != len(removed_samples):
@@ -2563,7 +2756,7 @@ def run_subset_data(in_prefix, in_type, out_prefix, base_dir, options):
 
     # We know this step does produce a new data set (bfile), so we return it
     return (os.path.join(out_prefix, "subset"), required_type, latex_file,
-            subset_data.desc)
+            subset_data.desc, subset_data.long_desc, None)
 
 
 def run_command(command):
@@ -2978,10 +3171,10 @@ def parse_args():
 
 
 # The parser object
-desc = """Runs the data clean up (version {}).""".format(__version__)
+desc = "Runs the data clean up (pyGenClean version {}).".format(__version__)
 parser = argparse.ArgumentParser(description=desc)
 parser.add_argument("-v", "--version", action="version",
-                    version="%(prog)s {}".format(__version__))
+                    version="pyGenClean version {}".format(__version__))
 
 group = parser.add_argument_group("Input File")
 group.add_argument("--bfile", type=str, metavar="FILE",

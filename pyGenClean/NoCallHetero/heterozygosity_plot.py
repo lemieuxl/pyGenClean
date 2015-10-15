@@ -21,7 +21,9 @@ import gzip
 import logging
 import argparse
 
-import numpy as npy
+import numpy as np
+
+from .. import __version__
 
 
 logger = logging.getLogger("heterozygosity_plot")
@@ -142,7 +144,7 @@ def compute_heterozygosity(in_prefix, nb_samples):
     tfam_name = in_prefix + ".tfam"
 
     # The function we want to use
-    check_heterozygosity = npy.vectorize(is_heterozygous)
+    check_heterozygosity = np.vectorize(is_heterozygous)
 
     # The autosomes
     autosomes = {str(i) for i in xrange(1, 23)}
@@ -153,12 +155,12 @@ def compute_heterozygosity(in_prefix, nb_samples):
         samples = input_file.readlines()
         samples = [tuple(i.rstrip("\r\n").split("\t")[:2]) for i in samples]
 
-    heterozygosity = npy.zeros(nb_samples, dtype=int)
-    nb_markers = npy.zeros(nb_samples, dtype=int)
+    heterozygosity = np.zeros(nb_samples, dtype=int)
+    nb_markers = np.zeros(nb_samples, dtype=int)
     with open(tped_name, 'rb') as input_file:
         # There is no header
         for line in input_file:
-            row = npy.array(line.rstrip("\r\n").split("\t"))
+            row = np.array(line.rstrip("\r\n").split("\t"))
 
             chromosome = row[0]
             if chromosome not in autosomes:
@@ -174,7 +176,7 @@ def compute_heterozygosity(in_prefix, nb_samples):
             # Adding to number of markers for each samples (excluding no calls)
             nb_markers += genotypes != "0 0"
 
-    return npy.true_divide(heterozygosity, nb_markers), samples
+    return np.true_divide(heterozygosity, nb_markers), samples
 
 
 def plot_heterozygosity(heterozygosity, options):
@@ -236,13 +238,13 @@ def plot_heterozygosity(heterozygosity, options):
             bins=options.bins,
             color="#0099CC",
             histtype="stepfilled",
-            weights=npy.zeros_like(heterozygosity) + 1.0 / len(heterozygosity),
+            weights=np.zeros_like(heterozygosity) + 1.0 / len(heterozygosity),
         )
 
         # Plotting the mean, the median and the variance
-        the_mean = npy.mean(heterozygosity)
-        the_median = npy.median(heterozygosity)
-        the_variance = npy.power(npy.std(heterozygosity), 2)
+        the_mean = np.mean(heterozygosity)
+        the_median = np.median(heterozygosity)
+        the_variance = np.power(np.std(heterozygosity), 2)
         mean_line = ax.axvline(the_mean, color="#CC0000", ls="--", lw=2,
                                clip_on=False)
         median_line = ax.axvline(the_median, color="#FF8800", ls="--", lw=2,
@@ -373,9 +375,10 @@ class ProgramError(Exception):
 
 
 # The parser object
-desc = """Plot the distribution of the heterozygosity ratio."""
+desc = "Plots the distribution of the heterozygosity ratio."
 parser = argparse.ArgumentParser(description=desc)
-
+parser.add_argument("-v", "--version", action="version",
+                    version="pyGenClean version {}".format(__version__))
 
 # The INPUT files
 group = parser.add_argument_group("Input File")

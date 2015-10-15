@@ -21,7 +21,9 @@ import shutil
 import logging
 import argparse
 
-import numpy as npy
+import numpy as np
+
+from .. import __version__
 
 
 logger = logging.getLogger("noCall_hetero_snps")
@@ -100,10 +102,10 @@ def processTPEDandTFAM(tped, tfam, prefix):
             row = line.rstrip("\r\n").split("\t")
             snpInfo = row[:4]
             chromosome = snpInfo[0]
-            genotypes = npy.array([i.upper() for i in row[4:]])
+            genotypes = np.array([i.upper() for i in row[4:]])
 
             # Testing the genotypes
-            uniqueGenotypes = npy.unique(genotypes)
+            uniqueGenotypes = np.unique(genotypes)
             if len(uniqueGenotypes) == 1:
                 # We have only one kind of genotype, either all homo, all
                 # hetero or all no call
@@ -226,8 +228,12 @@ class ProgramError(Exception):
 
 # The parser object
 pretty_name = "No calls and heterozygous only markers"
-desc = """Removes "no calls" only and heterozygous only markers."""
+desc = 'Removes "no calls" only and heterozygous only markers.'
+long_desc = ("The script removes completely failed markers (no calls) or "
+             "markers with only heterozygous genotypes.")
 parser = argparse.ArgumentParser(description=desc)
+parser.add_argument("-v", "--version", action="version",
+                    version="pyGenClean version {}".format(__version__))
 
 # The INPUT files
 group = parser.add_argument_group("Input File")

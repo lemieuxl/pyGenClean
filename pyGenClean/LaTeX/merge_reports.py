@@ -25,6 +25,7 @@ import argparse
 from glob import glob
 
 from . import auto_report
+from ..PlinkUtils import get_plink_version
 
 
 logger = logging.getLogger("merge_reports")
@@ -105,7 +106,7 @@ def merge_required_files(dirnames, out_dir):
     """
     # The list of files to merge
     fn_to_merge = ("steps_summary.tex", "excluded_markers.txt",
-                   "excluded_samples.txt", "results_summary.txt")
+                   "excluded_samples.txt")
 
     # Merging the files
     for fn in fn_to_merge:
@@ -115,6 +116,32 @@ def merge_required_files(dirnames, out_dir):
                 i_fn = os.path.join(dn, fn)
                 with open(i_fn, "r") as i_file:
                     o_file.write(i_file.read())
+
+    # Merging the result summary file
+    o_fn = os.path.join(out_dir, "results_summary.txt")
+    with open(o_fn, "w") as o_file:
+        for i, dn in enumerate(dirnames):
+            i_fn = os.path.join(dn, "results_summary.txt")
+            with open(i_fn, "r") as i_file:
+                if i != 0:
+                    # We skip the first 4 lines (file descriptions)
+                    [i_file.readline() for i in range(4)]
+                o_file.write(i_file.read())
+
+    # Merging the graphic paths file
+    graphic_paths = set()
+    for dn in dirnames:
+        fn = os.path.join(dn, "graphic_paths.txt")
+        if os.path.isfile(fn):
+            with open(fn, "r") as i_file:
+                graphic_paths.update({
+                    os.path.join(dn, path)
+                    for path in i_file.read().splitlines()
+                })
+    if len(graphic_paths) > 0:
+        with open(os.path.join(out_dir, "graphic_paths.txt"), "w") as o_file:
+            for path in sorted(graphic_paths):
+                print >>o_file, os.path.relpath(path, out_dir)
 
 
 def copy_initial_files(filename, out_dir):
@@ -232,8 +259,13 @@ def generate_report(out_dir, latex_summaries, nb_markers, nb_samples, options):
     :type options: argparse.Namespace
 
     """
+    # Getting the graphic paths file
+    graphic_paths_fn = None
+    if os.path.isfile(os.path.join(out_dir, "graphic_paths.txt")):
+        graphic_paths_fn = os.path.join(out_dir, "graphic_paths.txt")
+
     # We create the automatic report
-    report_name = os.path.join(out_dir, "merged_reports.tex")
+    report_name = os.path.join(out_dir, "merged_report.tex")
     auto_report.create_report(
         out_dir,
         report_name,
@@ -242,11 +274,14 @@ def generate_report(out_dir, latex_summaries, nb_markers, nb_samples, options):
         summaries=latex_summaries,
         background=options.report_background,
         summary_fn=os.path.join(out_dir, "results_summary.txt"),
+        report_title=options.report_title,
         report_author=options.report_author,
         initial_files=os.path.join(out_dir, "initial_files.txt"),
         final_files=os.path.join(out_dir, "final_files.txt"),
         final_nb_markers=nb_markers,
         final_nb_samples=nb_samples,
+        plink_version=get_plink_version(),
+        graphic_paths_fn=graphic_paths_fn,
     )
 
 
@@ -328,6 +363,9 @@ def add_custom_options(parser):
     :type parser: argparse.ArgumentParser
 
     """
+    parser.add_argument("--report-title", type=str, metavar="TITLE",
+                        default="Genetic Data Clean Up",
+                        help="The report title. [default: %(default)s]")
     parser.add_argument("--report-author", type=str, metavar="AUTHOR",
                         default="pyGenClean",
                         help="The current project number. "

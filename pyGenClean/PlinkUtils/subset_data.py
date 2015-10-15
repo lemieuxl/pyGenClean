@@ -21,6 +21,8 @@ import logging
 import argparse
 import subprocess
 
+from .. import __version__
+
 
 logger = logging.getLogger("subset")
 
@@ -265,8 +267,11 @@ class ProgramError(Exception):
 
 # The parser object
 pretty_name = "Data subset"
-desc = """Subset genotype data using Plink."""
+desc = "Subsets genotype data using Plink."
+long_desc = "The script excludes a set of markers and/or samples."
 parser = argparse.ArgumentParser(description=desc)
+parser.add_argument("-v", "--version", action="version",
+                    version="pyGenClean version {}".format(__version__))
 
 # The INPUT files
 group = parser.add_argument_group("Input File")
