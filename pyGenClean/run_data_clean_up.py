@@ -2210,7 +2210,7 @@ def run_flag_maf_zero(in_prefix, in_type, out_prefix, base_dir, options):
     # Writing the summary results
     with open(os.path.join(base_dir, "results_summary.txt"), "a") as o_file:
         print >>o_file, "# {}".format(script_prefix)
-        print >>o_file, ("Number of markers flagged for MAF\t"
+        print >>o_file, ("Number of markers flagged for MAF of 0\t"
                          "{:,d}".format(nb_flagged))
         print >>o_file, "---"
 
