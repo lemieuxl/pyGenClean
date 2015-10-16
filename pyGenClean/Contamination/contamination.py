@@ -320,6 +320,9 @@ def run_bafRegress_sge(filenames, out_prefix, extract_filename, freq_filename,
 
                 o_file.write(line)
 
+        # Deleting the chunk
+        os.remove(filename)
+
     # Closing
     o_file.close()
 
