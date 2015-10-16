@@ -18,6 +18,7 @@
 import os
 import sys
 import glob
+import pipes
 import logging
 import argparse
 import subprocess
@@ -64,8 +65,12 @@ def main(argString=None):
 
     # Run bafRegress
     logger.info("Running bafRegress")
-    run_bafRegress(sample_files, args.out, args.out + ".to_extract",
-                   args.out + ".frq", args)
+    if args.sge:
+        run_bafRegress_sge(sample_files, args.out, args.out + ".to_extract",
+                           args.out + ".frq", args)
+    else:
+        run_bafRegress(sample_files, args.out, args.out + ".to_extract",
+                       args.out + ".frq", args)
 
 
 def check_sample_files(fam_filename, raw_dirname):
@@ -188,6 +193,135 @@ def run_bafRegress(filenames, out_prefix, extract_filename, freq_filename,
         raise ProgramError("{}: cannot write file".format(
             out_prefix + ".bafRegress",
         ))
+
+
+def run_bafRegress_sge(filenames, out_prefix, extract_filename, freq_filename,
+                       options):
+    """Runs the bafRegress function using SGE.
+
+    :param filenames: the set of all sample files.
+    :param out_prefix: the output prefix.
+    :param extract_filename: the name of the markers to extract.
+    :param freq_filename: the name of the file containing the frequency.
+    :param options: the other options.
+
+    :type filenames: set
+    :type out_prefix: str
+    :type extract_filename: str
+    :type freq_filename: str
+    :type options: argparse.Namespace
+
+    """
+    # Checks the environment variable for DRMAA package
+    if "DRMAA_LIBRARY_PATH" not in os.environ:
+        msg = "could not load drmaa: set DRMAA_LIBRARY_PATH"
+        raise ProgramError(msg)
+
+    # Import the drmaa package
+    try:
+        import drmaa
+    except ImportError:
+        raise ProgramError("drmaa is not install, install drmaa")
+
+    # Initializing a session
+    s = drmaa.Session()
+    s.initialize()
+
+    # The base command
+    base_command = [
+        "bafRegress.py",
+        "estimate",
+        "--freqfile", freq_filename,
+        "--freqcol", "2,5",
+        "--extract", extract_filename,
+        "--colsample", options.colsample,
+        "--colmarker", options.colmarker,
+        "--colbaf", options.colbaf,
+        "--colab1", options.colab1,
+        "--colab2", options.colab2,
+    ]
+
+    # Creating chunks
+    chunks = [
+        list(filenames)[i: i+options.sample_per_run_for_sge]
+        for i in range(0, len(filenames), options.sample_per_run_for_sge)
+    ]
+
+    # Run for each sub task...
+    job_ids = []
+    job_templates = []
+    for i, chunk in enumerate(chunks):
+        # Creating the final command
+        command = [pipes.quote(token) for token in base_command + chunk]
+        command.append(
+            "> {}.bafRegress_{}".format(pipes.quote(out_prefix), i+1),
+        )
+        command = " ".join(command)
+
+        # Creating the job template
+        jt = s.createJobTemplate()
+        jt.remoteCommand = "bash"
+        jt.workingDirectory = os.getcwd()
+        jt.jobEnvironment = os.environ
+        jt.args = ["-c", command]
+        jt.jobName = "_bafRegress_{}".format(i+1)
+
+        # Cluster specifics
+        if options.sge_walltime is not None:
+            jt.hardWallclockTimeLimit = options.sge_walltime
+        if options.sge_nodes is not None:
+            native_spec = "-l nodes={}:ppn={}".format(options.sge_nodes[0],
+                                                      options.sge_nodes[1])
+            jt.nativeSpecification = native_spec
+
+        job_ids.append(s.runJob(jt))
+        job_templates.append(jt)
+
+    # Waiting for the jobs to finish
+    had_problems = []
+    for job_id in job_ids:
+        ret_val = s.wait(job_id, drmaa.Session.TIMEOUT_WAIT_FOREVER)
+        had_problems.append(ret_val.exitStatus == 0)
+
+    # Deleting the jobs
+    for jt in job_templates:
+        s.deleteJobTemplate(jt)
+
+    # Closing the session
+    s.exit()
+
+    # Checking for problems
+    if not all(had_problems):
+        raise ProgramError("Some SGE jobs had errors...")
+
+    # Merging the output files
+    o_file = None
+    try:
+        o_file = open(out_prefix + ".bafRegress", "w")
+    except IOError:
+        msg = "{}: cannot write file".format(out_prefix + ".bafRegress")
+        raise ProgramError(msg)
+
+    for i in range(len(chunks)):
+        filename = out_prefix + ".bafRegress_{}".format(i+1)
+        if not os.path.isfile(filename):
+            raise ProgramError("{}: no such file".format(filename))
+
+        with open(filename, "r") as i_file:
+            if i == 0:
+                # First file, we write everything
+                o_file.write(i_file.read())
+                continue
+
+            for j, line in enumerate(i_file):
+                if j == 0:
+                    # Skipping first line
+                    continue
+
+                o_file.write(line)
+
+    # Closing
+    o_file.close()
 
 
 def run_plink(in_prefix, out_prefix, extract_filename):
@@ -350,6 +484,26 @@ group.add_argument("--colab1", type=str, metavar="COL",
 group.add_argument("--colab2", type=str, metavar="COL",
                    default="Allele2 - AB",
                    help="The AB Allele 2 column. [default: %(default)s]")
+
+group = parser.add_argument_group("SGE Options")
+group.add_argument("--sge", action="store_true",
+                   help="Use SGE for parallelization.")
+group.add_argument("--sge-walltime", type=str, metavar="TIME",
+                   help=("The walltime for the job to run on the cluster. Do "
+                         "not use if you are not required to specify a "
+                         "walltime for your jobs on your cluster (e.g. 'qsub "
+                         "-lwalltime=1:0:0' on the cluster)."))
+group.add_argument("--sge-nodes", type=int, metavar="INT", nargs=2,
+                   help=("The number of nodes and the number of processor per "
+                         "nodes to use (e.g. 'qsub -lnodes=X:ppn=Y' on the "
+                         "cluster, where X is the number of nodes and Y is "
+                         " the number of processor to use. Do not use if you "
+                         "are not required to specify the number of nodes for "
+                         "your jobs on the cluster."))
+group.add_argument("--sample-per-run-for-sge", type=int, metavar="INT",
+                   default=30,
+                   help=("The number of sample to run for a single SGE job. "
+                         "[default: %(default)d]"))
 
 # The OUTPUT files
 group = parser.add_argument_group("Output File")
