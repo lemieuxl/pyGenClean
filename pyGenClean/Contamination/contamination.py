@@ -395,23 +395,41 @@ def parseArgs(argString=None):  # pragma: no cover
               :py:mod:`argparse` module. It contains the values of the
               different options.
 
-    =============== ====== ====================================================
-        Options      Type                       Description
-    =============== ====== ====================================================
+    ============================ ====== =======================================
+               Options            Type                Description
+    ============================ ====== =======================================
 
-    ``--bfile``     string The input file prefix (will find the plink binary
-                           files by appending the prefix to the .bim, .bed and
-                           .fam files, respectively).
-    ``--raw-dir``   string Directory containing the raw data (one file per
-                           sample, where the name of the file (minus the
-                           extension) is the sample identification number.
-    ``--colsample`` string The sample column.
-    ``--colmarker`` string The marker column.
-    ``--colbaf``    string The B allele frequency column.
-    ``--colab1``    string The AB Allele 1 column.
-    ``--colab2``    string The AB Allele 2 column.
-    ``--out``       string The prefix of the output files.
-    =============== ====== ====================================================
+    ``--bfile``                  string The input file prefix (will find the
+                                        plink binary files by appending the
+                                        prefix to the .bim, .bed and .fam
+                                        files, respectively).
+    ``--raw-dir``                string Directory containing the raw data (one
+                                        file per sample, where the name of the
+                                        file (minus the extension) is the
+                                        sample identification number.
+    ``--colsample``              string The sample column.
+    ``--colmarker``              string The marker column.
+    ``--colbaf``                 string The B allele frequency column.
+    ``--colab1``                 string The AB Allele 1 column.
+    ``--colab2``                 string The AB Allele 2 column.
+    ``--out``                    string The prefix of the output files.
+    ``--sge"                     bool   Use SGE for parallelization.
+    ``--sge-walltime``           string The walltime for the job to run on the
+                                        cluster. Do not use if you are not
+                                        required to specify a walltime for your
+                                        jobs on your cluster (e.g. 'qsub
+                                        -lwalltime=1:0:0' on the cluster).
+    ``--sge-nodes``              int    The number of nodes and the number of
+                                        processor per nodes to use (e.g. 'qsub
+                                        -lnodes=X:ppn=Y' on the cluster, where
+                                        X is the number of nodes and Y is  the
+                                        number of processor to use. Do not use
+                                        if you are not required to specify the
+                                        number of nodes for your jobs on the
+                                        cluster.
+    ``--sample-per-run-for-sge`` int    The number of sample to run for a
+                                        single SGE job.
+    ============================ ====== =======================================
 
     .. note::
         No option check is done here (except for the one automatically done by
