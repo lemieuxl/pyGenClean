@@ -1969,7 +1969,7 @@ def run_check_ethnicity(in_prefix, in_type, out_prefix, base_dir, options):
     # Computing the number of outliers
     outliers = None
     if not skip_ref_pops:
-        with open(filename, "r") as i_file:
+        with open(script_prefix + ".outliers", "r") as i_file:
             outliers = {
                 tuple(line.rstrip("\r\n").split("\t")) for line in i_file
             }
