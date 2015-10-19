@@ -214,7 +214,7 @@ following section:
 .. toctree::
     :maxdepth: 1
 
-    data_clean_up_module
+    module_content/modules
     duplicated_samples
     duplicated_markers
     clean_noCall_hetero_snps

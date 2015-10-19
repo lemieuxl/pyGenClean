@@ -88,7 +88,7 @@ def order_qc_dir(dirnames):
     """
     return sorted(
         dirnames, key=lambda dn: time.strptime(
-            os.path.basename(dn)[14:],
+            os.path.basename(dn.rstrip("/"))[14:],
             "%Y-%m-%d_%H.%M.%S",
         )
     )
@@ -127,6 +127,21 @@ def merge_required_files(dirnames, out_dir):
                     # We skip the first 4 lines (file descriptions)
                     [i_file.readline() for i in range(4)]
                 o_file.write(i_file.read())
+
+    # Merging the graphic paths file
+    graphic_paths = set()
+    for dn in dirnames:
+        fn = os.path.join(dn, "graphic_paths.txt")
+        if os.path.isfile(fn):
+            with open(fn, "r") as i_file:
+                graphic_paths.update({
+                    os.path.join(dn, path)
+                    for path in i_file.read().splitlines()
+                })
+    if len(graphic_paths) > 0:
+        with open(os.path.join(out_dir, "graphic_paths.txt"), "w") as o_file:
+            for path in sorted(graphic_paths):
+                print >>o_file, os.path.relpath(path, out_dir)
 
 
 def copy_initial_files(filename, out_dir):
@@ -244,6 +259,11 @@ def generate_report(out_dir, latex_summaries, nb_markers, nb_samples, options):
     :type options: argparse.Namespace
 
     """
+    # Getting the graphic paths file
+    graphic_paths_fn = None
+    if os.path.isfile(os.path.join(out_dir, "graphic_paths.txt")):
+        graphic_paths_fn = os.path.join(out_dir, "graphic_paths.txt")
+
     # We create the automatic report
     report_name = os.path.join(out_dir, "merged_report.tex")
     auto_report.create_report(
@@ -261,6 +281,7 @@ def generate_report(out_dir, latex_summaries, nb_markers, nb_samples, options):
         final_nb_markers=nb_markers,
         final_nb_samples=nb_samples,
         plink_version=get_plink_version(),
+        graphic_paths_fn=graphic_paths_fn,
     )
 
 
@@ -285,7 +306,7 @@ def checkArgs(args):
             raise ProgramError("{}: no such directory".format(dn))
 
         # Checking that this is a directory created from pyGenClean
-        if not os.path.basename(dn).startswith("data_clean_up."):
+        if not os.path.basename(dn.rstrip("/")).startswith("data_clean_up."):
             raise ProgramError("{}: not a pyGenClean directory".format(dn))
 
         # Checking that each directory contains the required files

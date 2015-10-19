@@ -102,6 +102,15 @@
 
 \begin{document}
 
+\BLOCK{ if graphic_paths|length > 0 }
+% The graphics path
+\graphicspath{
+\BLOCK{ for path in graphic_paths }
+    {\VAR{ path }}
+\BLOCK{ endfor }
+}
+\BLOCK{ endif }
+
 % The title page
 \title{\VAR{ report_title }}
 \subtitle{\ProjectName}

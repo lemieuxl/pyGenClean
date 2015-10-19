@@ -41,7 +41,7 @@ logging.basicConfig(
 
 
 def add_file_handler_to_root(log_fn):
-    """Adds a file handler to the root looging.
+    """Adds a file handler to the root logging.
 
     :param log_fn: the name of the log file.
 

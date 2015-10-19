@@ -186,7 +186,10 @@ def format_numbers(number, prefix=""):
 
     # Nothing matched
     if not r:
-        return number
+        if prefix != "":
+            return "$" + prefix + number + "$"
+        else:
+            return number
 
     # Getting the coefficient and the exponent
     coefficient = r.group(1)
@@ -222,7 +225,7 @@ def sanitize_tex(original_text):
 
     Text is sanitized by following these steps:
 
-    1. Replaces ``\\\\`` by ``\\textbackslash``
+    1. Replaces ``\\` by ``\\textbackslash``
     2. Escapes certain characters (such as ``$``, ``%``, ``_``, ``}``, ``{``,
        ``&`` and ``#``) by adding a backslash (*e.g.* from ``&`` to ``\\&``).
     3. Replaces special characters such as ``~`` by the LaTeX equivalent

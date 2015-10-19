@@ -102,7 +102,9 @@ def compareSNPs(before, after, outFileName):
     # Printing the SNPs
     try:
         with open(outFileName, "w") as outputFile:
-            print >>outputFile, "\n".join(before - after)
+            differences = before - after
+            if len(differences) > 0:
+                print >>outputFile, "\n".join(differences)
     except IOError:
         msg = "%(outFileName)s: can't write to file" % locals()
         raise ProgramError(msg)
