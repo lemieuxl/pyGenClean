@@ -302,10 +302,12 @@ def run_bafRegress_sge(filenames, out_prefix, extract_filename, freq_filename,
         msg = "{}: cannot write file".format(out_prefix + ".bafRegress")
         raise ProgramError(msg)
 
+    to_remove = set()
     for i in range(len(chunks)):
         filename = out_prefix + ".bafRegress_{}".format(i+1)
         if not os.path.isfile(filename):
             raise ProgramError("{}: no such file".format(filename))
+        to_remove.add(filename)
 
         with open(filename, "r") as i_file:
             if i == 0:
@@ -314,12 +316,12 @@ def run_bafRegress_sge(filenames, out_prefix, extract_filename, freq_filename,
                 continue
 
             for j, line in enumerate(i_file):
+                # Skipping first line
                 if j == 0:
-                    # Skipping first line
                     continue
-
                 o_file.write(line)
 
+    for filename in to_remove:
         # Deleting the chunk
         os.remove(filename)
 
