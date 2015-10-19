@@ -40,6 +40,7 @@ from .FlagMAF import flag_maf_zero
 from .DupSNPs import duplicated_snps
 from .Ethnicity import check_ethnicity
 from .Misc import compare_gold_standard
+from .Contamination import contamination
 from .DupSamples import duplicated_samples
 from .MarkerMissingness import snp_missingness
 from .RelatedSamples import find_related_samples
@@ -84,16 +85,17 @@ def main():
     args = parse_args()
     check_args(args)
 
-    # The directory name
-    dirname = "data_clean_up."
-    dirname += datetime.datetime.today().strftime("%Y-%m-%d_%H.%M.%S")
-    while os.path.isdir(dirname):
-        time.sleep(1)
-        dirname = "data_clean_up."
-        dirname += datetime.datetime.today().strftime("%Y-%m-%d_%H.%M.%S")
-
-    # Creating the output directory
-    os.mkdir(dirname)
+#    # The directory name
+#    dirname = "data_clean_up."
+#    dirname += datetime.datetime.today().strftime("%Y-%m-%d_%H.%M.%S")
+#    while os.path.isdir(dirname):
+#        time.sleep(1)
+#        dirname = "data_clean_up."
+#        dirname += datetime.datetime.today().strftime("%Y-%m-%d_%H.%M.%S")
+#
+#    # Creating the output directory
+#    os.mkdir(dirname)
+    dirname = "data_clean_up.2015-10-19_08.50.32"
 
     # Configuring the root logger
     add_file_handler_to_root(os.path.join(dirname, "pyGenClean.log"))
@@ -805,8 +807,8 @@ def run_sample_missingness(in_prefix, in_type, out_prefix, base_dir, options):
     input file type is the good one, or to create it if needed.
 
     """
-    # Creating the output directory
-    os.mkdir(out_prefix)
+#    # Creating the output directory
+#    os.mkdir(out_prefix)
 
     # We are looking at what we have
     required_type = "tfile"
@@ -822,12 +824,12 @@ def run_sample_missingness(in_prefix, in_type, out_prefix, base_dir, options):
     if required_type == "bfile":
         options.append("--is-bfile")
 
-    # We run the script
-    try:
-        sample_missingness.main(options)
-    except sample_missingness.ProgramError as e:
-        msg = "sample_missingness: {}".format(e)
-        raise ProgramError(msg)
+#    # We run the script
+#    try:
+#        sample_missingness.main(options)
+#    except sample_missingness.ProgramError as e:
+#        msg = "sample_missingness: {}".format(e)
+#        raise ProgramError(msg)
 
     # We want to modify the description, so that it contains the option used
     desc = sample_missingness.desc
@@ -924,8 +926,8 @@ def run_snp_missingness(in_prefix, in_type, out_prefix, base_dir, options):
     good one, or to create it if needed.
 
     """
-    # Creating the output directory
-    os.mkdir(out_prefix)
+#    # Creating the output directory
+#    os.mkdir(out_prefix)
 
     # We know we need a bfile
     required_type = "bfile"
@@ -937,12 +939,12 @@ def run_snp_missingness(in_prefix, in_type, out_prefix, base_dir, options):
     options += ["--{}".format(required_type), in_prefix,
                 "--out", script_prefix]
 
-    # We run the script
-    try:
-        snp_missingness.main(options)
-    except snp_missingness.ProgramError as e:
-        msg = "snp_missingness: {}".format(e)
-        raise ProgramError(msg)
+#    # We run the script
+#    try:
+#        snp_missingness.main(options)
+#    except snp_missingness.ProgramError as e:
+#        msg = "snp_missingness: {}".format(e)
+#        raise ProgramError(msg)
 
     # We want to modify the description, so that it contains the option used
     desc = snp_missingness.desc
@@ -1012,6 +1014,70 @@ def run_snp_missingness(in_prefix, in_type, out_prefix, base_dir, options):
     # We know this step does produce a new data set (bfile), so we return it
     return (os.path.join(out_prefix, "clean_geno"), "bfile", latex_file, desc,
             long_description)
+
+
+def run_contamination(in_prefix, in_type, out_prefix, base_dir, options):
+    """Runs the contamination check for samples.
+
+    :param in_prefix: the prefix of the input files.
+    :param in_type: the type of the input files.
+    :param out_prefix: the output prefix.
+    :param base_dir: the output directory.
+    :param options: the options needed.
+
+    :type in_prefix: str
+    :type in_type: str
+    :type out_prefix: str
+    :type base_dir: str
+    :type options: list
+
+    :returns: a tuple containing the prefix of the output files (the input
+              prefix for the next script) and the type of the output files
+              (``bfile``).
+
+    """
+    # Creating the output directory
+    os.mkdir(out_prefix)
+
+    # We know we need a bfile
+    required_type = "bfile"
+    check_input_files(in_prefix, in_type, required_type)
+
+    # We need to inject the name of the input file and the name of the output
+    # prefix
+    script_prefix = os.path.join(out_prefix, "contamination")
+    options += ["--{}".format(required_type), in_prefix,
+                "--out", script_prefix]
+
+    # We run the script
+    try:
+        contamination.main(options)
+    except contamination.ProgramError as e:
+        msg = "contamination {}".format(e)
+        raise ProgramError(msg)
+
+    # We write a LaTeX summary
+    latex_file = os.path.join(script_prefix + ".summary.tex")
+    try:
+        with open(latex_file, "w") as o_file:
+            print >>o_file, latex_template.subsection(
+                snp_missingness.pretty_name,
+            )
+            text = "Write the contamination text here."
+            print >>o_file, latex_template.wrap_lines(text)
+
+    except IOError:
+        msg = "{}: cannot write LaTeX summary".format(latex_file)
+        raise ProgramError(msg)
+
+    # Writing the summary results
+    with open(os.path.join(base_dir, "results_summary.txt"), "a") as o_file:
+        print >>o_file, "# {}".format(script_prefix)
+        print >>o_file, "Number of possibly contaminated samples\tnb"
+        print >>o_file, "---"
+
+    return (in_prefix, required_type, latex_file, contamination.desc,
+            contamination.long_desc)
 
 
 def run_sex_check(in_prefix, in_type, out_prefix, base_dir, options):
@@ -2894,6 +2960,7 @@ def read_config_file(filename):
     * ``snp_missingness`` (:py:func:`run_snp_missingness`)
     * ``sex_check`` (:py:func:`run_sex_check`)
     * ``plate_bias`` (:py:func:`run_plate_bias`)
+    * ``contamination`` (:py:func:`run_contamination`)
     * ``remove_heterozygous_haploid``
       (:py:func:`run_remove_heterozygous_haploid`)
     * ``find_related_samples`` (:py:func:`run_find_related_samples`)
@@ -3086,6 +3153,7 @@ available_modules = {
     "remove_heterozygous_haploid": remove_heterozygous_haploid,
     "find_related_samples": find_related_samples,
     "check_ethnicity": check_ethnicity,
+    "contamination": contamination,
     "flag_maf_zero": flag_maf_zero,
     "flag_hw": flag_hw,
     "subset": subset_data,
@@ -3102,6 +3170,7 @@ available_functions = {
     "remove_heterozygous_haploid": run_remove_heterozygous_haploid,
     "find_related_samples": run_find_related_samples,
     "check_ethnicity": run_check_ethnicity,
+    "contamination": run_contamination,
     "flag_maf_zero": run_flag_maf_zero,
     "flag_hw": run_flag_hw,
     "subset": run_subset_data,
