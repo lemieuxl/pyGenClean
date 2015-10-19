@@ -1101,7 +1101,7 @@ def run_contamination(in_prefix, in_type, out_prefix, base_dir, options):
         print >>o_file, "---"
 
     return (in_prefix, required_type, latex_file, contamination.desc,
-            contamination.long_desc)
+            contamination.long_desc, None)
 
 
 def run_sex_check(in_prefix, in_type, out_prefix, base_dir, options):
