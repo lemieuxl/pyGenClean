@@ -85,17 +85,16 @@ def main():
     args = parse_args()
     check_args(args)
 
-#    # The directory name
-#    dirname = "data_clean_up."
-#    dirname += datetime.datetime.today().strftime("%Y-%m-%d_%H.%M.%S")
-#    while os.path.isdir(dirname):
-#        time.sleep(1)
-#        dirname = "data_clean_up."
-#        dirname += datetime.datetime.today().strftime("%Y-%m-%d_%H.%M.%S")
-#
-#    # Creating the output directory
-#    os.mkdir(dirname)
-    dirname = "data_clean_up.2015-10-19_08.50.32"
+    # The directory name
+    dirname = "data_clean_up."
+    dirname += datetime.datetime.today().strftime("%Y-%m-%d_%H.%M.%S")
+    while os.path.isdir(dirname):
+        time.sleep(1)
+        dirname = "data_clean_up."
+        dirname += datetime.datetime.today().strftime("%Y-%m-%d_%H.%M.%S")
+
+    # Creating the output directory
+    os.mkdir(dirname)
 
     # Configuring the root logger
     add_file_handler_to_root(os.path.join(dirname, "pyGenClean.log"))
@@ -831,8 +830,8 @@ def run_sample_missingness(in_prefix, in_type, out_prefix, base_dir, options):
     input file type is the good one, or to create it if needed.
 
     """
-#    # Creating the output directory
-#    os.mkdir(out_prefix)
+    # Creating the output directory
+    os.mkdir(out_prefix)
 
     # We are looking at what we have
     required_type = "tfile"
@@ -848,12 +847,12 @@ def run_sample_missingness(in_prefix, in_type, out_prefix, base_dir, options):
     if required_type == "bfile":
         options.append("--is-bfile")
 
-#    # We run the script
-#    try:
-#        sample_missingness.main(options)
-#    except sample_missingness.ProgramError as e:
-#        msg = "sample_missingness: {}".format(e)
-#        raise ProgramError(msg)
+    # We run the script
+    try:
+        sample_missingness.main(options)
+    except sample_missingness.ProgramError as e:
+        msg = "sample_missingness: {}".format(e)
+        raise ProgramError(msg)
 
     # We want to modify the description, so that it contains the option used
     desc = sample_missingness.desc
@@ -950,8 +949,8 @@ def run_snp_missingness(in_prefix, in_type, out_prefix, base_dir, options):
     good one, or to create it if needed.
 
     """
-#    # Creating the output directory
-#    os.mkdir(out_prefix)
+    # Creating the output directory
+    os.mkdir(out_prefix)
 
     # We know we need a bfile
     required_type = "bfile"
@@ -963,12 +962,12 @@ def run_snp_missingness(in_prefix, in_type, out_prefix, base_dir, options):
     options += ["--{}".format(required_type), in_prefix,
                 "--out", script_prefix]
 
-#    # We run the script
-#    try:
-#        snp_missingness.main(options)
-#    except snp_missingness.ProgramError as e:
-#        msg = "snp_missingness: {}".format(e)
-#        raise ProgramError(msg)
+    # We run the script
+    try:
+        snp_missingness.main(options)
+    except snp_missingness.ProgramError as e:
+        msg = "snp_missingness: {}".format(e)
+        raise ProgramError(msg)
 
     # We want to modify the description, so that it contains the option used
     desc = snp_missingness.desc
@@ -1080,15 +1079,99 @@ def run_contamination(in_prefix, in_type, out_prefix, base_dir, options):
         msg = "contamination {}".format(e)
         raise ProgramError(msg)
 
+    # Reading the "contamination" file
+    nb_tested_samples = 0
+    contaminated_table = []
+    nb_contaminated_samples = 0
+    with open(script_prefix + ".bafRegress", "r") as i_file:
+        header = None
+        for i, line in enumerate(i_file):
+            row = line.rstrip("\r\n").split("\t")
+            if i == 0:
+                contaminated_table.append(tuple(row))
+                header = {name: i for i, name in enumerate(row)}
+
+                for name in ("sample", "estimate", "stderr", "tval", "pval",
+                             "callrate", "Nhom"):
+                    if name not in header:
+                        raise ProgramError("{}: missing column {}".format(
+                            script_prefix + ".bafRegress",
+                            name,
+                        ))
+                continue
+
+            # One more sample
+            nb_tested_samples += 1
+
+            # Reading the data
+            estimate = float(row[header["estimate"]])
+            if estimate > 0.01:
+                # This might be a contaminated samples
+                contaminated_table.append((
+                    latex_template.sanitize_tex(row[header["sample"]]),
+                    "{:.4f}".format(float(row[header["estimate"]])),
+                    "{:.4f}".format(float(row[header["stderr"]])),
+                    "{:.4f}".format(float(row[header["tval"]])),
+                    latex_template.format_numbers("{:.3e}".format(
+                        float(row[header["pval"]]),
+                    )),
+                    "{:.4f}".format(float(row[header["callrate"]])),
+                    "{:,d}".format(int(row[header["Nhom"]])),
+                ))
+                nb_contaminated_samples += 1
+
     # We write a LaTeX summary
     latex_file = os.path.join(script_prefix + ".summary.tex")
     try:
         with open(latex_file, "w") as o_file:
             print >>o_file, latex_template.subsection(
-                snp_missingness.pretty_name,
+                contamination.pretty_name,
             )
-            text = "Write the contamination text here."
+            text = ("A total of {:,d} sample{} {} analyzed for contamination "
+                    r"using \textit{bafRegress}\cite{bafRegress}. Using a "
+                    "threshold of 0.01, {:,d} sample{} {} estimated to be "
+                    "contaminated.".format(
+                        nb_tested_samples,
+                        "s" if nb_tested_samples > 1 else "",
+                        "were" if nb_tested_samples > 1 else "was",
+                        nb_contaminated_samples,
+                        "s" if nb_contaminated_samples > 1 else "",
+                        "were" if nb_contaminated_samples > 1 else "was",
+                        bafRegress="{bafRegress}",
+                    ))
+            print text
             print >>o_file, latex_template.wrap_lines(text)
+
+            if nb_contaminated_samples > 0:
+                label = re.sub(r"[/\\]", "_", script_prefix)
+                text = (
+                    r"Table~\ref{" + label + "} list all the samples that "
+                    r"were estimated to be contaminated (\textit{i.e.} with "
+                    r"an estimate $>0.01$)."
+                )
+                print >>o_file, latex_template.wrap_lines(text)
+
+                # Getting the template
+                longtable_template = latex_template.jinja2_env.get_template(
+                    "longtable_template.tex",
+                )
+
+                # Rendering
+                print >>o_file, longtable_template.render(
+                    table_caption=r"List of all possible contaminated samples "
+                                  r"(\textit{i.e.} with an estimate computed "
+                                  r"by \textit{bafRegress} $>0.01$).",
+                    table_label=label,
+                    nb_col=len(contaminated_table[1]),
+                    col_alignments="lrrrrrr",
+                    text_size="scriptsize",
+                    header_data=zip(contaminated_table[0],
+                                    [1 for i in contaminated_table[0]]),
+                    tabular_data=sorted(
+                        contaminated_table[1:],
+                        key=lambda item: item[0],
+                    ),
+                )
 
     except IOError:
         msg = "{}: cannot write LaTeX summary".format(latex_file)
@@ -1097,7 +1180,8 @@ def run_contamination(in_prefix, in_type, out_prefix, base_dir, options):
     # Writing the summary results
     with open(os.path.join(base_dir, "results_summary.txt"), "a") as o_file:
         print >>o_file, "# {}".format(script_prefix)
-        print >>o_file, "Number of possibly contaminated samples\tnb"
+        print >>o_file, ("Number of possibly contaminated "
+                         "samples\t{:,d}".format(nb_contaminated_samples))
         print >>o_file, "---"
 
     return (in_prefix, required_type, latex_file, contamination.desc,
@@ -1330,10 +1414,7 @@ def run_sex_check(in_prefix, in_type, out_prefix, base_dir, options):
                     col_alignments="llrrlrrrr",
                     text_size="scriptsize",
                     header_data=zip(table[0], [1 for i in table[0]]),
-                    tabular_data=sorted(
-                        sorted(table[1:], key=lambda item: item[1]),
-                        key=lambda item: (item[0], item[1]),
-                    ),
+                    tabular_data=sorted(table[1:], key=lambda item: item[1]),
                 )
 
             # If there is a figure, we add it here
