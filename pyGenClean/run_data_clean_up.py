@@ -385,9 +385,9 @@ def run_duplicated_samples(in_prefix, in_type, out_prefix, base_dir, options):
 
                 if len(not_good_still) > 0:
                     text = latex_template.textbf(
-                        "There {} {:,d} sample{} that {} not good enough for "
-                        "completion, but {} still selected as the best "
-                        "duplicate (see Table~{}).".format(
+                        "There {} {:,d} sample{} that {} not good due to low "
+                        "completion or concordance, but {} still selected as "
+                        "the best duplicate (see Table~{}).".format(
                             "were" if len(not_good_still) > 1 else "was",
                             len(not_good_still),
                             "s" if len(not_good_still) > 1 else "",
