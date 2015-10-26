@@ -592,12 +592,35 @@ def run_duplicated_snps(in_prefix, in_type, out_prefix, base_dir, options):
                 for marker_id in removed_markers:
                     print >>o_file, marker_id + "\t" + "removed duplicate"
 
-    # Reading the markers with problem
-    problematic_markers = set()
-    if os.path.isfile(script_prefix + ".problems"):
-        with open(script_prefix + ".problems", "r") as i_file:
-            for markers in i_file.read().splitlines()[1:]:
-                problematic_markers |= set(markers.split("\t")[2].split(";"))
+    # Writing the summary results
+    total_remaining = 0
+    with open(os.path.join(base_dir, "results_summary.txt"), "a") as o_file:
+        print >>o_file, "# {}".format(script_prefix)
+        rep_counter = Counter(duplicated_count.values()).most_common()
+        if rep_counter:
+            print >>o_file, "Number of replicated markers"
+        else:
+            print >>o_file, "Number of replicated markers\t0"
+        total_nb_removed_rep = 0
+        for rep_type, rep_count in rep_counter:
+            nb_removed_rep = (rep_count * rep_type) - rep_count
+            print >>o_file, "  - x{}\t{:,d}\t-{:,d}".format(
+                rep_type,
+                rep_count,
+                nb_removed_rep,
+            )
+            total_nb_removed_rep += nb_removed_rep
+        total_remaining = total_nb_removed_rep - len(removed_markers)
+        print >>o_file, (
+            "Number of replicated markers kept\t{nb:,d}\t+{nb:,d}".format(
+                nb=total_remaining,
+            )
+        )
+        print >>o_file, ("Poorly chosen replicated markers\t"
+                         "{nb:,d}".format(nb=len(not_good_still)))
+        print >>o_file, ("Final number of excluded markers\t"
+                         "{nb:,d}".format(nb=len(removed_markers)))
+        print >>o_file, "---"
 
     # We create a LaTeX summary
     latex_file = os.path.join(script_prefix + ".summary.tex")
@@ -641,18 +664,37 @@ def run_duplicated_snps(in_prefix, in_type, out_prefix, base_dir, options):
                 )
                 print >>o_file, latex_template.wrap_lines(text)
 
-                if len(not_good_still) > 0:
+                if total_remaining > 0:
                     text = latex_template.textbf(
-                        "There {} {:,d} marker{} that {} not good enough for "
-                        "completion, but {} still selected as the best "
-                        "duplicate and {} still present in the final "
+                        "In total, {:,d} maker{} {} not merged for different "
+                        "reasons (low completion rate, discordant allele, "
+                        "discordant MAF, etc) and {} still present in the "
                         "dataset.".format(
-                            "were" if len(not_good_still) > 1 else "was",
+                            total_remaining,
+                            "s" if total_remaining > 1 else "",
+                            "were" if total_remaining > 1 else "was",
+                            "are" if total_remaining > 1 else "is",
+                        )
+                    )
+                    print >>o_file, latex_template.wrap_lines(text)
+
+                if len(not_good_still) > 0:
+                    start = "A total of"
+                    end = " and {} still present in the final dataset.".format(
+                        "are" if len(not_good_still) > 1 else "is",
+                    )
+                    if total_remaining > 0:
+                        start = "Out of these,"
+                        end = "."
+                    text = latex_template.textbf(
+                        start + " {:,d} marker{} {} not good enough for "
+                        "completion, but {} still selected as the best "
+                        "duplicate{}".format(
                             len(not_good_still),
                             "s" if len(not_good_still) > 1 else "",
                             "were" if len(not_good_still) > 1 else "was",
                             "were" if len(not_good_still) > 1 else "was",
-                            "are" if len(not_good_still) > 1 else "is",
+                            end,
                         )
                     )
                     print >>o_file, latex_template.wrap_lines(text)
@@ -660,30 +702,6 @@ def run_duplicated_snps(in_prefix, in_type, out_prefix, base_dir, options):
     except IOError:
         msg = "{}: cannot write LaTeX summary".format(latex_file)
         raise ProgramError(msg)
-
-    # Writing the summary results
-    with open(os.path.join(base_dir, "results_summary.txt"), "a") as o_file:
-        print >>o_file, "# {}".format(script_prefix)
-        counter = Counter(duplicated_count.values()).most_common()
-        if counter:
-            print >>o_file, "Number of replicated markers"
-        else:
-            print >>o_file, "Number of replicated markers\t0"
-        for rep_type, rep_count in counter:
-            print >>o_file, "  - x{}\t{:,d}\t-{:,d}".format(
-                rep_type,
-                rep_count,
-                (rep_count * rep_type) - rep_count,
-            )
-        print >>o_file, ("Poorly chosen replicated markers\t"
-                         "{nb:,d}\t+{nb:,d}".format(nb=len(not_good_still)))
-        print >>o_file, ("Problematic markers not chosen\t"
-                         "{nb:,d}\t+{nb:,d}".format(
-                            nb=len(problematic_markers - chosen_markers),
-                         ))
-        print >>o_file, ("Final number of excluded markers\t"
-                         "{nb:,d}".format(nb=len(removed_markers)))
-        print >>o_file, "---"
 
     # We know this step does produce a new data set (tfile), so we return it
     return (os.path.join(out_prefix, "dup_snps.final"), "tfile", latex_file,
