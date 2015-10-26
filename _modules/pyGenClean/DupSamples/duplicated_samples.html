@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>pyGenClean.DupSamples.duplicated_samples &mdash; pyGenClean 1.7.0 documentation</title>
+    <title>pyGenClean.DupSamples.duplicated_samples &mdash; pyGenClean 1.7.1 documentation</title>
     
     <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '1.7.0',
+        VERSION:     '1.7.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,8 +24,8 @@
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="pyGenClean 1.7.0 documentation" href="../../../index.html" />
-    <link rel="up" title="Module code" href="../../index.html" /> 
+    <link rel="top" title="pyGenClean 1.7.1 documentation" href="../../../index.html" />
+    <link rel="up" title="pyGenClean" href="../../pyGenClean.html" /> 
   </head>
   <body role="document">
 
@@ -42,8 +42,9 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">pyGenClean 1.7.0 documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../../index.html">pyGenClean 1.7.1 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &raquo;</li>
+          <li class="nav-item nav-item-2"><a href="../../pyGenClean.html" accesskey="U">pyGenClean</a> &raquo;</li> 
       </ul>
     </div>
 
@@ -97,13 +98,15 @@
 <span class="kn">import</span> <span class="nn">StringIO</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">npy</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">__version__</span>
 
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&quot;duplicated_samples&quot;</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../../duplicated_samples.html#pyGenClean.DupSamples.duplicated_samples.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">argString</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../../module_content/pyGenClean.DupSamples.html#pyGenClean.DupSamples.duplicated_samples.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">argString</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Check for duplicated samples in a tfam/tped file.</span>
 
 <span class="sd">    :param argString: the options</span>
@@ -244,7 +247,7 @@
                          <span class="n">args</span><span class="o">.</span><span class="n">out</span> <span class="o">+</span> <span class="s">&quot;.unique_samples&quot;</span><span class="p">)</span>
 
 </div>
-<div class="viewcode-block" id="addToTPEDandTFAM"><a class="viewcode-back" href="../../../duplicated_samples.html#pyGenClean.DupSamples.duplicated_samples.addToTPEDandTFAM">[docs]</a><span class="k">def</span> <span class="nf">addToTPEDandTFAM</span><span class="p">(</span><span class="n">tped</span><span class="p">,</span> <span class="n">tfam</span><span class="p">,</span> <span class="n">prefix</span><span class="p">,</span> <span class="n">toAddPrefix</span><span class="p">):</span>
+<div class="viewcode-block" id="addToTPEDandTFAM"><a class="viewcode-back" href="../../../module_content/pyGenClean.DupSamples.html#pyGenClean.DupSamples.duplicated_samples.addToTPEDandTFAM">[docs]</a><span class="k">def</span> <span class="nf">addToTPEDandTFAM</span><span class="p">(</span><span class="n">tped</span><span class="p">,</span> <span class="n">tfam</span><span class="p">,</span> <span class="n">prefix</span><span class="p">,</span> <span class="n">toAddPrefix</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Append a tfile to another, creating a new one.</span>
 
 <span class="sd">    :param tped: the ``tped`` that will be appended to the other one.</span>
@@ -335,7 +338,7 @@
     <span class="n">newTPED</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
 </div>
-<div class="viewcode-block" id="createAndCleanTPED"><a class="viewcode-back" href="../../../duplicated_samples.html#pyGenClean.DupSamples.duplicated_samples.createAndCleanTPED">[docs]</a><span class="k">def</span> <span class="nf">createAndCleanTPED</span><span class="p">(</span><span class="n">tped</span><span class="p">,</span> <span class="n">tfam</span><span class="p">,</span> <span class="n">samples</span><span class="p">,</span> <span class="n">oldSamples</span><span class="p">,</span> <span class="n">chosenSamples</span><span class="p">,</span>
+<div class="viewcode-block" id="createAndCleanTPED"><a class="viewcode-back" href="../../../module_content/pyGenClean.DupSamples.html#pyGenClean.DupSamples.duplicated_samples.createAndCleanTPED">[docs]</a><span class="k">def</span> <span class="nf">createAndCleanTPED</span><span class="p">(</span><span class="n">tped</span><span class="p">,</span> <span class="n">tfam</span><span class="p">,</span> <span class="n">samples</span><span class="p">,</span> <span class="n">oldSamples</span><span class="p">,</span> <span class="n">chosenSamples</span><span class="p">,</span>
                        <span class="n">prefix</span><span class="p">,</span> <span class="n">completion</span><span class="p">,</span> <span class="n">completionT</span><span class="p">,</span> <span class="n">concordance</span><span class="p">,</span>
                        <span class="n">concordanceT</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Complete a TPED for duplicate samples.</span>
@@ -402,16 +405,16 @@
     <span class="n">concordanceSampleID</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">for</span> <span class="n">sampleID</span><span class="p">,</span> <span class="n">indexes</span> <span class="ow">in</span> <span class="n">samples</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
         <span class="c"># Checking the completion</span>
-        <span class="n">completionToKeep</span> <span class="o">=</span> <span class="n">npy</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">completion</span><span class="p">[</span><span class="n">indexes</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">completionT</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="n">completionToRemove</span> <span class="o">=</span> <span class="n">npy</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">completion</span><span class="p">[</span><span class="n">indexes</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">completionT</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">completionToKeep</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">completion</span><span class="p">[</span><span class="n">indexes</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">completionT</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">completionToRemove</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">completion</span><span class="p">[</span><span class="n">indexes</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">completionT</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">completionToRemove</span><span class="p">:</span>
             <span class="n">notGoodEnoughSamples</span><span class="p">[(</span><span class="nb">str</span><span class="p">(</span><span class="n">oldSamples</span><span class="p">[</span><span class="n">sampleID</span><span class="p">][</span><span class="n">k</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">),</span>
                                   <span class="nb">str</span><span class="p">(</span><span class="n">indexes</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">),</span> <span class="n">sampleID</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
                                   <span class="n">sampleID</span><span class="p">[</span><span class="mi">1</span><span class="p">])]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s">&quot;completion&quot;</span><span class="p">)</span>
 
         <span class="c"># Checking the concordance</span>
-        <span class="n">concordanceToKeep</span> <span class="o">=</span> <span class="n">npy</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">concordance</span><span class="p">[</span><span class="n">sampleID</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">concordanceT</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="n">concordanceToRemove</span> <span class="o">=</span> <span class="n">npy</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
+        <span class="n">concordanceToKeep</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">concordance</span><span class="p">[</span><span class="n">sampleID</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">concordanceT</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">concordanceToRemove</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
             <span class="n">concordance</span><span class="p">[</span><span class="n">sampleID</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">concordanceT</span>
         <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">concordanceToRemove</span><span class="p">:</span>
@@ -435,14 +438,14 @@
             <span class="n">curGenotypes</span> <span class="o">=</span> <span class="n">curSNPgenotypes</span><span class="p">[</span><span class="n">indexes</span><span class="p">]</span>
 
             <span class="c"># Subsetting for the good completion and concordance</span>
-            <span class="n">curGenotypes</span> <span class="o">=</span> <span class="n">curGenotypes</span><span class="p">[</span><span class="n">npy</span><span class="o">.</span><span class="n">intersect1d</span><span class="p">(</span><span class="n">concordanceToKeep</span><span class="p">,</span>
-                                                        <span class="n">completionToKeep</span><span class="p">)]</span>
+            <span class="n">curGenotypes</span> <span class="o">=</span> <span class="n">curGenotypes</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">intersect1d</span><span class="p">(</span><span class="n">concordanceToKeep</span><span class="p">,</span>
+                                                       <span class="n">completionToKeep</span><span class="p">)]</span>
 
             <span class="c"># Removing the no call from the genotypes</span>
-            <span class="n">cleanedCurGenotype</span> <span class="o">=</span> <span class="n">curGenotypes</span><span class="p">[</span><span class="n">npy</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">curGenotypes</span> <span class="o">!=</span> <span class="s">&quot;0 0&quot;</span><span class="p">)]</span>
+            <span class="n">cleanedCurGenotype</span> <span class="o">=</span> <span class="n">curGenotypes</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">curGenotypes</span> <span class="o">!=</span> <span class="s">&quot;0 0&quot;</span><span class="p">)]</span>
 
             <span class="c"># Checking the number of unique genotypes</span>
-            <span class="n">uniqueGenotypes</span> <span class="o">=</span> <span class="n">npy</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">cleanedCurGenotype</span><span class="p">)</span>
+            <span class="n">uniqueGenotypes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">cleanedCurGenotype</span><span class="p">)</span>
 
             <span class="c"># Checking the number of unique genotypes (except 0 0)</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">uniqueGenotypes</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
@@ -481,9 +484,9 @@
     <span class="n">notGoodEnoughFile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
     <span class="c"># Getting the indexes to keep</span>
-    <span class="n">sampleToKeep</span> <span class="o">=</span> <span class="n">npy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">chosenSamples</span><span class="o">.</span><span class="n">values</span><span class="p">())</span> <span class="o">+</span> <span class="mi">4</span>
+    <span class="n">sampleToKeep</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">chosenSamples</span><span class="o">.</span><span class="n">values</span><span class="p">())</span> <span class="o">+</span> <span class="mi">4</span>
     <span class="n">sampleToKeep</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
-    <span class="n">toKeep</span> <span class="o">=</span> <span class="n">npy</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">npy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">)),</span> <span class="n">sampleToKeep</span><span class="p">)</span>
+    <span class="n">toKeep</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">)),</span> <span class="n">sampleToKeep</span><span class="p">)</span>
 
     <span class="c"># Subsetting the tped</span>
     <span class="n">newTPED</span> <span class="o">=</span> <span class="n">tped</span><span class="p">[:,</span> <span class="n">toKeep</span><span class="p">]</span>
@@ -493,7 +496,7 @@
     <span class="k">for</span> <span class="n">sampleID</span><span class="p">,</span> <span class="n">indexes</span> <span class="ow">in</span> <span class="n">oldSamples</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
         <span class="n">i</span> <span class="o">=</span> <span class="n">samples</span><span class="p">[</span><span class="n">sampleID</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">chosenSamples</span><span class="p">[</span><span class="n">sampleID</span><span class="p">])</span>
         <span class="n">toKeep</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">indexes</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
-    <span class="n">toKeep</span> <span class="o">=</span> <span class="n">npy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">toKeep</span><span class="p">)</span>
+    <span class="n">toKeep</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">toKeep</span><span class="p">)</span>
     <span class="n">toKeep</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
 
     <span class="c"># Subsetting the tfam</span>
@@ -502,7 +505,7 @@
     <span class="k">return</span> <span class="n">newTPED</span><span class="p">,</span> <span class="n">newTFAM</span>
 
 </div>
-<div class="viewcode-block" id="chooseBestDuplicates"><a class="viewcode-back" href="../../../duplicated_samples.html#pyGenClean.DupSamples.duplicated_samples.chooseBestDuplicates">[docs]</a><span class="k">def</span> <span class="nf">chooseBestDuplicates</span><span class="p">(</span><span class="n">tped</span><span class="p">,</span> <span class="n">samples</span><span class="p">,</span> <span class="n">oldSamples</span><span class="p">,</span> <span class="n">completion</span><span class="p">,</span>
+<div class="viewcode-block" id="chooseBestDuplicates"><a class="viewcode-back" href="../../../module_content/pyGenClean.DupSamples.html#pyGenClean.DupSamples.duplicated_samples.chooseBestDuplicates">[docs]</a><span class="k">def</span> <span class="nf">chooseBestDuplicates</span><span class="p">(</span><span class="n">tped</span><span class="p">,</span> <span class="n">samples</span><span class="p">,</span> <span class="n">oldSamples</span><span class="p">,</span> <span class="n">completion</span><span class="p">,</span>
                          <span class="n">concordance_all</span><span class="p">,</span> <span class="n">prefix</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Choose the best duplicates according to the completion rate.</span>
 
@@ -567,20 +570,20 @@
         <span class="n">currCompletion</span> <span class="o">=</span> <span class="n">completion</span><span class="p">[</span><span class="n">indexes</span><span class="p">]</span>
 
         <span class="c"># Sorting those completion</span>
-        <span class="n">sortedCompletionIndexes</span> <span class="o">=</span> <span class="n">npy</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">currCompletion</span><span class="p">)</span>
+        <span class="n">sortedCompletionIndexes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">currCompletion</span><span class="p">)</span>
 
         <span class="c"># Getting the concordance</span>
         <span class="n">concordance</span> <span class="o">=</span> <span class="n">concordance_all</span><span class="p">[</span><span class="n">sample</span><span class="p">]</span>
         <span class="n">currConcordance</span> <span class="o">=</span> <span class="p">[[]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">indexes</span><span class="p">))]</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">indexes</span><span class="p">)):</span>
             <span class="n">indexToKeep</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">indexes</span><span class="p">)))</span> <span class="o">-</span> <span class="nb">set</span><span class="p">([</span><span class="n">i</span><span class="p">]))</span>
-            <span class="n">currConcordance</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">npy</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">concordance</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">indexToKeep</span><span class="p">])</span>
-        <span class="n">currConcordance</span> <span class="o">=</span> <span class="n">npy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">currConcordance</span><span class="p">)</span>
+            <span class="n">currConcordance</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">concordance</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">indexToKeep</span><span class="p">])</span>
+        <span class="n">currConcordance</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">currConcordance</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">sample</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sampleConcordance</span><span class="p">:</span>
             <span class="n">sampleConcordance</span><span class="p">[</span><span class="n">sample</span><span class="p">]</span> <span class="o">=</span> <span class="n">currConcordance</span>
 
         <span class="c"># Sorting the concordance</span>
-        <span class="n">sortedConcordanceIndexes</span> <span class="o">=</span> <span class="n">npy</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">currConcordance</span><span class="p">)</span>
+        <span class="n">sortedConcordanceIndexes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">currConcordance</span><span class="p">)</span>
 
         <span class="c"># Trying to find the best duplicate to keep</span>
         <span class="n">nbToCheck</span> <span class="o">=</span> <span class="mi">1</span>
@@ -596,10 +599,10 @@
 
             <span class="c"># Getting the indexes to consider</span>
             <span class="n">completionToConsider</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span>
-                <span class="n">npy</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">currCompletion</span> <span class="o">&gt;=</span> <span class="n">completionValue</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">currCompletion</span> <span class="o">&gt;=</span> <span class="n">completionValue</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
             <span class="p">)</span>
             <span class="n">concordanceToConsider</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span>
-                <span class="n">npy</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">currConcordance</span> <span class="o">&gt;=</span> <span class="n">concordanceValue</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">currConcordance</span> <span class="o">&gt;=</span> <span class="n">concordanceValue</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
 
             <span class="c"># Getting the intersection of the indexes</span>
             <span class="n">toConsider</span> <span class="o">=</span> <span class="n">concordanceToConsider</span> <span class="o">&amp;</span> <span class="n">completionToConsider</span>
@@ -633,7 +636,7 @@
     <span class="k">return</span> <span class="n">chosenIndexes</span><span class="p">,</span> <span class="n">completion</span><span class="p">,</span> <span class="n">sampleConcordance</span>
 
 </div>
-<div class="viewcode-block" id="printDuplicatedTPEDandTFAM"><a class="viewcode-back" href="../../../duplicated_samples.html#pyGenClean.DupSamples.duplicated_samples.printDuplicatedTPEDandTFAM">[docs]</a><span class="k">def</span> <span class="nf">printDuplicatedTPEDandTFAM</span><span class="p">(</span><span class="n">tped</span><span class="p">,</span> <span class="n">tfam</span><span class="p">,</span> <span class="n">samples</span><span class="p">,</span> <span class="n">oldSamples</span><span class="p">,</span> <span class="n">prefix</span><span class="p">):</span>
+<div class="viewcode-block" id="printDuplicatedTPEDandTFAM"><a class="viewcode-back" href="../../../module_content/pyGenClean.DupSamples.html#pyGenClean.DupSamples.duplicated_samples.printDuplicatedTPEDandTFAM">[docs]</a><span class="k">def</span> <span class="nf">printDuplicatedTPEDandTFAM</span><span class="p">(</span><span class="n">tped</span><span class="p">,</span> <span class="n">tfam</span><span class="p">,</span> <span class="n">samples</span><span class="p">,</span> <span class="n">oldSamples</span><span class="p">,</span> <span class="n">prefix</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Print the TPED and TFAM of the duplicated samples.</span>
 
 <span class="sd">    :param tped: the ``tped`` containing duplicated samples.</span>
@@ -686,7 +689,7 @@
     <span class="n">outputTFAM</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
 </div>
-<div class="viewcode-block" id="printConcordance"><a class="viewcode-back" href="../../../duplicated_samples.html#pyGenClean.DupSamples.duplicated_samples.printConcordance">[docs]</a><span class="k">def</span> <span class="nf">printConcordance</span><span class="p">(</span><span class="n">concordance</span><span class="p">,</span> <span class="n">prefix</span><span class="p">):</span>
+<div class="viewcode-block" id="printConcordance"><a class="viewcode-back" href="../../../module_content/pyGenClean.DupSamples.html#pyGenClean.DupSamples.duplicated_samples.printConcordance">[docs]</a><span class="k">def</span> <span class="nf">printConcordance</span><span class="p">(</span><span class="n">concordance</span><span class="p">,</span> <span class="n">prefix</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Print the concordance.</span>
 
 <span class="sd">    :param concordance: the concordance of each sample.</span>
@@ -719,17 +722,17 @@
 
         <span class="c"># Doing the division</span>
         <span class="n">none_zero</span> <span class="o">=</span> <span class="n">concordance</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span>
-        <span class="n">true_concordance</span> <span class="o">=</span> <span class="n">npy</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">npy</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="o">*</span><span class="n">concordance</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
-        <span class="n">true_concordance</span><span class="p">[</span><span class="n">npy</span><span class="o">.</span><span class="n">ravel</span><span class="p">(</span><span class="n">none_zero</span><span class="p">)]</span> <span class="o">=</span> <span class="n">npy</span><span class="o">.</span><span class="n">true_divide</span><span class="p">(</span>
+        <span class="n">true_concordance</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="o">*</span><span class="n">concordance</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+        <span class="n">true_concordance</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">(</span><span class="n">none_zero</span><span class="p">)]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">true_divide</span><span class="p">(</span>
             <span class="n">concordance</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="n">none_zero</span><span class="p">],</span>
             <span class="n">concordance</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="mi">1</span><span class="p">][</span><span class="n">none_zero</span><span class="p">],</span>
         <span class="p">)</span>
         <span class="n">true_concordance</span><span class="o">.</span><span class="n">shape</span> <span class="o">=</span> <span class="n">concordance</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span>
-        <span class="n">true_concordance</span> <span class="o">=</span> <span class="n">npy</span><span class="o">.</span><span class="n">asmatrix</span><span class="p">(</span><span class="n">true_concordance</span><span class="p">)</span>
+        <span class="n">true_concordance</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asmatrix</span><span class="p">(</span><span class="n">true_concordance</span><span class="p">)</span>
         <span class="n">concordance_percentage</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">true_concordance</span>
 
         <span class="n">output</span> <span class="o">=</span> <span class="n">StringIO</span><span class="o">.</span><span class="n">StringIO</span><span class="p">()</span>
-        <span class="n">npy</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">true_concordance</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s">&quot;</span><span class="se">\t</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s">&quot;</span><span class="si">%.8f</span><span class="s">&quot;</span><span class="p">)</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">true_concordance</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s">&quot;</span><span class="se">\t</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s">&quot;</span><span class="si">%.8f</span><span class="s">&quot;</span><span class="p">)</span>
         <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">outFile</span><span class="p">,</span> <span class="n">output</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\r\n</span><span class="s">&quot;</span><span class="p">)</span>
 
     <span class="n">outFile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
@@ -737,7 +740,7 @@
     <span class="k">return</span> <span class="n">concordance_percentage</span>
 
 </div>
-<div class="viewcode-block" id="printStatistics"><a class="viewcode-back" href="../../../duplicated_samples.html#pyGenClean.DupSamples.duplicated_samples.printStatistics">[docs]</a><span class="k">def</span> <span class="nf">printStatistics</span><span class="p">(</span><span class="n">completion</span><span class="p">,</span> <span class="n">concordance</span><span class="p">,</span> <span class="n">tpedSamples</span><span class="p">,</span> <span class="n">oldSamples</span><span class="p">,</span> <span class="n">prefix</span><span class="p">):</span>
+<div class="viewcode-block" id="printStatistics"><a class="viewcode-back" href="../../../module_content/pyGenClean.DupSamples.html#pyGenClean.DupSamples.duplicated_samples.printStatistics">[docs]</a><span class="k">def</span> <span class="nf">printStatistics</span><span class="p">(</span><span class="n">completion</span><span class="p">,</span> <span class="n">concordance</span><span class="p">,</span> <span class="n">tpedSamples</span><span class="p">,</span> <span class="n">oldSamples</span><span class="p">,</span> <span class="n">prefix</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Print the statistics in a file.</span>
 
 <span class="sd">    :param completion: the completion of each duplicated samples.</span>
@@ -762,9 +765,9 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="c"># Compute the completion percentage on none zero values</span>
-    <span class="n">none_zero_indexes</span> <span class="o">=</span> <span class="n">npy</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">completion</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span>
-    <span class="n">completionPercentage</span> <span class="o">=</span> <span class="n">npy</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">completion</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
-    <span class="n">completionPercentage</span><span class="p">[</span><span class="n">none_zero_indexes</span><span class="p">]</span> <span class="o">=</span> <span class="n">npy</span><span class="o">.</span><span class="n">true_divide</span><span class="p">(</span>
+    <span class="n">none_zero_indexes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">completion</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">completionPercentage</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">completion</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">completionPercentage</span><span class="p">[</span><span class="n">none_zero_indexes</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">true_divide</span><span class="p">(</span>
         <span class="n">completion</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">none_zero_indexes</span><span class="p">],</span>
         <span class="n">completion</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="n">none_zero_indexes</span><span class="p">],</span>
     <span class="p">)</span>
@@ -795,19 +798,19 @@
 
             <span class="c"># The concordance (not on total values = 0)</span>
             <span class="n">indexToKeep</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">indexes</span><span class="p">)))</span> <span class="o">-</span> <span class="nb">set</span><span class="p">([</span><span class="n">i</span><span class="p">]))</span>
-            <span class="n">values</span> <span class="o">=</span> <span class="n">npy</span><span class="o">.</span><span class="n">ravel</span><span class="p">(</span>
-                <span class="n">npy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">concordance</span><span class="p">[</span><span class="n">sampleID</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="n">i</span><span class="p">,</span> <span class="n">indexToKeep</span><span class="p">])</span>
+            <span class="n">values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">(</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">concordance</span><span class="p">[</span><span class="n">sampleID</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="n">i</span><span class="p">,</span> <span class="n">indexToKeep</span><span class="p">])</span>
             <span class="p">)</span>
-            <span class="n">total_values</span> <span class="o">=</span> <span class="n">npy</span><span class="o">.</span><span class="n">ravel</span><span class="p">(</span>
-                <span class="n">npy</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">concordance</span><span class="p">[</span><span class="n">sampleID</span><span class="p">][</span><span class="mi">1</span><span class="p">][</span><span class="n">i</span><span class="p">,</span> <span class="n">indexToKeep</span><span class="p">])</span>
+            <span class="n">total_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">(</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">concordance</span><span class="p">[</span><span class="n">sampleID</span><span class="p">][</span><span class="mi">1</span><span class="p">][</span><span class="n">i</span><span class="p">,</span> <span class="n">indexToKeep</span><span class="p">])</span>
             <span class="p">)</span>
-            <span class="n">currConcordance</span> <span class="o">=</span> <span class="n">npy</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">indexToKeep</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
-            <span class="n">none_zero_indexes</span> <span class="o">=</span> <span class="n">npy</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">total_values</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span>
-            <span class="n">currConcordance</span><span class="p">[</span><span class="n">none_zero_indexes</span><span class="p">]</span> <span class="o">=</span> <span class="n">npy</span><span class="o">.</span><span class="n">true_divide</span><span class="p">(</span>
+            <span class="n">currConcordance</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">indexToKeep</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+            <span class="n">none_zero_indexes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">total_values</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="n">currConcordance</span><span class="p">[</span><span class="n">none_zero_indexes</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">true_divide</span><span class="p">(</span>
                 <span class="n">values</span><span class="p">[</span><span class="n">none_zero_indexes</span><span class="p">],</span>
                 <span class="n">total_values</span><span class="p">[</span><span class="n">none_zero_indexes</span><span class="p">],</span>
             <span class="p">)</span>
-            <span class="n">currConcordance</span> <span class="o">=</span> <span class="n">npy</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">currConcordance</span><span class="p">)</span>
+            <span class="n">currConcordance</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">currConcordance</span><span class="p">)</span>
             <span class="n">toPrint</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%.8f</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">currConcordance</span><span class="p">)</span>
             <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">outputFile</span><span class="p">,</span> <span class="s">&quot;</span><span class="se">\t</span><span class="s">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">toPrint</span><span class="p">)</span>
 
@@ -817,7 +820,7 @@
     <span class="k">return</span> <span class="n">completionPercentage</span>
 
 </div>
-<div class="viewcode-block" id="computeStatistics"><a class="viewcode-back" href="../../../duplicated_samples.html#pyGenClean.DupSamples.duplicated_samples.computeStatistics">[docs]</a><span class="k">def</span> <span class="nf">computeStatistics</span><span class="p">(</span><span class="n">tped</span><span class="p">,</span> <span class="n">tfam</span><span class="p">,</span> <span class="n">samples</span><span class="p">,</span> <span class="n">oldSamples</span><span class="p">,</span> <span class="n">prefix</span><span class="p">):</span>
+<div class="viewcode-block" id="computeStatistics"><a class="viewcode-back" href="../../../module_content/pyGenClean.DupSamples.html#pyGenClean.DupSamples.duplicated_samples.computeStatistics">[docs]</a><span class="k">def</span> <span class="nf">computeStatistics</span><span class="p">(</span><span class="n">tped</span><span class="p">,</span> <span class="n">tfam</span><span class="p">,</span> <span class="n">samples</span><span class="p">,</span> <span class="n">oldSamples</span><span class="p">,</span> <span class="n">prefix</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Computes the completion and concordance of each samples.</span>
 
 <span class="sd">    :param tped: the ``tped`` containing duplicated samples.</span>
@@ -900,16 +903,16 @@
                                    <span class="s">&quot;dupIndex_2&quot;</span><span class="p">,</span> <span class="s">&quot;genotype_1&quot;</span><span class="p">,</span> <span class="s">&quot;genotype_2&quot;</span><span class="p">])</span>
 
     <span class="c"># The completion data type</span>
-    <span class="n">completion</span> <span class="o">=</span> <span class="n">npy</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">tped</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">4</span><span class="p">:]))],</span>
-                            <span class="p">[</span><span class="mi">0</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">tped</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">4</span><span class="p">:]))]])</span>
+    <span class="n">completion</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">tped</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">4</span><span class="p">:]))],</span>
+                           <span class="p">[</span><span class="mi">0</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">tped</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">4</span><span class="p">:]))]])</span>
 
     <span class="c"># The concordance data type</span>
     <span class="n">concordance</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">for</span> <span class="n">sampleID</span> <span class="ow">in</span> <span class="n">samples</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
         <span class="n">nbDup</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">samples</span><span class="p">[</span><span class="n">sampleID</span><span class="p">])</span>
         <span class="n">concordance</span><span class="p">[</span><span class="n">sampleID</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">npy</span><span class="o">.</span><span class="n">asmatrix</span><span class="p">(</span><span class="n">npy</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nbDup</span><span class="p">,</span> <span class="n">nbDup</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)),</span>
-            <span class="n">npy</span><span class="o">.</span><span class="n">asmatrix</span><span class="p">(</span><span class="n">npy</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nbDup</span><span class="p">,</span> <span class="n">nbDup</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)),</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">asmatrix</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nbDup</span><span class="p">,</span> <span class="n">nbDup</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)),</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">asmatrix</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nbDup</span><span class="p">,</span> <span class="n">nbDup</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)),</span>
         <span class="p">]</span>
 
     <span class="c">#####################################################################</span>
@@ -991,7 +994,7 @@
     <span class="k">return</span> <span class="n">completion</span><span class="p">,</span> <span class="n">concordance</span>
 
 </div>
-<div class="viewcode-block" id="processTPED"><a class="viewcode-back" href="../../../duplicated_samples.html#pyGenClean.DupSamples.duplicated_samples.processTPED">[docs]</a><span class="k">def</span> <span class="nf">processTPED</span><span class="p">(</span><span class="n">uniqueSamples</span><span class="p">,</span> <span class="n">duplicatedSamples</span><span class="p">,</span> <span class="n">fileName</span><span class="p">,</span> <span class="n">prefix</span><span class="p">):</span>
+<div class="viewcode-block" id="processTPED"><a class="viewcode-back" href="../../../module_content/pyGenClean.DupSamples.html#pyGenClean.DupSamples.duplicated_samples.processTPED">[docs]</a><span class="k">def</span> <span class="nf">processTPED</span><span class="p">(</span><span class="n">uniqueSamples</span><span class="p">,</span> <span class="n">duplicatedSamples</span><span class="p">,</span> <span class="n">fileName</span><span class="p">,</span> <span class="n">prefix</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Process the TPED file.</span>
 
 <span class="sd">    :param uniqueSamples: the position of unique samples.</span>
@@ -1051,12 +1054,12 @@
             <span class="n">newPositions</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">dI</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span>
         <span class="n">updatedSamples</span><span class="p">[</span><span class="n">sampleID</span><span class="p">]</span> <span class="o">=</span> <span class="n">newPositions</span>
 
-    <span class="n">tped</span> <span class="o">=</span> <span class="n">npy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">tped</span><span class="p">)</span>
+    <span class="n">tped</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">tped</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">tped</span><span class="p">,</span> <span class="n">updatedSamples</span>
 
 </div>
-<div class="viewcode-block" id="printUniqueTFAM"><a class="viewcode-back" href="../../../duplicated_samples.html#pyGenClean.DupSamples.duplicated_samples.printUniqueTFAM">[docs]</a><span class="k">def</span> <span class="nf">printUniqueTFAM</span><span class="p">(</span><span class="n">tfam</span><span class="p">,</span> <span class="n">samples</span><span class="p">,</span> <span class="n">prefix</span><span class="p">):</span>
+<div class="viewcode-block" id="printUniqueTFAM"><a class="viewcode-back" href="../../../module_content/pyGenClean.DupSamples.html#pyGenClean.DupSamples.duplicated_samples.printUniqueTFAM">[docs]</a><span class="k">def</span> <span class="nf">printUniqueTFAM</span><span class="p">(</span><span class="n">tfam</span><span class="p">,</span> <span class="n">samples</span><span class="p">,</span> <span class="n">prefix</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Prints a new TFAM with only unique samples.</span>
 
 <span class="sd">    :param tfam: a representation of a TFAM file.</span>
@@ -1078,7 +1081,7 @@
         <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
 </div>
-<div class="viewcode-block" id="findDuplicates"><a class="viewcode-back" href="../../../duplicated_samples.html#pyGenClean.DupSamples.duplicated_samples.findDuplicates">[docs]</a><span class="k">def</span> <span class="nf">findDuplicates</span><span class="p">(</span><span class="n">tfam</span><span class="p">):</span>
+<div class="viewcode-block" id="findDuplicates"><a class="viewcode-back" href="../../../module_content/pyGenClean.DupSamples.html#pyGenClean.DupSamples.duplicated_samples.findDuplicates">[docs]</a><span class="k">def</span> <span class="nf">findDuplicates</span><span class="p">(</span><span class="n">tfam</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Finds the duplicates in a TFAM.</span>
 
 <span class="sd">    :param tfam: representation of a ``tfam`` file.</span>
@@ -1112,7 +1115,7 @@
     <span class="k">return</span> <span class="n">uSamples</span><span class="p">,</span> <span class="n">dSamples</span>
 
 </div>
-<div class="viewcode-block" id="readTFAM"><a class="viewcode-back" href="../../../duplicated_samples.html#pyGenClean.DupSamples.duplicated_samples.readTFAM">[docs]</a><span class="k">def</span> <span class="nf">readTFAM</span><span class="p">(</span><span class="n">fileName</span><span class="p">):</span>
+<div class="viewcode-block" id="readTFAM"><a class="viewcode-back" href="../../../module_content/pyGenClean.DupSamples.html#pyGenClean.DupSamples.duplicated_samples.readTFAM">[docs]</a><span class="k">def</span> <span class="nf">readTFAM</span><span class="p">(</span><span class="n">fileName</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Reads the TFAM file.</span>
 
 <span class="sd">    :param fileName: the name of the ``tfam`` file.</span>
@@ -1129,12 +1132,12 @@
             <span class="nb">tuple</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\r\n</span><span class="s">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\t</span><span class="s">&quot;</span><span class="p">))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">inputFile</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
         <span class="p">]</span>
 
-    <span class="n">tfam</span> <span class="o">=</span> <span class="n">npy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">tfam</span><span class="p">)</span>
+    <span class="n">tfam</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">tfam</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">tfam</span>
 
 </div>
-<div class="viewcode-block" id="checkArgs"><a class="viewcode-back" href="../../../duplicated_samples.html#pyGenClean.DupSamples.duplicated_samples.checkArgs">[docs]</a><span class="k">def</span> <span class="nf">checkArgs</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+<div class="viewcode-block" id="checkArgs"><a class="viewcode-back" href="../../../module_content/pyGenClean.DupSamples.html#pyGenClean.DupSamples.duplicated_samples.checkArgs">[docs]</a><span class="k">def</span> <span class="nf">checkArgs</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Checks the arguments and options.</span>
 
 <span class="sd">    :param args: a :py:class:`argparse.Namespace` object containing the options</span>
@@ -1173,7 +1176,7 @@
     <span class="k">return</span> <span class="bp">True</span>
 
 </div>
-<div class="viewcode-block" id="parseArgs"><a class="viewcode-back" href="../../../duplicated_samples.html#pyGenClean.DupSamples.duplicated_samples.parseArgs">[docs]</a><span class="k">def</span> <span class="nf">parseArgs</span><span class="p">(</span><span class="n">argString</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>  <span class="c"># pragma: no cover</span>
+<div class="viewcode-block" id="parseArgs"><a class="viewcode-back" href="../../../module_content/pyGenClean.DupSamples.html#pyGenClean.DupSamples.duplicated_samples.parseArgs">[docs]</a><span class="k">def</span> <span class="nf">parseArgs</span><span class="p">(</span><span class="n">argString</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>  <span class="c"># pragma: no cover</span>
     <span class="sd">&quot;&quot;&quot;Parses the command line options and arguments.</span>
 
 <span class="sd">    :param argString: the options</span>
@@ -1208,7 +1211,7 @@
     <span class="k">return</span> <span class="n">args</span>
 
 </div>
-<div class="viewcode-block" id="ProgramError"><a class="viewcode-back" href="../../../duplicated_samples.html#pyGenClean.DupSamples.duplicated_samples.ProgramError">[docs]</a><span class="k">class</span> <span class="nc">ProgramError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<div class="viewcode-block" id="ProgramError"><a class="viewcode-back" href="../../../module_content/pyGenClean.DupSamples.html#pyGenClean.DupSamples.duplicated_samples.ProgramError">[docs]</a><span class="k">class</span> <span class="nc">ProgramError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;An :py:class:`Exception` raised in case of a problem.</span>
 
 <span class="sd">    :param msg: the message to print to the user before exiting.</span>
@@ -1231,8 +1234,13 @@
 
 <span class="c"># The parser object</span></div>
 <span class="n">pretty_name</span> <span class="o">=</span> <span class="s">&quot;Duplicated samples&quot;</span>
-<span class="n">desc</span> <span class="o">=</span> <span class="s">&quot;&quot;&quot;Extract and work with duplicated samples.&quot;&quot;&quot;</span>
+<span class="n">desc</span> <span class="o">=</span> <span class="s">&quot;Extracts and merges duplicated samples.&quot;</span>
+<span class="n">long_desc</span> <span class="o">=</span> <span class="p">(</span><span class="s">&quot;The script evaluates concordance and completion rate. If the &quot;</span>
+             <span class="s">&quot;thresholds are met, the script merges and completes the &quot;</span>
+             <span class="s">&quot;genotypes.&quot;</span><span class="p">)</span>
 <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="n">desc</span><span class="p">)</span>
+<span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;-v&quot;</span><span class="p">,</span> <span class="s">&quot;--version&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s">&quot;version&quot;</span><span class="p">,</span>
+                    <span class="n">version</span><span class="o">=</span><span class="s">&quot;pyGenClean version {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">__version__</span><span class="p">))</span>
 
 <span class="c"># The INPUT files</span>
 <span class="n">group</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s">&quot;Input File&quot;</span><span class="p">)</span>
@@ -1262,7 +1270,7 @@
                          <span class="s">&quot;</span><span class="si">%(default)s</span><span class="s">]&quot;</span><span class="p">))</span>
 
 
-<div class="viewcode-block" id="safe_main"><a class="viewcode-back" href="../../../duplicated_samples.html#pyGenClean.DupSamples.duplicated_samples.safe_main">[docs]</a><span class="k">def</span> <span class="nf">safe_main</span><span class="p">():</span>
+<div class="viewcode-block" id="safe_main"><a class="viewcode-back" href="../../../module_content/pyGenClean.DupSamples.html#pyGenClean.DupSamples.duplicated_samples.safe_main">[docs]</a><span class="k">def</span> <span class="nf">safe_main</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;A safe version of the main function (that catches ProgramError).&quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">main</span><span class="p">()</span>
@@ -1292,8 +1300,9 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">pyGenClean 1.7.0 documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../../index.html">pyGenClean 1.7.1 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &raquo;</li>
+          <li class="nav-item nav-item-2"><a href="../../pyGenClean.html" >pyGenClean</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">

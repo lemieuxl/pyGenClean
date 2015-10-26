@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Clean No Call and Only Heterozygous Markers Module &mdash; pyGenClean 1.7.0 documentation</title>
+    <title>Clean No Call and Only Heterozygous Markers Module &mdash; pyGenClean 1.7.1 documentation</title>
     
     <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '1.7.0',
+        VERSION:     '1.7.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="pyGenClean 1.7.0 documentation" href="index.html" />
+    <link rel="top" title="pyGenClean 1.7.1 documentation" href="index.html" />
     <link rel="next" title="Sample Missingness Module" href="sample_missingness.html" />
     <link rel="prev" title="Duplicated Markers Module" href="duplicated_markers.html" /> 
   </head>
@@ -49,7 +49,7 @@
         <li class="right" >
           <a href="duplicated_markers.html" title="Duplicated Markers Module"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">pyGenClean 1.7.0 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">pyGenClean 1.7.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
 
@@ -58,15 +58,11 @@
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Clean No Call and Only Heterozygous Markers Module</a><ul>
-<li><a class="reference internal" href="#input-files">Input FIles</a></li>
+<li><a class="reference internal" href="#input-files">Input Files</a></li>
 <li><a class="reference internal" href="#procedure">Procedure</a></li>
 <li><a class="reference internal" href="#output-files">Output Files</a></li>
 <li><a class="reference internal" href="#the-plots">The Plots</a></li>
-<li><a class="reference internal" href="#the-algorithm">The Algorithm</a><ul>
-<li><a class="reference internal" href="#module-pyGenClean.NoCallHetero.clean_noCall_hetero_snps">pyGenClean.NoCallHetero.clean_noCall_hetero_snps</a></li>
-<li><a class="reference internal" href="#module-pyGenClean.NoCallHetero.heterozygosity_plot">pyGenClean.NoCallHetero.heterozygosity_plot</a></li>
-</ul>
-</li>
+<li><a class="reference internal" href="#the-algorithm">The Algorithm</a></li>
 </ul>
 </li>
 </ul>
@@ -106,26 +102,28 @@
           <div class="body" role="main">
             
   <div class="section" id="clean-no-call-and-only-heterozygous-markers-module">
-<h1>Clean No Call and Only Heterozygous Markers Module<a class="headerlink" href="#clean-no-call-and-only-heterozygous-markers-module" title="Permalink to this headline">¶</a></h1>
+<span id="clean-no-call-hetero-label"></span><h1>Clean No Call and Only Heterozygous Markers Module<a class="headerlink" href="#clean-no-call-and-only-heterozygous-markers-module" title="Permalink to this headline">¶</a></h1>
 <p>The usage of the standalone module is shown below:</p>
 <div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> pyGenClean_clean_noCall_hetero_snps --help
-<span class="go">usage: pyGenClean_clean_noCall_hetero_snps [-h] --tfile FILE [--out FILE]</span>
+<span class="go">usage: pyGenClean_clean_noCall_hetero_snps [-h] [-v] --tfile FILE [--out FILE]</span>
 
 <span class="go">Removes &quot;no calls&quot; only and heterozygous only markers.</span>
 
 <span class="go">optional arguments:</span>
-<span class="go">  -h, --help    show this help message and exit</span>
+<span class="go">  -h, --help     show this help message and exit</span>
+<span class="go">  -v, --version  show program&#39;s version number and exit</span>
 
 <span class="go">Input File:</span>
-<span class="go">  --tfile FILE  The input file prefix (will find the tped and tfam file by</span>
-<span class="go">                appending the prefix to .tped and .tfam, respectively.</span>
+<span class="go">  --tfile FILE   The input file prefix (will find the tped and tfam file by</span>
+<span class="go">                 appending the prefix to .tped and .tfam, respectively.</span>
 
 <span class="go">Output File:</span>
-<span class="go">  --out FILE    The prefix of the output files. [default: clean_noCall_hetero]</span>
+<span class="go">  --out FILE     The prefix of the output files. [default:</span>
+<span class="go">                 clean_noCall_hetero]</span>
 </pre></div>
 </div>
 <div class="section" id="input-files">
-<h2>Input FIles<a class="headerlink" href="#input-files" title="Permalink to this headline">¶</a></h2>
+<h2>Input Files<a class="headerlink" href="#input-files" title="Permalink to this headline">¶</a></h2>
 <p>This module uses the transposed pedfile format separated by tabulations
 (<code class="docutils literal"><span class="pre">tped</span></code> and <code class="docutils literal"><span class="pre">tfam</span></code> files) for the source data set (the data of interest).</p>
 </div>
@@ -161,15 +159,16 @@ failed in the initial dataset.</li>
 be visualized using histograms or box plots. This script has not yet been
 included in the automated pipeline, so it needs to be started manually.</p>
 <div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> pyGenClean_heterozygosity_plot --help
-<span class="go">usage: pyGenClean_heterozygosity_plot [-h] --tfile FILE [--boxplot]</span>
+<span class="go">usage: pyGenClean_heterozygosity_plot [-h] [-v] --tfile FILE [--boxplot]</span>
 <span class="go">                                      [--format FORMAT] [--bins INT]</span>
 <span class="go">                                      [--xlim FLOAT FLOAT] [--ymax FLOAT]</span>
 <span class="go">                                      [--out FILE]</span>
 
-<span class="go">Plot the distribution of the heterozygosity ratio.</span>
+<span class="go">Plots the distribution of the heterozygosity ratio.</span>
 
 <span class="go">optional arguments:</span>
 <span class="go">  -h, --help          show this help message and exit</span>
+<span class="go">  -v, --version       show program&#39;s version number and exit</span>
 
 <span class="go">Input File:</span>
 <span class="go">  --tfile FILE        The prefix of the transposed file</span>
@@ -201,366 +200,12 @@ heterozygosity rates.</p>
 </div>
 <div class="section" id="the-algorithm">
 <h2>The Algorithm<a class="headerlink" href="#the-algorithm" title="Permalink to this headline">¶</a></h2>
-<p>For more information about the actual algorithms and source codes (the
-<a class="reference internal" href="#module-pyGenClean.NoCallHetero.clean_noCall_hetero_snps" title="pyGenClean.NoCallHetero.clean_noCall_hetero_snps"><code class="xref py py-mod docutils literal"><span class="pre">pyGenClean.NoCallHetero.clean_noCall_hetero_snps</span></code></a> and
-<a class="reference internal" href="#module-pyGenClean.NoCallHetero.heterozygosity_plot" title="pyGenClean.NoCallHetero.heterozygosity_plot"><code class="xref py py-mod docutils literal"><span class="pre">pyGenClean.NoCallHetero.heterozygosity_plot</span></code></a> modules), refer to the
-following sections.</p>
-<div class="section" id="module-pyGenClean.NoCallHetero.clean_noCall_hetero_snps">
-<span id="pygenclean-nocallhetero-clean-nocall-hetero-snps"></span><h3>pyGenClean.NoCallHetero.clean_noCall_hetero_snps<a class="headerlink" href="#module-pyGenClean.NoCallHetero.clean_noCall_hetero_snps" title="Permalink to this headline">¶</a></h3>
-<dl class="exception">
-<dt id="pyGenClean.NoCallHetero.clean_noCall_hetero_snps.ProgramError">
-<em class="property">exception </em><code class="descclassname">pyGenClean.NoCallHetero.clean_noCall_hetero_snps.</code><code class="descname">ProgramError</code><span class="sig-paren">(</span><em>msg</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/NoCallHetero/clean_noCall_hetero_snps.html#ProgramError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.NoCallHetero.clean_noCall_hetero_snps.ProgramError" title="Permalink to this definition">¶</a></dt>
-<dd><p>An <code class="xref py py-class docutils literal"><span class="pre">Exception</span></code> raised in case of a problem.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>msg</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the message to print to the user before exiting.</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="pyGenClean.NoCallHetero.clean_noCall_hetero_snps.checkArgs">
-<code class="descclassname">pyGenClean.NoCallHetero.clean_noCall_hetero_snps.</code><code class="descname">checkArgs</code><span class="sig-paren">(</span><em>args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/NoCallHetero/clean_noCall_hetero_snps.html#checkArgs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.NoCallHetero.clean_noCall_hetero_snps.checkArgs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Checks the arguments and options.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>args</strong> (<a class="reference external" href="http://docs.python.org/library/argparse.html#argparse.Namespace" title="(in Python v2.7)"><em>argparse.Namespace</em></a>) &#8211; an object containing the options of the program.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><code class="docutils literal"><span class="pre">True</span></code> if everything was OK.</td>
-</tr>
-</tbody>
-</table>
-<p>If there is a problem with an option, an exception is raised using the
-<a class="reference internal" href="#pyGenClean.NoCallHetero.clean_noCall_hetero_snps.ProgramError" title="pyGenClean.NoCallHetero.clean_noCall_hetero_snps.ProgramError"><code class="xref py py-class docutils literal"><span class="pre">ProgramError</span></code></a> class, a message is printed to the
-<code class="xref py py-class docutils literal"><span class="pre">sys.stderr</span></code> and the program exists with code 1.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="pyGenClean.NoCallHetero.clean_noCall_hetero_snps.main">
-<code class="descclassname">pyGenClean.NoCallHetero.clean_noCall_hetero_snps.</code><code class="descname">main</code><span class="sig-paren">(</span><em>argString=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/NoCallHetero/clean_noCall_hetero_snps.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.NoCallHetero.clean_noCall_hetero_snps.main" title="Permalink to this definition">¶</a></dt>
-<dd><p>The main function of the module.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>argString</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; the options.</td>
-</tr>
-</tbody>
-</table>
-<p>These are the steps:</p>
-<ol class="arabic simple">
-<li>Prints the options.</li>
-<li>Reads the <code class="docutils literal"><span class="pre">tfam</span></code> and <code class="docutils literal"><span class="pre">tped</span></code> files and find all heterozygous and all
-failed markers (<a class="reference internal" href="#pyGenClean.NoCallHetero.clean_noCall_hetero_snps.processTPEDandTFAM" title="pyGenClean.NoCallHetero.clean_noCall_hetero_snps.processTPEDandTFAM"><code class="xref py py-func docutils literal"><span class="pre">processTPEDandTFAM()</span></code></a>).</li>
-</ol>
-</dd></dl>
-
-<dl class="function">
-<dt id="pyGenClean.NoCallHetero.clean_noCall_hetero_snps.parseArgs">
-<code class="descclassname">pyGenClean.NoCallHetero.clean_noCall_hetero_snps.</code><code class="descname">parseArgs</code><span class="sig-paren">(</span><em>argString=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/NoCallHetero/clean_noCall_hetero_snps.html#parseArgs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.NoCallHetero.clean_noCall_hetero_snps.parseArgs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Parses the command line options and arguments.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>argString</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; the options.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A <a class="reference external" href="http://docs.python.org/library/argparse.html#argparse.Namespace" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">argparse.Namespace</span></code></a> object created by the
-<a class="reference external" href="http://docs.python.org/library/argparse.html#module-argparse" title="(in Python v2.7)"><code class="xref py py-mod docutils literal"><span class="pre">argparse</span></code></a> module. It contains the values of the
-different options.</td>
-</tr>
-</tbody>
-</table>
-<table border="1" class="docutils">
-<colgroup>
-<col width="21%" />
-<col width="11%" />
-<col width="68%" />
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Options</th>
-<th class="head">Type</th>
-<th class="head">Description</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr class="row-even"><td><code class="docutils literal"><span class="pre">--tfile</span></code></td>
-<td>string</td>
-<td>The input file prefix (Plink tfile).</td>
-</tr>
-<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--out</span></code></td>
-<td>string</td>
-<td>The prefix of the output files</td>
-</tr>
-</tbody>
-</table>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">No option check is done here (except for the one automatically done by
-argparse). Those need to be done elsewhere (see <a class="reference internal" href="#pyGenClean.NoCallHetero.clean_noCall_hetero_snps.checkArgs" title="pyGenClean.NoCallHetero.clean_noCall_hetero_snps.checkArgs"><code class="xref py py-func docutils literal"><span class="pre">checkArgs()</span></code></a>).</p>
-</div>
-</dd></dl>
-
-<dl class="function">
-<dt id="pyGenClean.NoCallHetero.clean_noCall_hetero_snps.processTPEDandTFAM">
-<code class="descclassname">pyGenClean.NoCallHetero.clean_noCall_hetero_snps.</code><code class="descname">processTPEDandTFAM</code><span class="sig-paren">(</span><em>tped</em>, <em>tfam</em>, <em>prefix</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/NoCallHetero/clean_noCall_hetero_snps.html#processTPEDandTFAM"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.NoCallHetero.clean_noCall_hetero_snps.processTPEDandTFAM" title="Permalink to this definition">¶</a></dt>
-<dd><p>Process the TPED and TFAM files.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>tped</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the name of the <code class="docutils literal"><span class="pre">tped</span></code> file.</li>
-<li><strong>tfam</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the name of the <code class="docutils literal"><span class="pre">tfam</span></code> file.</li>
-<li><strong>prefix</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the prefix of the output files.</li>
+<p>For more information about the actual algorithms and source codes, refer to the
+following pages.</p>
+<ul class="simple">
+<li><a class="reference internal" href="module_content/pyGenClean.NoCallHetero.html#module-pyGenClean.NoCallHetero.clean_noCall_hetero_snps" title="pyGenClean.NoCallHetero.clean_noCall_hetero_snps"><code class="xref py py-mod docutils literal"><span class="pre">pyGenClean.NoCallHetero.clean_noCall_hetero_snps</span></code></a></li>
+<li><a class="reference internal" href="module_content/pyGenClean.NoCallHetero.html#module-pyGenClean.NoCallHetero.heterozygosity_plot" title="pyGenClean.NoCallHetero.heterozygosity_plot"><code class="xref py py-mod docutils literal"><span class="pre">pyGenClean.NoCallHetero.heterozygosity_plot</span></code></a></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
-<p>Copies the original <code class="docutils literal"><span class="pre">tfam</span></code> file into <code class="docutils literal"><span class="pre">prefix.tfam</span></code>. Then, it reads the
-<code class="docutils literal"><span class="pre">tped</span></code> file and keeps in memory two sets containing the markers which are
-all failed or which contains only heterozygous genotypes.</p>
-<p>It creates two output files, <code class="docutils literal"><span class="pre">prefix.allFailed</span></code> and <code class="docutils literal"><span class="pre">prefix.allHetero</span></code>,
-containing the markers that are all failed and are all heterozygous,
-respectively.</p>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">All heterozygous markers located on the mitochondrial chromosome are
-not remove.</p>
-</div>
-</dd></dl>
-
-<dl class="function">
-<dt id="pyGenClean.NoCallHetero.clean_noCall_hetero_snps.safe_main">
-<code class="descclassname">pyGenClean.NoCallHetero.clean_noCall_hetero_snps.</code><code class="descname">safe_main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/NoCallHetero/clean_noCall_hetero_snps.html#safe_main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.NoCallHetero.clean_noCall_hetero_snps.safe_main" title="Permalink to this definition">¶</a></dt>
-<dd><p>A safe version of the main function (that catches ProgramError).</p>
-</dd></dl>
-
-</div>
-<div class="section" id="module-pyGenClean.NoCallHetero.heterozygosity_plot">
-<span id="pygenclean-nocallhetero-heterozygosity-plot"></span><h3>pyGenClean.NoCallHetero.heterozygosity_plot<a class="headerlink" href="#module-pyGenClean.NoCallHetero.heterozygosity_plot" title="Permalink to this headline">¶</a></h3>
-<dl class="exception">
-<dt id="pyGenClean.NoCallHetero.heterozygosity_plot.ProgramError">
-<em class="property">exception </em><code class="descclassname">pyGenClean.NoCallHetero.heterozygosity_plot.</code><code class="descname">ProgramError</code><span class="sig-paren">(</span><em>msg</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/NoCallHetero/heterozygosity_plot.html#ProgramError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.NoCallHetero.heterozygosity_plot.ProgramError" title="Permalink to this definition">¶</a></dt>
-<dd><p>An <code class="xref py py-class docutils literal"><span class="pre">Exception</span></code> raised in case of a problem.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>msg</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the message to print to the user before exiting.</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="pyGenClean.NoCallHetero.heterozygosity_plot.checkArgs">
-<code class="descclassname">pyGenClean.NoCallHetero.heterozygosity_plot.</code><code class="descname">checkArgs</code><span class="sig-paren">(</span><em>args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/NoCallHetero/heterozygosity_plot.html#checkArgs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.NoCallHetero.heterozygosity_plot.checkArgs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Checks the arguments and options.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>args</strong> (<a class="reference external" href="http://docs.python.org/library/argparse.html#argparse.Namespace" title="(in Python v2.7)"><em>argparse.Namespace</em></a>) &#8211; an object containing the options of the program.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><code class="docutils literal"><span class="pre">True</span></code> if everything was OK.</td>
-</tr>
-</tbody>
-</table>
-<p>If there is a problem with an option, an exception is raised using the
-<a class="reference internal" href="#pyGenClean.NoCallHetero.heterozygosity_plot.ProgramError" title="pyGenClean.NoCallHetero.heterozygosity_plot.ProgramError"><code class="xref py py-class docutils literal"><span class="pre">ProgramError</span></code></a> class, a message is printed to the
-<code class="xref py py-class docutils literal"><span class="pre">sys.stderr</span></code> and the program exists with code 1.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="pyGenClean.NoCallHetero.heterozygosity_plot.compute_heterozygosity">
-<code class="descclassname">pyGenClean.NoCallHetero.heterozygosity_plot.</code><code class="descname">compute_heterozygosity</code><span class="sig-paren">(</span><em>in_prefix</em>, <em>nb_samples</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/NoCallHetero/heterozygosity_plot.html#compute_heterozygosity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.NoCallHetero.heterozygosity_plot.compute_heterozygosity" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computes the heterozygosity ratio of samples (from tped).</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="pyGenClean.NoCallHetero.heterozygosity_plot.compute_nb_samples">
-<code class="descclassname">pyGenClean.NoCallHetero.heterozygosity_plot.</code><code class="descname">compute_nb_samples</code><span class="sig-paren">(</span><em>in_prefix</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/NoCallHetero/heterozygosity_plot.html#compute_nb_samples"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.NoCallHetero.heterozygosity_plot.compute_nb_samples" title="Permalink to this definition">¶</a></dt>
-<dd><p>Check the number of samples.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>in_prefix</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the prefix of the input file.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">the number of sample in <code class="docutils literal"><span class="pre">prefix.fam</span></code>.</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="pyGenClean.NoCallHetero.heterozygosity_plot.is_heterozygous">
-<code class="descclassname">pyGenClean.NoCallHetero.heterozygosity_plot.</code><code class="descname">is_heterozygous</code><span class="sig-paren">(</span><em>genotype</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/NoCallHetero/heterozygosity_plot.html#is_heterozygous"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.NoCallHetero.heterozygosity_plot.is_heterozygous" title="Permalink to this definition">¶</a></dt>
-<dd><p>Tells if a genotype &#8220;A B&#8221; is heterozygous.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>genotype</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the genotype to test for heterozygosity.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><code class="docutils literal"><span class="pre">True</span></code> if the genotype is heterozygous, <code class="docutils literal"><span class="pre">False</span></code> otherwise.</td>
-</tr>
-</tbody>
-</table>
-<p>The genotype must contain two alleles, separated by a space. It then
-compares the first allele (<code class="docutils literal"><span class="pre">genotype[0]</span></code>) with the last one
-(<code class="docutils literal"><span class="pre">genotype[-1]</span></code>).</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">is_heterozygous</span><span class="p">(</span><span class="s">&quot;A A&quot;</span><span class="p">)</span>
-<span class="go">False</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">is_heterozygous</span><span class="p">(</span><span class="s">&quot;G C&quot;</span><span class="p">)</span>
-<span class="go">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">is_heterozygous</span><span class="p">(</span><span class="s">&quot;0 0&quot;</span><span class="p">)</span> <span class="c"># No call is not heterozygous.</span>
-<span class="go">False</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="function">
-<dt id="pyGenClean.NoCallHetero.heterozygosity_plot.main">
-<code class="descclassname">pyGenClean.NoCallHetero.heterozygosity_plot.</code><code class="descname">main</code><span class="sig-paren">(</span><em>argString=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/NoCallHetero/heterozygosity_plot.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.NoCallHetero.heterozygosity_plot.main" title="Permalink to this definition">¶</a></dt>
-<dd><p>The main function of the module.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>argString</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; the options.</td>
-</tr>
-</tbody>
-</table>
-<p>These are the steps:</p>
-<ol class="arabic simple">
-<li>Prints the options.</li>
-<li>Checks the number of samples in the <code class="docutils literal"><span class="pre">tfam</span></code> file
-(<a class="reference internal" href="#pyGenClean.NoCallHetero.heterozygosity_plot.compute_nb_samples" title="pyGenClean.NoCallHetero.heterozygosity_plot.compute_nb_samples"><code class="xref py py-func docutils literal"><span class="pre">compute_nb_samples()</span></code></a>).</li>
-<li>Computes the heterozygosity rate (<a class="reference internal" href="#pyGenClean.NoCallHetero.heterozygosity_plot.compute_heterozygosity" title="pyGenClean.NoCallHetero.heterozygosity_plot.compute_heterozygosity"><code class="xref py py-func docutils literal"><span class="pre">compute_heterozygosity()</span></code></a>).</li>
-<li>Saves the heterozygosity data (in <code class="docutils literal"><span class="pre">out.het</span></code>).</li>
-<li>Plots the heterozygosity rate (<a class="reference internal" href="#pyGenClean.NoCallHetero.heterozygosity_plot.plot_heterozygosity" title="pyGenClean.NoCallHetero.heterozygosity_plot.plot_heterozygosity"><code class="xref py py-func docutils literal"><span class="pre">plot_heterozygosity()</span></code></a>).</li>
-</ol>
-</dd></dl>
-
-<dl class="function">
-<dt id="pyGenClean.NoCallHetero.heterozygosity_plot.parseArgs">
-<code class="descclassname">pyGenClean.NoCallHetero.heterozygosity_plot.</code><code class="descname">parseArgs</code><span class="sig-paren">(</span><em>argString=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/NoCallHetero/heterozygosity_plot.html#parseArgs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.NoCallHetero.heterozygosity_plot.parseArgs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Parses the command line options and arguments.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>argString</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; the options.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A <a class="reference external" href="http://docs.python.org/library/argparse.html#argparse.Namespace" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">argparse.Namespace</span></code></a> object created by the
-<a class="reference external" href="http://docs.python.org/library/argparse.html#module-argparse" title="(in Python v2.7)"><code class="xref py py-mod docutils literal"><span class="pre">argparse</span></code></a> module. It contains the values of the
-different options.</td>
-</tr>
-</tbody>
-</table>
-<table border="1" class="docutils">
-<colgroup>
-<col width="23%" />
-<col width="11%" />
-<col width="67%" />
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Options</th>
-<th class="head">Type</th>
-<th class="head">Description</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr class="row-even"><td><code class="docutils literal"><span class="pre">--tfile</span></code></td>
-<td>string</td>
-<td>The prefix of the transposed file.</td>
-</tr>
-<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--boxplot</span></code></td>
-<td>bool</td>
-<td>Draw a boxplot instead of a histogram.</td>
-</tr>
-<tr class="row-even"><td><code class="docutils literal"><span class="pre">--format</span></code></td>
-<td>string</td>
-<td>The output file format.</td>
-</tr>
-<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--bins</span></code></td>
-<td>int</td>
-<td>The number of bins for the histogram.</td>
-</tr>
-<tr class="row-even"><td><code class="docutils literal"><span class="pre">--xlim</span></code></td>
-<td>float</td>
-<td>The limit of the x axis.</td>
-</tr>
-<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--ymax</span></code></td>
-<td>float</td>
-<td>&#8220;The maximal Y value.</td>
-</tr>
-<tr class="row-even"><td><code class="docutils literal"><span class="pre">--out</span></code></td>
-<td>string</td>
-<td>The prefix of the output files.</td>
-</tr>
-</tbody>
-</table>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">No option check is done here (except for the one automatically done by
-argparse). Those need to be done elsewhere (see <a class="reference internal" href="#pyGenClean.NoCallHetero.heterozygosity_plot.checkArgs" title="pyGenClean.NoCallHetero.heterozygosity_plot.checkArgs"><code class="xref py py-func docutils literal"><span class="pre">checkArgs()</span></code></a>).</p>
-</div>
-</dd></dl>
-
-<dl class="function">
-<dt id="pyGenClean.NoCallHetero.heterozygosity_plot.plot_heterozygosity">
-<code class="descclassname">pyGenClean.NoCallHetero.heterozygosity_plot.</code><code class="descname">plot_heterozygosity</code><span class="sig-paren">(</span><em>heterozygosity</em>, <em>options</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/NoCallHetero/heterozygosity_plot.html#plot_heterozygosity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.NoCallHetero.heterozygosity_plot.plot_heterozygosity" title="Permalink to this definition">¶</a></dt>
-<dd><p>Plots the heterozygosity rate distribution.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>heterozygosity</strong> (<a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.array.html#numpy.array" title="(in NumPy v1.9)"><em>numpy.array</em></a>) &#8211; the heterozygosity data.</li>
-<li><strong>options</strong> (<a class="reference external" href="http://docs.python.org/library/argparse.html#argparse.Namespace" title="(in Python v2.7)"><em>argparse.Namespace</em></a>) &#8211; the options.</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-<p>Plots a histogram or a boxplot of the heterozygosity distribution.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="pyGenClean.NoCallHetero.heterozygosity_plot.safe_main">
-<code class="descclassname">pyGenClean.NoCallHetero.heterozygosity_plot.</code><code class="descname">safe_main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/NoCallHetero/heterozygosity_plot.html#safe_main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.NoCallHetero.heterozygosity_plot.safe_main" title="Permalink to this definition">¶</a></dt>
-<dd><p>A safe version of the main function (that catches ProgramError).</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="pyGenClean.NoCallHetero.heterozygosity_plot.save_heterozygosity">
-<code class="descclassname">pyGenClean.NoCallHetero.heterozygosity_plot.</code><code class="descname">save_heterozygosity</code><span class="sig-paren">(</span><em>heterozygosity</em>, <em>samples</em>, <em>out_prefix</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/NoCallHetero/heterozygosity_plot.html#save_heterozygosity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.NoCallHetero.heterozygosity_plot.save_heterozygosity" title="Permalink to this definition">¶</a></dt>
-<dd><p>Saves the heterozygosity data.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>heterozygosity</strong> (<a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.array.html#numpy.array" title="(in NumPy v1.9)"><em>numpy.array</em></a>) &#8211; the heterozygosity data.</li>
-<li><strong>samples</strong> (<em>list of tuples of str</em>) &#8211; the list of samples.</li>
-<li><strong>out_prefix</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the prefix of the output files.</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-</div>
 </div>
 </div>
 
@@ -585,7 +230,7 @@ argparse). Those need to be done elsewhere (see <a class="reference internal" hr
         <li class="right" >
           <a href="duplicated_markers.html" title="Duplicated Markers Module"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">pyGenClean 1.7.0 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">pyGenClean 1.7.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">

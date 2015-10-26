@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Welcome to pyGenClean’s documentation! &mdash; pyGenClean 1.7.0 documentation</title>
+    <title>Welcome to pyGenClean’s documentation! &mdash; pyGenClean 1.7.1 documentation</title>
     
     <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '1.7.0',
+        VERSION:     '1.7.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="pyGenClean 1.7.0 documentation" href="#" />
+    <link rel="top" title="pyGenClean 1.7.1 documentation" href="#" />
     <link rel="next" title="Linux Installation" href="install_linux.html" /> 
   </head>
   <body role="document">
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="install_linux.html" title="Linux Installation"
              accesskey="N">next</a> |</li>
-        <li class="nav-item nav-item-0"><a href="#">pyGenClean 1.7.0 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="#">pyGenClean 1.7.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
 
@@ -109,20 +109,21 @@ experiment. The first step of any analysis with genotyping arrays is typically
 the conduct of a thorough data clean up and quality control to remove poor
 quality genotypes and generate metrics to inform and select individuals for
 downstream statistical analysis.</p>
-<p><code class="xref py py-mod docutils literal"><span class="pre">pyGenClean</span></code> is an informatics tool to facilitate and standardize the
+<p><a class="reference internal" href="module_content/pyGenClean.html#module-pyGenClean" title="pyGenClean"><code class="xref py py-mod docutils literal"><span class="pre">pyGenClean</span></code></a> is an informatics tool to facilitate and standardize the
 genetic data clean up pipeline with genotyping array data. In conjuction with a
 source batch-queuing system, the tool minimizes data manipulation errors, it
 accelerates the completion of the data clean up process and it provides
 informative graphics and metrics to guide decision making for statistical
 analysis.</p>
-<p><code class="xref py py-mod docutils literal"><span class="pre">pyGenClean</span></code> is a command tool working on both Linux and Windows
+<p><a class="reference internal" href="module_content/pyGenClean.html#module-pyGenClean" title="pyGenClean"><code class="xref py py-mod docutils literal"><span class="pre">pyGenClean</span></code></a> is a command tool working on both Linux and Windows
 operating systems. Its usage is shown below:</p>
 <div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> run_pyGenClean --help
 <span class="go">usage: run_pyGenClean [-h] [-v] [--bfile FILE] [--tfile FILE] [--file FILE]</span>
-<span class="go">                      [--report-author AUTHOR] [--report-number NUMBER]</span>
+<span class="go">                      [--report-title TITLE] [--report-author AUTHOR]</span>
+<span class="go">                      [--report-number NUMBER]</span>
 <span class="go">                      [--report-background BACKGROUND] --conf FILE</span>
 
-<span class="go">Runs the data clean up (version 1.7.0).</span>
+<span class="go">Runs the data clean up (pyGenClean version 1.7.1).</span>
 
 <span class="go">optional arguments:</span>
 <span class="go">  -h, --help            show this help message and exit</span>
@@ -139,6 +140,7 @@ operating systems. Its usage is shown below:</p>
 <span class="go">                        appending the prefix to the .ped and .fam files).</span>
 
 <span class="go">Report Options:</span>
+<span class="go">  --report-title TITLE  The report title. [default: Genetic Data Clean Up]</span>
 <span class="go">  --report-author AUTHOR</span>
 <span class="go">                        The current project number. [default: pyGenClean]</span>
 <span class="go">  --report-number NUMBER</span>
@@ -164,7 +166,7 @@ of its function. Optional manual checks for go-no-go decisions are indicated.</p
 </div>
 <div class="section" id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
-<p><code class="xref py py-mod docutils literal"><span class="pre">pyGenClean</span></code> is a Python package that works on both Linux and Windows
+<p><a class="reference internal" href="module_content/pyGenClean.html#module-pyGenClean" title="pyGenClean"><code class="xref py py-mod docutils literal"><span class="pre">pyGenClean</span></code></a> is a Python package that works on both Linux and Windows
 operating systems. It requires a set of Python dependencies and PLINK. Complete
 installation procedures are available for both Linux (32 and 64 bits) and
 Windows in the following sections.</p>
@@ -177,19 +179,19 @@ Windows in the following sections.</p>
 </div>
 <div class="section" id="input-files">
 <h2>Input Files<a class="headerlink" href="#input-files" title="Permalink to this headline">¶</a></h2>
-<p>To use <code class="xref py py-mod docutils literal"><span class="pre">pyGenClean</span></code>, two sets of files are required: a set of genotype
+<p>To use <a class="reference internal" href="module_content/pyGenClean.html#module-pyGenClean" title="pyGenClean"><code class="xref py py-mod docutils literal"><span class="pre">pyGenClean</span></code></a>, two sets of files are required: a set of genotype
 files and a configuration file.</p>
 <div class="section" id="genotype-files">
 <h3>Genotype Files<a class="headerlink" href="#genotype-files" title="Permalink to this headline">¶</a></h3>
 <p>The input files of the main program (<code class="docutils literal"><span class="pre">run_pyGenClean</span></code>) is one of the
 following:</p>
 <ul class="simple">
-<li>PLINK&#8217;s pedfile format (use <code class="xref py py-mod docutils literal"><span class="pre">pyGenClean</span></code>&#8216;s <code class="docutils literal"><span class="pre">--file</span></code> option)
+<li>PLINK&#8217;s pedfile format (use <a class="reference internal" href="module_content/pyGenClean.html#module-pyGenClean" title="pyGenClean"><code class="xref py py-mod docutils literal"><span class="pre">pyGenClean</span></code></a>&#8216;s <code class="docutils literal"><span class="pre">--file</span></code> option)
 consist of two files with the following extensions: <code class="docutils literal"><span class="pre">PED</span></code> and <code class="docutils literal"><span class="pre">MAP</span></code>.</li>
-<li>PLINK&#8217;s transposed pedfile format (use <code class="xref py py-mod docutils literal"><span class="pre">pyGenClean</span></code>&#8216;s <code class="docutils literal"><span class="pre">--tfile</span></code>
+<li>PLINK&#8217;s transposed pedfile format (use <a class="reference internal" href="module_content/pyGenClean.html#module-pyGenClean" title="pyGenClean"><code class="xref py py-mod docutils literal"><span class="pre">pyGenClean</span></code></a>&#8216;s <code class="docutils literal"><span class="pre">--tfile</span></code>
 option) consist of two files with the following extensions: <code class="docutils literal"><span class="pre">TPED</span></code> and
 <code class="docutils literal"><span class="pre">TFAM</span></code>.</li>
-<li>PLINK&#8217;s binary pedfile format (use <code class="xref py py-mod docutils literal"><span class="pre">pyGenClean</span></code>&#8216;s <code class="docutils literal"><span class="pre">--bfile</span></code>
+<li>PLINK&#8217;s binary pedfile format (use <a class="reference internal" href="module_content/pyGenClean.html#module-pyGenClean" title="pyGenClean"><code class="xref py py-mod docutils literal"><span class="pre">pyGenClean</span></code></a>&#8216;s <code class="docutils literal"><span class="pre">--bfile</span></code>
 option) consist of three files with the following extensions: <code class="docutils literal"><span class="pre">BED</span></code>,
 <code class="docutils literal"><span class="pre">BIM</span></code> and <code class="docutils literal"><span class="pre">FAM</span></code>.</li>
 </ul>
@@ -213,13 +215,13 @@ format.</li>
 </div>
 <div class="section" id="configuration-file">
 <h3>Configuration File<a class="headerlink" href="#configuration-file" title="Permalink to this headline">¶</a></h3>
-<p>To customized <code class="xref py py-mod docutils literal"><span class="pre">pyGenClean</span></code>, a basic configuration file is required. It
+<p>To customized <a class="reference internal" href="module_content/pyGenClean.html#module-pyGenClean" title="pyGenClean"><code class="xref py py-mod docutils literal"><span class="pre">pyGenClean</span></code></a>, a basic configuration file is required. It
 tells which script to use in a specific order. It also sets the different
 options and input files, so that the analysis is easy to replicate or modify.</p>
 <p>The configuration file consists of sections, led by a <code class="docutils literal"><span class="pre">[section]</span></code> header
 (contiguous integers which gives the order of the pipeline) and followed by
 customization of this particular part of the pipeline. Lines preceded by a
-<code class="docutils literal"><span class="pre">#</span></code> are comments and are not read by <code class="xref py py-mod docutils literal"><span class="pre">pyGenClean</span></code>.</p>
+<code class="docutils literal"><span class="pre">#</span></code> are comments and are not read by <a class="reference internal" href="module_content/pyGenClean.html#module-pyGenClean" title="pyGenClean"><code class="xref py py-mod docutils literal"><span class="pre">pyGenClean</span></code></a>.</p>
 <p>The following example first removes samples with a missing rate of 10% and
 more, then removes markers with a missing rate of 2% and more. Finally, it
 removes the samples with a missing rate of 2% and more.</p>
@@ -298,6 +300,10 @@ files (with all available parameters) are given.</p>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="how_to_run.html">How to Run the Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="automatic_report.html">Automatic Report</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="automatic_report.html#report-merging">Report merging</a></li>
+</ul>
+</li>
 </ul>
 </div>
 </div>
@@ -307,7 +313,7 @@ files (with all available parameters) are given.</p>
 following section:</p>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="data_clean_up_module.html">The Data Clean Up Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module_content/modules.html">Main pyGenClean pipeline</a></li>
 <li class="toctree-l1"><a class="reference internal" href="duplicated_samples.html">Duplicated Samples Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="duplicated_markers.html">Duplicated Markers Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="clean_noCall_hetero_snps.html">Clean No Call and Only Heterozygous Markers Module</a></li>
@@ -353,7 +359,7 @@ following section:</p>
         <li class="right" >
           <a href="install_linux.html" title="Linux Installation"
              >next</a> |</li>
-        <li class="nav-item nav-item-0"><a href="#">pyGenClean 1.7.0 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="#">pyGenClean 1.7.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">

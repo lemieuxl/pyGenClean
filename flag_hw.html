@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Hardy Weinberg Equilibrium Module &mdash; pyGenClean 1.7.0 documentation</title>
+    <title>Hardy Weinberg Equilibrium Module &mdash; pyGenClean 1.7.1 documentation</title>
     
     <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '1.7.0',
+        VERSION:     '1.7.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="pyGenClean 1.7.0 documentation" href="index.html" />
+    <link rel="top" title="pyGenClean 1.7.1 documentation" href="index.html" />
     <link rel="next" title="Comparison with a Gold Standard Module" href="compare_gold_standard.html" />
     <link rel="prev" title="Minor Allele Frequency of Zero Module" href="flag_maf_zero.html" /> 
   </head>
@@ -49,7 +49,7 @@
         <li class="right" >
           <a href="flag_maf_zero.html" title="Minor Allele Frequency of Zero Module"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">pyGenClean 1.7.0 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">pyGenClean 1.7.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
 
@@ -61,10 +61,7 @@
 <li><a class="reference internal" href="#input-files">Input Files</a></li>
 <li><a class="reference internal" href="#procedure">Procedure</a></li>
 <li><a class="reference internal" href="#output-files">Output Files</a></li>
-<li><a class="reference internal" href="#the-algorithm">The Algorithm</a><ul>
-<li><a class="reference internal" href="#module-pyGenClean.FlagHW.flag_hw">pyGenClean.FlagHW.flag_hw</a></li>
-</ul>
-</li>
+<li><a class="reference internal" href="#the-algorithm">The Algorithm</a></li>
 </ul>
 </li>
 </ul>
@@ -104,26 +101,27 @@
           <div class="body" role="main">
             
   <div class="section" id="hardy-weinberg-equilibrium-module">
-<h1>Hardy Weinberg Equilibrium Module<a class="headerlink" href="#hardy-weinberg-equilibrium-module" title="Permalink to this headline">¶</a></h1>
+<span id="flag-hw-label"></span><h1>Hardy Weinberg Equilibrium Module<a class="headerlink" href="#hardy-weinberg-equilibrium-module" title="Permalink to this headline">¶</a></h1>
 <p>The usage of the standalone module is shown below:</p>
 <div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> pyGenClean_flag_hw --help
-<span class="go">usage: pyGenClean_flag_hw [-h] --bfile FILE [--hwe FLOAT] [--out FILE]</span>
+<span class="go">usage: pyGenClean_flag_hw [-h] [-v] --bfile FILE [--hwe FLOAT] [--out FILE]</span>
 
-<span class="go">Flag SNPs with Hardy-Weinberg disequilibrium.</span>
+<span class="go">Flags SNPs with Hardy-Weinberg disequilibrium.</span>
 
 <span class="go">optional arguments:</span>
-<span class="go">  -h, --help    show this help message and exit</span>
+<span class="go">  -h, --help     show this help message and exit</span>
+<span class="go">  -v, --version  show program&#39;s version number and exit</span>
 
 <span class="go">Input File:</span>
-<span class="go">  --bfile FILE  The input file prefix (will find the plink binary files by</span>
-<span class="go">                appending the prefix to the .bim, .bed and .fam files,</span>
-<span class="go">                respectively.</span>
+<span class="go">  --bfile FILE   The input file prefix (will find the plink binary files by</span>
+<span class="go">                 appending the prefix to the .bim, .bed and .fam files,</span>
+<span class="go">                 respectively.</span>
 
 <span class="go">Options:</span>
-<span class="go">  --hwe FLOAT   The Hardy-Weinberg equilibrium threshold. [default: 1e-4]</span>
+<span class="go">  --hwe FLOAT    The Hardy-Weinberg equilibrium threshold. [default: 1e-4]</span>
 
 <span class="go">Output File:</span>
-<span class="go">  --out FILE    The prefix of the output files. [default: flag_hw]</span>
+<span class="go">  --out FILE     The prefix of the output files. [default: flag_hw]</span>
 </pre></div>
 </div>
 <div class="section" id="input-files">
@@ -178,213 +176,11 @@ ones that have a lower p value than the Bonferroni threshold.</li>
 </div>
 <div class="section" id="the-algorithm">
 <h2>The Algorithm<a class="headerlink" href="#the-algorithm" title="Permalink to this headline">¶</a></h2>
-<p>For more information about the actual algorithms and source codes (the
-<a class="reference internal" href="#module-pyGenClean.FlagHW.flag_hw" title="pyGenClean.FlagHW.flag_hw"><code class="xref py py-mod docutils literal"><span class="pre">pyGenClean.FlagHW.flag_hw</span></code></a> module), refer to the following sections.</p>
-<div class="section" id="module-pyGenClean.FlagHW.flag_hw">
-<span id="pygenclean-flaghw-flag-hw"></span><h3>pyGenClean.FlagHW.flag_hw<a class="headerlink" href="#module-pyGenClean.FlagHW.flag_hw" title="Permalink to this headline">¶</a></h3>
-<dl class="exception">
-<dt id="pyGenClean.FlagHW.flag_hw.ProgramError">
-<em class="property">exception </em><code class="descclassname">pyGenClean.FlagHW.flag_hw.</code><code class="descname">ProgramError</code><span class="sig-paren">(</span><em>msg</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/FlagHW/flag_hw.html#ProgramError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.FlagHW.flag_hw.ProgramError" title="Permalink to this definition">¶</a></dt>
-<dd><p>An <code class="xref py py-class docutils literal"><span class="pre">Exception</span></code> raised in case of a problem.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>msg</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the message to print to the user before exiting.</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="pyGenClean.FlagHW.flag_hw.checkArgs">
-<code class="descclassname">pyGenClean.FlagHW.flag_hw.</code><code class="descname">checkArgs</code><span class="sig-paren">(</span><em>args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/FlagHW/flag_hw.html#checkArgs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.FlagHW.flag_hw.checkArgs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Checks the arguments and options.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>args</strong> (<a class="reference external" href="http://docs.python.org/library/argparse.html#argparse.Namespace" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">argparse.Namespace</span></code></a>) &#8211; a <a class="reference external" href="http://docs.python.org/library/argparse.html#argparse.Namespace" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">argparse.Namespace</span></code></a> object containing the options
-of the program.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><code class="docutils literal"><span class="pre">True</span></code> if everything was OK.</td>
-</tr>
-</tbody>
-</table>
-<p>If there is a problem with an option, an exception is raised using the
-<a class="reference internal" href="#pyGenClean.FlagHW.flag_hw.ProgramError" title="pyGenClean.FlagHW.flag_hw.ProgramError"><code class="xref py py-class docutils literal"><span class="pre">ProgramError</span></code></a> class, a message is printed to the
-<code class="xref py py-class docutils literal"><span class="pre">sys.stderr</span></code> and the program exists with code 1.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="pyGenClean.FlagHW.flag_hw.compareBIMfiles">
-<code class="descclassname">pyGenClean.FlagHW.flag_hw.</code><code class="descname">compareBIMfiles</code><span class="sig-paren">(</span><em>beforeFileName</em>, <em>afterFileName</em>, <em>outputFileName</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/FlagHW/flag_hw.html#compareBIMfiles"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.FlagHW.flag_hw.compareBIMfiles" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compare two BIM files for differences.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>beforeFileName</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the name of the file before modification.</li>
-<li><strong>afterFileName</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the name of the file after modification.</li>
-<li><strong>outputFileName</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the name of the output file (containing the
-differences between the <code class="docutils literal"><span class="pre">before</span></code> and the <code class="docutils literal"><span class="pre">after</span></code>
-files.</li>
+<p>For more information about the actual algorithms and source codes, refer to the
+following page.</p>
+<ul class="simple">
+<li><a class="reference internal" href="module_content/pyGenClean.FlagHW.html#module-pyGenClean.FlagHW.flag_hw" title="pyGenClean.FlagHW.flag_hw"><code class="xref py py-mod docutils literal"><span class="pre">pyGenClean.FlagHW.flag_hw</span></code></a></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">the number of differences between the two files.</p>
-</td>
-</tr>
-</tbody>
-</table>
-<p>The <code class="docutils literal"><span class="pre">bim</span></code> files contain the list of markers in a given dataset. The
-<code class="docutils literal"><span class="pre">before</span></code> file should have more markers than the <code class="docutils literal"><span class="pre">after</span></code> file. The
-<code class="docutils literal"><span class="pre">after</span></code> file should be a subset of the markers in the <code class="docutils literal"><span class="pre">before</span></code> file.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="pyGenClean.FlagHW.flag_hw.computeHWE">
-<code class="descclassname">pyGenClean.FlagHW.flag_hw.</code><code class="descname">computeHWE</code><span class="sig-paren">(</span><em>prefix</em>, <em>threshold</em>, <em>outPrefix</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/FlagHW/flag_hw.html#computeHWE"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.FlagHW.flag_hw.computeHWE" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute the Hardy Weinberg test using Plink.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>prefix</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the prefix of all the files.</li>
-<li><strong>threshold</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the Hardy Weinberg threshold.</li>
-<li><strong>outPrefix</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the prefix of the output file.</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-<p>Uses Plink to exclude markers that failed the Hardy-Weinberg test at a
-specified significance threshold.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="pyGenClean.FlagHW.flag_hw.computeNumberOfMarkers">
-<code class="descclassname">pyGenClean.FlagHW.flag_hw.</code><code class="descname">computeNumberOfMarkers</code><span class="sig-paren">(</span><em>inputFileName</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/FlagHW/flag_hw.html#computeNumberOfMarkers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.FlagHW.flag_hw.computeNumberOfMarkers" title="Permalink to this definition">¶</a></dt>
-<dd><p>Count the number of marker (line) in a BIM file.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>inputFileName</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the name of the <code class="docutils literal"><span class="pre">bim</span></code> file.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">the number of marker in the <code class="docutils literal"><span class="pre">bim</span></code> file.</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="pyGenClean.FlagHW.flag_hw.main">
-<code class="descclassname">pyGenClean.FlagHW.flag_hw.</code><code class="descname">main</code><span class="sig-paren">(</span><em>argString=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/FlagHW/flag_hw.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.FlagHW.flag_hw.main" title="Permalink to this definition">¶</a></dt>
-<dd><p>The main function.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>argString</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; the options.</td>
-</tr>
-</tbody>
-</table>
-<p>These are the steps performed by this module:</p>
-<ol class="arabic simple">
-<li>Prints the options of the module.</li>
-<li>Computes the number of markers in the input file
-(<a class="reference internal" href="#pyGenClean.FlagHW.flag_hw.computeNumberOfMarkers" title="pyGenClean.FlagHW.flag_hw.computeNumberOfMarkers"><code class="xref py py-func docutils literal"><span class="pre">computeNumberOfMarkers()</span></code></a>).</li>
-<li>If there are no markers, the module stops.</li>
-<li>Computes the Bonferroni therhold (<span class="math">\(0.05 / \textrm{nbMarkers}\)</span>).</li>
-<li>Runs Plink to find failed markers with the Bonferroni threshold.</li>
-<li>Runs Plink to find failed markers with the default threshold.</li>
-<li>Compares the <code class="docutils literal"><span class="pre">bim</span></code> files for the Bonferroni threshold.</li>
-<li>Compares the <code class="docutils literal"><span class="pre">bim</span></code> files for the default threshold.</li>
-<li>Computes the &#8220;in between&#8221; marker list, which is the markers from the
-default threshold and the Bonferroni threshold.</li>
-</ol>
-</dd></dl>
-
-<dl class="function">
-<dt id="pyGenClean.FlagHW.flag_hw.parseArgs">
-<code class="descclassname">pyGenClean.FlagHW.flag_hw.</code><code class="descname">parseArgs</code><span class="sig-paren">(</span><em>argString=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/FlagHW/flag_hw.html#parseArgs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.FlagHW.flag_hw.parseArgs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Parses the command line options and arguments.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>argString</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; the options.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A <a class="reference external" href="http://docs.python.org/library/argparse.html#argparse.Namespace" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">argparse.Namespace</span></code></a> object created by
-the <a class="reference external" href="http://docs.python.org/library/argparse.html#module-argparse" title="(in Python v2.7)"><code class="xref py py-mod docutils literal"><span class="pre">argparse</span></code></a> module. It contains the values of the
-different options.</td>
-</tr>
-</tbody>
-</table>
-<table border="1" class="docutils">
-<colgroup>
-<col width="19%" />
-<col width="10%" />
-<col width="71%" />
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Options</th>
-<th class="head">Type</th>
-<th class="head">Description</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr class="row-even"><td><code class="docutils literal"><span class="pre">--bfile</span></code></td>
-<td>string</td>
-<td>The input file prefix (binary Plink file).</td>
-</tr>
-<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--hwe</span></code></td>
-<td>float</td>
-<td>The Hardy-Weinberg equilibrium threshold.</td>
-</tr>
-<tr class="row-even"><td><code class="docutils literal"><span class="pre">--out</span></code></td>
-<td>string</td>
-<td>The prefix of the output files.</td>
-</tr>
-</tbody>
-</table>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">No option check is done here (except for the one automatically done by
-argparse). Those need to be done elsewhere (see <a class="reference internal" href="#pyGenClean.FlagHW.flag_hw.checkArgs" title="pyGenClean.FlagHW.flag_hw.checkArgs"><code class="xref py py-func docutils literal"><span class="pre">checkArgs()</span></code></a>).</p>
-</div>
-</dd></dl>
-
-<dl class="function">
-<dt id="pyGenClean.FlagHW.flag_hw.runCommand">
-<code class="descclassname">pyGenClean.FlagHW.flag_hw.</code><code class="descname">runCommand</code><span class="sig-paren">(</span><em>command</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/FlagHW/flag_hw.html#runCommand"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.FlagHW.flag_hw.runCommand" title="Permalink to this definition">¶</a></dt>
-<dd><p>Run a command.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>command</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; the command to run.</td>
-</tr>
-</tbody>
-</table>
-<p>Tries to run a command. If it fails, raise a <a class="reference internal" href="#pyGenClean.FlagHW.flag_hw.ProgramError" title="pyGenClean.FlagHW.flag_hw.ProgramError"><code class="xref py py-class docutils literal"><span class="pre">ProgramError</span></code></a>. This
-function uses the <a class="reference external" href="http://docs.python.org/library/subprocess.html#module-subprocess" title="(in Python v2.7)"><code class="xref py py-mod docutils literal"><span class="pre">subprocess</span></code></a> module.</p>
-<div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">The variable <code class="docutils literal"><span class="pre">command</span></code> should be a list of stings (no other type).</p>
-</div>
-</dd></dl>
-
-<dl class="function">
-<dt id="pyGenClean.FlagHW.flag_hw.safe_main">
-<code class="descclassname">pyGenClean.FlagHW.flag_hw.</code><code class="descname">safe_main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/FlagHW/flag_hw.html#safe_main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.FlagHW.flag_hw.safe_main" title="Permalink to this definition">¶</a></dt>
-<dd><p>A safe version of the main function (that catches ProgramError).</p>
-</dd></dl>
-
-</div>
 </div>
 </div>
 
@@ -409,7 +205,7 @@ function uses the <a class="reference external" href="http://docs.python.org/lib
         <li class="right" >
           <a href="flag_maf_zero.html" title="Minor Allele Frequency of Zero Module"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">pyGenClean 1.7.0 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">pyGenClean 1.7.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">

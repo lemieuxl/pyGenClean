@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>pyGenClean.NoCallHetero.heterozygosity_plot &mdash; pyGenClean 1.7.0 documentation</title>
+    <title>pyGenClean.NoCallHetero.heterozygosity_plot &mdash; pyGenClean 1.7.1 documentation</title>
     
     <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '1.7.0',
+        VERSION:     '1.7.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,8 +24,8 @@
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="pyGenClean 1.7.0 documentation" href="../../../index.html" />
-    <link rel="up" title="Module code" href="../../index.html" /> 
+    <link rel="top" title="pyGenClean 1.7.1 documentation" href="../../../index.html" />
+    <link rel="up" title="pyGenClean" href="../../pyGenClean.html" /> 
   </head>
   <body role="document">
 
@@ -42,8 +42,9 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">pyGenClean 1.7.0 documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../../index.html">pyGenClean 1.7.1 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &raquo;</li>
+          <li class="nav-item nav-item-2"><a href="../../pyGenClean.html" accesskey="U">pyGenClean</a> &raquo;</li> 
       </ul>
     </div>
 
@@ -94,13 +95,15 @@
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">argparse</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">npy</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">__version__</span>
 
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&quot;heterozygosity_plot&quot;</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../../clean_noCall_hetero_snps.html#pyGenClean.NoCallHetero.heterozygosity_plot.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">argString</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../../module_content/pyGenClean.NoCallHetero.html#pyGenClean.NoCallHetero.heterozygosity_plot.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">argString</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;The main function of the module.</span>
 
 <span class="sd">    :param argString: the options.</span>
@@ -134,7 +137,7 @@
     <span class="n">plot_heterozygosity</span><span class="p">(</span><span class="n">heterozygosity</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
 
 </div>
-<div class="viewcode-block" id="save_heterozygosity"><a class="viewcode-back" href="../../../clean_noCall_hetero_snps.html#pyGenClean.NoCallHetero.heterozygosity_plot.save_heterozygosity">[docs]</a><span class="k">def</span> <span class="nf">save_heterozygosity</span><span class="p">(</span><span class="n">heterozygosity</span><span class="p">,</span> <span class="n">samples</span><span class="p">,</span> <span class="n">out_prefix</span><span class="p">):</span>
+<div class="viewcode-block" id="save_heterozygosity"><a class="viewcode-back" href="../../../module_content/pyGenClean.NoCallHetero.html#pyGenClean.NoCallHetero.heterozygosity_plot.save_heterozygosity">[docs]</a><span class="k">def</span> <span class="nf">save_heterozygosity</span><span class="p">(</span><span class="n">heterozygosity</span><span class="p">,</span> <span class="n">samples</span><span class="p">,</span> <span class="n">out_prefix</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Saves the heterozygosity data.</span>
 
 <span class="sd">    :param heterozygosity: the heterozygosity data.</span>
@@ -162,7 +165,7 @@
     <span class="n">o_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
 </div>
-<div class="viewcode-block" id="compute_nb_samples"><a class="viewcode-back" href="../../../clean_noCall_hetero_snps.html#pyGenClean.NoCallHetero.heterozygosity_plot.compute_nb_samples">[docs]</a><span class="k">def</span> <span class="nf">compute_nb_samples</span><span class="p">(</span><span class="n">in_prefix</span><span class="p">):</span>
+<div class="viewcode-block" id="compute_nb_samples"><a class="viewcode-back" href="../../../module_content/pyGenClean.NoCallHetero.html#pyGenClean.NoCallHetero.heterozygosity_plot.compute_nb_samples">[docs]</a><span class="k">def</span> <span class="nf">compute_nb_samples</span><span class="p">(</span><span class="n">in_prefix</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Check the number of samples.</span>
 
 <span class="sd">    :param in_prefix: the prefix of the input file.</span>
@@ -179,7 +182,7 @@
     <span class="k">return</span> <span class="n">nb</span>
 
 </div>
-<div class="viewcode-block" id="is_heterozygous"><a class="viewcode-back" href="../../../clean_noCall_hetero_snps.html#pyGenClean.NoCallHetero.heterozygosity_plot.is_heterozygous">[docs]</a><span class="k">def</span> <span class="nf">is_heterozygous</span><span class="p">(</span><span class="n">genotype</span><span class="p">):</span>
+<div class="viewcode-block" id="is_heterozygous"><a class="viewcode-back" href="../../../module_content/pyGenClean.NoCallHetero.html#pyGenClean.NoCallHetero.heterozygosity_plot.is_heterozygous">[docs]</a><span class="k">def</span> <span class="nf">is_heterozygous</span><span class="p">(</span><span class="n">genotype</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Tells if a genotype &quot;A B&quot; is heterozygous.</span>
 
 <span class="sd">    :param genotype: the genotype to test for heterozygosity.</span>
@@ -209,13 +212,13 @@
     <span class="k">return</span> <span class="ow">not</span> <span class="n">genotype</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">genotype</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
 </div>
-<div class="viewcode-block" id="compute_heterozygosity"><a class="viewcode-back" href="../../../clean_noCall_hetero_snps.html#pyGenClean.NoCallHetero.heterozygosity_plot.compute_heterozygosity">[docs]</a><span class="k">def</span> <span class="nf">compute_heterozygosity</span><span class="p">(</span><span class="n">in_prefix</span><span class="p">,</span> <span class="n">nb_samples</span><span class="p">):</span>
+<div class="viewcode-block" id="compute_heterozygosity"><a class="viewcode-back" href="../../../module_content/pyGenClean.NoCallHetero.html#pyGenClean.NoCallHetero.heterozygosity_plot.compute_heterozygosity">[docs]</a><span class="k">def</span> <span class="nf">compute_heterozygosity</span><span class="p">(</span><span class="n">in_prefix</span><span class="p">,</span> <span class="n">nb_samples</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Computes the heterozygosity ratio of samples (from tped).&quot;&quot;&quot;</span>
     <span class="n">tped_name</span> <span class="o">=</span> <span class="n">in_prefix</span> <span class="o">+</span> <span class="s">&quot;.tped&quot;</span>
     <span class="n">tfam_name</span> <span class="o">=</span> <span class="n">in_prefix</span> <span class="o">+</span> <span class="s">&quot;.tfam&quot;</span>
 
     <span class="c"># The function we want to use</span>
-    <span class="n">check_heterozygosity</span> <span class="o">=</span> <span class="n">npy</span><span class="o">.</span><span class="n">vectorize</span><span class="p">(</span><span class="n">is_heterozygous</span><span class="p">)</span>
+    <span class="n">check_heterozygosity</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vectorize</span><span class="p">(</span><span class="n">is_heterozygous</span><span class="p">)</span>
 
     <span class="c"># The autosomes</span>
     <span class="n">autosomes</span> <span class="o">=</span> <span class="p">{</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">23</span><span class="p">)}</span>
@@ -226,12 +229,12 @@
         <span class="n">samples</span> <span class="o">=</span> <span class="n">input_file</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
         <span class="n">samples</span> <span class="o">=</span> <span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\r\n</span><span class="s">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\t</span><span class="s">&quot;</span><span class="p">)[:</span><span class="mi">2</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">samples</span><span class="p">]</span>
 
-    <span class="n">heterozygosity</span> <span class="o">=</span> <span class="n">npy</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nb_samples</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
-    <span class="n">nb_markers</span> <span class="o">=</span> <span class="n">npy</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nb_samples</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">heterozygosity</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nb_samples</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">nb_markers</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nb_samples</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">tped_name</span><span class="p">,</span> <span class="s">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">input_file</span><span class="p">:</span>
         <span class="c"># There is no header</span>
         <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">input_file</span><span class="p">:</span>
-            <span class="n">row</span> <span class="o">=</span> <span class="n">npy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\r\n</span><span class="s">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\t</span><span class="s">&quot;</span><span class="p">))</span>
+            <span class="n">row</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\r\n</span><span class="s">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\t</span><span class="s">&quot;</span><span class="p">))</span>
 
             <span class="n">chromosome</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
             <span class="k">if</span> <span class="n">chromosome</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">autosomes</span><span class="p">:</span>
@@ -247,10 +250,10 @@
             <span class="c"># Adding to number of markers for each samples (excluding no calls)</span>
             <span class="n">nb_markers</span> <span class="o">+=</span> <span class="n">genotypes</span> <span class="o">!=</span> <span class="s">&quot;0 0&quot;</span>
 
-    <span class="k">return</span> <span class="n">npy</span><span class="o">.</span><span class="n">true_divide</span><span class="p">(</span><span class="n">heterozygosity</span><span class="p">,</span> <span class="n">nb_markers</span><span class="p">),</span> <span class="n">samples</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">true_divide</span><span class="p">(</span><span class="n">heterozygosity</span><span class="p">,</span> <span class="n">nb_markers</span><span class="p">),</span> <span class="n">samples</span>
 
 </div>
-<div class="viewcode-block" id="plot_heterozygosity"><a class="viewcode-back" href="../../../clean_noCall_hetero_snps.html#pyGenClean.NoCallHetero.heterozygosity_plot.plot_heterozygosity">[docs]</a><span class="k">def</span> <span class="nf">plot_heterozygosity</span><span class="p">(</span><span class="n">heterozygosity</span><span class="p">,</span> <span class="n">options</span><span class="p">):</span>
+<div class="viewcode-block" id="plot_heterozygosity"><a class="viewcode-back" href="../../../module_content/pyGenClean.NoCallHetero.html#pyGenClean.NoCallHetero.heterozygosity_plot.plot_heterozygosity">[docs]</a><span class="k">def</span> <span class="nf">plot_heterozygosity</span><span class="p">(</span><span class="n">heterozygosity</span><span class="p">,</span> <span class="n">options</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Plots the heterozygosity rate distribution.</span>
 
 <span class="sd">    :param heterozygosity: the heterozygosity data.</span>
@@ -309,13 +312,13 @@
             <span class="n">bins</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">bins</span><span class="p">,</span>
             <span class="n">color</span><span class="o">=</span><span class="s">&quot;#0099CC&quot;</span><span class="p">,</span>
             <span class="n">histtype</span><span class="o">=</span><span class="s">&quot;stepfilled&quot;</span><span class="p">,</span>
-            <span class="n">weights</span><span class="o">=</span><span class="n">npy</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">heterozygosity</span><span class="p">)</span> <span class="o">+</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">heterozygosity</span><span class="p">),</span>
+            <span class="n">weights</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">heterozygosity</span><span class="p">)</span> <span class="o">+</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">heterozygosity</span><span class="p">),</span>
         <span class="p">)</span>
 
         <span class="c"># Plotting the mean, the median and the variance</span>
-        <span class="n">the_mean</span> <span class="o">=</span> <span class="n">npy</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">heterozygosity</span><span class="p">)</span>
-        <span class="n">the_median</span> <span class="o">=</span> <span class="n">npy</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">heterozygosity</span><span class="p">)</span>
-        <span class="n">the_variance</span> <span class="o">=</span> <span class="n">npy</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">npy</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">heterozygosity</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">the_mean</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">heterozygosity</span><span class="p">)</span>
+        <span class="n">the_median</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">heterozygosity</span><span class="p">)</span>
+        <span class="n">the_variance</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">heterozygosity</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span>
         <span class="n">mean_line</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">the_mean</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s">&quot;#CC0000&quot;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s">&quot;--&quot;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
                                <span class="n">clip_on</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
         <span class="n">median_line</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">the_median</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s">&quot;#FF8800&quot;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s">&quot;--&quot;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
@@ -351,7 +354,7 @@
         <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
 
 </div>
-<div class="viewcode-block" id="checkArgs"><a class="viewcode-back" href="../../../clean_noCall_hetero_snps.html#pyGenClean.NoCallHetero.heterozygosity_plot.checkArgs">[docs]</a><span class="k">def</span> <span class="nf">checkArgs</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+<div class="viewcode-block" id="checkArgs"><a class="viewcode-back" href="../../../module_content/pyGenClean.NoCallHetero.html#pyGenClean.NoCallHetero.heterozygosity_plot.checkArgs">[docs]</a><span class="k">def</span> <span class="nf">checkArgs</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Checks the arguments and options.</span>
 
 <span class="sd">    :param args: an object containing the options of the program.</span>
@@ -386,7 +389,7 @@
     <span class="k">return</span> <span class="bp">True</span>
 
 </div>
-<div class="viewcode-block" id="parseArgs"><a class="viewcode-back" href="../../../clean_noCall_hetero_snps.html#pyGenClean.NoCallHetero.heterozygosity_plot.parseArgs">[docs]</a><span class="k">def</span> <span class="nf">parseArgs</span><span class="p">(</span><span class="n">argString</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>  <span class="c"># pragma: no cover</span>
+<div class="viewcode-block" id="parseArgs"><a class="viewcode-back" href="../../../module_content/pyGenClean.NoCallHetero.html#pyGenClean.NoCallHetero.heterozygosity_plot.parseArgs">[docs]</a><span class="k">def</span> <span class="nf">parseArgs</span><span class="p">(</span><span class="n">argString</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>  <span class="c"># pragma: no cover</span>
     <span class="sd">&quot;&quot;&quot;Parses the command line options and arguments.</span>
 
 <span class="sd">    :param argString: the options.</span>
@@ -423,7 +426,7 @@
     <span class="k">return</span> <span class="n">args</span>
 
 </div>
-<div class="viewcode-block" id="ProgramError"><a class="viewcode-back" href="../../../clean_noCall_hetero_snps.html#pyGenClean.NoCallHetero.heterozygosity_plot.ProgramError">[docs]</a><span class="k">class</span> <span class="nc">ProgramError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<div class="viewcode-block" id="ProgramError"><a class="viewcode-back" href="../../../module_content/pyGenClean.NoCallHetero.html#pyGenClean.NoCallHetero.heterozygosity_plot.ProgramError">[docs]</a><span class="k">class</span> <span class="nc">ProgramError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;An :py:class:`Exception` raised in case of a problem.</span>
 
 <span class="sd">    :param msg: the message to print to the user before exiting.</span>
@@ -446,9 +449,10 @@
 
 
 <span class="c"># The parser object</span></div>
-<span class="n">desc</span> <span class="o">=</span> <span class="s">&quot;&quot;&quot;Plot the distribution of the heterozygosity ratio.&quot;&quot;&quot;</span>
+<span class="n">desc</span> <span class="o">=</span> <span class="s">&quot;Plots the distribution of the heterozygosity ratio.&quot;</span>
 <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="n">desc</span><span class="p">)</span>
-
+<span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;-v&quot;</span><span class="p">,</span> <span class="s">&quot;--version&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s">&quot;version&quot;</span><span class="p">,</span>
+                    <span class="n">version</span><span class="o">=</span><span class="s">&quot;pyGenClean version {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">__version__</span><span class="p">))</span>
 
 <span class="c"># The INPUT files</span>
 <span class="n">group</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s">&quot;Input File&quot;</span><span class="p">)</span>
@@ -477,7 +481,7 @@
                          <span class="s">&quot;</span><span class="si">%(default)s</span><span class="s">]&quot;</span><span class="p">))</span>
 
 
-<div class="viewcode-block" id="safe_main"><a class="viewcode-back" href="../../../clean_noCall_hetero_snps.html#pyGenClean.NoCallHetero.heterozygosity_plot.safe_main">[docs]</a><span class="k">def</span> <span class="nf">safe_main</span><span class="p">():</span>
+<div class="viewcode-block" id="safe_main"><a class="viewcode-back" href="../../../module_content/pyGenClean.NoCallHetero.html#pyGenClean.NoCallHetero.heterozygosity_plot.safe_main">[docs]</a><span class="k">def</span> <span class="nf">safe_main</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;A safe version of the main function (that catches ProgramError).&quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">main</span><span class="p">()</span>
@@ -507,8 +511,9 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">pyGenClean 1.7.0 documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../../index.html">pyGenClean 1.7.1 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &raquo;</li>
+          <li class="nav-item nav-item-2"><a href="../../pyGenClean.html" >pyGenClean</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">

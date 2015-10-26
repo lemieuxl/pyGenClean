@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Configuration Files &mdash; pyGenClean 1.7.0 documentation</title>
+    <title>Configuration Files &mdash; pyGenClean 1.7.1 documentation</title>
     
     <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '1.7.0',
+        VERSION:     '1.7.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="pyGenClean 1.7.0 documentation" href="index.html" />
+    <link rel="top" title="pyGenClean 1.7.1 documentation" href="index.html" />
     <link rel="next" title="How to Run the Pipeline" href="how_to_run.html" />
     <link rel="prev" title="Proposed Protocol" href="protocol.html" /> 
   </head>
@@ -49,7 +49,7 @@
         <li class="right" >
           <a href="protocol.html" title="Proposed Protocol"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">pyGenClean 1.7.0 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">pyGenClean 1.7.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
 
@@ -273,7 +273,18 @@ provide the intensities (<code class="docutils literal"><span class="pre">sex-ch
 155
 156
 157
-158</pre></div></td><td class="code"><div class="highlight"><pre><span class="c1"># This is the first part of example configuration files for performing efficient</span>
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169</pre></div></td><td class="code"><div class="highlight"><pre><span class="c1"># This is the first part of example configuration files for performing efficient</span>
 <span class="c1"># data clean up. All commented out parameters are those that are used by</span>
 <span class="c1"># default.</span>
 
@@ -344,7 +355,7 @@ provide the intensities (<code class="docutils literal"><span class="pre">sex-ch
 <span class="c1"># this step, we recommend using a threshold of 2% missing rate.</span>
 <span class="c1"># ##############################################################################</span>
 
-<span class="k">script</span> <span class="o">=</span> <span class="k">sample_missingness</span> 
+<span class="k">script</span> <span class="o">=</span> <span class="k">sample_missingness</span>
 <span class="k">mind</span> <span class="o">=</span> <span class="m">0</span><span class="k">.</span><span class="m">02</span>
 
 
@@ -400,6 +411,8 @@ provide the intensities (<code class="docutils literal"><span class="pre">sex-ch
 <span class="c1"># ibs2-ratio = 0.8</span>
 <span class="c1"># sge</span>
 <span class="c1"># line-per-file-for-sge = 100</span>
+<span class="c1"># sge-walltime = WRITE WALLTIME ONLY IF REQUIRED</span>
+<span class="c1"># sge-nodes = WRITE NB NODES AND NB PROCESSOR PER NODE ONLY IF REQUIRED</span>
 
 
 
@@ -407,16 +420,19 @@ provide the intensities (<code class="docutils literal"><span class="pre">sex-ch
 <span class="c1"># ##############################################################################</span>
 <span class="c1"># Using PLINK, computes the MDS value of each sample, and using three reference</span>
 <span class="c1"># populations (CEU, YRI and JPT-CHB), finds outliers of one of those three</span>
-<span class="c1"># reference population. You might need to change the &quot;multiplier&quot; option to be</span>
-<span class="c1"># more or less stringent, according to you dataset. If you have a server with a</span>
-<span class="c1"># DRMAA-compliant distributed resource management system, you can uncomment the</span>
-<span class="c1"># &quot;sge&quot; and the &quot;line-per-file-for-sge&quot; options, to run this step in parallel.</span>
+<span class="c1"># reference population. You might want to skip the reference population using</span>
+<span class="c1"># the &quot;skip-ref-pops&quot; option. You might need to change the &quot;multiplier&quot; option</span>
+<span class="c1"># to be more or less stringent, according to you dataset. If you have a server</span>
+<span class="c1"># with a DRMAA-compliant distributed resource management system, you can</span>
+<span class="c1"># uncomment the &quot;sge&quot; and the &quot;line-per-file-for-sge&quot; options, to run this step</span>
+<span class="c1"># in parallel.</span>
 <span class="c1"># ##############################################################################</span>
 
 <span class="k">script</span> <span class="o">=</span> <span class="k">check_ethnicity</span>
 <span class="k">ceu-bfile</span> <span class="o">=</span> <span class="n">/PATH/TO/PLINK/BINARY/FILE/FOR/CEU_population</span>
 <span class="k">yri-bfile</span> <span class="o">=</span> <span class="n">/PATH/TO/PLINK/BINARY/FILE/FOR/YRI_population</span>
 <span class="k">jpt-chb-bfile</span> <span class="o">=</span> <span class="n">/PATH/TO/PLINK/BINARY/FILE/FOR/JPT-CHB_population</span>
+<span class="c1"># skip-ref-pops</span>
 <span class="c1"># min-nb-snp = 8000</span>
 <span class="c1"># indep-pairwise = 50 5 0.1</span>
 <span class="c1"># maf = 0.05</span>
@@ -431,6 +447,12 @@ provide the intensities (<code class="docutils literal"><span class="pre">sex-ch
 <span class="c1"># title = &quot;C2 in function of C1 - MDS&quot;</span>
 <span class="c1"># xlabel = C1</span>
 <span class="c1"># ylabel = C2</span>
+<span class="c1"># create-scree-plot</span>
+<span class="c1"># scree-plot-title &quot;TITLE OF THE PLOT&quot;</span>
+<span class="c1"># sge-walltime = WRITE WALLTIME ONLY IF REQUIRED</span>
+<span class="c1"># sge-nodes = WRITE NB NODES AND NB PROCESSOR PER NODE ONLY IF REQUIRED</span>
+<span class="c1"># ibs-sge-walltime = WRITE WALLTIME ONLY IF REQUIRED</span>
+<span class="c1"># ibs-sge-nodes = WRITE NB NODES AND NB PROCESSOR PER NODE ONLY IF REQUIRED</span>
 </pre></div>
 </td></tr></table></div>
 </div>
@@ -593,7 +615,7 @@ and <code class="docutils literal"><span class="pre">plate_bias</span></code> se
         <li class="right" >
           <a href="protocol.html" title="Proposed Protocol"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">pyGenClean 1.7.0 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">pyGenClean 1.7.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">

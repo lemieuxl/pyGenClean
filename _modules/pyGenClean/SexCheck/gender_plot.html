@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>pyGenClean.SexCheck.gender_plot &mdash; pyGenClean 1.7.0 documentation</title>
+    <title>pyGenClean.SexCheck.gender_plot &mdash; pyGenClean 1.7.1 documentation</title>
     
     <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '1.7.0',
+        VERSION:     '1.7.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,8 +24,8 @@
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="pyGenClean 1.7.0 documentation" href="../../../index.html" />
-    <link rel="up" title="Module code" href="../../index.html" /> 
+    <link rel="top" title="pyGenClean 1.7.1 documentation" href="../../../index.html" />
+    <link rel="up" title="pyGenClean" href="../../pyGenClean.html" /> 
   </head>
   <body role="document">
 
@@ -42,8 +42,9 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">pyGenClean 1.7.0 documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../../index.html">pyGenClean 1.7.1 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &raquo;</li>
+          <li class="nav-item nav-item-2"><a href="../../pyGenClean.html" accesskey="U">pyGenClean</a> &raquo;</li> 
       </ul>
     </div>
 
@@ -94,13 +95,15 @@
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">argparse</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">npy</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">__version__</span>
 
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&quot;gender_plot&quot;</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../../sex_check.html#pyGenClean.SexCheck.gender_plot.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">argString</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../../module_content/pyGenClean.SexCheck.html#pyGenClean.SexCheck.gender_plot.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">argString</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;The main function of the module.</span>
 
 <span class="sd">    :param argString: the options.</span>
@@ -147,7 +150,7 @@
     <span class="n">plot_gender</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
 
 </div>
-<div class="viewcode-block" id="read_sex_problems"><a class="viewcode-back" href="../../../sex_check.html#pyGenClean.SexCheck.gender_plot.read_sex_problems">[docs]</a><span class="k">def</span> <span class="nf">read_sex_problems</span><span class="p">(</span><span class="n">file_name</span><span class="p">):</span>
+<div class="viewcode-block" id="read_sex_problems"><a class="viewcode-back" href="../../../module_content/pyGenClean.SexCheck.html#pyGenClean.SexCheck.gender_plot.read_sex_problems">[docs]</a><span class="k">def</span> <span class="nf">read_sex_problems</span><span class="p">(</span><span class="n">file_name</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Reads the sex problem file.</span>
 
 <span class="sd">    :param file_name: the name of the file containing sex problems.</span>
@@ -180,7 +183,7 @@
     <span class="k">return</span> <span class="n">problems</span>
 
 </div>
-<div class="viewcode-block" id="encode_chr"><a class="viewcode-back" href="../../../sex_check.html#pyGenClean.SexCheck.gender_plot.encode_chr">[docs]</a><span class="k">def</span> <span class="nf">encode_chr</span><span class="p">(</span><span class="n">chromosome</span><span class="p">):</span>
+<div class="viewcode-block" id="encode_chr"><a class="viewcode-back" href="../../../module_content/pyGenClean.SexCheck.html#pyGenClean.SexCheck.gender_plot.encode_chr">[docs]</a><span class="k">def</span> <span class="nf">encode_chr</span><span class="p">(</span><span class="n">chromosome</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Encodes chromosomes.</span>
 
 <span class="sd">    :param chromosome: the chromosome to encode.</span>
@@ -239,7 +242,7 @@
         <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
 </div>
-<div class="viewcode-block" id="encode_gender"><a class="viewcode-back" href="../../../sex_check.html#pyGenClean.SexCheck.gender_plot.encode_gender">[docs]</a><span class="k">def</span> <span class="nf">encode_gender</span><span class="p">(</span><span class="n">gender</span><span class="p">):</span>
+<div class="viewcode-block" id="encode_gender"><a class="viewcode-back" href="../../../module_content/pyGenClean.SexCheck.html#pyGenClean.SexCheck.gender_plot.encode_gender">[docs]</a><span class="k">def</span> <span class="nf">encode_gender</span><span class="p">(</span><span class="n">gender</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Encodes the gender.</span>
 
 <span class="sd">    :param gender: the gender to encode.</span>
@@ -274,7 +277,7 @@
     <span class="k">return</span> <span class="s">&quot;Unknown&quot;</span>
 
 </div>
-<div class="viewcode-block" id="read_bim"><a class="viewcode-back" href="../../../sex_check.html#pyGenClean.SexCheck.gender_plot.read_bim">[docs]</a><span class="k">def</span> <span class="nf">read_bim</span><span class="p">(</span><span class="n">file_name</span><span class="p">):</span>
+<div class="viewcode-block" id="read_bim"><a class="viewcode-back" href="../../../module_content/pyGenClean.SexCheck.html#pyGenClean.SexCheck.gender_plot.read_bim">[docs]</a><span class="k">def</span> <span class="nf">read_bim</span><span class="p">(</span><span class="n">file_name</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Reads the BIM file to gather marker names.</span>
 
 <span class="sd">    :param file_name: the name of the ``bim`` file.</span>
@@ -299,7 +302,7 @@
     <span class="k">return</span> <span class="n">marker_names_chr</span>
 
 </div>
-<div class="viewcode-block" id="read_fam"><a class="viewcode-back" href="../../../sex_check.html#pyGenClean.SexCheck.gender_plot.read_fam">[docs]</a><span class="k">def</span> <span class="nf">read_fam</span><span class="p">(</span><span class="n">file_name</span><span class="p">):</span>
+<div class="viewcode-block" id="read_fam"><a class="viewcode-back" href="../../../module_content/pyGenClean.SexCheck.html#pyGenClean.SexCheck.gender_plot.read_fam">[docs]</a><span class="k">def</span> <span class="nf">read_fam</span><span class="p">(</span><span class="n">file_name</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Reads the FAM file to gather sample names.</span>
 
 <span class="sd">    :param file_name: the ``fam`` file to read.</span>
@@ -322,7 +325,7 @@
     <span class="k">return</span> <span class="n">sample_names_gender</span>
 
 </div>
-<div class="viewcode-block" id="plot_gender"><a class="viewcode-back" href="../../../sex_check.html#pyGenClean.SexCheck.gender_plot.plot_gender">[docs]</a><span class="k">def</span> <span class="nf">plot_gender</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">options</span><span class="p">):</span>
+<div class="viewcode-block" id="plot_gender"><a class="viewcode-back" href="../../../module_content/pyGenClean.SexCheck.html#pyGenClean.SexCheck.gender_plot.plot_gender">[docs]</a><span class="k">def</span> <span class="nf">plot_gender</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">options</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Plots the gender.</span>
 
 <span class="sd">    :param data: the data to plot.</span>
@@ -372,7 +375,7 @@
     <span class="n">labels</span> <span class="o">=</span> <span class="p">[]</span>
 
     <span class="c"># Plotting the OK males</span>
-    <span class="n">males</span> <span class="o">=</span> <span class="n">npy</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s">&quot;gender&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;Male&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="s">&quot;status&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;OK&quot;</span><span class="p">)</span>
+    <span class="n">males</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s">&quot;gender&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;Male&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="s">&quot;status&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;OK&quot;</span><span class="p">)</span>
     <span class="n">tmp</span><span class="p">,</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s">&quot;chr23&quot;</span><span class="p">][</span><span class="n">males</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="s">&quot;chr24&quot;</span><span class="p">][</span><span class="n">males</span><span class="p">],</span> <span class="s">&quot;o&quot;</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
                    <span class="n">mec</span><span class="o">=</span><span class="s">&quot;#0099CC&quot;</span><span class="p">,</span> <span class="n">mfc</span><span class="o">=</span><span class="s">&quot;#0099CC&quot;</span><span class="p">)</span>
     <span class="n">plot_object</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span>
@@ -381,8 +384,8 @@
         <span class="n">print_data_to_file</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">males</span><span class="p">],</span> <span class="s">&quot;{}.ok_males.txt&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">out</span><span class="p">))</span>
 
     <span class="c"># Plotting the OK females</span>
-    <span class="n">females</span> <span class="o">=</span> <span class="n">npy</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s">&quot;gender&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;Female&quot;</span><span class="p">,</span>
-                              <span class="n">data</span><span class="p">[</span><span class="s">&quot;status&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;OK&quot;</span><span class="p">)</span>
+    <span class="n">females</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s">&quot;gender&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;Female&quot;</span><span class="p">,</span>
+                             <span class="n">data</span><span class="p">[</span><span class="s">&quot;status&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;OK&quot;</span><span class="p">)</span>
     <span class="n">tmp</span><span class="p">,</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s">&quot;chr23&quot;</span><span class="p">][</span><span class="n">females</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="s">&quot;chr24&quot;</span><span class="p">][</span><span class="n">females</span><span class="p">],</span> <span class="s">&quot;o&quot;</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
                    <span class="n">mec</span><span class="o">=</span><span class="s">&quot;#CC0000&quot;</span><span class="p">,</span> <span class="n">mfc</span><span class="o">=</span><span class="s">&quot;#CC0000&quot;</span><span class="p">)</span>
     <span class="n">plot_object</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span>
@@ -392,8 +395,8 @@
                            <span class="s">&quot;{}.ok_females.txt&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">out</span><span class="p">))</span>
 
     <span class="c"># Plotting the OK unknowns</span>
-    <span class="n">unknowns</span> <span class="o">=</span> <span class="n">npy</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s">&quot;gender&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;Unknown&quot;</span><span class="p">,</span>
-                               <span class="n">data</span><span class="p">[</span><span class="s">&quot;status&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;OK&quot;</span><span class="p">)</span>
+    <span class="n">unknowns</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s">&quot;gender&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;Unknown&quot;</span><span class="p">,</span>
+                              <span class="n">data</span><span class="p">[</span><span class="s">&quot;status&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;OK&quot;</span><span class="p">)</span>
     <span class="n">tmp</span><span class="p">,</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s">&quot;chr23&quot;</span><span class="p">][</span><span class="n">unknowns</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="s">&quot;chr24&quot;</span><span class="p">][</span><span class="n">unknowns</span><span class="p">],</span> <span class="s">&quot;o&quot;</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
                    <span class="n">mec</span><span class="o">=</span><span class="s">&quot;#555555&quot;</span><span class="p">,</span> <span class="n">mfc</span><span class="o">=</span><span class="s">&quot;#555555&quot;</span><span class="p">)</span>
     <span class="n">plot_object</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span>
@@ -403,8 +406,8 @@
                            <span class="s">&quot;{}.ok_unknowns.txt&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">out</span><span class="p">))</span>
 
     <span class="c"># Plotting the Problem males</span>
-    <span class="n">males</span> <span class="o">=</span> <span class="n">npy</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s">&quot;gender&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;Male&quot;</span><span class="p">,</span>
-                            <span class="n">data</span><span class="p">[</span><span class="s">&quot;status&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;Problem&quot;</span><span class="p">)</span>
+    <span class="n">males</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s">&quot;gender&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;Male&quot;</span><span class="p">,</span>
+                           <span class="n">data</span><span class="p">[</span><span class="s">&quot;status&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;Problem&quot;</span><span class="p">)</span>
     <span class="n">tmp</span><span class="p">,</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s">&quot;chr23&quot;</span><span class="p">][</span><span class="n">males</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="s">&quot;chr24&quot;</span><span class="p">][</span><span class="n">males</span><span class="p">],</span> <span class="s">&quot;^&quot;</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span>
                    <span class="n">mec</span><span class="o">=</span><span class="s">&quot;#000000&quot;</span><span class="p">,</span> <span class="n">mfc</span><span class="o">=</span><span class="s">&quot;#669900&quot;</span><span class="p">)</span>
     <span class="n">plot_object</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span>
@@ -414,8 +417,8 @@
                            <span class="s">&quot;{}.problematic_males.txt&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">out</span><span class="p">))</span>
 
     <span class="c"># Plotting the Problem females</span>
-    <span class="n">females</span> <span class="o">=</span> <span class="n">npy</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s">&quot;gender&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;Female&quot;</span><span class="p">,</span>
-                              <span class="n">data</span><span class="p">[</span><span class="s">&quot;status&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;Problem&quot;</span><span class="p">)</span>
+    <span class="n">females</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s">&quot;gender&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;Female&quot;</span><span class="p">,</span>
+                             <span class="n">data</span><span class="p">[</span><span class="s">&quot;status&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;Problem&quot;</span><span class="p">)</span>
     <span class="n">tmp</span><span class="p">,</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s">&quot;chr23&quot;</span><span class="p">][</span><span class="n">females</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="s">&quot;chr24&quot;</span><span class="p">][</span><span class="n">females</span><span class="p">],</span> <span class="s">&quot;v&quot;</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span>
                    <span class="n">mec</span><span class="o">=</span><span class="s">&quot;#000000&quot;</span><span class="p">,</span> <span class="n">mfc</span><span class="o">=</span><span class="s">&quot;#9933CC&quot;</span><span class="p">)</span>
     <span class="n">plot_object</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span>
@@ -425,8 +428,8 @@
                            <span class="s">&quot;{}.problematic_females.txt&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">out</span><span class="p">))</span>
 
     <span class="c"># Plotting the Problem unknowns</span>
-    <span class="n">unknowns</span> <span class="o">=</span> <span class="n">npy</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s">&quot;gender&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;Unknown&quot;</span><span class="p">,</span>
-                               <span class="n">data</span><span class="p">[</span><span class="s">&quot;status&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;Problem&quot;</span><span class="p">)</span>
+    <span class="n">unknowns</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s">&quot;gender&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;Unknown&quot;</span><span class="p">,</span>
+                              <span class="n">data</span><span class="p">[</span><span class="s">&quot;status&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;Problem&quot;</span><span class="p">)</span>
     <span class="n">tmp</span><span class="p">,</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s">&quot;chr23&quot;</span><span class="p">][</span><span class="n">unknowns</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="s">&quot;chr24&quot;</span><span class="p">][</span><span class="n">unknowns</span><span class="p">],</span> <span class="s">&quot;&gt;&quot;</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span>
                    <span class="n">mec</span><span class="o">=</span><span class="s">&quot;#000000&quot;</span><span class="p">,</span> <span class="n">mfc</span><span class="o">=</span><span class="s">&quot;#555555&quot;</span><span class="p">)</span>
     <span class="n">plot_object</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span>
@@ -458,7 +461,7 @@
             <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
 </div>
-<div class="viewcode-block" id="print_data_to_file"><a class="viewcode-back" href="../../../sex_check.html#pyGenClean.SexCheck.gender_plot.print_data_to_file">[docs]</a><span class="k">def</span> <span class="nf">print_data_to_file</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">file_name</span><span class="p">):</span>
+<div class="viewcode-block" id="print_data_to_file"><a class="viewcode-back" href="../../../module_content/pyGenClean.SexCheck.html#pyGenClean.SexCheck.gender_plot.print_data_to_file">[docs]</a><span class="k">def</span> <span class="nf">print_data_to_file</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">file_name</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Prints data to file.</span>
 
 <span class="sd">    :param data: the data to print.</span>
@@ -478,7 +481,7 @@
         <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
 </div>
-<div class="viewcode-block" id="read_summarized_intensities"><a class="viewcode-back" href="../../../sex_check.html#pyGenClean.SexCheck.gender_plot.read_summarized_intensities">[docs]</a><span class="k">def</span> <span class="nf">read_summarized_intensities</span><span class="p">(</span><span class="n">prefix</span><span class="p">):</span>
+<div class="viewcode-block" id="read_summarized_intensities"><a class="viewcode-back" href="../../../module_content/pyGenClean.SexCheck.html#pyGenClean.SexCheck.gender_plot.read_summarized_intensities">[docs]</a><span class="k">def</span> <span class="nf">read_summarized_intensities</span><span class="p">(</span><span class="n">prefix</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Reads the summarized intensities from 6 files.</span>
 
 <span class="sd">    :param prefix: the prefix of the six files.</span>
@@ -564,7 +567,7 @@
                     <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">sampleID</span><span class="p">,</span> <span class="n">chr23</span><span class="p">,</span> <span class="n">chr24</span><span class="p">,</span> <span class="n">gender</span><span class="p">,</span> <span class="n">status</span><span class="p">))</span>
 
     <span class="c"># Creating the data structure</span>
-    <span class="n">data</span> <span class="o">=</span> <span class="n">npy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
         <span class="n">data</span><span class="p">,</span>
         <span class="n">dtype</span><span class="o">=</span><span class="p">[(</span><span class="s">&quot;sampleID&quot;</span><span class="p">,</span> <span class="s">&quot;a{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">max</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">i</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">data</span><span class="p">]))),</span>
                <span class="p">(</span><span class="s">&quot;chr23&quot;</span><span class="p">,</span> <span class="nb">float</span><span class="p">),</span> <span class="p">(</span><span class="s">&quot;chr24&quot;</span><span class="p">,</span> <span class="nb">float</span><span class="p">),</span>
@@ -574,7 +577,7 @@
     <span class="k">return</span> <span class="n">data</span>
 
 </div>
-<div class="viewcode-block" id="read_intensities"><a class="viewcode-back" href="../../../sex_check.html#pyGenClean.SexCheck.gender_plot.read_intensities">[docs]</a><span class="k">def</span> <span class="nf">read_intensities</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="n">needed_markers_chr</span><span class="p">,</span> <span class="n">needed_samples_gender</span><span class="p">,</span>
+<div class="viewcode-block" id="read_intensities"><a class="viewcode-back" href="../../../module_content/pyGenClean.SexCheck.html#pyGenClean.SexCheck.gender_plot.read_intensities">[docs]</a><span class="k">def</span> <span class="nf">read_intensities</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="n">needed_markers_chr</span><span class="p">,</span> <span class="n">needed_samples_gender</span><span class="p">,</span>
                      <span class="n">sex_problems</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Reads the intensities from a file.</span>
 
@@ -698,7 +701,7 @@
             <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;0 marker on chr23 or chr24&quot;</span>
             <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
-    <span class="n">data</span> <span class="o">=</span> <span class="n">npy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
         <span class="n">data</span><span class="p">,</span>
         <span class="n">dtype</span><span class="o">=</span><span class="p">[(</span><span class="s">&quot;sampleID&quot;</span><span class="p">,</span> <span class="s">&quot;a{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">max</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">i</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">data</span><span class="p">]))),</span>
                <span class="p">(</span><span class="s">&quot;chr23&quot;</span><span class="p">,</span> <span class="nb">float</span><span class="p">),</span>
@@ -709,7 +712,7 @@
     <span class="k">return</span> <span class="n">data</span>
 
 </div>
-<div class="viewcode-block" id="checkArgs"><a class="viewcode-back" href="../../../sex_check.html#pyGenClean.SexCheck.gender_plot.checkArgs">[docs]</a><span class="k">def</span> <span class="nf">checkArgs</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+<div class="viewcode-block" id="checkArgs"><a class="viewcode-back" href="../../../module_content/pyGenClean.SexCheck.html#pyGenClean.SexCheck.gender_plot.checkArgs">[docs]</a><span class="k">def</span> <span class="nf">checkArgs</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Checks the arguments and options.</span>
 
 <span class="sd">    :param args: an object containing the options of the program.</span>
@@ -763,7 +766,7 @@
     <span class="k">return</span> <span class="bp">True</span>
 
 </div>
-<div class="viewcode-block" id="parseArgs"><a class="viewcode-back" href="../../../sex_check.html#pyGenClean.SexCheck.gender_plot.parseArgs">[docs]</a><span class="k">def</span> <span class="nf">parseArgs</span><span class="p">(</span><span class="n">argString</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>  <span class="c"># pragma: no cover</span>
+<div class="viewcode-block" id="parseArgs"><a class="viewcode-back" href="../../../module_content/pyGenClean.SexCheck.html#pyGenClean.SexCheck.gender_plot.parseArgs">[docs]</a><span class="k">def</span> <span class="nf">parseArgs</span><span class="p">(</span><span class="n">argString</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>  <span class="c"># pragma: no cover</span>
     <span class="sd">&quot;&quot;&quot;Parses the command line options and arguments.</span>
 
 <span class="sd">    :param argString: the options.</span>
@@ -808,7 +811,7 @@
     <span class="k">return</span> <span class="n">args</span>
 
 </div>
-<div class="viewcode-block" id="ProgramError"><a class="viewcode-back" href="../../../sex_check.html#pyGenClean.SexCheck.gender_plot.ProgramError">[docs]</a><span class="k">class</span> <span class="nc">ProgramError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<div class="viewcode-block" id="ProgramError"><a class="viewcode-back" href="../../../module_content/pyGenClean.SexCheck.html#pyGenClean.SexCheck.gender_plot.ProgramError">[docs]</a><span class="k">class</span> <span class="nc">ProgramError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;An :py:class:`Exception` raised in case of a problem.</span>
 
 <span class="sd">    :param msg: the message to print to the user before exiting.</span>
@@ -830,8 +833,10 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span>
 
 <span class="c"># The parser object</span></div>
-<span class="n">desc</span> <span class="o">=</span> <span class="s">&quot;&quot;&quot;Plots the gender using X and Y chromosomes&#39; intensities&quot;&quot;&quot;</span>
+<span class="n">desc</span> <span class="o">=</span> <span class="s">&quot;Plots the gender using X and Y chromosomes&#39; intensities&quot;</span>
 <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="n">desc</span><span class="p">)</span>
+<span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;-v&quot;</span><span class="p">,</span> <span class="s">&quot;--version&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s">&quot;version&quot;</span><span class="p">,</span>
+                    <span class="n">version</span><span class="o">=</span><span class="s">&quot;pyGenClean version {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">__version__</span><span class="p">))</span>
 
 <span class="c"># The INPUT files</span>
 <span class="n">group</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s">&quot;Input File&quot;</span><span class="p">)</span>
@@ -876,7 +881,7 @@
                          <span class="s">&quot;a Plink binary file. [default: </span><span class="si">%(default)s</span><span class="s">]&quot;</span><span class="p">))</span>
 
 
-<div class="viewcode-block" id="safe_main"><a class="viewcode-back" href="../../../sex_check.html#pyGenClean.SexCheck.gender_plot.safe_main">[docs]</a><span class="k">def</span> <span class="nf">safe_main</span><span class="p">():</span>
+<div class="viewcode-block" id="safe_main"><a class="viewcode-back" href="../../../module_content/pyGenClean.SexCheck.html#pyGenClean.SexCheck.gender_plot.safe_main">[docs]</a><span class="k">def</span> <span class="nf">safe_main</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;A safe version of the main function (that catches ProgramError).&quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">main</span><span class="p">()</span>
@@ -906,8 +911,9 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">pyGenClean 1.7.0 documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../../index.html">pyGenClean 1.7.1 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &raquo;</li>
+          <li class="nav-item nav-item-2"><a href="../../pyGenClean.html" >pyGenClean</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">

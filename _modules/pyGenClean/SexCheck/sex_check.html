@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>pyGenClean.SexCheck.sex_check &mdash; pyGenClean 1.7.0 documentation</title>
+    <title>pyGenClean.SexCheck.sex_check &mdash; pyGenClean 1.7.1 documentation</title>
     
     <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '1.7.0',
+        VERSION:     '1.7.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,8 +24,8 @@
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="pyGenClean 1.7.0 documentation" href="../../../index.html" />
-    <link rel="up" title="Module code" href="../../index.html" /> 
+    <link rel="top" title="pyGenClean 1.7.1 documentation" href="../../../index.html" />
+    <link rel="up" title="pyGenClean" href="../../pyGenClean.html" /> 
   </head>
   <body role="document">
 
@@ -42,8 +42,9 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">pyGenClean 1.7.0 documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../../index.html">pyGenClean 1.7.1 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &raquo;</li>
+          <li class="nav-item nav-item-2"><a href="../../pyGenClean.html" accesskey="U">pyGenClean</a> &raquo;</li> 
       </ul>
     </div>
 
@@ -94,18 +95,19 @@
 <span class="kn">import</span> <span class="nn">argparse</span>
 <span class="kn">import</span> <span class="nn">subprocess</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">npy</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 
 <span class="kn">from</span> <span class="nn">.import</span> <span class="nn">gender_plot</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">baf_lrr_plot</span>
 
+<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">__version__</span>
 <span class="kn">from</span> <span class="nn">..PlinkUtils</span> <span class="kn">import</span> <span class="n">createRowFromPlinkSpacedOutput</span>
 
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&quot;sex_check&quot;</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../../sex_check.html#pyGenClean.SexCheck.sex_check.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">argString</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../../module_content/pyGenClean.SexCheck.html#pyGenClean.SexCheck.sex_check.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">argString</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;The main function of the module.</span>
 
 <span class="sd">    :param argString: the options.</span>
@@ -192,7 +194,7 @@
                              <span class="n">args</span><span class="o">.</span><span class="n">lrr_baf_format</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">out</span><span class="p">)</span>
 
 </div>
-<div class="viewcode-block" id="createGenderPlot"><a class="viewcode-back" href="../../../sex_check.html#pyGenClean.SexCheck.sex_check.createGenderPlot">[docs]</a><span class="k">def</span> <span class="nf">createGenderPlot</span><span class="p">(</span><span class="n">bfile</span><span class="p">,</span> <span class="n">intensities</span><span class="p">,</span> <span class="n">problematic_samples</span><span class="p">,</span> <span class="n">format</span><span class="p">,</span>
+<div class="viewcode-block" id="createGenderPlot"><a class="viewcode-back" href="../../../module_content/pyGenClean.SexCheck.html#pyGenClean.SexCheck.sex_check.createGenderPlot">[docs]</a><span class="k">def</span> <span class="nf">createGenderPlot</span><span class="p">(</span><span class="n">bfile</span><span class="p">,</span> <span class="n">intensities</span><span class="p">,</span> <span class="n">problematic_samples</span><span class="p">,</span> <span class="n">format</span><span class="p">,</span>
                      <span class="n">out_prefix</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Creates the gender plot.</span>
 
@@ -222,7 +224,7 @@
         <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
 </div>
-<div class="viewcode-block" id="createLrrBafPlot"><a class="viewcode-back" href="../../../sex_check.html#pyGenClean.SexCheck.sex_check.createLrrBafPlot">[docs]</a><span class="k">def</span> <span class="nf">createLrrBafPlot</span><span class="p">(</span><span class="n">raw_dir</span><span class="p">,</span> <span class="n">problematic_samples</span><span class="p">,</span> <span class="n">format</span><span class="p">,</span> <span class="n">out_prefix</span><span class="p">):</span>
+<div class="viewcode-block" id="createLrrBafPlot"><a class="viewcode-back" href="../../../module_content/pyGenClean.SexCheck.html#pyGenClean.SexCheck.sex_check.createLrrBafPlot">[docs]</a><span class="k">def</span> <span class="nf">createLrrBafPlot</span><span class="p">(</span><span class="n">raw_dir</span><span class="p">,</span> <span class="n">problematic_samples</span><span class="p">,</span> <span class="n">format</span><span class="p">,</span> <span class="n">out_prefix</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Creates the LRR and BAF plot.</span>
 
 <span class="sd">    :param raw_dir: the directory containing the intensities.</span>
@@ -256,7 +258,7 @@
         <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
 </div>
-<div class="viewcode-block" id="checkBim"><a class="viewcode-back" href="../../../sex_check.html#pyGenClean.SexCheck.sex_check.checkBim">[docs]</a><span class="k">def</span> <span class="nf">checkBim</span><span class="p">(</span><span class="n">fileName</span><span class="p">,</span> <span class="n">minNumber</span><span class="p">,</span> <span class="n">chromosome</span><span class="p">):</span>
+<div class="viewcode-block" id="checkBim"><a class="viewcode-back" href="../../../module_content/pyGenClean.SexCheck.html#pyGenClean.SexCheck.sex_check.checkBim">[docs]</a><span class="k">def</span> <span class="nf">checkBim</span><span class="p">(</span><span class="n">fileName</span><span class="p">,</span> <span class="n">minNumber</span><span class="p">,</span> <span class="n">chromosome</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Checks the BIM file for chrN markers.</span>
 
 <span class="sd">    :param fileName:</span>
@@ -282,7 +284,7 @@
     <span class="k">return</span> <span class="bp">True</span>
 
 </div>
-<div class="viewcode-block" id="computeNoCall"><a class="viewcode-back" href="../../../sex_check.html#pyGenClean.SexCheck.sex_check.computeNoCall">[docs]</a><span class="k">def</span> <span class="nf">computeNoCall</span><span class="p">(</span><span class="n">fileName</span><span class="p">):</span>
+<div class="viewcode-block" id="computeNoCall"><a class="viewcode-back" href="../../../module_content/pyGenClean.SexCheck.html#pyGenClean.SexCheck.sex_check.computeNoCall">[docs]</a><span class="k">def</span> <span class="nf">computeNoCall</span><span class="p">(</span><span class="n">fileName</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Computes the number of no call.</span>
 
 <span class="sd">    :param fileName: the name of the file</span>
@@ -308,10 +310,10 @@
                 <span class="n">row</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\r\n</span><span class="s">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot; &quot;</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">i</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
                     <span class="c"># This is data</span>
-                    <span class="n">genotypes</span> <span class="o">=</span> <span class="n">npy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">6</span><span class="p">:])</span>
+                    <span class="n">genotypes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">6</span><span class="p">:])</span>
 
                     <span class="n">nbMarker</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">genotypes</span><span class="p">)</span>
-                    <span class="n">nbNA</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">npy</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">genotypes</span> <span class="o">==</span> <span class="s">&quot;NA&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+                    <span class="n">nbNA</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">genotypes</span> <span class="o">==</span> <span class="s">&quot;NA&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
 
                     <span class="n">toPrint</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">row</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="nb">str</span><span class="p">(</span><span class="n">nbMarker</span><span class="p">),</span>
                                     <span class="nb">str</span><span class="p">(</span><span class="n">nbNA</span><span class="p">)))</span>
@@ -329,7 +331,7 @@
     <span class="n">outputFile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
 </div>
-<div class="viewcode-block" id="computeHeteroPercentage"><a class="viewcode-back" href="../../../sex_check.html#pyGenClean.SexCheck.sex_check.computeHeteroPercentage">[docs]</a><span class="k">def</span> <span class="nf">computeHeteroPercentage</span><span class="p">(</span><span class="n">fileName</span><span class="p">):</span>
+<div class="viewcode-block" id="computeHeteroPercentage"><a class="viewcode-back" href="../../../module_content/pyGenClean.SexCheck.html#pyGenClean.SexCheck.sex_check.computeHeteroPercentage">[docs]</a><span class="k">def</span> <span class="nf">computeHeteroPercentage</span><span class="p">(</span><span class="n">fileName</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Computes the heterozygosity percentage.</span>
 
 <span class="sd">    :param fileName: the name of the input file.</span>
@@ -356,11 +358,11 @@
                 <span class="n">row</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\r\n</span><span class="s">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot; &quot;</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">i</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
                     <span class="c"># This is data</span>
-                    <span class="n">genotypes</span> <span class="o">=</span> <span class="n">npy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">6</span><span class="p">:])</span>
-                    <span class="n">genotypes</span> <span class="o">=</span> <span class="n">genotypes</span><span class="p">[</span><span class="n">npy</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">genotypes</span> <span class="o">!=</span> <span class="s">&quot;NA&quot;</span><span class="p">)]</span>
+                    <span class="n">genotypes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">6</span><span class="p">:])</span>
+                    <span class="n">genotypes</span> <span class="o">=</span> <span class="n">genotypes</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">genotypes</span> <span class="o">!=</span> <span class="s">&quot;NA&quot;</span><span class="p">)]</span>
 
                     <span class="n">nbMarker</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">genotypes</span><span class="p">)</span>
-                    <span class="n">nbHetero</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">npy</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">genotypes</span> <span class="o">==</span> <span class="s">&quot;1&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+                    <span class="n">nbHetero</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">genotypes</span> <span class="o">==</span> <span class="s">&quot;1&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
                     <span class="n">percentHetero</span> <span class="o">=</span> <span class="o">-</span><span class="mi">9999</span>
                     <span class="k">if</span> <span class="n">nbMarker</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
                         <span class="n">percentHetero</span> <span class="o">=</span> <span class="n">nbHetero</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">nbMarker</span><span class="p">)</span>
@@ -387,7 +389,7 @@
     <span class="n">outputFile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
 </div>
-<div class="viewcode-block" id="readCheckSexFile"><a class="viewcode-back" href="../../../sex_check.html#pyGenClean.SexCheck.sex_check.readCheckSexFile">[docs]</a><span class="k">def</span> <span class="nf">readCheckSexFile</span><span class="p">(</span><span class="n">fileName</span><span class="p">,</span> <span class="n">allProblemsFileName</span><span class="p">,</span> <span class="n">idsFileName</span><span class="p">,</span> <span class="n">femaleF</span><span class="p">,</span>
+<div class="viewcode-block" id="readCheckSexFile"><a class="viewcode-back" href="../../../module_content/pyGenClean.SexCheck.html#pyGenClean.SexCheck.sex_check.readCheckSexFile">[docs]</a><span class="k">def</span> <span class="nf">readCheckSexFile</span><span class="p">(</span><span class="n">fileName</span><span class="p">,</span> <span class="n">allProblemsFileName</span><span class="p">,</span> <span class="n">idsFileName</span><span class="p">,</span> <span class="n">femaleF</span><span class="p">,</span>
                      <span class="n">maleF</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Reads the Plink check-sex output file.</span>
 
@@ -516,7 +518,7 @@
     <span class="k">return</span> <span class="bp">True</span>
 
 </div>
-<div class="viewcode-block" id="runPlinkSexCheck"><a class="viewcode-back" href="../../../sex_check.html#pyGenClean.SexCheck.sex_check.runPlinkSexCheck">[docs]</a><span class="k">def</span> <span class="nf">runPlinkSexCheck</span><span class="p">(</span><span class="n">options</span><span class="p">):</span>
+<div class="viewcode-block" id="runPlinkSexCheck"><a class="viewcode-back" href="../../../module_content/pyGenClean.SexCheck.html#pyGenClean.SexCheck.sex_check.runPlinkSexCheck">[docs]</a><span class="k">def</span> <span class="nf">runPlinkSexCheck</span><span class="p">(</span><span class="n">options</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Runs Plink to perform a sex check analysis.</span>
 
 <span class="sd">    :param options: the options.</span>
@@ -532,7 +534,7 @@
     <span class="n">runCommand</span><span class="p">(</span><span class="n">plinkCommand</span><span class="p">)</span>
 
 </div>
-<div class="viewcode-block" id="createPedChr23UsingPlink"><a class="viewcode-back" href="../../../sex_check.html#pyGenClean.SexCheck.sex_check.createPedChr23UsingPlink">[docs]</a><span class="k">def</span> <span class="nf">createPedChr23UsingPlink</span><span class="p">(</span><span class="n">options</span><span class="p">):</span>
+<div class="viewcode-block" id="createPedChr23UsingPlink"><a class="viewcode-back" href="../../../module_content/pyGenClean.SexCheck.html#pyGenClean.SexCheck.sex_check.createPedChr23UsingPlink">[docs]</a><span class="k">def</span> <span class="nf">createPedChr23UsingPlink</span><span class="p">(</span><span class="n">options</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Run Plink to create a ped format.</span>
 
 <span class="sd">    :param options: the options.</span>
@@ -551,7 +553,7 @@
     <span class="n">runCommand</span><span class="p">(</span><span class="n">plinkCommand</span><span class="p">)</span>
 
 </div>
-<div class="viewcode-block" id="createPedChr24UsingPlink"><a class="viewcode-back" href="../../../sex_check.html#pyGenClean.SexCheck.sex_check.createPedChr24UsingPlink">[docs]</a><span class="k">def</span> <span class="nf">createPedChr24UsingPlink</span><span class="p">(</span><span class="n">options</span><span class="p">):</span>
+<div class="viewcode-block" id="createPedChr24UsingPlink"><a class="viewcode-back" href="../../../module_content/pyGenClean.SexCheck.html#pyGenClean.SexCheck.sex_check.createPedChr24UsingPlink">[docs]</a><span class="k">def</span> <span class="nf">createPedChr24UsingPlink</span><span class="p">(</span><span class="n">options</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Run plink to create a ped format.</span>
 
 <span class="sd">    :param options: the options.</span>
@@ -570,7 +572,7 @@
     <span class="n">runCommand</span><span class="p">(</span><span class="n">plinkCommand</span><span class="p">)</span>
 
 </div>
-<div class="viewcode-block" id="runCommand"><a class="viewcode-back" href="../../../sex_check.html#pyGenClean.SexCheck.sex_check.runCommand">[docs]</a><span class="k">def</span> <span class="nf">runCommand</span><span class="p">(</span><span class="n">command</span><span class="p">):</span>
+<div class="viewcode-block" id="runCommand"><a class="viewcode-back" href="../../../module_content/pyGenClean.SexCheck.html#pyGenClean.SexCheck.sex_check.runCommand">[docs]</a><span class="k">def</span> <span class="nf">runCommand</span><span class="p">(</span><span class="n">command</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Run a command.</span>
 
 <span class="sd">    :param command: the command to run.</span>
@@ -594,7 +596,7 @@
         <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
 </div>
-<div class="viewcode-block" id="checkArgs"><a class="viewcode-back" href="../../../sex_check.html#pyGenClean.SexCheck.sex_check.checkArgs">[docs]</a><span class="k">def</span> <span class="nf">checkArgs</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+<div class="viewcode-block" id="checkArgs"><a class="viewcode-back" href="../../../module_content/pyGenClean.SexCheck.html#pyGenClean.SexCheck.sex_check.checkArgs">[docs]</a><span class="k">def</span> <span class="nf">checkArgs</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Checks the arguments and options.</span>
 
 <span class="sd">    :param args: an object containing the options of the program.</span>
@@ -628,7 +630,7 @@
     <span class="k">return</span> <span class="bp">True</span>
 
 </div>
-<div class="viewcode-block" id="parseArgs"><a class="viewcode-back" href="../../../sex_check.html#pyGenClean.SexCheck.sex_check.parseArgs">[docs]</a><span class="k">def</span> <span class="nf">parseArgs</span><span class="p">(</span><span class="n">argString</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>  <span class="c"># pragma: no cover</span>
+<div class="viewcode-block" id="parseArgs"><a class="viewcode-back" href="../../../module_content/pyGenClean.SexCheck.html#pyGenClean.SexCheck.sex_check.parseArgs">[docs]</a><span class="k">def</span> <span class="nf">parseArgs</span><span class="p">(</span><span class="n">argString</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>  <span class="c"># pragma: no cover</span>
     <span class="sd">&quot;&quot;&quot;Parses the command line options and arguments.</span>
 
 <span class="sd">    :param argString: the options.</span>
@@ -675,7 +677,7 @@
     <span class="k">return</span> <span class="n">args</span>
 
 </div>
-<div class="viewcode-block" id="ProgramError"><a class="viewcode-back" href="../../../sex_check.html#pyGenClean.SexCheck.sex_check.ProgramError">[docs]</a><span class="k">class</span> <span class="nc">ProgramError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<div class="viewcode-block" id="ProgramError"><a class="viewcode-back" href="../../../module_content/pyGenClean.SexCheck.html#pyGenClean.SexCheck.sex_check.ProgramError">[docs]</a><span class="k">class</span> <span class="nc">ProgramError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;An :py:class:`Exception` raised in case of a problem.</span>
 
 <span class="sd">    :param msg: the message to print to the user before exiting.</span>
@@ -699,8 +701,13 @@
 
 <span class="c"># The parser object</span></div>
 <span class="n">pretty_name</span> <span class="o">=</span> <span class="s">&quot;Gender check&quot;</span>
-<span class="n">desc</span> <span class="o">=</span> <span class="s">&quot;&quot;&quot;Check sample&#39;s gender using Plink.&quot;&quot;&quot;</span>
+<span class="n">desc</span> <span class="o">=</span> <span class="s">&quot;Check sample&#39;s gender using Plink.&quot;</span>
+<span class="n">long_desc</span> <span class="o">=</span> <span class="p">(</span><span class="s">&quot;The script identifies any individual with discrepancies between &quot;</span>
+             <span class="s">&quot;phenotype and genotype data for sex. Individuals with sex error &quot;</span>
+             <span class="s">&quot;are to be investigated.&quot;</span><span class="p">)</span>
 <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="n">desc</span><span class="p">)</span>
+<span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;-v&quot;</span><span class="p">,</span> <span class="s">&quot;--version&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s">&quot;version&quot;</span><span class="p">,</span>
+                    <span class="n">version</span><span class="o">=</span><span class="s">&quot;pyGenClean version {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">__version__</span><span class="p">))</span>
 
 <span class="c"># The INPUT files</span>
 <span class="n">group</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s">&quot;Input File&quot;</span><span class="p">)</span>
@@ -751,7 +758,7 @@
                          <span class="s">&quot;Plink binary file. [default: </span><span class="si">%(default)s</span><span class="s">]&quot;</span><span class="p">))</span>
 
 
-<div class="viewcode-block" id="safe_main"><a class="viewcode-back" href="../../../sex_check.html#pyGenClean.SexCheck.sex_check.safe_main">[docs]</a><span class="k">def</span> <span class="nf">safe_main</span><span class="p">():</span>
+<div class="viewcode-block" id="safe_main"><a class="viewcode-back" href="../../../module_content/pyGenClean.SexCheck.html#pyGenClean.SexCheck.sex_check.safe_main">[docs]</a><span class="k">def</span> <span class="nf">safe_main</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;A safe version of the main function (that catches ProgramError).&quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">main</span><span class="p">()</span>
@@ -781,8 +788,9 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">pyGenClean 1.7.0 documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../../index.html">pyGenClean 1.7.1 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &raquo;</li>
+          <li class="nav-item nav-item-2"><a href="../../pyGenClean.html" >pyGenClean</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">

@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Comparison with a Gold Standard Module &mdash; pyGenClean 1.7.0 documentation</title>
+    <title>Comparison with a Gold Standard Module &mdash; pyGenClean 1.7.1 documentation</title>
     
     <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '1.7.0',
+        VERSION:     '1.7.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="pyGenClean 1.7.0 documentation" href="index.html" />
+    <link rel="top" title="pyGenClean 1.7.1 documentation" href="index.html" />
     <link rel="next" title="Plink Utils" href="plink_utils.html" />
     <link rel="prev" title="Hardy Weinberg Equilibrium Module" href="flag_hw.html" /> 
   </head>
@@ -49,7 +49,7 @@
         <li class="right" >
           <a href="flag_hw.html" title="Hardy Weinberg Equilibrium Module"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">pyGenClean 1.7.0 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">pyGenClean 1.7.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
 
@@ -59,7 +59,7 @@
   <ul>
 <li><a class="reference internal" href="#">Comparison with a Gold Standard Module</a><ul>
 <li><a class="reference internal" href="#output-files">Output Files</a></li>
-<li><a class="reference internal" href="#module-pyGenClean.Misc.compare_gold_standard">The Code</a></li>
+<li><a class="reference internal" href="#the-algorithm">The algorithm</a></li>
 </ul>
 </li>
 </ul>
@@ -105,255 +105,13 @@
 <h2>Output Files<a class="headerlink" href="#output-files" title="Permalink to this headline">¶</a></h2>
 <p>Describe the output files here.</p>
 </div>
-<div class="section" id="module-pyGenClean.Misc.compare_gold_standard">
-<span id="the-code"></span><h2>The Code<a class="headerlink" href="#module-pyGenClean.Misc.compare_gold_standard" title="Permalink to this headline">¶</a></h2>
-<dl class="exception">
-<dt id="pyGenClean.Misc.compare_gold_standard.ProgramError">
-<em class="property">exception </em><code class="descclassname">pyGenClean.Misc.compare_gold_standard.</code><code class="descname">ProgramError</code><span class="sig-paren">(</span><em>msg</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/Misc/compare_gold_standard.html#ProgramError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.Misc.compare_gold_standard.ProgramError" title="Permalink to this definition">¶</a></dt>
-<dd><p>An <code class="xref py py-class docutils literal"><span class="pre">Exception</span></code> raised in case of a problem.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>msg</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the message to print to the user before exiting.</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="pyGenClean.Misc.compare_gold_standard.checkArgs">
-<code class="descclassname">pyGenClean.Misc.compare_gold_standard.</code><code class="descname">checkArgs</code><span class="sig-paren">(</span><em>args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/Misc/compare_gold_standard.html#checkArgs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.Misc.compare_gold_standard.checkArgs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Checks the arguments and options.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>args</strong> (<a class="reference external" href="http://docs.python.org/library/argparse.html#argparse.Namespace" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">argparse.Namespace</span></code></a>) &#8211; a <code class="xref py py-class docutils literal"><span class="pre">Namespace</span></code> object containing the options of the
-program.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><code class="docutils literal"><span class="pre">True</span></code> if everything was OK.</td>
-</tr>
-</tbody>
-</table>
-<p>If there is a problem with an option, an exception is raised using the
-<a class="reference internal" href="#pyGenClean.Misc.compare_gold_standard.ProgramError" title="pyGenClean.Misc.compare_gold_standard.ProgramError"><code class="xref py py-class docutils literal"><span class="pre">ProgramError</span></code></a> class, a message is printed
-to the <code class="xref py py-class docutils literal"><span class="pre">sys.stderr</span></code> and the program exists with code 1.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="pyGenClean.Misc.compare_gold_standard.check_fam_for_samples">
-<code class="descclassname">pyGenClean.Misc.compare_gold_standard.</code><code class="descname">check_fam_for_samples</code><span class="sig-paren">(</span><em>required_samples</em>, <em>source</em>, <em>gold</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/Misc/compare_gold_standard.html#check_fam_for_samples"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.Misc.compare_gold_standard.check_fam_for_samples" title="Permalink to this definition">¶</a></dt>
-<dd><p>Check fam files for required_samples.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="pyGenClean.Misc.compare_gold_standard.computeFrequency">
-<code class="descclassname">pyGenClean.Misc.compare_gold_standard.</code><code class="descname">computeFrequency</code><span class="sig-paren">(</span><em>prefix</em>, <em>outPrefix</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/Misc/compare_gold_standard.html#computeFrequency"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.Misc.compare_gold_standard.computeFrequency" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute the frequency using Plink.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="pyGenClean.Misc.compare_gold_standard.compute_statistics">
-<code class="descclassname">pyGenClean.Misc.compare_gold_standard.</code><code class="descname">compute_statistics</code><span class="sig-paren">(</span><em>out_dir</em>, <em>gold_prefix</em>, <em>source_prefix</em>, <em>same_samples</em>, <em>use_sge</em>, <em>final_out_prefix</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/Misc/compare_gold_standard.html#compute_statistics"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.Misc.compare_gold_standard.compute_statistics" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute the statistics.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="pyGenClean.Misc.compare_gold_standard.exclude_SNPs_samples">
-<code class="descclassname">pyGenClean.Misc.compare_gold_standard.</code><code class="descname">exclude_SNPs_samples</code><span class="sig-paren">(</span><em>inPrefix</em>, <em>outPrefix</em>, <em>exclusionSNP=None</em>, <em>keepSample=None</em>, <em>transpose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/Misc/compare_gold_standard.html#exclude_SNPs_samples"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.Misc.compare_gold_standard.exclude_SNPs_samples" title="Permalink to this definition">¶</a></dt>
-<dd><p>Exclude some SNPs and keep some samples using Plink.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="pyGenClean.Misc.compare_gold_standard.extractSNPs">
-<code class="descclassname">pyGenClean.Misc.compare_gold_standard.</code><code class="descname">extractSNPs</code><span class="sig-paren">(</span><em>prefixes</em>, <em>snpToExtractFileNames</em>, <em>outPrefixes</em>, <em>runSGE</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/Misc/compare_gold_standard.html#extractSNPs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.Misc.compare_gold_standard.extractSNPs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Extract a list of SNPs using Plink.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="pyGenClean.Misc.compare_gold_standard.findFlippedSNPs">
-<code class="descclassname">pyGenClean.Misc.compare_gold_standard.</code><code class="descname">findFlippedSNPs</code><span class="sig-paren">(</span><em>goldFrqFile1</em>, <em>sourceAlleles</em>, <em>outPrefix</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/Misc/compare_gold_standard.html#findFlippedSNPs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.Misc.compare_gold_standard.findFlippedSNPs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Find flipped SNPs and flip them in the data1.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="pyGenClean.Misc.compare_gold_standard.findOverlappingSNPsWithGoldStandard">
-<code class="descclassname">pyGenClean.Misc.compare_gold_standard.</code><code class="descname">findOverlappingSNPsWithGoldStandard</code><span class="sig-paren">(</span><em>prefix</em>, <em>gold_prefixe</em>, <em>out_prefix</em>, <em>use_marker_names=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/Misc/compare_gold_standard.html#findOverlappingSNPsWithGoldStandard"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.Misc.compare_gold_standard.findOverlappingSNPsWithGoldStandard" title="Permalink to this definition">¶</a></dt>
-<dd><p>Find the overlapping SNPs in 4 different data sets.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="pyGenClean.Misc.compare_gold_standard.flipSNPs">
-<code class="descclassname">pyGenClean.Misc.compare_gold_standard.</code><code class="descname">flipSNPs</code><span class="sig-paren">(</span><em>inPrefix</em>, <em>outPrefix</em>, <em>flipFileName</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/Misc/compare_gold_standard.html#flipSNPs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.Misc.compare_gold_standard.flipSNPs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Flip SNPs using Plink.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="pyGenClean.Misc.compare_gold_standard.illumina_to_snp">
-<code class="descclassname">pyGenClean.Misc.compare_gold_standard.</code><code class="descname">illumina_to_snp</code><span class="sig-paren">(</span><em>strand</em>, <em>snp</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/Misc/compare_gold_standard.html#illumina_to_snp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.Misc.compare_gold_standard.illumina_to_snp" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the TOP strand of the marker.</p>
-<p>Function that takes a strand (TOP or BOT) and a SNP (e.g. : [A/C]) and
-returns a space separated AlleleA[space]AlleleB string.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>strand</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; Either &#8220;TOP&#8221; or &#8220;BOT&#8221;</li>
-<li><strong>snp</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; [A/C], [A/T], [G/C], [T/C], [A/G], [C/G], [T/A] or [T/G].</li>
+<div class="section" id="the-algorithm">
+<h2>The algorithm<a class="headerlink" href="#the-algorithm" title="Permalink to this headline">¶</a></h2>
+<p>For more information about the actual algorithms and source codes, refer to the
+following pages.</p>
+<ul class="simple">
+<li><a class="reference internal" href="module_content/pyGenClean.Misc.html#module-pyGenClean.Misc.compare_gold_standard" title="pyGenClean.Misc.compare_gold_standard"><code class="xref py py-mod docutils literal"><span class="pre">pyGenClean.Misc.compare_gold_standard</span></code></a></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The nucleotide for allele A and the nucleotide for allele B
-(space separated)</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)">str</a></p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="pyGenClean.Misc.compare_gold_standard.keepSamples">
-<code class="descclassname">pyGenClean.Misc.compare_gold_standard.</code><code class="descname">keepSamples</code><span class="sig-paren">(</span><em>prefixes</em>, <em>samplesToExtractFileNames</em>, <em>outPrefixes</em>, <em>runSGE</em>, <em>transpose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/Misc/compare_gold_standard.html#keepSamples"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.Misc.compare_gold_standard.keepSamples" title="Permalink to this definition">¶</a></dt>
-<dd><p>Extract a list of SNPs using Plink.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="pyGenClean.Misc.compare_gold_standard.parseArgs">
-<code class="descclassname">pyGenClean.Misc.compare_gold_standard.</code><code class="descname">parseArgs</code><span class="sig-paren">(</span><em>argString=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/Misc/compare_gold_standard.html#parseArgs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.Misc.compare_gold_standard.parseArgs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Parses the command line options and arguments.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A <code class="xref py py-class docutils literal"><span class="pre">numpy.Namespace</span></code> object created by
-the <a class="reference external" href="http://docs.python.org/library/argparse.html#module-argparse" title="(in Python v2.7)"><code class="xref py py-mod docutils literal"><span class="pre">argparse</span></code></a> module. It contains the values of the
-different options.</td>
-</tr>
-</tbody>
-</table>
-<table border="1" class="docutils">
-<colgroup>
-<col width="30%" />
-<col width="10%" />
-<col width="60%" />
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Options</th>
-<th class="head">Type</th>
-<th class="head">Description</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr class="row-even"><td><code class="docutils literal"><span class="pre">--bfile</span></code></td>
-<td>string</td>
-<td>The input file prefix (will find the plink
-binary files by appending the prefix to the
-<code class="docutils literal"><span class="pre">.bim</span></code>, <code class="docutils literal"><span class="pre">.bed</span></code> and <code class="docutils literal"><span class="pre">.fam</span></code> files,
-respectively).</td>
-</tr>
-<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--gold-bfile</span></code></td>
-<td>string</td>
-<td>The input file prefix (will find the plink
-binary files by appending the prefix to the
-<code class="docutils literal"><span class="pre">.bim</span></code>, <code class="docutils literal"><span class="pre">.bed</span></code> and <code class="docutils literal"><span class="pre">.fam</span></code> files,
-respectively) for the Gold Standard.</td>
-</tr>
-<tr class="row-even"><td><code class="docutils literal"><span class="pre">--same-samples</span></code></td>
-<td>string</td>
-<td>A file containing samples which are present
-in both the gold standard and the source
-panel. One line by identity and tab
-separated. For each row, first sample is
-Gold Standard, second is source panel.</td>
-</tr>
-<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--source-manifest</span></code></td>
-<td>string</td>
-<td>The illumina marker manifest. This file
-should have tabs as field separator. There
-should be no lines before the main header
-line. There should be no lines after the
-last data line.</td>
-</tr>
-<tr class="row-even"><td><code class="docutils literal"><span class="pre">--source-alleles</span></code></td>
-<td>string</td>
-<td>A file containing the source alleles (TOP).
-Two columns (separated by tabulation, one
-with the marker name, the other with the
-alleles (separated by space). No header.</td>
-</tr>
-<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--sge</span></code></td>
-<td>boolean</td>
-<td>Use SGE for parallelization.</td>
-</tr>
-<tr class="row-even"><td><code class="docutils literal"><span class="pre">--do-not-flip</span></code></td>
-<td>boolean</td>
-<td>Do not flip SNPs. WARNING: only use this
-option only if the Gold Standard was
-generated using the same chip (hence,
-flipping is unnecessary).</td>
-</tr>
-<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--use-marker-names</span></code></td>
-<td>boolean</td>
-<td>Use marker names instead of (chr, position).
-WARNING: only use this options only if the
-Gold Standard was generated using the same
-chip (hence, they have the same marker
-names).</td>
-</tr>
-<tr class="row-even"><td><code class="docutils literal"><span class="pre">--out</span></code></td>
-<td>string</td>
-<td>The prefix of the output files.</td>
-</tr>
-</tbody>
-</table>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">No option check is done here (except for the one automatically done by
-argparse). Those need to be done elsewhere (see <a class="reference internal" href="#pyGenClean.Misc.compare_gold_standard.checkArgs" title="pyGenClean.Misc.compare_gold_standard.checkArgs"><code class="xref py py-func docutils literal"><span class="pre">checkArgs()</span></code></a>).</p>
-</div>
-</dd></dl>
-
-<dl class="function">
-<dt id="pyGenClean.Misc.compare_gold_standard.read_same_samples_file">
-<code class="descclassname">pyGenClean.Misc.compare_gold_standard.</code><code class="descname">read_same_samples_file</code><span class="sig-paren">(</span><em>filename</em>, <em>out_prefix</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/Misc/compare_gold_standard.html#read_same_samples_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.Misc.compare_gold_standard.read_same_samples_file" title="Permalink to this definition">¶</a></dt>
-<dd><p>Reads a file containing same samples.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="pyGenClean.Misc.compare_gold_standard.read_source_alleles">
-<code class="descclassname">pyGenClean.Misc.compare_gold_standard.</code><code class="descname">read_source_alleles</code><span class="sig-paren">(</span><em>file_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/Misc/compare_gold_standard.html#read_source_alleles"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.Misc.compare_gold_standard.read_source_alleles" title="Permalink to this definition">¶</a></dt>
-<dd><p>Reads an allele file.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="pyGenClean.Misc.compare_gold_standard.read_source_manifest">
-<code class="descclassname">pyGenClean.Misc.compare_gold_standard.</code><code class="descname">read_source_manifest</code><span class="sig-paren">(</span><em>file_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/Misc/compare_gold_standard.html#read_source_manifest"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.Misc.compare_gold_standard.read_source_manifest" title="Permalink to this definition">¶</a></dt>
-<dd><p>Reads Illumina manifest.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="pyGenClean.Misc.compare_gold_standard.renameSNPs">
-<code class="descclassname">pyGenClean.Misc.compare_gold_standard.</code><code class="descname">renameSNPs</code><span class="sig-paren">(</span><em>inPrefix</em>, <em>updateFileName</em>, <em>outPrefix</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/Misc/compare_gold_standard.html#renameSNPs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.Misc.compare_gold_standard.renameSNPs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Updates the name of the SNPs using Plink.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="pyGenClean.Misc.compare_gold_standard.runCommand">
-<code class="descclassname">pyGenClean.Misc.compare_gold_standard.</code><code class="descname">runCommand</code><span class="sig-paren">(</span><em>command</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/Misc/compare_gold_standard.html#runCommand"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.Misc.compare_gold_standard.runCommand" title="Permalink to this definition">¶</a></dt>
-<dd><p>Run a command.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="pyGenClean.Misc.compare_gold_standard.safe_main">
-<code class="descclassname">pyGenClean.Misc.compare_gold_standard.</code><code class="descname">safe_main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/Misc/compare_gold_standard.html#safe_main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.Misc.compare_gold_standard.safe_main" title="Permalink to this definition">¶</a></dt>
-<dd><p>A safe version of the main function (that catches ProgramError).</p>
-</dd></dl>
-
 </div>
 </div>
 
@@ -378,7 +136,7 @@ argparse). Those need to be done elsewhere (see <a class="reference internal" hr
         <li class="right" >
           <a href="flag_hw.html" title="Hardy Weinberg Equilibrium Module"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">pyGenClean 1.7.0 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">pyGenClean 1.7.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">

@@ -1,0 +1,1024 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>pyGenClean.PlinkUtils package &mdash; pyGenClean 1.7.1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.7.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="pyGenClean 1.7.1 documentation" href="../index.html" />
+    <link rel="up" title="pyGenClean package" href="pyGenClean.html" />
+    <link rel="next" title="pyGenClean.RelatedSamples package" href="pyGenClean.RelatedSamples.html" />
+    <link rel="prev" title="pyGenClean.PlateBias package" href="pyGenClean.PlateBias.html" /> 
+  </head>
+  <body role="document">
+
+<div style="background-color: white; text-align: left; padding: 10px 10px 15px 15px">
+<a href="../index.html"><img src="../_static/logo.png" border="0" alt="py4sci"/></a>
+</div>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="pyGenClean.RelatedSamples.html" title="pyGenClean.RelatedSamples package"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="pyGenClean.PlateBias.html" title="pyGenClean.PlateBias package"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">pyGenClean 1.7.1 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="modules.html" >Main pyGenClean pipeline</a> &raquo;</li>
+          <li class="nav-item nav-item-2"><a href="pyGenClean.html" accesskey="U">pyGenClean package</a> &raquo;</li> 
+      </ul>
+    </div>
+
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">pyGenClean.PlinkUtils package</a><ul>
+<li><a class="reference internal" href="#module-pyGenClean.PlinkUtils">Module contents</a></li>
+<li><a class="reference internal" href="#submodules">Submodules</a><ul>
+<li><a class="reference internal" href="#module-pyGenClean.PlinkUtils.compare_bim">pyGenClean.PlinkUtils.compare_bim module</a></li>
+<li><a class="reference internal" href="#module-pyGenClean.PlinkUtils.plot_MDS">pyGenClean.PlinkUtils.plot_MDS module</a></li>
+<li><a class="reference internal" href="#module-pyGenClean.PlinkUtils.plot_MDS_standalone">pyGenClean.PlinkUtils.plot_MDS_standalone module</a></li>
+<li><a class="reference internal" href="#module-pyGenClean.PlinkUtils.subset_data">pyGenClean.PlinkUtils.subset_data module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="pyGenClean.PlateBias.html"
+                        title="previous chapter">pyGenClean.PlateBias package</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="pyGenClean.RelatedSamples.html"
+                        title="next chapter">pyGenClean.RelatedSamples package</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/module_content/pyGenClean.PlinkUtils.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="pygenclean-plinkutils-package">
+<h1>pyGenClean.PlinkUtils package<a class="headerlink" href="#pygenclean-plinkutils-package" title="Permalink to this headline">¶</a></h1>
+<p>For more information about how to use this module, refer to the
+<a class="reference internal" href="../plink_utils.html#plink-utils-label"><span>Plink Utils</span></a>.</p>
+<div class="section" id="module-pyGenClean.PlinkUtils">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-pyGenClean.PlinkUtils" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="pyGenClean.PlinkUtils.createRowFromPlinkSpacedOutput">
+<code class="descclassname">pyGenClean.PlinkUtils.</code><code class="descname">createRowFromPlinkSpacedOutput</code><span class="sig-paren">(</span><em>line</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyGenClean/PlinkUtils.html#createRowFromPlinkSpacedOutput"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.PlinkUtils.createRowFromPlinkSpacedOutput" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove leading spaces and change spaces to tabs.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Param:</th><td class="field-body">line: a line from a Plink&#8217;s report file.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Type:</th><td class="field-body">line: str</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">an array containing each field from the input line.</td>
+</tr>
+</tbody>
+</table>
+<p>Plink&#8217;s output files are usually created so that they are human readable.
+Hence, instead of separating fields using tabulation, it uses a certain
+amount of spaces to create columns. Using the <a class="reference external" href="http://docs.python.org/library/re.html#module-re" title="(in Python v2.7)"><code class="xref py py-mod docutils literal"><span class="pre">re</span></code></a> module, the
+fields are split.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">line</span> <span class="o">=</span> <span class="s">&quot; CHR               SNP         BP   A1      A2&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">createRowFromPlinkSpacedOutput</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+<span class="go">[&#39;CHR&#39;, &#39;SNP&#39;, &#39;BP&#39;, &#39;A1&#39;, &#39;A2&#39;]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.PlinkUtils.get_plink_version">
+<code class="descclassname">pyGenClean.PlinkUtils.</code><code class="descname">get_plink_version</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyGenClean/PlinkUtils.html#get_plink_version"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.PlinkUtils.get_plink_version" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the Plink version from the binary.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the version of the Plink software</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)">str</a></td>
+</tr>
+</tbody>
+</table>
+<p>This function uses <a class="reference external" href="http://docs.python.org/library/subprocess.html#subprocess.Popen" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">subprocess.Popen</span></code></a> to gather the version of
+the Plink binary. Since executing the software to gather the version
+creates an output file, it is deleted.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">This function only works as long as the version is returned as
+<code class="docutils literal"><span class="pre">|</span> <span class="pre">PLINK!</span> <span class="pre">|</span> <span class="pre">NNN</span> <span class="pre">|</span></code> (where, <code class="docutils literal"><span class="pre">NNN</span></code> is the version), since we use
+regular expresion to extract the version number from the standard
+output of the software.</p>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-pyGenClean.PlinkUtils.compare_bim">
+<span id="pygenclean-plinkutils-compare-bim-module"></span><h3>pyGenClean.PlinkUtils.compare_bim module<a class="headerlink" href="#module-pyGenClean.PlinkUtils.compare_bim" title="Permalink to this headline">¶</a></h3>
+<dl class="exception">
+<dt id="pyGenClean.PlinkUtils.compare_bim.ProgramError">
+<em class="property">exception </em><code class="descclassname">pyGenClean.PlinkUtils.compare_bim.</code><code class="descname">ProgramError</code><span class="sig-paren">(</span><em>msg</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyGenClean/PlinkUtils/compare_bim.html#ProgramError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.PlinkUtils.compare_bim.ProgramError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="http://docs.python.org/library/exceptions.html#exceptions.Exception" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">exceptions.Exception</span></code></a></p>
+<p>An <code class="xref py py-class docutils literal"><span class="pre">Exception</span></code> raised in case of a problem.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>msg</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the message to print to the user before exiting.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.PlinkUtils.compare_bim.checkArgs">
+<code class="descclassname">pyGenClean.PlinkUtils.compare_bim.</code><code class="descname">checkArgs</code><span class="sig-paren">(</span><em>args</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyGenClean/PlinkUtils/compare_bim.html#checkArgs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.PlinkUtils.compare_bim.checkArgs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks the arguments and options.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>args</strong> (<a class="reference external" href="http://docs.python.org/library/argparse.html#argparse.Namespace" title="(in Python v2.7)"><em>argparse.Namespace</em></a>) &#8211; an object containing the options of the program.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><code class="docutils literal"><span class="pre">True</span></code> if everything was OK.</td>
+</tr>
+</tbody>
+</table>
+<p>If there is a problem with an option, an exception is raised using the
+<a class="reference internal" href="#pyGenClean.PlinkUtils.compare_bim.ProgramError" title="pyGenClean.PlinkUtils.compare_bim.ProgramError"><code class="xref py py-class docutils literal"><span class="pre">ProgramError</span></code></a> class, a message is printed to the
+<code class="xref py py-class docutils literal"><span class="pre">sys.stderr</span></code> and the program exists with code 1.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.PlinkUtils.compare_bim.compareSNPs">
+<code class="descclassname">pyGenClean.PlinkUtils.compare_bim.</code><code class="descname">compareSNPs</code><span class="sig-paren">(</span><em>before</em>, <em>after</em>, <em>outFileName</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyGenClean/PlinkUtils/compare_bim.html#compareSNPs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.PlinkUtils.compare_bim.compareSNPs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compares two set of SNPs.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>before</strong> (<a class="reference external" href="http://docs.python.org/library/stdtypes.html#set" title="(in Python v2.7)"><em>set</em></a>) &#8211; the names of the markers in the <code class="docutils literal"><span class="pre">before</span></code> file.</li>
+<li><strong>after</strong> (<a class="reference external" href="http://docs.python.org/library/stdtypes.html#set" title="(in Python v2.7)"><em>set</em></a>) &#8211; the names of the markers in the <code class="docutils literal"><span class="pre">after</span></code> file.</li>
+<li><strong>outFileName</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the name of the output file.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Finds the difference between two sets of markers, and write them in the
+<code class="docutils literal"><span class="pre">outFileName</span></code> file.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>A <a class="reference internal" href="#pyGenClean.PlinkUtils.compare_bim.ProgramError" title="pyGenClean.PlinkUtils.compare_bim.ProgramError"><code class="xref py py-class docutils literal"><span class="pre">ProgramError</span></code></a> is raised if:</p>
+<ol class="last arabic simple">
+<li>There are more markers in the <code class="docutils literal"><span class="pre">after</span></code> set than in the  <code class="docutils literal"><span class="pre">before</span></code>
+set.</li>
+<li>Some markers that are in the <code class="docutils literal"><span class="pre">after</span></code> set are not in the <code class="docutils literal"><span class="pre">before</span></code>
+set.</li>
+</ol>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.PlinkUtils.compare_bim.main">
+<code class="descclassname">pyGenClean.PlinkUtils.compare_bim.</code><code class="descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyGenClean/PlinkUtils/compare_bim.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.PlinkUtils.compare_bim.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>The main function of the module.</p>
+<p>The purpose of this module is to find markers that were removed by Plink.
+When Plinks exclude some markers from binary files, there are no easy way
+to find the list of removed markers, except by comparing the two BIM files
+(before and after modification).</p>
+<p>Here are the steps of this module:</p>
+<ol class="arabic simple">
+<li>Reads the BIM file before the modification (<a class="reference internal" href="#pyGenClean.PlinkUtils.compare_bim.readBIM" title="pyGenClean.PlinkUtils.compare_bim.readBIM"><code class="xref py py-func docutils literal"><span class="pre">readBIM()</span></code></a>).</li>
+<li>Reads the BIM file after the modification (<a class="reference internal" href="#pyGenClean.PlinkUtils.compare_bim.readBIM" title="pyGenClean.PlinkUtils.compare_bim.readBIM"><code class="xref py py-func docutils literal"><span class="pre">readBIM()</span></code></a>).</li>
+<li>Compares the list of markers before and after modification, and write
+the removed markers into a file (<a class="reference internal" href="#pyGenClean.PlinkUtils.compare_bim.compareSNPs" title="pyGenClean.PlinkUtils.compare_bim.compareSNPs"><code class="xref py py-func docutils literal"><span class="pre">compareSNPs()</span></code></a>).</li>
+</ol>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This module only finds marker that were removed (since adding markers
+to a BIM file usually includes a companion file to tell Plink which
+marker to add.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.PlinkUtils.compare_bim.parseArgs">
+<code class="descclassname">pyGenClean.PlinkUtils.compare_bim.</code><code class="descname">parseArgs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyGenClean/PlinkUtils/compare_bim.html#parseArgs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.PlinkUtils.compare_bim.parseArgs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parses the command line options and arguments.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A <a class="reference external" href="http://docs.python.org/library/argparse.html#argparse.Namespace" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">argparse.Namespace</span></code></a> object created by the
+<a class="reference external" href="http://docs.python.org/library/argparse.html#module-argparse" title="(in Python v2.7)"><code class="xref py py-mod docutils literal"><span class="pre">argparse</span></code></a> module. It contains the values of the
+different options.</td>
+</tr>
+</tbody>
+</table>
+<table border="1" class="docutils">
+<colgroup>
+<col width="19%" />
+<col width="10%" />
+<col width="71%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Options</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--before</span></code></td>
+<td>string</td>
+<td>The name of the BIM file before modification.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--after</span></code></td>
+<td>string</td>
+<td>The name of the BIM file after modification.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--out</span></code></td>
+<td>string</td>
+<td>The prefix of the output files</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">No option check is done here (except for the one automatically done by
+argparse). Those need to be done elsewhere (see <a class="reference internal" href="#pyGenClean.PlinkUtils.compare_bim.checkArgs" title="pyGenClean.PlinkUtils.compare_bim.checkArgs"><code class="xref py py-func docutils literal"><span class="pre">checkArgs()</span></code></a>).</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.PlinkUtils.compare_bim.readBIM">
+<code class="descclassname">pyGenClean.PlinkUtils.compare_bim.</code><code class="descname">readBIM</code><span class="sig-paren">(</span><em>fileName</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyGenClean/PlinkUtils/compare_bim.html#readBIM"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.PlinkUtils.compare_bim.readBIM" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads a BIM file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>fileName</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the name of the BIM file to read.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">the set of markers in the BIM file.</td>
+</tr>
+</tbody>
+</table>
+<p>Reads a Plink BIM file and extract the name of the markers. There is one
+marker per line, and the name of the marker is in the second column. There
+is no header in the BIM file.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.PlinkUtils.compare_bim.safe_main">
+<code class="descclassname">pyGenClean.PlinkUtils.compare_bim.</code><code class="descname">safe_main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyGenClean/PlinkUtils/compare_bim.html#safe_main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.PlinkUtils.compare_bim.safe_main" title="Permalink to this definition">¶</a></dt>
+<dd><p>A safe version of the main function (that catches ProgramError).</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyGenClean.PlinkUtils.plot_MDS">
+<span id="pygenclean-plinkutils-plot-mds-module"></span><h3>pyGenClean.PlinkUtils.plot_MDS module<a class="headerlink" href="#module-pyGenClean.PlinkUtils.plot_MDS" title="Permalink to this headline">¶</a></h3>
+<dl class="exception">
+<dt id="pyGenClean.PlinkUtils.plot_MDS.ProgramError">
+<em class="property">exception </em><code class="descclassname">pyGenClean.PlinkUtils.plot_MDS.</code><code class="descname">ProgramError</code><span class="sig-paren">(</span><em>msg</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyGenClean/PlinkUtils/plot_MDS.html#ProgramError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.PlinkUtils.plot_MDS.ProgramError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="http://docs.python.org/library/exceptions.html#exceptions.Exception" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">exceptions.Exception</span></code></a></p>
+<p>An <code class="xref py py-class docutils literal"><span class="pre">Exception</span></code> raised in case of a problem.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>msg</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the message to print to the user before exiting.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.PlinkUtils.plot_MDS.addCustomOptions">
+<code class="descclassname">pyGenClean.PlinkUtils.plot_MDS.</code><code class="descname">addCustomOptions</code><span class="sig-paren">(</span><em>parser</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyGenClean/PlinkUtils/plot_MDS.html#addCustomOptions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.PlinkUtils.plot_MDS.addCustomOptions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds custom options to a parser.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>parser</strong> (<em>argparse.parser</em>) &#8211; the parser.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.PlinkUtils.plot_MDS.checkArgs">
+<code class="descclassname">pyGenClean.PlinkUtils.plot_MDS.</code><code class="descname">checkArgs</code><span class="sig-paren">(</span><em>args</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyGenClean/PlinkUtils/plot_MDS.html#checkArgs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.PlinkUtils.plot_MDS.checkArgs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks the arguments and options.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>args</strong> (<a class="reference external" href="http://docs.python.org/library/argparse.html#argparse.Namespace" title="(in Python v2.7)"><em>argparse.Namespace</em></a>) &#8211; an object containing the options of the program.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><code class="docutils literal"><span class="pre">True</span></code> if everything was OK.</td>
+</tr>
+</tbody>
+</table>
+<p>If there is a problem with an option, an exception is raised using the
+<a class="reference internal" href="#pyGenClean.PlinkUtils.plot_MDS.ProgramError" title="pyGenClean.PlinkUtils.plot_MDS.ProgramError"><code class="xref py py-class docutils literal"><span class="pre">ProgramError</span></code></a> class, a message is printed to the
+<code class="xref py py-class docutils literal"><span class="pre">sys.stderr</span></code> and the program exists with code 1.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.PlinkUtils.plot_MDS.extractData">
+<code class="descclassname">pyGenClean.PlinkUtils.plot_MDS.</code><code class="descname">extractData</code><span class="sig-paren">(</span><em>fileName</em>, <em>populations</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyGenClean/PlinkUtils/plot_MDS.html#extractData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.PlinkUtils.plot_MDS.extractData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extract the C1 and C2 columns for plotting.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>fileName</strong> (<a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) &#8211; the name of the MDS file.</li>
+<li><strong>populations</strong> &#8211; the population of each sample in the MDS file.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">the MDS data with information about the population of each
+sample. The first element of the returned tuple is a tuple. The
+last element of the returned tuple is the list of the populations
+(the order is the same as in the first element). The first
+element of the first tuple is the C1 data, and the last element
+is the C2 data.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If a sample in the MDS file is not in the population file, it is skip.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.PlinkUtils.plot_MDS.main">
+<code class="descclassname">pyGenClean.PlinkUtils.plot_MDS.</code><code class="descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyGenClean/PlinkUtils/plot_MDS.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.PlinkUtils.plot_MDS.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>The main function of the module.</p>
+<p>These are the steps:</p>
+<ol class="arabic simple">
+<li>Reads the population file (<a class="reference internal" href="#pyGenClean.PlinkUtils.plot_MDS.readPopulations" title="pyGenClean.PlinkUtils.plot_MDS.readPopulations"><code class="xref py py-func docutils literal"><span class="pre">readPopulations()</span></code></a>).</li>
+<li>Extract the MDS data (<a class="reference internal" href="#pyGenClean.PlinkUtils.plot_MDS.extractData" title="pyGenClean.PlinkUtils.plot_MDS.extractData"><code class="xref py py-func docutils literal"><span class="pre">extractData()</span></code></a>).</li>
+<li>Plots the MDS data (<a class="reference internal" href="#pyGenClean.PlinkUtils.plot_MDS.plotMDS" title="pyGenClean.PlinkUtils.plot_MDS.plotMDS"><code class="xref py py-func docutils literal"><span class="pre">plotMDS()</span></code></a>).</li>
+</ol>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.PlinkUtils.plot_MDS.parseArgs">
+<code class="descclassname">pyGenClean.PlinkUtils.plot_MDS.</code><code class="descname">parseArgs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyGenClean/PlinkUtils/plot_MDS.html#parseArgs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.PlinkUtils.plot_MDS.parseArgs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parses the command line options and arguments.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A <a class="reference external" href="http://docs.python.org/library/argparse.html#argparse.Namespace" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">argparse.Namespace</span></code></a> object created by the
+<a class="reference external" href="http://docs.python.org/library/argparse.html#module-argparse" title="(in Python v2.7)"><code class="xref py py-mod docutils literal"><span class="pre">argparse</span></code></a> module. It contains the values of the
+different options.</td>
+</tr>
+</tbody>
+</table>
+<table border="1" class="docutils">
+<colgroup>
+<col width="31%" />
+<col width="9%" />
+<col width="60%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Options</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--file</span></code></td>
+<td>string</td>
+<td>The MBS file.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--population-file</span></code></td>
+<td>string</td>
+<td>A file containing population information.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--format</span></code></td>
+<td>string</td>
+<td>The output file format.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--title</span></code></td>
+<td>string</td>
+<td>The title of the MDS plot.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--xlabel</span></code></td>
+<td>string</td>
+<td>The label of the X axis.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--ylabel</span></code></td>
+<td>string</td>
+<td>The label of the Y axis.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--out</span></code></td>
+<td>string</td>
+<td>The prefix of the output files.</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">No option check is done here (except for the one automatically done by
+argparse). Those need to be done elsewhere (see <a class="reference internal" href="#pyGenClean.PlinkUtils.plot_MDS.checkArgs" title="pyGenClean.PlinkUtils.plot_MDS.checkArgs"><code class="xref py py-func docutils literal"><span class="pre">checkArgs()</span></code></a>).</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.PlinkUtils.plot_MDS.plotMDS">
+<code class="descclassname">pyGenClean.PlinkUtils.plot_MDS.</code><code class="descname">plotMDS</code><span class="sig-paren">(</span><em>data</em>, <em>theOrders</em>, <em>theLabels</em>, <em>theColors</em>, <em>theSizes</em>, <em>theMarkers</em>, <em>options</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyGenClean/PlinkUtils/plot_MDS.html#plotMDS"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.PlinkUtils.plot_MDS.plotMDS" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot the MDS data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>data</strong> (<em>list of numpy.array</em>) &#8211; the data to plot (MDS values).</li>
+<li><strong>theOrders</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; the order of the populations to plot.</li>
+<li><strong>theLabels</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; the names of populations to plot.</li>
+<li><strong>theColors</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; the colors of the populations to plot.</li>
+<li><strong>theSizes</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; the sizes of the markers for each population to plot.</li>
+<li><strong>theMarkers</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; the type of markers for each population to plot.</li>
+<li><strong>options</strong> (<a class="reference external" href="http://docs.python.org/library/argparse.html#argparse.Namespace" title="(in Python v2.7)"><em>argparse.Namespace</em></a>) &#8211; the options.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.PlinkUtils.plot_MDS.readPopulations">
+<code class="descclassname">pyGenClean.PlinkUtils.plot_MDS.</code><code class="descname">readPopulations</code><span class="sig-paren">(</span><em>inputFileName</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyGenClean/PlinkUtils/plot_MDS.html#readPopulations"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.PlinkUtils.plot_MDS.readPopulations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads a population file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>inputFileName</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the name of the population file.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">a <a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">dict</span></code></a> of population for each of the samples.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.PlinkUtils.plot_MDS.safe_main">
+<code class="descclassname">pyGenClean.PlinkUtils.plot_MDS.</code><code class="descname">safe_main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyGenClean/PlinkUtils/plot_MDS.html#safe_main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.PlinkUtils.plot_MDS.safe_main" title="Permalink to this definition">¶</a></dt>
+<dd><p>A safe version of the main function (that catches ProgramError).</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyGenClean.PlinkUtils.plot_MDS_standalone">
+<span id="pygenclean-plinkutils-plot-mds-standalone-module"></span><h3>pyGenClean.PlinkUtils.plot_MDS_standalone module<a class="headerlink" href="#module-pyGenClean.PlinkUtils.plot_MDS_standalone" title="Permalink to this headline">¶</a></h3>
+<dl class="exception">
+<dt id="pyGenClean.PlinkUtils.plot_MDS_standalone.ProgramError">
+<em class="property">exception </em><code class="descclassname">pyGenClean.PlinkUtils.plot_MDS_standalone.</code><code class="descname">ProgramError</code><span class="sig-paren">(</span><em>msg</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyGenClean/PlinkUtils/plot_MDS_standalone.html#ProgramError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.PlinkUtils.plot_MDS_standalone.ProgramError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="http://docs.python.org/library/exceptions.html#exceptions.Exception" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">exceptions.Exception</span></code></a></p>
+<p>An <code class="xref py py-class docutils literal"><span class="pre">Exception</span></code> raised in case of a problem.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>msg</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the message to print to the user before exiting.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.PlinkUtils.plot_MDS_standalone.checkArgs">
+<code class="descclassname">pyGenClean.PlinkUtils.plot_MDS_standalone.</code><code class="descname">checkArgs</code><span class="sig-paren">(</span><em>args</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyGenClean/PlinkUtils/plot_MDS_standalone.html#checkArgs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.PlinkUtils.plot_MDS_standalone.checkArgs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks the arguments and options.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>args</strong> (<a class="reference external" href="http://docs.python.org/library/argparse.html#argparse.Namespace" title="(in Python v2.7)"><em>argparse.Namespace</em></a>) &#8211; an object containing the options of the program.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><code class="docutils literal"><span class="pre">True</span></code> if everything was OK.</td>
+</tr>
+</tbody>
+</table>
+<p>If there is a problem with an option, an exception is raised using the
+<a class="reference internal" href="#pyGenClean.PlinkUtils.plot_MDS_standalone.ProgramError" title="pyGenClean.PlinkUtils.plot_MDS_standalone.ProgramError"><code class="xref py py-class docutils literal"><span class="pre">ProgramError</span></code></a> class, a message is printed to the
+<code class="xref py py-class docutils literal"><span class="pre">sys.stderr</span></code> and the program exists with code 1.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.PlinkUtils.plot_MDS_standalone.extractData">
+<code class="descclassname">pyGenClean.PlinkUtils.plot_MDS_standalone.</code><code class="descname">extractData</code><span class="sig-paren">(</span><em>fileName</em>, <em>populations</em>, <em>population_order</em>, <em>xaxis</em>, <em>yaxis</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyGenClean/PlinkUtils/plot_MDS_standalone.html#extractData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.PlinkUtils.plot_MDS_standalone.extractData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extract the C1 and C2 columns for plotting.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>fileName</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the name of the MDS file.</li>
+<li><strong>populations</strong> (<a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) &#8211; the population of each sample in the MDS file.</li>
+<li><strong>population_order</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; the required population order.</li>
+<li><strong>xaxis</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the component to print as the X axis.</li>
+<li><strong>yaxis</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the component to print as the Y axis.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">the MDS data with information about the population of each
+sample. The first element of the returned tuple is a tuple. The
+last element of the returned tuple is the list of the populations
+(the order is the same as in the first element). The first
+element of the first tuple is the C1 data, and the last element
+is the C2 data.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If a sample in the MDS file is not in the population file, it is skip.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.PlinkUtils.plot_MDS_standalone.main">
+<code class="descclassname">pyGenClean.PlinkUtils.plot_MDS_standalone.</code><code class="descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyGenClean/PlinkUtils/plot_MDS_standalone.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.PlinkUtils.plot_MDS_standalone.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>The main function of the module.</p>
+<p>These are the steps:</p>
+<ol class="arabic simple">
+<li>Reads the population file (<a class="reference internal" href="#pyGenClean.PlinkUtils.plot_MDS_standalone.readPopulations" title="pyGenClean.PlinkUtils.plot_MDS_standalone.readPopulations"><code class="xref py py-func docutils literal"><span class="pre">readPopulations()</span></code></a>).</li>
+<li>Extracts the MDS values (<a class="reference internal" href="#pyGenClean.PlinkUtils.plot_MDS_standalone.extractData" title="pyGenClean.PlinkUtils.plot_MDS_standalone.extractData"><code class="xref py py-func docutils literal"><span class="pre">extractData()</span></code></a>).</li>
+<li>Plots the MDS values (<a class="reference internal" href="#pyGenClean.PlinkUtils.plot_MDS_standalone.plotMDS" title="pyGenClean.PlinkUtils.plot_MDS_standalone.plotMDS"><code class="xref py py-func docutils literal"><span class="pre">plotMDS()</span></code></a>).</li>
+</ol>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.PlinkUtils.plot_MDS_standalone.parseArgs">
+<code class="descclassname">pyGenClean.PlinkUtils.plot_MDS_standalone.</code><code class="descname">parseArgs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyGenClean/PlinkUtils/plot_MDS_standalone.html#parseArgs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.PlinkUtils.plot_MDS_standalone.parseArgs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parses the command line options and arguments.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A <a class="reference external" href="http://docs.python.org/library/argparse.html#argparse.Namespace" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">argparse.Namespace</span></code></a> object created by the
+<a class="reference external" href="http://docs.python.org/library/argparse.html#module-argparse" title="(in Python v2.7)"><code class="xref py py-mod docutils literal"><span class="pre">argparse</span></code></a> module. It contains the values of the
+different options.</td>
+</tr>
+</tbody>
+</table>
+<table border="1" class="docutils">
+<colgroup>
+<col width="34%" />
+<col width="8%" />
+<col width="58%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Options</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--file</span></code></td>
+<td>string</td>
+<td>The MBS file.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--population-file</span></code></td>
+<td>string</td>
+<td>A file containing population information.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--population-order</span></code></td>
+<td>string</td>
+<td>The order to print the different
+populations.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--population-colors</span></code></td>
+<td>string</td>
+<td>The population point color in the plot.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--population-sizes</span></code></td>
+<td>string</td>
+<td>The population point size in the plot.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--population-markers</span></code></td>
+<td>string</td>
+<td>The population point marker in the plot.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--population-alpha</span></code></td>
+<td>string</td>
+<td>The population alpha value in the plot.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--format</span></code></td>
+<td>string</td>
+<td>The output file format.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--title</span></code></td>
+<td>string</td>
+<td>The title of the MDS plot.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--xaxis</span></code></td>
+<td>string</td>
+<td>The component to print on the X axis.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--xlabel</span></code></td>
+<td>string</td>
+<td>The label of the X axis.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--yaxis</span></code></td>
+<td>string</td>
+<td>The component to print on the Y axis.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--ylabel</span></code></td>
+<td>string</td>
+<td>The label of the Y axis.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--legend-position</span></code></td>
+<td>string</td>
+<td>The position of the legend.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--legend-size</span></code></td>
+<td>int</td>
+<td>The size of the legend text.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--legend-ncol</span></code></td>
+<td>int</td>
+<td>The number of columns for the legend.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--legend-alpha</span></code></td>
+<td>float</td>
+<td>The alpha value of the legend.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--title-fontsize</span></code></td>
+<td>int</td>
+<td>The font size of the title.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--label-fontsize</span></code></td>
+<td>int</td>
+<td>The font size of the X and Y labels.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--axis-fontsize</span></code></td>
+<td>int</td>
+<td>The font size of the X and Y axis.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--adjust-left</span></code></td>
+<td>float</td>
+<td>Adjust the left margin.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--adjust-right</span></code></td>
+<td>float</td>
+<td>Adjust the right margin.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--adjust-top</span></code></td>
+<td>float</td>
+<td>Adjust the top margin.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--adjust-bottom</span></code></td>
+<td>float</td>
+<td>Adjust the bottom margin.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--out</span></code></td>
+<td>string</td>
+<td>The prefix of the output files.</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">No option check is done here (except for the one automatically done by
+argparse). Those need to be done elsewhere (see <a class="reference internal" href="#pyGenClean.PlinkUtils.plot_MDS_standalone.checkArgs" title="pyGenClean.PlinkUtils.plot_MDS_standalone.checkArgs"><code class="xref py py-func docutils literal"><span class="pre">checkArgs()</span></code></a>).</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.PlinkUtils.plot_MDS_standalone.plotMDS">
+<code class="descclassname">pyGenClean.PlinkUtils.plot_MDS_standalone.</code><code class="descname">plotMDS</code><span class="sig-paren">(</span><em>data</em>, <em>theOrders</em>, <em>theLabels</em>, <em>theColors</em>, <em>theAlphas</em>, <em>theSizes</em>, <em>theMarkers</em>, <em>options</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyGenClean/PlinkUtils/plot_MDS_standalone.html#plotMDS"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.PlinkUtils.plot_MDS_standalone.plotMDS" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot the MDS data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>data</strong> (<em>list of numpy.array</em>) &#8211; the data to plot (MDS values).</li>
+<li><strong>theOrders</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; the order of the populations to plot.</li>
+<li><strong>theLabels</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; the names of the populations to plot.</li>
+<li><strong>theColors</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; the colors of the populations to plot.</li>
+<li><strong>theAlphas</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; the alpha value for the populations to plot.</li>
+<li><strong>theSizes</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; the sizes of the markers for each population to plot.</li>
+<li><strong>theMarkers</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; the type of marker for each population to plot.</li>
+<li><strong>options</strong> (<a class="reference external" href="http://docs.python.org/library/argparse.html#argparse.Namespace" title="(in Python v2.7)"><em>argparse.Namespace</em></a>) &#8211; the options.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.PlinkUtils.plot_MDS_standalone.readPopulations">
+<code class="descclassname">pyGenClean.PlinkUtils.plot_MDS_standalone.</code><code class="descname">readPopulations</code><span class="sig-paren">(</span><em>inputFileName</em>, <em>requiredPopulation</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyGenClean/PlinkUtils/plot_MDS_standalone.html#readPopulations"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.PlinkUtils.plot_MDS_standalone.readPopulations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads a population file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>inputFileName</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the name of the population file.</li>
+<li><strong>requiredPopulation</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; the required population.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">a <a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">dict</span></code></a> containing the population of each samples.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.PlinkUtils.plot_MDS_standalone.safe_main">
+<code class="descclassname">pyGenClean.PlinkUtils.plot_MDS_standalone.</code><code class="descname">safe_main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyGenClean/PlinkUtils/plot_MDS_standalone.html#safe_main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.PlinkUtils.plot_MDS_standalone.safe_main" title="Permalink to this definition">¶</a></dt>
+<dd><p>A safe version of the main function (that catches ProgramError).</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyGenClean.PlinkUtils.subset_data">
+<span id="pygenclean-plinkutils-subset-data-module"></span><h3>pyGenClean.PlinkUtils.subset_data module<a class="headerlink" href="#module-pyGenClean.PlinkUtils.subset_data" title="Permalink to this headline">¶</a></h3>
+<dl class="exception">
+<dt id="pyGenClean.PlinkUtils.subset_data.ProgramError">
+<em class="property">exception </em><code class="descclassname">pyGenClean.PlinkUtils.subset_data.</code><code class="descname">ProgramError</code><span class="sig-paren">(</span><em>msg</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyGenClean/PlinkUtils/subset_data.html#ProgramError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.PlinkUtils.subset_data.ProgramError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="http://docs.python.org/library/exceptions.html#exceptions.Exception" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">exceptions.Exception</span></code></a></p>
+<p>An <code class="xref py py-class docutils literal"><span class="pre">Exception</span></code> raised in case of a problem.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>msg</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the message to print to the user before exiting.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.PlinkUtils.subset_data.checkArgs">
+<code class="descclassname">pyGenClean.PlinkUtils.subset_data.</code><code class="descname">checkArgs</code><span class="sig-paren">(</span><em>args</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyGenClean/PlinkUtils/subset_data.html#checkArgs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.PlinkUtils.subset_data.checkArgs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks the arguments and options.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>args</strong> (<a class="reference external" href="http://docs.python.org/library/argparse.html#argparse.Namespace" title="(in Python v2.7)"><em>argparse.Namespace</em></a>) &#8211; an object containing the options of the program.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><code class="docutils literal"><span class="pre">True</span></code> if everything was OK.</td>
+</tr>
+</tbody>
+</table>
+<p>If there is a problem with an option, an exception is raised using the
+<a class="reference internal" href="#pyGenClean.PlinkUtils.subset_data.ProgramError" title="pyGenClean.PlinkUtils.subset_data.ProgramError"><code class="xref py py-class docutils literal"><span class="pre">ProgramError</span></code></a> class, a message is printed to the
+<code class="xref py py-class docutils literal"><span class="pre">sys.stderr</span></code> and the program exists with code 1.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Only one operation for markers and one operation for samples can be
+done at a time. Hence, one of <code class="docutils literal"><span class="pre">--exclude</span></code> or <code class="docutils literal"><span class="pre">--extract</span></code> can be
+done for markers, and one of <code class="docutils literal"><span class="pre">--remove</span></code> or <code class="docutils literal"><span class="pre">--keep</span></code> can be done for
+samples.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.PlinkUtils.subset_data.main">
+<code class="descclassname">pyGenClean.PlinkUtils.subset_data.</code><code class="descname">main</code><span class="sig-paren">(</span><em>argString=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyGenClean/PlinkUtils/subset_data.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.PlinkUtils.subset_data.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>The main function of the modile.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>argString</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; the options.</td>
+</tr>
+</tbody>
+</table>
+<p>Here are the steps:</p>
+<ol class="arabic simple">
+<li>Prints the options.</li>
+<li>Subset the data (<a class="reference internal" href="#pyGenClean.PlinkUtils.subset_data.subset_data" title="pyGenClean.PlinkUtils.subset_data.subset_data"><code class="xref py py-func docutils literal"><span class="pre">subset_data()</span></code></a>).</li>
+</ol>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The type of the output files are determined by the type of the input
+files (<em>e.g.</em> if the input files are binary files, so will be the
+output ones).</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.PlinkUtils.subset_data.parseArgs">
+<code class="descclassname">pyGenClean.PlinkUtils.subset_data.</code><code class="descname">parseArgs</code><span class="sig-paren">(</span><em>argString=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyGenClean/PlinkUtils/subset_data.html#parseArgs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.PlinkUtils.subset_data.parseArgs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parses the command line options and arguments.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>argString</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; the parameters.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A <a class="reference external" href="http://docs.python.org/library/argparse.html#argparse.Namespace" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">argparse.Namespace</span></code></a> object created by the
+<a class="reference external" href="http://docs.python.org/library/argparse.html#module-argparse" title="(in Python v2.7)"><code class="xref py py-mod docutils literal"><span class="pre">argparse</span></code></a> module. It contains the values of the
+different options.</td>
+</tr>
+</tbody>
+</table>
+<table border="1" class="docutils">
+<colgroup>
+<col width="19%" />
+<col width="8%" />
+<col width="73%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Options</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--ifile</span></code></td>
+<td>string</td>
+<td>The input file prefix.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--is-bfile</span></code></td>
+<td>bool</td>
+<td>The input file is a bfile</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--is-tfile</span></code></td>
+<td>bool</td>
+<td>The input file is a tfile</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--is-file</span></code></td>
+<td>bool</td>
+<td>The input file is a file</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--exclude</span></code></td>
+<td>string</td>
+<td>A file containing SNPs to exclude from the data set.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--extract</span></code></td>
+<td>string</td>
+<td>A file containing SNPs to extract from the data set.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--remove</span></code></td>
+<td>string</td>
+<td>A file containing samples (FID and IID) to remove
+from the data set.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--keep</span></code></td>
+<td>string</td>
+<td>A file containing samples (FID and IID) to keep from
+the data set.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--out</span></code></td>
+<td>string</td>
+<td>The prefix of the output files.</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">No option check is done here (except for the one automatically done by
+argparse). Those need to be done elsewhere (see <a class="reference internal" href="#pyGenClean.PlinkUtils.subset_data.checkArgs" title="pyGenClean.PlinkUtils.subset_data.checkArgs"><code class="xref py py-func docutils literal"><span class="pre">checkArgs()</span></code></a>).</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.PlinkUtils.subset_data.runCommand">
+<code class="descclassname">pyGenClean.PlinkUtils.subset_data.</code><code class="descname">runCommand</code><span class="sig-paren">(</span><em>command</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyGenClean/PlinkUtils/subset_data.html#runCommand"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.PlinkUtils.subset_data.runCommand" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs a command.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>command</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; the command to run.</td>
+</tr>
+</tbody>
+</table>
+<p>If there is a problem, a <a class="reference internal" href="#pyGenClean.PlinkUtils.subset_data.ProgramError" title="pyGenClean.PlinkUtils.subset_data.ProgramError"><code class="xref py py-class docutils literal"><span class="pre">ProgramError</span></code></a> is raised.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.PlinkUtils.subset_data.safe_main">
+<code class="descclassname">pyGenClean.PlinkUtils.subset_data.</code><code class="descname">safe_main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyGenClean/PlinkUtils/subset_data.html#safe_main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.PlinkUtils.subset_data.safe_main" title="Permalink to this definition">¶</a></dt>
+<dd><p>A safe version of the main function (that catches ProgramError).</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.PlinkUtils.subset_data.subset_data">
+<code class="descclassname">pyGenClean.PlinkUtils.subset_data.</code><code class="descname">subset_data</code><span class="sig-paren">(</span><em>options</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyGenClean/PlinkUtils/subset_data.html#subset_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.PlinkUtils.subset_data.subset_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Subset the data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>options</strong> (<a class="reference external" href="http://docs.python.org/library/argparse.html#argparse.Namespace" title="(in Python v2.7)"><em>argparse.Namespace</em></a>) &#8211; the options.</td>
+</tr>
+</tbody>
+</table>
+<p>Subset the data using either <code class="docutils literal"><span class="pre">--exclude</span></code> or <code class="docutils literal"><span class="pre">--extract``for</span> <span class="pre">markers</span> <span class="pre">or</span>
+<span class="pre">``--remove</span></code> or <code class="docutils literal"><span class="pre">keep</span></code> for samples.</p>
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="pyGenClean.RelatedSamples.html" title="pyGenClean.RelatedSamples package"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="pyGenClean.PlateBias.html" title="pyGenClean.PlateBias package"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">pyGenClean 1.7.1 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="modules.html" >Main pyGenClean pipeline</a> &raquo;</li>
+          <li class="nav-item nav-item-2"><a href="pyGenClean.html" >pyGenClean package</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2012, Louis-Philippe Lemieux Perreault.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+    </div>
+  </body>
+</html>

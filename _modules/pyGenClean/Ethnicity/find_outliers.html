@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>pyGenClean.Ethnicity.find_outliers &mdash; pyGenClean 1.7.0 documentation</title>
+    <title>pyGenClean.Ethnicity.find_outliers &mdash; pyGenClean 1.7.1 documentation</title>
     
     <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '1.7.0',
+        VERSION:     '1.7.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,8 +24,8 @@
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="pyGenClean 1.7.0 documentation" href="../../../index.html" />
-    <link rel="up" title="Module code" href="../../index.html" /> 
+    <link rel="top" title="pyGenClean 1.7.1 documentation" href="../../../index.html" />
+    <link rel="up" title="pyGenClean" href="../../pyGenClean.html" /> 
   </head>
   <body role="document">
 
@@ -42,8 +42,9 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">pyGenClean 1.7.0 documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../../index.html">pyGenClean 1.7.1 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &raquo;</li>
+          <li class="nav-item nav-item-2"><a href="../../pyGenClean.html" accesskey="U">pyGenClean</a> &raquo;</li> 
       </ul>
     </div>
 
@@ -93,15 +94,16 @@
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">argparse</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">npy</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 
+<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">__version__</span>
 <span class="kn">from</span> <span class="nn">..PlinkUtils</span> <span class="kn">import</span> <span class="n">createRowFromPlinkSpacedOutput</span> <span class="k">as</span> <span class="n">create_row</span>
 
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&quot;find_outliers&quot;</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../../check_ethnicity.html#pyGenClean.Ethnicity.find_outliers.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">argString</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../../module_content/pyGenClean.Ethnicity.html#pyGenClean.Ethnicity.find_outliers.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">argString</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;The main function.</span>
 
 <span class="sd">    :param argString: the options.</span>
@@ -173,7 +175,7 @@
         <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
 </div>
-<div class="viewcode-block" id="find_outliers"><a class="viewcode-back" href="../../../check_ethnicity.html#pyGenClean.Ethnicity.find_outliers.find_outliers">[docs]</a><span class="k">def</span> <span class="nf">find_outliers</span><span class="p">(</span><span class="n">mds</span><span class="p">,</span> <span class="n">centers</span><span class="p">,</span> <span class="n">center_info</span><span class="p">,</span> <span class="n">ref_pop</span><span class="p">,</span> <span class="n">options</span><span class="p">):</span>
+<div class="viewcode-block" id="find_outliers"><a class="viewcode-back" href="../../../module_content/pyGenClean.Ethnicity.html#pyGenClean.Ethnicity.find_outliers.find_outliers">[docs]</a><span class="k">def</span> <span class="nf">find_outliers</span><span class="p">(</span><span class="n">mds</span><span class="p">,</span> <span class="n">centers</span><span class="p">,</span> <span class="n">center_info</span><span class="p">,</span> <span class="n">ref_pop</span><span class="p">,</span> <span class="n">options</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Finds the outliers for a given population.</span>
 
 <span class="sd">    :param mds: the ``mds`` information about each samples.</span>
@@ -233,7 +235,7 @@
     <span class="kn">from</span> <span class="nn">sklearn.metrics.pairwise</span> <span class="kn">import</span> <span class="n">euclidean_distances</span>
 
     <span class="c"># Formatting the data</span>
-    <span class="n">data</span> <span class="o">=</span> <span class="n">npy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">mds</span><span class="p">[</span><span class="s">&quot;c1&quot;</span><span class="p">],</span> <span class="n">mds</span><span class="p">[</span><span class="s">&quot;c2&quot;</span><span class="p">]))</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">mds</span><span class="p">[</span><span class="s">&quot;c1&quot;</span><span class="p">],</span> <span class="n">mds</span><span class="p">[</span><span class="s">&quot;c2&quot;</span><span class="p">]))</span>
 
     <span class="c"># Configuring and running the KMeans</span>
     <span class="n">k_means</span> <span class="o">=</span> <span class="n">KMeans</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="n">centers</span><span class="p">,</span> <span class="n">n_clusters</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">n_init</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
@@ -309,14 +311,14 @@
         <span class="n">distances</span> <span class="o">=</span> <span class="n">euclidean_distances</span><span class="p">(</span><span class="n">subset_data</span><span class="p">,</span> <span class="n">centers</span><span class="p">[</span><span class="n">label</span><span class="p">])</span>
 
         <span class="c"># Finding the outliers (that are not in the reference populations</span>
-        <span class="n">sigma</span> <span class="o">=</span> <span class="n">npy</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">npy</span><span class="o">.</span><span class="n">true_divide</span><span class="p">(</span><span class="n">npy</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">distances</span> <span class="o">**</span> <span class="mi">2</span><span class="p">),</span>
-                                         <span class="nb">len</span><span class="p">(</span><span class="n">distances</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span>
-        <span class="n">outliers</span> <span class="o">=</span> <span class="n">npy</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span>
+        <span class="n">sigma</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">true_divide</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">distances</span> <span class="o">**</span> <span class="mi">2</span><span class="p">),</span>
+                                       <span class="nb">len</span><span class="p">(</span><span class="n">distances</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="n">outliers</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span>
             <span class="p">(</span><span class="n">distances</span> <span class="o">&gt;</span> <span class="n">options</span><span class="o">.</span><span class="n">multiplier</span> <span class="o">*</span> <span class="n">sigma</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span>
             <span class="n">subset_mds</span> <span class="o">!=</span> <span class="n">ref_pop_name</span><span class="p">[</span><span class="n">label</span><span class="p">],</span>
         <span class="p">)</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;  - {} outliers for the {} cluster&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-            <span class="n">npy</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">outliers</span><span class="p">),</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">outliers</span><span class="p">),</span>
             <span class="n">ref_pop_name</span><span class="p">[</span><span class="n">label</span><span class="p">],</span>
         <span class="p">))</span>
 
@@ -342,8 +344,8 @@
             <span class="c"># This is the population we want, hence only the real outliers are</span>
             <span class="c"># outliers (we don&#39;t include the reference population)</span>
             <span class="n">outlier_mds</span> <span class="o">=</span> <span class="n">subset_mds</span><span class="p">[</span>
-                <span class="n">npy</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">subset_mds</span><span class="p">[</span><span class="s">&quot;pop&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="n">ref_pop_name</span><span class="p">[</span><span class="n">label</span><span class="p">],</span>
-                                <span class="n">outliers</span><span class="p">)</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">subset_mds</span><span class="p">[</span><span class="s">&quot;pop&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="n">ref_pop_name</span><span class="p">[</span><span class="n">label</span><span class="p">],</span>
+                               <span class="n">outliers</span><span class="p">)</span>
             <span class="p">]</span>
 
             <span class="c"># Plotting the outliers</span>
@@ -354,11 +356,11 @@
 
             <span class="c"># Plotting the not outliers</span>
             <span class="n">plot_not_outliers</span><span class="p">,</span> <span class="o">=</span> <span class="n">axe_outliers</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
-                <span class="n">subset_mds</span><span class="p">[</span><span class="s">&quot;c1&quot;</span><span class="p">][</span><span class="n">npy</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span>
+                <span class="n">subset_mds</span><span class="p">[</span><span class="s">&quot;c1&quot;</span><span class="p">][</span><span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span>
                         <span class="o">~</span><span class="n">outliers</span><span class="p">,</span>
                         <span class="n">subset_mds</span><span class="p">[</span><span class="s">&quot;pop&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="n">ref_pop_name</span><span class="p">[</span><span class="n">label</span><span class="p">]</span>
                 <span class="p">)],</span>
-                <span class="n">subset_mds</span><span class="p">[</span><span class="s">&quot;c2&quot;</span><span class="p">][</span><span class="n">npy</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span>
+                <span class="n">subset_mds</span><span class="p">[</span><span class="s">&quot;c2&quot;</span><span class="p">][</span><span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span>
                     <span class="o">~</span><span class="n">outliers</span><span class="p">,</span>
                     <span class="n">subset_mds</span><span class="p">[</span><span class="s">&quot;pop&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="n">ref_pop_name</span><span class="p">[</span><span class="n">label</span><span class="p">]</span>
                 <span class="p">)],</span>
@@ -424,7 +426,7 @@
     <span class="k">return</span> <span class="n">outliers_set</span>
 
 </div>
-<div class="viewcode-block" id="find_ref_centers"><a class="viewcode-back" href="../../../check_ethnicity.html#pyGenClean.Ethnicity.find_outliers.find_ref_centers">[docs]</a><span class="k">def</span> <span class="nf">find_ref_centers</span><span class="p">(</span><span class="n">mds</span><span class="p">):</span>
+<div class="viewcode-block" id="find_ref_centers"><a class="viewcode-back" href="../../../module_content/pyGenClean.Ethnicity.html#pyGenClean.Ethnicity.find_outliers.find_ref_centers">[docs]</a><span class="k">def</span> <span class="nf">find_ref_centers</span><span class="p">(</span><span class="n">mds</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Finds the center of the three reference clusters.</span>
 
 <span class="sd">    :param mds: the ``mds`` information about each samples.</span>
@@ -452,14 +454,14 @@
     <span class="n">asn_mds</span> <span class="o">=</span> <span class="n">mds</span><span class="p">[</span><span class="n">mds</span><span class="p">[</span><span class="s">&quot;pop&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;JPT-CHB&quot;</span><span class="p">]</span>
 
     <span class="c"># Computing the centers</span>
-    <span class="n">centers</span> <span class="o">=</span> <span class="p">[[</span><span class="n">npy</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">ceu_mds</span><span class="p">[</span><span class="s">&quot;c1&quot;</span><span class="p">]),</span> <span class="n">npy</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">ceu_mds</span><span class="p">[</span><span class="s">&quot;c2&quot;</span><span class="p">])],</span>
-               <span class="p">[</span><span class="n">npy</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">yri_mds</span><span class="p">[</span><span class="s">&quot;c1&quot;</span><span class="p">]),</span> <span class="n">npy</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">yri_mds</span><span class="p">[</span><span class="s">&quot;c2&quot;</span><span class="p">])],</span>
-               <span class="p">[</span><span class="n">npy</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">asn_mds</span><span class="p">[</span><span class="s">&quot;c1&quot;</span><span class="p">]),</span> <span class="n">npy</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">asn_mds</span><span class="p">[</span><span class="s">&quot;c2&quot;</span><span class="p">])]]</span>
+    <span class="n">centers</span> <span class="o">=</span> <span class="p">[[</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">ceu_mds</span><span class="p">[</span><span class="s">&quot;c1&quot;</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">ceu_mds</span><span class="p">[</span><span class="s">&quot;c2&quot;</span><span class="p">])],</span>
+               <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">yri_mds</span><span class="p">[</span><span class="s">&quot;c1&quot;</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">yri_mds</span><span class="p">[</span><span class="s">&quot;c2&quot;</span><span class="p">])],</span>
+               <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">asn_mds</span><span class="p">[</span><span class="s">&quot;c1&quot;</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">asn_mds</span><span class="p">[</span><span class="s">&quot;c2&quot;</span><span class="p">])]]</span>
 
-    <span class="k">return</span> <span class="n">npy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">centers</span><span class="p">),</span> <span class="p">{</span><span class="s">&quot;CEU&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;YRI&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s">&quot;JPT-CHB&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">}</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">centers</span><span class="p">),</span> <span class="p">{</span><span class="s">&quot;CEU&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;YRI&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s">&quot;JPT-CHB&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">}</span>
 
 </div>
-<div class="viewcode-block" id="read_mds_file"><a class="viewcode-back" href="../../../check_ethnicity.html#pyGenClean.Ethnicity.find_outliers.read_mds_file">[docs]</a><span class="k">def</span> <span class="nf">read_mds_file</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">,</span> <span class="n">pops</span><span class="p">):</span>
+<div class="viewcode-block" id="read_mds_file"><a class="viewcode-back" href="../../../module_content/pyGenClean.Ethnicity.html#pyGenClean.Ethnicity.find_outliers.read_mds_file">[docs]</a><span class="k">def</span> <span class="nf">read_mds_file</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">,</span> <span class="n">pops</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Reads a MDS file.</span>
 
 <span class="sd">    :param file_name: the name of the ``mds`` file.</span>
@@ -516,15 +518,15 @@
                 <span class="n">max_iid</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">sample_id</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
 
     <span class="c"># Creating the numpy array</span>
-    <span class="n">mds</span> <span class="o">=</span> <span class="n">npy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">mds</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="p">[(</span><span class="s">&quot;fid&quot;</span><span class="p">,</span> <span class="s">&quot;a{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">max_fid</span><span class="p">)),</span>
-                                <span class="p">(</span><span class="s">&quot;iid&quot;</span><span class="p">,</span> <span class="s">&quot;a{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">max_iid</span><span class="p">)),</span>
-                                <span class="p">(</span><span class="s">&quot;c1&quot;</span><span class="p">,</span> <span class="nb">float</span><span class="p">),</span> <span class="p">(</span><span class="s">&quot;c2&quot;</span><span class="p">,</span> <span class="nb">float</span><span class="p">),</span>
-                                <span class="p">(</span><span class="s">&quot;pop&quot;</span><span class="p">,</span> <span class="s">&quot;a7&quot;</span><span class="p">)])</span>
+    <span class="n">mds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">mds</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="p">[(</span><span class="s">&quot;fid&quot;</span><span class="p">,</span> <span class="s">&quot;a{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">max_fid</span><span class="p">)),</span>
+                               <span class="p">(</span><span class="s">&quot;iid&quot;</span><span class="p">,</span> <span class="s">&quot;a{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">max_iid</span><span class="p">)),</span>
+                               <span class="p">(</span><span class="s">&quot;c1&quot;</span><span class="p">,</span> <span class="nb">float</span><span class="p">),</span> <span class="p">(</span><span class="s">&quot;c2&quot;</span><span class="p">,</span> <span class="nb">float</span><span class="p">),</span>
+                               <span class="p">(</span><span class="s">&quot;pop&quot;</span><span class="p">,</span> <span class="s">&quot;a7&quot;</span><span class="p">)])</span>
 
     <span class="k">return</span> <span class="n">mds</span>
 
 </div>
-<div class="viewcode-block" id="read_population_file"><a class="viewcode-back" href="../../../check_ethnicity.html#pyGenClean.Ethnicity.find_outliers.read_population_file">[docs]</a><span class="k">def</span> <span class="nf">read_population_file</span><span class="p">(</span><span class="n">file_name</span><span class="p">):</span>
+<div class="viewcode-block" id="read_population_file"><a class="viewcode-back" href="../../../module_content/pyGenClean.Ethnicity.html#pyGenClean.Ethnicity.find_outliers.read_population_file">[docs]</a><span class="k">def</span> <span class="nf">read_population_file</span><span class="p">(</span><span class="n">file_name</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Reads the population file.</span>
 
 <span class="sd">    :param file_name: the name of the population file.</span>
@@ -567,7 +569,7 @@
     <span class="k">return</span> <span class="n">pops</span>
 
 </div>
-<div class="viewcode-block" id="checkArgs"><a class="viewcode-back" href="../../../check_ethnicity.html#pyGenClean.Ethnicity.find_outliers.checkArgs">[docs]</a><span class="k">def</span> <span class="nf">checkArgs</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+<div class="viewcode-block" id="checkArgs"><a class="viewcode-back" href="../../../module_content/pyGenClean.Ethnicity.html#pyGenClean.Ethnicity.find_outliers.checkArgs">[docs]</a><span class="k">def</span> <span class="nf">checkArgs</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Checks the arguments and options.</span>
 
 <span class="sd">    :param args: a :py:class:`argparse.Namespace` object containing the options</span>
@@ -599,7 +601,7 @@
     <span class="k">return</span> <span class="bp">True</span>
 
 </div>
-<div class="viewcode-block" id="parseArgs"><a class="viewcode-back" href="../../../check_ethnicity.html#pyGenClean.Ethnicity.find_outliers.parseArgs">[docs]</a><span class="k">def</span> <span class="nf">parseArgs</span><span class="p">(</span><span class="n">argString</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>  <span class="c"># pragma: no cover</span>
+<div class="viewcode-block" id="parseArgs"><a class="viewcode-back" href="../../../module_content/pyGenClean.Ethnicity.html#pyGenClean.Ethnicity.find_outliers.parseArgs">[docs]</a><span class="k">def</span> <span class="nf">parseArgs</span><span class="p">(</span><span class="n">argString</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>  <span class="c"># pragma: no cover</span>
     <span class="sd">&quot;&quot;&quot;Parses the command line options and arguments.</span>
 
 <span class="sd">    :param argString: the options.</span>
@@ -618,13 +620,15 @@
 <span class="sd">                                 :py:mod:`pyGenClean.Ethnicity.check_ethnicity`</span>
 <span class="sd">                                 module.</span>
 <span class="sd">    ``--format``          string The output file format (png, ps, or pdf.</span>
-<span class="sd">    ``--out``             string The prefix of the output files.</span>
 <span class="sd">    ``--outliers-of``     string Finds the outliers of this population.</span>
 <span class="sd">    ``--multiplier``      float  To find the outliers, we look for more than</span>
 <span class="sd">                                 :math:`x` times the cluster standard</span>
 <span class="sd">                                 deviation.</span>
 <span class="sd">    ``--xaxis``           string The component to use for the X axis.</span>
 <span class="sd">    ``--yaxis``           string The component to use for the Y axis.</span>
+<span class="sd">    ``--format``          string The output file format (png, ps, or pdf</span>
+<span class="sd">                                 formats are available).</span>
+<span class="sd">    ``--out``             string The prefix of the output files.</span>
 <span class="sd">    ===================== ====== ==============================================</span>
 
 <span class="sd">    .. note::</span>
@@ -641,7 +645,7 @@
     <span class="k">return</span> <span class="n">args</span>
 
 </div>
-<div class="viewcode-block" id="add_custom_options"><a class="viewcode-back" href="../../../check_ethnicity.html#pyGenClean.Ethnicity.find_outliers.add_custom_options">[docs]</a><span class="k">def</span> <span class="nf">add_custom_options</span><span class="p">(</span><span class="n">parser</span><span class="p">):</span>
+<div class="viewcode-block" id="add_custom_options"><a class="viewcode-back" href="../../../module_content/pyGenClean.Ethnicity.html#pyGenClean.Ethnicity.find_outliers.add_custom_options">[docs]</a><span class="k">def</span> <span class="nf">add_custom_options</span><span class="p">(</span><span class="n">parser</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Adds custom options to a parser.</span>
 
 <span class="sd">    :param parser: the parser to which to add options.</span>
@@ -668,7 +672,7 @@
                               <span class="s">&quot;[default: </span><span class="si">%(default)s</span><span class="s">]&quot;</span><span class="p">))</span>
 
 </div>
-<div class="viewcode-block" id="ProgramError"><a class="viewcode-back" href="../../../check_ethnicity.html#pyGenClean.Ethnicity.find_outliers.ProgramError">[docs]</a><span class="k">class</span> <span class="nc">ProgramError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<div class="viewcode-block" id="ProgramError"><a class="viewcode-back" href="../../../module_content/pyGenClean.Ethnicity.html#pyGenClean.Ethnicity.find_outliers.ProgramError">[docs]</a><span class="k">class</span> <span class="nc">ProgramError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;An :py:class:`Exception` raised in case of a problem.</span>
 
 <span class="sd">    :param msg: the message to print to the user before exiting.</span>
@@ -690,8 +694,11 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span>
 
 <span class="c"># The parser object</span></div>
-<span class="n">desc</span> <span class="o">=</span> <span class="s">&quot;&quot;&quot;Finds outliers in SOURCE from CEU samples.&quot;&quot;&quot;</span>
+<span class="n">desc</span> <span class="o">=</span> <span class="s">&quot;Finds outliers in SOURCE from CEU samples.&quot;</span>
+<span class="n">long_desc</span> <span class="o">=</span> <span class="bp">None</span>
 <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="n">desc</span><span class="p">)</span>
+<span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;-v&quot;</span><span class="p">,</span> <span class="s">&quot;--version&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s">&quot;version&quot;</span><span class="p">,</span>
+                    <span class="n">version</span><span class="o">=</span><span class="s">&quot;pyGenClean version {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">__version__</span><span class="p">))</span>
 
 
 <span class="c"># The INPUT files</span>
@@ -718,7 +725,7 @@
                          <span class="s">&quot;</span><span class="si">%(default)s</span><span class="s">]&quot;</span><span class="p">))</span>
 
 
-<div class="viewcode-block" id="safe_main"><a class="viewcode-back" href="../../../check_ethnicity.html#pyGenClean.Ethnicity.find_outliers.safe_main">[docs]</a><span class="k">def</span> <span class="nf">safe_main</span><span class="p">():</span>
+<div class="viewcode-block" id="safe_main"><a class="viewcode-back" href="../../../module_content/pyGenClean.Ethnicity.html#pyGenClean.Ethnicity.find_outliers.safe_main">[docs]</a><span class="k">def</span> <span class="nf">safe_main</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;A safe version of the main function (that catches ProgramError).&quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">main</span><span class="p">()</span>
@@ -748,8 +755,9 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">pyGenClean 1.7.0 documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../../index.html">pyGenClean 1.7.1 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &raquo;</li>
+          <li class="nav-item nav-item-2"><a href="../../pyGenClean.html" >pyGenClean</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">

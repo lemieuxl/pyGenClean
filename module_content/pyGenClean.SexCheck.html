@@ -1,0 +1,1161 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>pyGenClean.SexCheck package &mdash; pyGenClean 1.7.1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.7.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="pyGenClean 1.7.1 documentation" href="../index.html" />
+    <link rel="up" title="pyGenClean package" href="pyGenClean.html" />
+    <link rel="next" title="Duplicated Samples Module" href="../duplicated_samples.html" />
+    <link rel="prev" title="pyGenClean.SampleMissingness package" href="pyGenClean.SampleMissingness.html" /> 
+  </head>
+  <body role="document">
+
+<div style="background-color: white; text-align: left; padding: 10px 10px 15px 15px">
+<a href="../index.html"><img src="../_static/logo.png" border="0" alt="py4sci"/></a>
+</div>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../duplicated_samples.html" title="Duplicated Samples Module"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="pyGenClean.SampleMissingness.html" title="pyGenClean.SampleMissingness package"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">pyGenClean 1.7.1 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="modules.html" >Main pyGenClean pipeline</a> &raquo;</li>
+          <li class="nav-item nav-item-2"><a href="pyGenClean.html" accesskey="U">pyGenClean package</a> &raquo;</li> 
+      </ul>
+    </div>
+
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">pyGenClean.SexCheck package</a><ul>
+<li><a class="reference internal" href="#module-pyGenClean.SexCheck">Module contents</a></li>
+<li><a class="reference internal" href="#submodules">Submodules</a><ul>
+<li><a class="reference internal" href="#module-pyGenClean.SexCheck.baf_lrr_plot">pyGenClean.SexCheck.baf_lrr_plot module</a></li>
+<li><a class="reference internal" href="#module-pyGenClean.SexCheck.gender_plot">pyGenClean.SexCheck.gender_plot module</a></li>
+<li><a class="reference internal" href="#module-pyGenClean.SexCheck.sex_check">pyGenClean.SexCheck.sex_check module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="pyGenClean.SampleMissingness.html"
+                        title="previous chapter">pyGenClean.SampleMissingness package</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../duplicated_samples.html"
+                        title="next chapter">Duplicated Samples Module</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/module_content/pyGenClean.SexCheck.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="pygenclean-sexcheck-package">
+<h1>pyGenClean.SexCheck package<a class="headerlink" href="#pygenclean-sexcheck-package" title="Permalink to this headline">¶</a></h1>
+<p>For more information about how to use this module, refer to the
+<a class="reference internal" href="../sex_check.html#sexcheck-module-lable"><span>Sex Check Module</span></a>.</p>
+<div class="section" id="module-pyGenClean.SexCheck">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-pyGenClean.SexCheck" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-pyGenClean.SexCheck.baf_lrr_plot">
+<span id="pygenclean-sexcheck-baf-lrr-plot-module"></span><h3>pyGenClean.SexCheck.baf_lrr_plot module<a class="headerlink" href="#module-pyGenClean.SexCheck.baf_lrr_plot" title="Permalink to this headline">¶</a></h3>
+<dl class="exception">
+<dt id="pyGenClean.SexCheck.baf_lrr_plot.ProgramError">
+<em class="property">exception </em><code class="descclassname">pyGenClean.SexCheck.baf_lrr_plot.</code><code class="descname">ProgramError</code><span class="sig-paren">(</span><em>msg</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyGenClean/SexCheck/baf_lrr_plot.html#ProgramError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.SexCheck.baf_lrr_plot.ProgramError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="http://docs.python.org/library/exceptions.html#exceptions.Exception" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">exceptions.Exception</span></code></a></p>
+<p>An <code class="xref py py-class docutils literal"><span class="pre">Exception</span></code> raised in case of a problem.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>msg</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the message to print to the user before exiting.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.SexCheck.baf_lrr_plot.checkArgs">
+<code class="descclassname">pyGenClean.SexCheck.baf_lrr_plot.</code><code class="descname">checkArgs</code><span class="sig-paren">(</span><em>args</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyGenClean/SexCheck/baf_lrr_plot.html#checkArgs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.SexCheck.baf_lrr_plot.checkArgs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks the arguments and options.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>args</strong> (<a class="reference external" href="http://docs.python.org/library/argparse.html#argparse.Namespace" title="(in Python v2.7)"><em>argparse.Namespace</em></a>) &#8211; an object containing the options of the program.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><code class="docutils literal"><span class="pre">True</span></code> if everything was OK.</td>
+</tr>
+</tbody>
+</table>
+<p>If there is a problem with an option, an exception is raised using the
+<a class="reference internal" href="#pyGenClean.SexCheck.baf_lrr_plot.ProgramError" title="pyGenClean.SexCheck.baf_lrr_plot.ProgramError"><code class="xref py py-class docutils literal"><span class="pre">ProgramError</span></code></a> class, a message is printed to the
+<code class="xref py py-class docutils literal"><span class="pre">sys.stderr</span></code> and the program exists with code 1.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.SexCheck.baf_lrr_plot.check_file_names">
+<code class="descclassname">pyGenClean.SexCheck.baf_lrr_plot.</code><code class="descname">check_file_names</code><span class="sig-paren">(</span><em>samples</em>, <em>raw_dir</em>, <em>options</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyGenClean/SexCheck/baf_lrr_plot.html#check_file_names"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.SexCheck.baf_lrr_plot.check_file_names" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if all files are present.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>samples</strong> (<em>list of tuples</em>) &#8211; a list of tuples with the family ID as first element (str)
+and sample ID as last element (str).</li>
+<li><strong>raw_dir</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the directory containing the raw files.</li>
+<li><strong>options</strong> (<a class="reference external" href="http://docs.python.org/library/argparse.html#argparse.Namespace" title="(in Python v2.7)"><em>argparse.Namespace</em></a>) &#8211; the options.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">a dict containing samples as key (a tuple with the family ID as
+first element and sample ID as last element) and the name of the
+raw file as element.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.SexCheck.baf_lrr_plot.encode_chromosome">
+<code class="descclassname">pyGenClean.SexCheck.baf_lrr_plot.</code><code class="descname">encode_chromosome</code><span class="sig-paren">(</span><em>chromosome</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyGenClean/SexCheck/baf_lrr_plot.html#encode_chromosome"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.SexCheck.baf_lrr_plot.encode_chromosome" title="Permalink to this definition">¶</a></dt>
+<dd><p>Encodes chromosomes.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>chromosome</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the chromosome to encode.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">the encoded chromosome.</td>
+</tr>
+</tbody>
+</table>
+<p>Encodes the sexual chromosomes, from <code class="docutils literal"><span class="pre">23</span></code> and <code class="docutils literal"><span class="pre">24</span></code> to <code class="docutils literal"><span class="pre">X</span></code> and <code class="docutils literal"><span class="pre">Y</span></code>,
+respectively.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Only the sexual chromosomes are encoded.</p>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">encode_chromosome</span><span class="p">(</span><span class="s">&quot;23&quot;</span><span class="p">)</span>
+<span class="go">&#39;X&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">encode_chromosome</span><span class="p">(</span><span class="s">&quot;24&quot;</span><span class="p">)</span>
+<span class="go">&#39;Y&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">encode_chromosome</span><span class="p">(</span><span class="s">&quot;This is not a chromosome&quot;</span><span class="p">)</span>
+<span class="go">&#39;This is not a chromosome&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.SexCheck.baf_lrr_plot.main">
+<code class="descclassname">pyGenClean.SexCheck.baf_lrr_plot.</code><code class="descname">main</code><span class="sig-paren">(</span><em>argString=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyGenClean/SexCheck/baf_lrr_plot.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.SexCheck.baf_lrr_plot.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>The main function of this module.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>argString</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; the options.</td>
+</tr>
+</tbody>
+</table>
+<p>These are the steps:</p>
+<ol class="arabic simple">
+<li>Prints the options.</li>
+<li>Reads the problematic samples (<a class="reference internal" href="#pyGenClean.SexCheck.baf_lrr_plot.read_problematic_samples" title="pyGenClean.SexCheck.baf_lrr_plot.read_problematic_samples"><code class="xref py py-func docutils literal"><span class="pre">read_problematic_samples()</span></code></a>).</li>
+<li>Finds and checks the raw files for each of the problematic samples
+(<a class="reference internal" href="#pyGenClean.SexCheck.baf_lrr_plot.check_file_names" title="pyGenClean.SexCheck.baf_lrr_plot.check_file_names"><code class="xref py py-func docutils literal"><span class="pre">check_file_names()</span></code></a>).</li>
+<li>Plots the BAF and LRR (<a class="reference internal" href="#pyGenClean.SexCheck.baf_lrr_plot.plot_baf_lrr" title="pyGenClean.SexCheck.baf_lrr_plot.plot_baf_lrr"><code class="xref py py-func docutils literal"><span class="pre">plot_baf_lrr()</span></code></a>).</li>
+</ol>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.SexCheck.baf_lrr_plot.parseArgs">
+<code class="descclassname">pyGenClean.SexCheck.baf_lrr_plot.</code><code class="descname">parseArgs</code><span class="sig-paren">(</span><em>argString=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyGenClean/SexCheck/baf_lrr_plot.html#parseArgs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.SexCheck.baf_lrr_plot.parseArgs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parses the command line options and arguments.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>argString</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; the options.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A <a class="reference external" href="http://docs.python.org/library/argparse.html#argparse.Namespace" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">argparse.Namespace</span></code></a> object created by the
+<a class="reference external" href="http://docs.python.org/library/argparse.html#module-argparse" title="(in Python v2.7)"><code class="xref py py-mod docutils literal"><span class="pre">argparse</span></code></a> module. It contains the values of the
+different options.</td>
+</tr>
+</tbody>
+</table>
+<table border="1" class="docutils">
+<colgroup>
+<col width="34%" />
+<col width="8%" />
+<col width="58%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Options</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--problematic-samples</span></code></td>
+<td>string</td>
+<td>The list of sample with sex problems to
+plot</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--use-full-ids</span></code></td>
+<td>bool</td>
+<td>Use full sample IDs (famID and indID).</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--full-ids-delimiter</span></code></td>
+<td>string</td>
+<td>The delimiter between famID and indID.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--raw-dir</span></code></td>
+<td>string</td>
+<td>Directory containing information about
+every samples (BAF and LRR).</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--format</span></code></td>
+<td>string</td>
+<td>The output file format (png, ps, pdf, or
+X11).</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--out</span></code></td>
+<td>string</td>
+<td>The prefix of the output files.</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">No option check is done here (except for the one automatically done by
+argparse). Those need to be done elsewhere (see <a class="reference internal" href="#pyGenClean.SexCheck.baf_lrr_plot.checkArgs" title="pyGenClean.SexCheck.baf_lrr_plot.checkArgs"><code class="xref py py-func docutils literal"><span class="pre">checkArgs()</span></code></a>).</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.SexCheck.baf_lrr_plot.plot_baf_lrr">
+<code class="descclassname">pyGenClean.SexCheck.baf_lrr_plot.</code><code class="descname">plot_baf_lrr</code><span class="sig-paren">(</span><em>file_names</em>, <em>options</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyGenClean/SexCheck/baf_lrr_plot.html#plot_baf_lrr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.SexCheck.baf_lrr_plot.plot_baf_lrr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot BAF and LRR for a list of files.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>file_names</strong> (<a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) &#8211; contains the name of the input file for each sample.</li>
+<li><strong>options</strong> (<a class="reference external" href="http://docs.python.org/library/argparse.html#argparse.Namespace" title="(in Python v2.7)"><em>argparse.Namespace</em></a>) &#8211; the options.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Plots the BAF (B Allele Frequency) and LRR (Log R Ratio) of each samples.
+Only the sexual chromosome are shown.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.SexCheck.baf_lrr_plot.read_problematic_samples">
+<code class="descclassname">pyGenClean.SexCheck.baf_lrr_plot.</code><code class="descname">read_problematic_samples</code><span class="sig-paren">(</span><em>file_name</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyGenClean/SexCheck/baf_lrr_plot.html#read_problematic_samples"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.SexCheck.baf_lrr_plot.read_problematic_samples" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads a file with sample IDs.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>file_name</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the name of the file containing problematic samples after
+sex check.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">a set of problematic samples (tuple containing the family ID as
+first element and the sample ID as last element).</td>
+</tr>
+</tbody>
+</table>
+<p>Reads a file containing problematic samples after sex check. The file is
+provided by the module <a class="reference internal" href="#module-pyGenClean.SexCheck.sex_check" title="pyGenClean.SexCheck.sex_check"><code class="xref py py-mod docutils literal"><span class="pre">pyGenClean.SexCheck.sex_check</span></code></a>. This file
+contains two columns, the first one being the family ID and the second one,
+the sample ID.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.SexCheck.baf_lrr_plot.safe_main">
+<code class="descclassname">pyGenClean.SexCheck.baf_lrr_plot.</code><code class="descname">safe_main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyGenClean/SexCheck/baf_lrr_plot.html#safe_main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.SexCheck.baf_lrr_plot.safe_main" title="Permalink to this definition">¶</a></dt>
+<dd><p>A safe version of the main function (that catches ProgramError).</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyGenClean.SexCheck.gender_plot">
+<span id="pygenclean-sexcheck-gender-plot-module"></span><h3>pyGenClean.SexCheck.gender_plot module<a class="headerlink" href="#module-pyGenClean.SexCheck.gender_plot" title="Permalink to this headline">¶</a></h3>
+<dl class="exception">
+<dt id="pyGenClean.SexCheck.gender_plot.ProgramError">
+<em class="property">exception </em><code class="descclassname">pyGenClean.SexCheck.gender_plot.</code><code class="descname">ProgramError</code><span class="sig-paren">(</span><em>msg</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyGenClean/SexCheck/gender_plot.html#ProgramError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.SexCheck.gender_plot.ProgramError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="http://docs.python.org/library/exceptions.html#exceptions.Exception" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">exceptions.Exception</span></code></a></p>
+<p>An <code class="xref py py-class docutils literal"><span class="pre">Exception</span></code> raised in case of a problem.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>msg</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the message to print to the user before exiting.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.SexCheck.gender_plot.checkArgs">
+<code class="descclassname">pyGenClean.SexCheck.gender_plot.</code><code class="descname">checkArgs</code><span class="sig-paren">(</span><em>args</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyGenClean/SexCheck/gender_plot.html#checkArgs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.SexCheck.gender_plot.checkArgs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks the arguments and options.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>args</strong> (<a class="reference external" href="http://docs.python.org/library/argparse.html#argparse.Namespace" title="(in Python v2.7)"><em>argparse.Namespace</em></a>) &#8211; an object containing the options of the program.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><code class="docutils literal"><span class="pre">True</span></code> if everything was OK.</td>
+</tr>
+</tbody>
+</table>
+<p>If there is a problem with an option, an exception is raised using the
+<a class="reference internal" href="#pyGenClean.SexCheck.gender_plot.ProgramError" title="pyGenClean.SexCheck.gender_plot.ProgramError"><code class="xref py py-class docutils literal"><span class="pre">ProgramError</span></code></a> class, a message is printed to the
+<code class="xref py py-class docutils literal"><span class="pre">sys.stderr</span></code> and the program exists with code 1.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.SexCheck.gender_plot.encode_chr">
+<code class="descclassname">pyGenClean.SexCheck.gender_plot.</code><code class="descname">encode_chr</code><span class="sig-paren">(</span><em>chromosome</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyGenClean/SexCheck/gender_plot.html#encode_chr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.SexCheck.gender_plot.encode_chr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Encodes chromosomes.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>chromosome</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the chromosome to encode.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">the encoded chromosome as <a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">int</span></code></a>.</td>
+</tr>
+</tbody>
+</table>
+<p>It changes <code class="docutils literal"><span class="pre">X</span></code>, <code class="docutils literal"><span class="pre">Y</span></code>, <code class="docutils literal"><span class="pre">XY</span></code> and <code class="docutils literal"><span class="pre">MT</span></code> to <code class="docutils literal"><span class="pre">23</span></code>, <code class="docutils literal"><span class="pre">24</span></code>, <code class="docutils literal"><span class="pre">25</span></code> and
+<code class="docutils literal"><span class="pre">26</span></code>, respectively. It changes everything else as <a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">int</span></code></a>.</p>
+<p>If <code class="xref py py-class docutils literal"><span class="pre">ValueError</span></code> is raised, then <a class="reference internal" href="#pyGenClean.SexCheck.gender_plot.ProgramError" title="pyGenClean.SexCheck.gender_plot.ProgramError"><code class="xref py py-class docutils literal"><span class="pre">ProgramError</span></code></a> is
+also raised. If a chromosome as a value below 1 or above 26, a
+<a class="reference internal" href="#pyGenClean.SexCheck.gender_plot.ProgramError" title="pyGenClean.SexCheck.gender_plot.ProgramError"><code class="xref py py-class docutils literal"><span class="pre">ProgramError</span></code></a> is raised.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="n">encode_chr</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">11</span><span class="p">)]</span>
+<span class="go">[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="n">encode_chr</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">11</span><span class="p">,</span> <span class="mi">21</span><span class="p">)]</span>
+<span class="go">[11, 12, 13, 14, 15, 16, 17, 18, 19, 20]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="n">encode_chr</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">21</span><span class="p">,</span> <span class="mi">27</span><span class="p">)]</span>
+<span class="go">[21, 22, 23, 24, 25, 26]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="n">encode_chr</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&quot;X&quot;</span><span class="p">,</span> <span class="s">&quot;Y&quot;</span><span class="p">,</span> <span class="s">&quot;XY&quot;</span><span class="p">,</span> <span class="s">&quot;MT&quot;</span><span class="p">]]</span>
+<span class="go">[23, 24, 25, 26]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">encode_chr</span><span class="p">(</span><span class="s">&quot;27&quot;</span><span class="p">)</span>
+<span class="gt">Traceback (most recent call last):</span>
+    <span class="o">...</span>
+<span class="gr">ProgramError</span>: <span class="n">27: invalid chromosome</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">encode_chr</span><span class="p">(</span><span class="s">&quot;XX&quot;</span><span class="p">)</span>
+<span class="gt">Traceback (most recent call last):</span>
+    <span class="o">...</span>
+<span class="gr">ProgramError</span>: <span class="n">XX: invalid chromosome</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.SexCheck.gender_plot.encode_gender">
+<code class="descclassname">pyGenClean.SexCheck.gender_plot.</code><code class="descname">encode_gender</code><span class="sig-paren">(</span><em>gender</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyGenClean/SexCheck/gender_plot.html#encode_gender"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.SexCheck.gender_plot.encode_gender" title="Permalink to this definition">¶</a></dt>
+<dd><p>Encodes the gender.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>gender</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the gender to encode.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">the encoded gender.</td>
+</tr>
+</tbody>
+</table>
+<p>It changes <code class="docutils literal"><span class="pre">1</span></code> and <code class="docutils literal"><span class="pre">2</span></code> to <code class="docutils literal"><span class="pre">Male</span></code> and <code class="docutils literal"><span class="pre">Female</span></code> respectively. It
+encodes everything else to <code class="docutils literal"><span class="pre">Unknown</span></code>.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">encode_gender</span><span class="p">(</span><span class="s">&quot;1&quot;</span><span class="p">)</span>
+<span class="go">&#39;Male&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">encode_gender</span><span class="p">(</span><span class="s">&quot;2&quot;</span><span class="p">)</span>
+<span class="go">&#39;Female&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">encode_gender</span><span class="p">(</span><span class="s">&quot;0&quot;</span><span class="p">)</span>
+<span class="go">&#39;Unknown&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">encode_gender</span><span class="p">(</span><span class="s">&quot;This is not a gender code&quot;</span><span class="p">)</span>
+<span class="go">&#39;Unknown&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.SexCheck.gender_plot.main">
+<code class="descclassname">pyGenClean.SexCheck.gender_plot.</code><code class="descname">main</code><span class="sig-paren">(</span><em>argString=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyGenClean/SexCheck/gender_plot.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.SexCheck.gender_plot.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>The main function of the module.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>argString</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; the options.</td>
+</tr>
+</tbody>
+</table>
+<p>These are the steps:</p>
+<ol class="arabic simple">
+<li>Prints the options.</li>
+<li>If there are <code class="docutils literal"><span class="pre">summarized_intensities</span></code> provided, reads the files
+(<a class="reference internal" href="#pyGenClean.SexCheck.gender_plot.read_summarized_intensities" title="pyGenClean.SexCheck.gender_plot.read_summarized_intensities"><code class="xref py py-func docutils literal"><span class="pre">read_summarized_intensities()</span></code></a>) and skips to step 7.</li>
+<li>Reads the <code class="docutils literal"><span class="pre">bim</span></code> file to get markers on the sexual chromosomes
+(<a class="reference internal" href="#pyGenClean.SexCheck.gender_plot.read_bim" title="pyGenClean.SexCheck.gender_plot.read_bim"><code class="xref py py-func docutils literal"><span class="pre">read_bim()</span></code></a>).</li>
+<li>Reads the <code class="docutils literal"><span class="pre">fam</span></code> file to get gender (<a class="reference internal" href="#pyGenClean.SexCheck.gender_plot.read_fam" title="pyGenClean.SexCheck.gender_plot.read_fam"><code class="xref py py-func docutils literal"><span class="pre">read_fam()</span></code></a>).</li>
+<li>Reads the file containing samples with sex problems
+(<a class="reference internal" href="#pyGenClean.SexCheck.gender_plot.read_sex_problems" title="pyGenClean.SexCheck.gender_plot.read_sex_problems"><code class="xref py py-func docutils literal"><span class="pre">read_sex_problems()</span></code></a>).</li>
+<li>Reads the intensities and summarizes them (<a class="reference internal" href="#pyGenClean.SexCheck.gender_plot.read_intensities" title="pyGenClean.SexCheck.gender_plot.read_intensities"><code class="xref py py-func docutils literal"><span class="pre">read_intensities()</span></code></a>).</li>
+<li>Plots the summarized intensities (<a class="reference internal" href="#pyGenClean.SexCheck.gender_plot.plot_gender" title="pyGenClean.SexCheck.gender_plot.plot_gender"><code class="xref py py-func docutils literal"><span class="pre">plot_gender()</span></code></a>).</li>
+</ol>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.SexCheck.gender_plot.parseArgs">
+<code class="descclassname">pyGenClean.SexCheck.gender_plot.</code><code class="descname">parseArgs</code><span class="sig-paren">(</span><em>argString=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyGenClean/SexCheck/gender_plot.html#parseArgs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.SexCheck.gender_plot.parseArgs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parses the command line options and arguments.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>argString</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; the options.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A <a class="reference external" href="http://docs.python.org/library/argparse.html#argparse.Namespace" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">argparse.Namespace</span></code></a> object created by the
+<a class="reference external" href="http://docs.python.org/library/argparse.html#module-argparse" title="(in Python v2.7)"><code class="xref py py-mod docutils literal"><span class="pre">argparse</span></code></a> module. It contains the values of the
+different options.</td>
+</tr>
+</tbody>
+</table>
+<table border="1" class="docutils">
+<colgroup>
+<col width="38%" />
+<col width="8%" />
+<col width="53%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Options</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--bfile</span></code></td>
+<td>string</td>
+<td>The plink binary file containing
+information about markers and
+individuals.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--intensities</span></code></td>
+<td>string</td>
+<td>A file containing alleles intensities
+for each of the markers located on the
+X and Y chromosome.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--summarized-intensities</span></code></td>
+<td>string</td>
+<td>The prefix of six files containing
+summarized chr23 and chr24 intensities.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--sex-problems</span></code></td>
+<td>string</td>
+<td>The file containing individuals with
+sex problems.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--format</span></code></td>
+<td>string</td>
+<td>The output file format (png, ps, pdf,
+or X11).</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--xlabel</span></code></td>
+<td>string</td>
+<td>The label of the X axis.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--ylabel</span></code></td>
+<td>string</td>
+<td>The label of the Y axis.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--out</span></code></td>
+<td>string</td>
+<td>The prefix of the output files.</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">No option check is done here (except for the one automatically done by
+argparse). Those need to be done elsewhere (see <a class="reference internal" href="#pyGenClean.SexCheck.gender_plot.checkArgs" title="pyGenClean.SexCheck.gender_plot.checkArgs"><code class="xref py py-func docutils literal"><span class="pre">checkArgs()</span></code></a>).</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.SexCheck.gender_plot.plot_gender">
+<code class="descclassname">pyGenClean.SexCheck.gender_plot.</code><code class="descname">plot_gender</code><span class="sig-paren">(</span><em>data</em>, <em>options</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyGenClean/SexCheck/gender_plot.html#plot_gender"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.SexCheck.gender_plot.plot_gender" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plots the gender.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>data</strong> (<a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.recarray.html#numpy.recarray" title="(in NumPy v1.10)"><em>numpy.recarray</em></a>) &#8211; the data to plot.</li>
+<li><strong>options</strong> (<a class="reference external" href="http://docs.python.org/library/argparse.html#argparse.Namespace" title="(in Python v2.7)"><em>argparse.Namespace</em></a>) &#8211; the options.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Plots the summarized intensities of the markers on the Y chromosomes in
+function of the markers on the X chromosomes, with problematic samples with
+different colors.</p>
+<p>Also uses <a class="reference internal" href="#pyGenClean.SexCheck.gender_plot.print_data_to_file" title="pyGenClean.SexCheck.gender_plot.print_data_to_file"><code class="xref py py-func docutils literal"><span class="pre">print_data_to_file()</span></code></a> to save the data, so that it is
+faster to rerun the analysis.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.SexCheck.gender_plot.print_data_to_file">
+<code class="descclassname">pyGenClean.SexCheck.gender_plot.</code><code class="descname">print_data_to_file</code><span class="sig-paren">(</span><em>data</em>, <em>file_name</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyGenClean/SexCheck/gender_plot.html#print_data_to_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.SexCheck.gender_plot.print_data_to_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prints data to file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>data</strong> (<a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.recarray.html#numpy.recarray" title="(in NumPy v1.10)"><em>numpy.recarray</em></a>) &#8211; the data to print.</li>
+<li><strong>file_name</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the name of the output file.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.SexCheck.gender_plot.read_bim">
+<code class="descclassname">pyGenClean.SexCheck.gender_plot.</code><code class="descname">read_bim</code><span class="sig-paren">(</span><em>file_name</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyGenClean/SexCheck/gender_plot.html#read_bim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.SexCheck.gender_plot.read_bim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads the BIM file to gather marker names.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>file_name</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the name of the <code class="docutils literal"><span class="pre">bim</span></code> file.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">a <a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">dict</span></code></a> containing the chromosomal location of each
+marker on the sexual chromosomes.</td>
+</tr>
+</tbody>
+</table>
+<p>It uses the <a class="reference internal" href="#pyGenClean.SexCheck.gender_plot.encode_chr" title="pyGenClean.SexCheck.gender_plot.encode_chr"><code class="xref py py-func docutils literal"><span class="pre">encode_chr()</span></code></a> to encode the chromosomes from <code class="docutils literal"><span class="pre">X</span></code> and
+<code class="docutils literal"><span class="pre">Y</span></code> to <code class="docutils literal"><span class="pre">23</span></code> and <code class="docutils literal"><span class="pre">24</span></code>, respectively.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.SexCheck.gender_plot.read_fam">
+<code class="descclassname">pyGenClean.SexCheck.gender_plot.</code><code class="descname">read_fam</code><span class="sig-paren">(</span><em>file_name</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyGenClean/SexCheck/gender_plot.html#read_fam"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.SexCheck.gender_plot.read_fam" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads the FAM file to gather sample names.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>file_name</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the <code class="docutils literal"><span class="pre">fam</span></code> file to read.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">a <a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">dict</span></code></a> containing the gender of each samples.</td>
+</tr>
+</tbody>
+</table>
+<p>It uses the <a class="reference internal" href="#pyGenClean.SexCheck.gender_plot.encode_gender" title="pyGenClean.SexCheck.gender_plot.encode_gender"><code class="xref py py-func docutils literal"><span class="pre">encode_gender()</span></code></a> to encode the gender from <code class="docutils literal"><span class="pre">1``and</span>
+<span class="pre">``2</span></code> to <code class="docutils literal"><span class="pre">Male</span></code> and <code class="docutils literal"><span class="pre">Female</span></code>, respectively.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.SexCheck.gender_plot.read_intensities">
+<code class="descclassname">pyGenClean.SexCheck.gender_plot.</code><code class="descname">read_intensities</code><span class="sig-paren">(</span><em>file_name</em>, <em>needed_markers_chr</em>, <em>needed_samples_gender</em>, <em>sex_problems</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyGenClean/SexCheck/gender_plot.html#read_intensities"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.SexCheck.gender_plot.read_intensities" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads the intensities from a file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>file_name</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the name of the input file.</li>
+<li><strong>needed_markers_chr</strong> (<a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) &#8211; the markers that are needed.</li>
+<li><strong>needed_samples_gender</strong> (<a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) &#8211; the gender of all the samples.</li>
+<li><strong>sex_problems</strong> (<a class="reference external" href="http://docs.python.org/library/stdtypes.html#frozenset" title="(in Python v2.7)"><em>frozenset</em></a>) &#8211; the sample with sex problem.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">a :py:class`numpy.recarray` containing the following columns (for
+each of the samples): <code class="docutils literal"><span class="pre">sampleID</span></code>, <code class="docutils literal"><span class="pre">chr23</span></code>, <code class="docutils literal"><span class="pre">chr24</span></code>,
+<code class="docutils literal"><span class="pre">gender</span></code> and <code class="docutils literal"><span class="pre">status</span></code>.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Reads the normalized intensities from a final report. The file must contain
+the following columns: <code class="docutils literal"><span class="pre">SNP</span> <span class="pre">Name</span></code>, <code class="docutils literal"><span class="pre">Sample</span> <span class="pre">ID</span></code>, <code class="docutils literal"><span class="pre">X</span></code>, <code class="docutils literal"><span class="pre">Y</span></code> and
+<code class="docutils literal"><span class="pre">Chr</span></code>. It then keeps only the required markers (those that are on
+sexual chromosomes (<code class="docutils literal"><span class="pre">23</span></code> or <code class="docutils literal"><span class="pre">24</span></code>), encoding <cite>NaN</cite> intensities to zero.</p>
+<p>The final data set contains the following information for each sample:</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">sampleID</span></code>: the sample ID.</li>
+<li><code class="docutils literal"><span class="pre">chr23</span></code>: the summarized intensities for chromosome 23.</li>
+<li><code class="docutils literal"><span class="pre">chr24</span></code>: the summarized intensities for chromosome 24.</li>
+<li><code class="docutils literal"><span class="pre">gender</span></code>: the gender of the sample (<code class="docutils literal"><span class="pre">Male</span></code> or <code class="docutils literal"><span class="pre">Female</span></code>).</li>
+<li><code class="docutils literal"><span class="pre">status</span></code>: the status of the sample (<code class="docutils literal"><span class="pre">OK</span></code> or <code class="docutils literal"><span class="pre">Problem</span></code>).</li>
+</ul>
+<p>The summarized intensities for a chromosome (<span class="math">\(S_{chr}\)</span>) is computed
+using this formula (where <span class="math">\(I_{chr}\)</span> is the set of all marker
+intensities on chromosome <span class="math">\(chr\)</span>):</p>
+<div class="math">
+\[S_{chr} = \frac{\sum{I_{chr}}}{||I_{chr}||}\]</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.SexCheck.gender_plot.read_sex_problems">
+<code class="descclassname">pyGenClean.SexCheck.gender_plot.</code><code class="descname">read_sex_problems</code><span class="sig-paren">(</span><em>file_name</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyGenClean/SexCheck/gender_plot.html#read_sex_problems"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.SexCheck.gender_plot.read_sex_problems" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads the sex problem file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>file_name</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the name of the file containing sex problems.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">a <a class="reference external" href="http://docs.python.org/library/stdtypes.html#frozenset" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">frozenset</span></code></a> containing samples with sex problem.</td>
+</tr>
+</tbody>
+</table>
+<p>If there is no <code class="docutils literal"><span class="pre">file_name</span></code> (<em>i.e.</em> is <code class="docutils literal"><span class="pre">None</span></code>), then an empty
+<a class="reference external" href="http://docs.python.org/library/stdtypes.html#frozenset" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">frozenset</span></code></a> is returned.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.SexCheck.gender_plot.read_summarized_intensities">
+<code class="descclassname">pyGenClean.SexCheck.gender_plot.</code><code class="descname">read_summarized_intensities</code><span class="sig-paren">(</span><em>prefix</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyGenClean/SexCheck/gender_plot.html#read_summarized_intensities"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.SexCheck.gender_plot.read_summarized_intensities" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads the summarized intensities from 6 files.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>prefix</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the prefix of the six files.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">a :py:class`numpy.recarray` containing the following columns (for
+each of the samples): <code class="docutils literal"><span class="pre">sampleID</span></code>, <code class="docutils literal"><span class="pre">chr23</span></code>, <code class="docutils literal"><span class="pre">chr24</span></code>,
+<code class="docutils literal"><span class="pre">gender</span></code> and <code class="docutils literal"><span class="pre">status</span></code>.</td>
+</tr>
+</tbody>
+</table>
+<p>Instead of reading a final report (like <a class="reference internal" href="#pyGenClean.SexCheck.gender_plot.read_intensities" title="pyGenClean.SexCheck.gender_plot.read_intensities"><code class="xref py py-func docutils literal"><span class="pre">read_intensities()</span></code></a>), this
+function reads six files previously created by this module to gather sample
+information. Here are the content of the six files:</p>
+<ul>
+<li><p class="first"><code class="docutils literal"><span class="pre">prefix.ok_females.txt</span></code>: information about females without sex problem.</p>
+</li>
+<li><p class="first"><code class="docutils literal"><span class="pre">prefix.ok_males.txt</span></code>: information about males without sex problem.</p>
+</li>
+<li><dl class="first docutils">
+<dt><code class="docutils literal"><span class="pre">prefix.ok_unknowns.txt</span></code>: information about unknown gender without sex</dt>
+<dd><p class="first last">problem.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><code class="docutils literal"><span class="pre">prefix.problematic_females.txt</span></code>: information about females with sex</dt>
+<dd><p class="first last">problem.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><code class="docutils literal"><span class="pre">prefix.problematic_males.txt</span></code>: information about males with sex</dt>
+<dd><p class="first last">problem.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><code class="docutils literal"><span class="pre">prefix.problematic_unknowns.txt</span></code>: information about unknown gender</dt>
+<dd><p class="first last">with sex problem.</p>
+</dd>
+</dl>
+</li>
+</ul>
+<p>Each file contains the following columns: <code class="docutils literal"><span class="pre">sampleID</span></code>, <code class="docutils literal"><span class="pre">chr23</span></code>,
+<code class="docutils literal"><span class="pre">chr24</span></code>, <code class="docutils literal"><span class="pre">gender</span></code> and <code class="docutils literal"><span class="pre">status</span></code>.</p>
+<p>The final data set contains the following information for each sample:</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">sampleID</span></code>: the sample ID.</li>
+<li><code class="docutils literal"><span class="pre">chr23</span></code>: the summarized intensities for chromosome 23.</li>
+<li><code class="docutils literal"><span class="pre">chr24</span></code>: the summarized intensities for chromosome 24.</li>
+<li><code class="docutils literal"><span class="pre">gender</span></code>: the gender of the sample (<code class="docutils literal"><span class="pre">Male</span></code> or <code class="docutils literal"><span class="pre">Female</span></code>).</li>
+<li><code class="docutils literal"><span class="pre">status</span></code>: the status of the sample (<code class="docutils literal"><span class="pre">OK</span></code> or <code class="docutils literal"><span class="pre">Problem</span></code>).</li>
+</ul>
+<p>The summarized intensities for a chromosome (<span class="math">\(S_{chr}\)</span>) is computed
+using this formula (where <span class="math">\(I_{chr}\)</span> is the set of all marker
+intensities on chromosome <span class="math">\(chr\)</span>):</p>
+<div class="math">
+\[S_{chr} = \frac{\sum{I_{chr}}}{||I_{chr}||}\]</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.SexCheck.gender_plot.safe_main">
+<code class="descclassname">pyGenClean.SexCheck.gender_plot.</code><code class="descname">safe_main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyGenClean/SexCheck/gender_plot.html#safe_main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.SexCheck.gender_plot.safe_main" title="Permalink to this definition">¶</a></dt>
+<dd><p>A safe version of the main function (that catches ProgramError).</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyGenClean.SexCheck.sex_check">
+<span id="pygenclean-sexcheck-sex-check-module"></span><h3>pyGenClean.SexCheck.sex_check module<a class="headerlink" href="#module-pyGenClean.SexCheck.sex_check" title="Permalink to this headline">¶</a></h3>
+<dl class="exception">
+<dt id="pyGenClean.SexCheck.sex_check.ProgramError">
+<em class="property">exception </em><code class="descclassname">pyGenClean.SexCheck.sex_check.</code><code class="descname">ProgramError</code><span class="sig-paren">(</span><em>msg</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyGenClean/SexCheck/sex_check.html#ProgramError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.SexCheck.sex_check.ProgramError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="http://docs.python.org/library/exceptions.html#exceptions.Exception" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">exceptions.Exception</span></code></a></p>
+<p>An <code class="xref py py-class docutils literal"><span class="pre">Exception</span></code> raised in case of a problem.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>msg</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the message to print to the user before exiting.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.SexCheck.sex_check.checkArgs">
+<code class="descclassname">pyGenClean.SexCheck.sex_check.</code><code class="descname">checkArgs</code><span class="sig-paren">(</span><em>args</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyGenClean/SexCheck/sex_check.html#checkArgs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.SexCheck.sex_check.checkArgs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks the arguments and options.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>args</strong> (<a class="reference external" href="http://docs.python.org/library/argparse.html#argparse.Namespace" title="(in Python v2.7)"><em>argparse.Namespace</em></a>) &#8211; an object containing the options of the program.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><code class="docutils literal"><span class="pre">True</span></code> if everything was OK.</td>
+</tr>
+</tbody>
+</table>
+<p>If there is a problem with an option, an exception is raised using the
+<a class="reference internal" href="#pyGenClean.SexCheck.sex_check.ProgramError" title="pyGenClean.SexCheck.sex_check.ProgramError"><code class="xref py py-class docutils literal"><span class="pre">ProgramError</span></code></a> class, a message is printed to the
+<code class="xref py py-class docutils literal"><span class="pre">sys.stderr</span></code> and the program exists with code 1.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.SexCheck.sex_check.checkBim">
+<code class="descclassname">pyGenClean.SexCheck.sex_check.</code><code class="descname">checkBim</code><span class="sig-paren">(</span><em>fileName</em>, <em>minNumber</em>, <em>chromosome</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyGenClean/SexCheck/sex_check.html#checkBim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.SexCheck.sex_check.checkBim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks the BIM file for chrN markers.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>fileName</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; </li>
+<li><strong>minNumber</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; </li>
+<li><strong>chromosome</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; </li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><code class="docutils literal"><span class="pre">True</span></code> if there are at least <code class="docutils literal"><span class="pre">minNumber</span></code> markers on
+chromosome <code class="docutils literal"><span class="pre">chromosome</span></code>, <code class="docutils literal"><span class="pre">False</span></code> otherwise.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.SexCheck.sex_check.computeHeteroPercentage">
+<code class="descclassname">pyGenClean.SexCheck.sex_check.</code><code class="descname">computeHeteroPercentage</code><span class="sig-paren">(</span><em>fileName</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyGenClean/SexCheck/sex_check.html#computeHeteroPercentage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.SexCheck.sex_check.computeHeteroPercentage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the heterozygosity percentage.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>fileName</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the name of the input file.</td>
+</tr>
+</tbody>
+</table>
+<p>Reads the <code class="docutils literal"><span class="pre">ped</span></code> file created by Plink using the <code class="docutils literal"><span class="pre">recodeA</span></code> options (see
+<a class="reference internal" href="#pyGenClean.SexCheck.sex_check.createPedChr23UsingPlink" title="pyGenClean.SexCheck.sex_check.createPedChr23UsingPlink"><code class="xref py py-func docutils literal"><span class="pre">createPedChr23UsingPlink()</span></code></a>) and computes the heterozygosity
+percentage on the chromosome <code class="docutils literal"><span class="pre">23</span></code>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.SexCheck.sex_check.computeNoCall">
+<code class="descclassname">pyGenClean.SexCheck.sex_check.</code><code class="descname">computeNoCall</code><span class="sig-paren">(</span><em>fileName</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyGenClean/SexCheck/sex_check.html#computeNoCall"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.SexCheck.sex_check.computeNoCall" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the number of no call.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>fileName</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the name of the file</td>
+</tr>
+</tbody>
+</table>
+<p>Reads the <code class="docutils literal"><span class="pre">ped</span></code> file created by Plink using the <code class="docutils literal"><span class="pre">recodeA</span></code> options (see
+<a class="reference internal" href="#pyGenClean.SexCheck.sex_check.createPedChr24UsingPlink" title="pyGenClean.SexCheck.sex_check.createPedChr24UsingPlink"><code class="xref py py-func docutils literal"><span class="pre">createPedChr24UsingPlink()</span></code></a>) and computes the number and percentage
+of no calls on the chromosome <code class="docutils literal"><span class="pre">24</span></code>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.SexCheck.sex_check.createGenderPlot">
+<code class="descclassname">pyGenClean.SexCheck.sex_check.</code><code class="descname">createGenderPlot</code><span class="sig-paren">(</span><em>bfile</em>, <em>intensities</em>, <em>problematic_samples</em>, <em>format</em>, <em>out_prefix</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyGenClean/SexCheck/sex_check.html#createGenderPlot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.SexCheck.sex_check.createGenderPlot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates the gender plot.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>bfile</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the prefix of the input binary file.</li>
+<li><strong>intensities</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the file containing the intensities.</li>
+<li><strong>problematic_samples</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the file containing the problematic samples.</li>
+<li><strong>format</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the format of the output plot.</li>
+<li><strong>out_prefix</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the prefix of the output file.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Creates the gender plot of the samples using the
+<a class="reference internal" href="#module-pyGenClean.SexCheck.gender_plot" title="pyGenClean.SexCheck.gender_plot"><code class="xref py py-mod docutils literal"><span class="pre">pyGenClean.SexCheck.gender_plot</span></code></a> module.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.SexCheck.sex_check.createLrrBafPlot">
+<code class="descclassname">pyGenClean.SexCheck.sex_check.</code><code class="descname">createLrrBafPlot</code><span class="sig-paren">(</span><em>raw_dir</em>, <em>problematic_samples</em>, <em>format</em>, <em>out_prefix</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyGenClean/SexCheck/sex_check.html#createLrrBafPlot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.SexCheck.sex_check.createLrrBafPlot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates the LRR and BAF plot.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>raw_dir</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the directory containing the intensities.</li>
+<li><strong>problematic_samples</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the file containing the problematic samples.</li>
+<li><strong>format</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the format of the plot.</li>
+<li><strong>out_prefix</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the prefix of the output file.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Creates the LRR (Log R Ratio) and BAF (B Allele Frequency) of the
+problematic samples using the <a class="reference internal" href="#module-pyGenClean.SexCheck.baf_lrr_plot" title="pyGenClean.SexCheck.baf_lrr_plot"><code class="xref py py-mod docutils literal"><span class="pre">pyGenClean.SexCheck.baf_lrr_plot</span></code></a>
+module.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.SexCheck.sex_check.createPedChr23UsingPlink">
+<code class="descclassname">pyGenClean.SexCheck.sex_check.</code><code class="descname">createPedChr23UsingPlink</code><span class="sig-paren">(</span><em>options</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyGenClean/SexCheck/sex_check.html#createPedChr23UsingPlink"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.SexCheck.sex_check.createPedChr23UsingPlink" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run Plink to create a ped format.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>options</strong> (<a class="reference external" href="http://docs.python.org/library/argparse.html#argparse.Namespace" title="(in Python v2.7)"><em>argparse.Namespace</em></a>) &#8211; the options.</td>
+</tr>
+</tbody>
+</table>
+<p>Uses Plink to create a <code class="docutils literal"><span class="pre">ped</span></code> file of markers on the chromosome <code class="docutils literal"><span class="pre">23</span></code>. It
+uses the <code class="docutils literal"><span class="pre">recodeA</span></code> options to use additive coding. It also subsets the
+data to keep only samples with sex problems.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.SexCheck.sex_check.createPedChr24UsingPlink">
+<code class="descclassname">pyGenClean.SexCheck.sex_check.</code><code class="descname">createPedChr24UsingPlink</code><span class="sig-paren">(</span><em>options</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyGenClean/SexCheck/sex_check.html#createPedChr24UsingPlink"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.SexCheck.sex_check.createPedChr24UsingPlink" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run plink to create a ped format.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>options</strong> (<a class="reference external" href="http://docs.python.org/library/argparse.html#argparse.Namespace" title="(in Python v2.7)"><em>argparse.Namespace</em></a>) &#8211; the options.</td>
+</tr>
+</tbody>
+</table>
+<p>Uses Plink to create a <code class="docutils literal"><span class="pre">ped</span></code> file of markers on the chromosome <code class="docutils literal"><span class="pre">24</span></code>. It
+uses the <code class="docutils literal"><span class="pre">recodeA</span></code> options to use additive coding. It also subsets the
+data to keep only samples with sex problems.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.SexCheck.sex_check.main">
+<code class="descclassname">pyGenClean.SexCheck.sex_check.</code><code class="descname">main</code><span class="sig-paren">(</span><em>argString=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyGenClean/SexCheck/sex_check.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.SexCheck.sex_check.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>The main function of the module.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>argString</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; the options.</td>
+</tr>
+</tbody>
+</table>
+<p>These are the following steps:</p>
+<ol class="arabic simple">
+<li>Prints the options.</li>
+<li>Checks if there are enough markers on the chromosome <code class="docutils literal"><span class="pre">23</span></code>
+(<a class="reference internal" href="#pyGenClean.SexCheck.sex_check.checkBim" title="pyGenClean.SexCheck.sex_check.checkBim"><code class="xref py py-func docutils literal"><span class="pre">checkBim()</span></code></a>). If not, quits here.</li>
+<li>Runs the sex check analysis using Plink (<a class="reference internal" href="#pyGenClean.SexCheck.sex_check.runPlinkSexCheck" title="pyGenClean.SexCheck.sex_check.runPlinkSexCheck"><code class="xref py py-func docutils literal"><span class="pre">runPlinkSexCheck()</span></code></a>).</li>
+<li>If there are no sex problems, then quits (<a class="reference internal" href="#pyGenClean.SexCheck.sex_check.readCheckSexFile" title="pyGenClean.SexCheck.sex_check.readCheckSexFile"><code class="xref py py-func docutils literal"><span class="pre">readCheckSexFile()</span></code></a>).</li>
+<li>Creates the recoded file for the chromosome <code class="docutils literal"><span class="pre">23</span></code>
+(<a class="reference internal" href="#pyGenClean.SexCheck.sex_check.createPedChr23UsingPlink" title="pyGenClean.SexCheck.sex_check.createPedChr23UsingPlink"><code class="xref py py-func docutils literal"><span class="pre">createPedChr23UsingPlink()</span></code></a>).</li>
+<li>Computes the heterozygosity percentage on the chromosome <code class="docutils literal"><span class="pre">23</span></code>
+(<a class="reference internal" href="#pyGenClean.SexCheck.sex_check.computeHeteroPercentage" title="pyGenClean.SexCheck.sex_check.computeHeteroPercentage"><code class="xref py py-func docutils literal"><span class="pre">computeHeteroPercentage()</span></code></a>).</li>
+<li>If there are enough markers on chromosome <code class="docutils literal"><span class="pre">24</span></code> (at least 1), creates
+the recoded file for this chromosome
+(<a class="reference internal" href="#pyGenClean.SexCheck.sex_check.createPedChr24UsingPlink" title="pyGenClean.SexCheck.sex_check.createPedChr24UsingPlink"><code class="xref py py-func docutils literal"><span class="pre">createPedChr24UsingPlink()</span></code></a>).</li>
+<li>Computes the number of no call on the chromosome <code class="docutils literal"><span class="pre">24</span></code>
+(<a class="reference internal" href="#pyGenClean.SexCheck.sex_check.computeNoCall" title="pyGenClean.SexCheck.sex_check.computeNoCall"><code class="xref py py-func docutils literal"><span class="pre">computeNoCall()</span></code></a>).</li>
+<li>If required, plots the gender plot (<a class="reference internal" href="#pyGenClean.SexCheck.sex_check.createGenderPlot" title="pyGenClean.SexCheck.sex_check.createGenderPlot"><code class="xref py py-func docutils literal"><span class="pre">createGenderPlot()</span></code></a>).</li>
+<li>If required, plots the BAF and LRR plot (<a class="reference internal" href="#pyGenClean.SexCheck.sex_check.createLrrBafPlot" title="pyGenClean.SexCheck.sex_check.createLrrBafPlot"><code class="xref py py-func docutils literal"><span class="pre">createLrrBafPlot()</span></code></a>).</li>
+</ol>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.SexCheck.sex_check.parseArgs">
+<code class="descclassname">pyGenClean.SexCheck.sex_check.</code><code class="descname">parseArgs</code><span class="sig-paren">(</span><em>argString=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyGenClean/SexCheck/sex_check.html#parseArgs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.SexCheck.sex_check.parseArgs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parses the command line options and arguments.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>argString</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; the options.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A <a class="reference external" href="http://docs.python.org/library/argparse.html#argparse.Namespace" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">argparse.Namespace</span></code></a> object created by the
+<a class="reference external" href="http://docs.python.org/library/argparse.html#module-argparse" title="(in Python v2.7)"><code class="xref py py-mod docutils literal"><span class="pre">argparse</span></code></a> module. It contains the values of the
+different options.</td>
+</tr>
+</tbody>
+</table>
+<table border="1" class="docutils">
+<colgroup>
+<col width="34%" />
+<col width="8%" />
+<col width="58%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Options</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--bfile</span></code></td>
+<td>string</td>
+<td>The input file prefix (Plink binary).</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--femaleF</span></code></td>
+<td>float</td>
+<td>The female F threshold.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--maleF</span></code></td>
+<td>float</td>
+<td>The male F threshold.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--nbChr23</span></code></td>
+<td>int</td>
+<td>The minimum number of markers on
+chromosome 23 before computing Plink&#8217;s sex
+check.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--gender-plot</span></code></td>
+<td>bool</td>
+<td>Create the gender plot.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--sex-chr-intensities</span></code></td>
+<td>string</td>
+<td>A file containing alleles intensities for
+each of the markers located on the X and Y
+chromosome.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--gender-plot-format</span></code></td>
+<td>string</td>
+<td>The output file format for the gender
+plot.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--lrr-baf</span></code></td>
+<td>bool</td>
+<td>Create the LRR and BAF plot.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--lrr-baf-raw-dir</span></code></td>
+<td>string</td>
+<td>Directory containing information about
+every samples (BAF and LRR).</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--lrr-baf-format</span></code></td>
+<td>string</td>
+<td>The output file format.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--out</span></code></td>
+<td>string</td>
+<td>The prefix of the output files.</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">No option check is done here (except for the one automatically done by
+argparse). Those need to be done elsewhere (see <a class="reference internal" href="#pyGenClean.SexCheck.sex_check.checkArgs" title="pyGenClean.SexCheck.sex_check.checkArgs"><code class="xref py py-func docutils literal"><span class="pre">checkArgs()</span></code></a>).</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.SexCheck.sex_check.readCheckSexFile">
+<code class="descclassname">pyGenClean.SexCheck.sex_check.</code><code class="descname">readCheckSexFile</code><span class="sig-paren">(</span><em>fileName</em>, <em>allProblemsFileName</em>, <em>idsFileName</em>, <em>femaleF</em>, <em>maleF</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyGenClean/SexCheck/sex_check.html#readCheckSexFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.SexCheck.sex_check.readCheckSexFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads the Plink check-sex output file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>fileName</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the name of the input file.</li>
+<li><strong>allProblemsFileName</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the name of the output file that will contain
+all the problems.</li>
+<li><strong>idsFileName</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the name of the output file what will contain samples
+with sex problems.</li>
+<li><strong>femaleF</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; the F threshold for females.</li>
+<li><strong>maleF</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; the F threshold for males.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><code class="docutils literal"><span class="pre">True</span></code> if there are sex problems, <code class="docutils literal"><span class="pre">False</span></code> otherwise.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Reads sex check file provided by <a class="reference internal" href="#pyGenClean.SexCheck.sex_check.runPlinkSexCheck" title="pyGenClean.SexCheck.sex_check.runPlinkSexCheck"><code class="xref py py-func docutils literal"><span class="pre">runPlinkSexCheck()</span></code></a> (Plink) and
+extract the samples that have sex problems.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.SexCheck.sex_check.runCommand">
+<code class="descclassname">pyGenClean.SexCheck.sex_check.</code><code class="descname">runCommand</code><span class="sig-paren">(</span><em>command</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyGenClean/SexCheck/sex_check.html#runCommand"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.SexCheck.sex_check.runCommand" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run a command.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>command</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; the command to run.</td>
+</tr>
+</tbody>
+</table>
+<p>Tries to run a command. If it fails, raise a <a class="reference internal" href="#pyGenClean.SexCheck.sex_check.ProgramError" title="pyGenClean.SexCheck.sex_check.ProgramError"><code class="xref py py-class docutils literal"><span class="pre">ProgramError</span></code></a>. This
+function uses the <a class="reference external" href="http://docs.python.org/library/subprocess.html#module-subprocess" title="(in Python v2.7)"><code class="xref py py-mod docutils literal"><span class="pre">subprocess</span></code></a> module.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">The variable command should be a list of strings (no other type).</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.SexCheck.sex_check.runPlinkSexCheck">
+<code class="descclassname">pyGenClean.SexCheck.sex_check.</code><code class="descname">runPlinkSexCheck</code><span class="sig-paren">(</span><em>options</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyGenClean/SexCheck/sex_check.html#runPlinkSexCheck"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.SexCheck.sex_check.runPlinkSexCheck" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs Plink to perform a sex check analysis.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>options</strong> (<a class="reference external" href="http://docs.python.org/library/argparse.html#argparse.Namespace" title="(in Python v2.7)"><em>argparse.Namespace</em></a>) &#8211; the options.</td>
+</tr>
+</tbody>
+</table>
+<p>Uses Plink to perform a sex check analysis.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.SexCheck.sex_check.safe_main">
+<code class="descclassname">pyGenClean.SexCheck.sex_check.</code><code class="descname">safe_main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyGenClean/SexCheck/sex_check.html#safe_main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.SexCheck.sex_check.safe_main" title="Permalink to this definition">¶</a></dt>
+<dd><p>A safe version of the main function (that catches ProgramError).</p>
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../duplicated_samples.html" title="Duplicated Samples Module"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="pyGenClean.SampleMissingness.html" title="pyGenClean.SampleMissingness package"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">pyGenClean 1.7.1 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="modules.html" >Main pyGenClean pipeline</a> &raquo;</li>
+          <li class="nav-item nav-item-2"><a href="pyGenClean.html" >pyGenClean package</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2012, Louis-Philippe Lemieux Perreault.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+    </div>
+  </body>
+</html>

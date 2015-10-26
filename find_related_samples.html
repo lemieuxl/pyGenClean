@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Related Samples Module &mdash; pyGenClean 1.7.0 documentation</title>
+    <title>Related Samples Module &mdash; pyGenClean 1.7.1 documentation</title>
     
     <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '1.7.0',
+        VERSION:     '1.7.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="pyGenClean 1.7.0 documentation" href="index.html" />
+    <link rel="top" title="pyGenClean 1.7.1 documentation" href="index.html" />
     <link rel="next" title="Ethnicity Module" href="check_ethnicity.html" />
     <link rel="prev" title="Heterozygous Haploid Module" href="remove_heterozygous_haploid.html" /> 
   </head>
@@ -49,7 +49,7 @@
         <li class="right" >
           <a href="remove_heterozygous_haploid.html" title="Heterozygous Haploid Module"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">pyGenClean 1.7.0 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">pyGenClean 1.7.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
 
@@ -62,11 +62,8 @@
 <li><a class="reference internal" href="#procedure">Procedure</a></li>
 <li><a class="reference internal" href="#output-files">Output Files</a></li>
 <li><a class="reference internal" href="#the-plots">The Plots</a></li>
-<li><a class="reference internal" href="#the-algorithm">The Algorithm</a><ul>
-<li><a class="reference internal" href="#module-pyGenClean.RelatedSamples.find_related_samples">pyGenClean.RelatedSamples.find_related_samples</a></li>
-<li><a class="reference internal" href="#module-pyGenClean.RelatedSamples.merge_related_samples">pyGenClean.RelatedSamples.merge_related_samples</a></li>
-</ul>
-</li>
+<li><a class="reference internal" href="#finding-outliers">Finding Outliers</a></li>
+<li><a class="reference internal" href="#the-algorithm">The Algorithm</a></li>
 </ul>
 </li>
 </ul>
@@ -109,7 +106,7 @@
 <span id="related-samples-label"></span><h1>Related Samples Module<a class="headerlink" href="#related-samples-module" title="Permalink to this headline">¶</a></h1>
 <p>The usage of the standalone module is shown below:</p>
 <div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> pyGenClean_find_related_samples --help
-<span class="go">usage: pyGenClean_find_related_samples [-h] --bfile FILE [--genome-only]</span>
+<span class="go">usage: pyGenClean_find_related_samples [-h] [-v] --bfile FILE [--genome-only]</span>
 <span class="go">                                       [--min-nb-snp INT]</span>
 <span class="go">                                       [--indep-pairwise STR STR STR]</span>
 <span class="go">                                       [--maf FLOAT] [--ibs2-ratio FLOAT]</span>
@@ -122,6 +119,7 @@
 
 <span class="go">optional arguments:</span>
 <span class="go">  -h, --help            show this help message and exit</span>
+<span class="go">  -v, --version         show program&#39;s version number and exit</span>
 
 <span class="go">Input File:</span>
 <span class="go">  --bfile FILE          The input file prefix (will find the plink binary</span>
@@ -204,8 +202,8 @@ each of the pruned markers. This data set will exist only if the option
 <li><code class="docutils literal"><span class="pre">ibs.genome</span></code>: PLINK&#8217;s results including IBS values.</li>
 </ul>
 </li>
-<li><p class="first">One file provided by the <a class="reference internal" href="#module-pyGenClean.RelatedSamples.find_related_samples" title="pyGenClean.RelatedSamples.find_related_samples"><code class="xref py py-mod docutils literal"><span class="pre">pyGenClean.RelatedSamples.find_related_samples</span></code></a> and
-three files provided by <a class="reference internal" href="#module-pyGenClean.RelatedSamples.merge_related_samples" title="pyGenClean.RelatedSamples.merge_related_samples"><code class="xref py py-mod docutils literal"><span class="pre">pyGenClean.RelatedSamples.merge_related_samples</span></code></a>:</p>
+<li><p class="first">One file provided by the <a class="reference internal" href="module_content/pyGenClean.RelatedSamples.html#module-pyGenClean.RelatedSamples.find_related_samples" title="pyGenClean.RelatedSamples.find_related_samples"><code class="xref py py-mod docutils literal"><span class="pre">pyGenClean.RelatedSamples.find_related_samples</span></code></a> and
+three files provided by <a class="reference internal" href="module_content/pyGenClean.RelatedSamples.html#module-pyGenClean.RelatedSamples.merge_related_samples" title="pyGenClean.RelatedSamples.merge_related_samples"><code class="xref py py-mod docutils literal"><span class="pre">pyGenClean.RelatedSamples.merge_related_samples</span></code></a>:</p>
 <ul>
 <li><dl class="first docutils">
 <dt><code class="docutils literal"><span class="pre">ibs.related_individuals</span></code>: a subset of the <code class="docutils literal"><span class="pre">ibs.genome.genome</span></code> file</dt>
@@ -214,7 +212,7 @@ are appended to the original <code class="docutils literal"><span class="pre">ib
 (the value that is considered to find related individuals), <code class="docutils literal"><span class="pre">status</span></code>
 (the type of relatedness [<em>e.g.</em> twins]) and <code class="docutils literal"><span class="pre">code</span></code> (a numerical code
 that represent the <code class="docutils literal"><span class="pre">status</span></code>). This file is provided by the
-<a class="reference internal" href="#module-pyGenClean.RelatedSamples.find_related_samples" title="pyGenClean.RelatedSamples.find_related_samples"><code class="xref py py-mod docutils literal"><span class="pre">pyGenClean.RelatedSamples.find_related_samples</span></code></a> module.</p>
+<a class="reference internal" href="module_content/pyGenClean.RelatedSamples.html#module-pyGenClean.RelatedSamples.find_related_samples" title="pyGenClean.RelatedSamples.find_related_samples"><code class="xref py py-mod docutils literal"><span class="pre">pyGenClean.RelatedSamples.find_related_samples</span></code></a> module.</p>
 </dd>
 </dl>
 </li>
@@ -261,7 +259,7 @@ Figure <a class="reference internal" href="#ibs-z2-figure"><span>Z2 in function 
 function of <span class="math">\(IBS2^*_{ratio}\)</span> (where each point represents a pair of
 related individuals. The color code comes from the different value of
 <span class="math">\(Z_0\)</span>, <span class="math">\(Z_1\)</span> and <span class="math">\(Z_2\)</span>, as described in the
-<a class="reference internal" href="#pyGenClean.RelatedSamples.find_related_samples.extractRelatedIndividuals" title="pyGenClean.RelatedSamples.find_related_samples.extractRelatedIndividuals"><code class="xref py py-func docutils literal"><span class="pre">pyGenClean.RelatedSamples.find_related_samples.extractRelatedIndividuals()</span></code></a>
+<a class="reference internal" href="module_content/pyGenClean.RelatedSamples.html#pyGenClean.RelatedSamples.find_related_samples.extractRelatedIndividuals" title="pyGenClean.RelatedSamples.find_related_samples.extractRelatedIndividuals"><code class="xref py py-func docutils literal"><span class="pre">pyGenClean.RelatedSamples.find_related_samples.extractRelatedIndividuals()</span></code></a>
 function. In this plot, there are four locations where related samples tend to
 accumulate (first degree relatives (full sibs), second degree relatives
 (half-sibs, grand-parent-child or uncle-nephew), parent-child and twins (or
@@ -280,622 +278,45 @@ pairs, where the location of the &#8220;clusters&#8221; is different.</p>
 <p class="caption"><span class="caption-text">Z2 in function of IBS2 ratio</span></p>
 </div>
 </div>
+<div class="section" id="finding-outliers">
+<h2>Finding Outliers<a class="headerlink" href="#finding-outliers" title="Permalink to this headline">¶</a></h2>
+<p>A standalone script was created in order to regroup related samples in
+different subset. The usage is as follow:</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> pyGenClean_merge_related_samples --help
+<span class="go">usage: pyGenClean_merge_related_samples [-h] [-v] --ibs-related FILE</span>
+<span class="go">                                        [--no-status] [--out FILE]</span>
+
+<span class="go">Merges related samples according to IBS.</span>
+
+<span class="go">optional arguments:</span>
+<span class="go">  -h, --help          show this help message and exit</span>
+<span class="go">  -v, --version       show program&#39;s version number and exit</span>
+
+<span class="go">Input File:</span>
+<span class="go">  --ibs-related FILE  The input file containing related individuals according</span>
+<span class="go">                      to IBS value.</span>
+
+<span class="go">Options:</span>
+<span class="go">  --no-status         The input file doesn&#39;t have a &#39;status&#39; column.</span>
+
+<span class="go">Output File:</span>
+<span class="go">  --out FILE          The prefix of the output files. [default: ibs_merged]</span>
+</pre></div>
+</div>
+<p>At the end of the analysis, two files are created. The file
+<code class="docutils literal"><span class="pre">*.chosen_related_individuals&quot;</span></code> contains a list of randomly selected samples
+according to their relatedness (to keep only on sample for a group of related
+samples). The file <code class="docutils literal"><span class="pre">*.discarded_related_individuals</span></code> contains a list of
+sample to exclude to only keep unrelated samples in a dataset.</p>
+</div>
 <div class="section" id="the-algorithm">
 <h2>The Algorithm<a class="headerlink" href="#the-algorithm" title="Permalink to this headline">¶</a></h2>
-<p>For more information about the actual algorithms and source codes (the
-<a class="reference internal" href="#module-pyGenClean.RelatedSamples.find_related_samples" title="pyGenClean.RelatedSamples.find_related_samples"><code class="xref py py-mod docutils literal"><span class="pre">pyGenClean.RelatedSamples.find_related_samples</span></code></a> and
-<a class="reference internal" href="#module-pyGenClean.RelatedSamples.merge_related_samples" title="pyGenClean.RelatedSamples.merge_related_samples"><code class="xref py py-mod docutils literal"><span class="pre">pyGenClean.RelatedSamples.merge_related_samples</span></code></a> modules), refer to
-the following sections.</p>
-<div class="section" id="module-pyGenClean.RelatedSamples.find_related_samples">
-<span id="pygenclean-relatedsamples-find-related-samples"></span><h3>pyGenClean.RelatedSamples.find_related_samples<a class="headerlink" href="#module-pyGenClean.RelatedSamples.find_related_samples" title="Permalink to this headline">¶</a></h3>
-<dl class="exception">
-<dt id="pyGenClean.RelatedSamples.find_related_samples.ProgramError">
-<em class="property">exception </em><code class="descclassname">pyGenClean.RelatedSamples.find_related_samples.</code><code class="descname">ProgramError</code><span class="sig-paren">(</span><em>msg</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/RelatedSamples/find_related_samples.html#ProgramError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.RelatedSamples.find_related_samples.ProgramError" title="Permalink to this definition">¶</a></dt>
-<dd><p>An <code class="xref py py-class docutils literal"><span class="pre">Exception</span></code> raised in case of a problem.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>msg</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the message to print to the user before exiting.</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="pyGenClean.RelatedSamples.find_related_samples.checkArgs">
-<code class="descclassname">pyGenClean.RelatedSamples.find_related_samples.</code><code class="descname">checkArgs</code><span class="sig-paren">(</span><em>args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/RelatedSamples/find_related_samples.html#checkArgs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.RelatedSamples.find_related_samples.checkArgs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Checks the arguments and options.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>args</strong> (<a class="reference external" href="http://docs.python.org/library/argparse.html#argparse.Namespace" title="(in Python v2.7)"><em>argparse.Namespace</em></a>) &#8211; an object containing the options of the program.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><code class="docutils literal"><span class="pre">True</span></code> if everything was OK.</td>
-</tr>
-</tbody>
-</table>
-<p>If there is a problem with an option, an exception is raised using the
-<a class="reference internal" href="#pyGenClean.RelatedSamples.find_related_samples.ProgramError" title="pyGenClean.RelatedSamples.find_related_samples.ProgramError"><code class="xref py py-class docutils literal"><span class="pre">ProgramError</span></code></a> class, a message is printed to the
-<code class="xref py py-class docutils literal"><span class="pre">sys.stderr</span></code> and the program exists with code 1.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="pyGenClean.RelatedSamples.find_related_samples.checkNumberOfSNP">
-<code class="descclassname">pyGenClean.RelatedSamples.find_related_samples.</code><code class="descname">checkNumberOfSNP</code><span class="sig-paren">(</span><em>fileName</em>, <em>minimumNumber</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/RelatedSamples/find_related_samples.html#checkNumberOfSNP"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.RelatedSamples.find_related_samples.checkNumberOfSNP" title="Permalink to this definition">¶</a></dt>
-<dd><p>Check there is enough SNPs in the file (with minimum).</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>fileName</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the name of the file.</li>
-<li><strong>minimumNumber</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; the minimum number of markers that needs to be in the
-file.</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><code class="docutils literal"><span class="pre">True</span></code> if there is enough markers in the file, <code class="docutils literal"><span class="pre">False</span></code>
-otherwise.</p>
-</td>
-</tr>
-</tbody>
-</table>
-<p>Reads the number of markers (number of lines) in a file.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="pyGenClean.RelatedSamples.find_related_samples.extractRelatedIndividuals">
-<code class="descclassname">pyGenClean.RelatedSamples.find_related_samples.</code><code class="descname">extractRelatedIndividuals</code><span class="sig-paren">(</span><em>fileName</em>, <em>outPrefix</em>, <em>ibs2_ratio_threshold</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/RelatedSamples/find_related_samples.html#extractRelatedIndividuals"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.RelatedSamples.find_related_samples.extractRelatedIndividuals" title="Permalink to this definition">¶</a></dt>
-<dd><p>Extract related individuals according IBS2* ratio.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>fileName</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the name of the input file.</li>
-<li><strong>outPrefix</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the prefix of the output files.</li>
-<li><strong>ibs2_ratio_threshold</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; the ibs2 ratio threshold (tells if sample pair
-is related or not).</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">a <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.recarray.html#numpy.recarray" title="(in NumPy v1.9)"><code class="xref py py-class docutils literal"><span class="pre">numpy.recarray</span></code></a> data set containing (for each
-related sample pair) the <code class="docutils literal"><span class="pre">ibs2</span> <span class="pre">ratio</span></code>, <code class="docutils literal"><span class="pre">Z1</span></code>, <code class="docutils literal"><span class="pre">Z2</span></code> and the
-type of relatedness.</p>
-</td>
-</tr>
-</tbody>
-</table>
-<p>Reads a <code class="docutils literal"><span class="pre">genome</span></code> file (provided by <a class="reference internal" href="#pyGenClean.RelatedSamples.find_related_samples.runGenome" title="pyGenClean.RelatedSamples.find_related_samples.runGenome"><code class="xref py py-func docutils literal"><span class="pre">runGenome()</span></code></a>) and extract
-related sample pairs according to <code class="docutils literal"><span class="pre">IBS2</span> <span class="pre">ratio</span></code>.</p>
-<p>A <code class="docutils literal"><span class="pre">genome</span></code> file contains at least the following information for each
-sample pair:</p>
+<p>For more information about the actual algorithms and source codes, refer to the
+following page.</p>
 <ul class="simple">
-<li><strong>FID1:</strong> the family ID of the first sample in the pair.</li>
-<li><strong>IID1:</strong> the individual ID of the first sample in the pair.</li>
-<li><strong>FID2:</strong> the family ID of the second sample in the pair.</li>
-<li><strong>IID2:</strong> the individual ID of the second sample in the pair.</li>
-<li><strong>Z0:</strong> the probability that <span class="math">\(IBD = 0\)</span>.</li>
-<li><strong>Z1:</strong> the probability that <span class="math">\(IBD = 1\)</span>.</li>
-<li><strong>Z2:</strong> the probability that <span class="math">\(IBD = 2\)</span>.</li>
-<li><strong>HOMHOM:</strong> the number of <span class="math">\(IBS = 0\)</span> SNP pairs used in <code class="docutils literal"><span class="pre">PPC</span></code> test.</li>
-<li><strong>HETHET:</strong> the number of <span class="math">\(IBS = 2\)</span> het/het SNP pairs in <code class="docutils literal"><span class="pre">PPC</span></code>
-test.</li>
+<li><a class="reference internal" href="module_content/pyGenClean.RelatedSamples.html#module-pyGenClean.RelatedSamples.find_related_samples" title="pyGenClean.RelatedSamples.find_related_samples"><code class="xref py py-mod docutils literal"><span class="pre">pyGenClean.RelatedSamples.find_related_samples</span></code></a></li>
+<li><a class="reference internal" href="module_content/pyGenClean.RelatedSamples.html#module-pyGenClean.RelatedSamples.merge_related_samples" title="pyGenClean.RelatedSamples.merge_related_samples"><code class="xref py py-mod docutils literal"><span class="pre">pyGenClean.RelatedSamples.merge_related_samples</span></code></a></li>
 </ul>
-<p>The <code class="docutils literal"><span class="pre">IBS2</span> <span class="pre">ratio</span></code> is computed using the following formula:</p>
-<div class="math">
-\[\textrm{IBS2 ratio} = \frac{\textrm{HETHET}}
-                             {\textrm{HOMHOM} + \textrm{HETHET}}\]</div>
-<p>If the <code class="docutils literal"><span class="pre">IBS2</span> <span class="pre">ratio</span></code> is higher than the threshold, the samples in the pair
-are related. The following values help in finding the relatedness of the
-sample pair.</p>
-<table border="1" class="docutils">
-<colgroup>
-<col width="57%" />
-<col width="34%" />
-<col width="9%" />
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Values</th>
-<th class="head">Relation</th>
-<th class="head">Code</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr class="row-even"><td><span class="math">\(0.17 \leq z_0 \leq 0.33\)</span> and
-<span class="math">\(0.40 \leq z_1 \leq 0.60\)</span></td>
-<td>Full-sibs</td>
-<td>1</td>
-</tr>
-<tr class="row-odd"><td><span class="math">\(0.40 \leq z_0 \leq 0.60\)</span> and
-<span class="math">\(0.40 \leq z_1 \leq 0.60\)</span></td>
-<td>Half-sibs or
-Grand-parent-Child or
-Uncle-Nephew</td>
-<td>2</td>
-</tr>
-<tr class="row-even"><td><span class="math">\(z_0 \leq 0.05\)</span> and
-<span class="math">\(z_1 \geq 0.95\)</span> and
-<span class="math">\(z_2 \leq 0.05\)</span></td>
-<td>Parent-Child</td>
-<td>3</td>
-</tr>
-<tr class="row-odd"><td><span class="math">\(z_0 \leq 0.05\)</span> and
-<span class="math">\(z_1 \leq 0.05\)</span> and
-<span class="math">\(z_2 \geq 0.95\)</span></td>
-<td>Twins or Duplicated
-samples</td>
-<td>4</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="pyGenClean.RelatedSamples.find_related_samples.extractSNPs">
-<code class="descclassname">pyGenClean.RelatedSamples.find_related_samples.</code><code class="descname">extractSNPs</code><span class="sig-paren">(</span><em>snpsToExtract</em>, <em>options</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/RelatedSamples/find_related_samples.html#extractSNPs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.RelatedSamples.find_related_samples.extractSNPs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Extract markers using Plink.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>snpsToExtract</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the name of the file containing markers to extract.</li>
-<li><strong>options</strong> (<a class="reference external" href="http://docs.python.org/library/argparse.html#argparse.Namespace" title="(in Python v2.7)"><em>argparse.Namespace</em></a>) &#8211; the options</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">the prefix of the output files.</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="pyGenClean.RelatedSamples.find_related_samples.main">
-<code class="descclassname">pyGenClean.RelatedSamples.find_related_samples.</code><code class="descname">main</code><span class="sig-paren">(</span><em>argString=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/RelatedSamples/find_related_samples.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.RelatedSamples.find_related_samples.main" title="Permalink to this definition">¶</a></dt>
-<dd><p>The main function of this module.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>argString</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; the options.</td>
-</tr>
-</tbody>
-</table>
-<p>Here are the steps for this function:</p>
-<ol class="arabic simple">
-<li>Prints the options.</li>
-<li>Uses Plink to extract markers according to LD
-(<a class="reference internal" href="#pyGenClean.RelatedSamples.find_related_samples.selectSNPsAccordingToLD" title="pyGenClean.RelatedSamples.find_related_samples.selectSNPsAccordingToLD"><code class="xref py py-func docutils literal"><span class="pre">selectSNPsAccordingToLD()</span></code></a>).</li>
-<li>Checks if there is enough markers after pruning
-(<a class="reference internal" href="#pyGenClean.RelatedSamples.find_related_samples.checkNumberOfSNP" title="pyGenClean.RelatedSamples.find_related_samples.checkNumberOfSNP"><code class="xref py py-func docutils literal"><span class="pre">checkNumberOfSNP()</span></code></a>). If not, then quits.</li>
-<li>Extract markers according to LD (<a class="reference internal" href="#pyGenClean.RelatedSamples.find_related_samples.extractSNPs" title="pyGenClean.RelatedSamples.find_related_samples.extractSNPs"><code class="xref py py-func docutils literal"><span class="pre">extractSNPs()</span></code></a>).</li>
-<li>Runs Plink with the <code class="docutils literal"><span class="pre">genome</span></code> option (<a class="reference internal" href="#pyGenClean.RelatedSamples.find_related_samples.runGenome" title="pyGenClean.RelatedSamples.find_related_samples.runGenome"><code class="xref py py-func docutils literal"><span class="pre">runGenome()</span></code></a>). Quits here
-if the user asker only for the <code class="docutils literal"><span class="pre">genome</span></code> file.</li>
-<li>Finds related individuals and gets values for plotting
-(<a class="reference internal" href="#pyGenClean.RelatedSamples.find_related_samples.extractRelatedIndividuals" title="pyGenClean.RelatedSamples.find_related_samples.extractRelatedIndividuals"><code class="xref py py-func docutils literal"><span class="pre">extractRelatedIndividuals()</span></code></a>).</li>
-<li>Plots <code class="docutils literal"><span class="pre">Z1</span></code> in function of <code class="docutils literal"><span class="pre">IBS2</span> <span class="pre">ratio</span></code> for related individuals
-(<a class="reference internal" href="#pyGenClean.RelatedSamples.find_related_samples.plot_related_data" title="pyGenClean.RelatedSamples.find_related_samples.plot_related_data"><code class="xref py py-func docutils literal"><span class="pre">plot_related_data()</span></code></a>).</li>
-<li>Plots <code class="docutils literal"><span class="pre">Z2</span></code> in function of <code class="docutils literal"><span class="pre">IBS2</span> <span class="pre">ratio</span></code> for related individuals
-(<a class="reference internal" href="#pyGenClean.RelatedSamples.find_related_samples.plot_related_data" title="pyGenClean.RelatedSamples.find_related_samples.plot_related_data"><code class="xref py py-func docutils literal"><span class="pre">plot_related_data()</span></code></a>).</li>
-</ol>
-</dd></dl>
-
-<dl class="function">
-<dt id="pyGenClean.RelatedSamples.find_related_samples.mergeGenomeLogFiles">
-<code class="descclassname">pyGenClean.RelatedSamples.find_related_samples.</code><code class="descname">mergeGenomeLogFiles</code><span class="sig-paren">(</span><em>outPrefix</em>, <em>nbSet</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/RelatedSamples/find_related_samples.html#mergeGenomeLogFiles"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.RelatedSamples.find_related_samples.mergeGenomeLogFiles" title="Permalink to this definition">¶</a></dt>
-<dd><p>Merge genome and log files together.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>outPrefix</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the prefix of the output files.</li>
-<li><strong>nbSet</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; The number of set of files to merge together.</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">the name of the output file (the <code class="docutils literal"><span class="pre">genome</span></code> file).</p>
-</td>
-</tr>
-</tbody>
-</table>
-<p>After merging, the files are deleted to save space.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="pyGenClean.RelatedSamples.find_related_samples.parseArgs">
-<code class="descclassname">pyGenClean.RelatedSamples.find_related_samples.</code><code class="descname">parseArgs</code><span class="sig-paren">(</span><em>argString=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/RelatedSamples/find_related_samples.html#parseArgs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.RelatedSamples.find_related_samples.parseArgs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Parses the command line options and arguments.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>argString</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; the options.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A <a class="reference external" href="http://docs.python.org/library/argparse.html#argparse.Namespace" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">argparse.Namespace</span></code></a> object created by
-the <a class="reference external" href="http://docs.python.org/library/argparse.html#module-argparse" title="(in Python v2.7)"><code class="xref py py-mod docutils literal"><span class="pre">argparse</span></code></a> module. It contains the values of the
-different options.</td>
-</tr>
-</tbody>
-</table>
-<table border="1" class="docutils">
-<colgroup>
-<col width="37%" />
-<col width="8%" />
-<col width="55%" />
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Options       Type</th>
-<th class="head">&nbsp;</th>
-<th class="head">Description</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr class="row-even"><td><code class="docutils literal"><span class="pre">--bfile</span></code></td>
-<td>string</td>
-<td>The input file prefix (Plink binary
-file).</td>
-</tr>
-<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--genome-only</span></code></td>
-<td>bool</td>
-<td>Only create the genome file.</td>
-</tr>
-<tr class="row-even"><td><code class="docutils literal"><span class="pre">--min-nb-snp</span></code></td>
-<td>int</td>
-<td>The minimum number of markers needed to
-compute IBS values.</td>
-</tr>
-<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--indep-pairwise</span></code></td>
-<td>string</td>
-<td>Three numbers: window size, window shift
-and the r2 threshold.</td>
-</tr>
-<tr class="row-even"><td><code class="docutils literal"><span class="pre">--maf</span></code></td>
-<td>string</td>
-<td>Restrict to SNPs with MAF &gt;= threshold.</td>
-</tr>
-<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--ibs2-ratio</span></code></td>
-<td>float</td>
-<td>The initial IBS2* ratio (the minimum
-value to show in the plot.</td>
-</tr>
-<tr class="row-even"><td><code class="docutils literal"><span class="pre">--sge</span></code></td>
-<td>bool</td>
-<td>Use SGE for parallelization.</td>
-</tr>
-<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--sge-walltime</span></code></td>
-<td>int</td>
-<td>The time limit (for clusters).</td>
-</tr>
-<tr class="row-even"><td><code class="docutils literal"><span class="pre">--sge-nodes</span></code></td>
-<td>int
-int</td>
-<td>Two INTs (number of nodes and number of
-processor per nodes).</td>
-</tr>
-<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--line-per-file-for-sge</span></code></td>
-<td>int</td>
-<td>The number of line per file for SGE task
-array.</td>
-</tr>
-<tr class="row-even"><td><code class="docutils literal"><span class="pre">--out</span></code></td>
-<td>string</td>
-<td>The prefix of the output files.</td>
-</tr>
-</tbody>
-</table>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">No option check is done here (except for the one automatically done by
-argparse). Those need to be done elsewhere (see <a class="reference internal" href="#pyGenClean.RelatedSamples.find_related_samples.checkArgs" title="pyGenClean.RelatedSamples.find_related_samples.checkArgs"><code class="xref py py-func docutils literal"><span class="pre">checkArgs()</span></code></a>).</p>
-</div>
-</dd></dl>
-
-<dl class="function">
-<dt id="pyGenClean.RelatedSamples.find_related_samples.plot_related_data">
-<code class="descclassname">pyGenClean.RelatedSamples.find_related_samples.</code><code class="descname">plot_related_data</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>code</em>, <em>ylabel</em>, <em>fileName</em>, <em>options</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/RelatedSamples/find_related_samples.html#plot_related_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.RelatedSamples.find_related_samples.plot_related_data" title="Permalink to this definition">¶</a></dt>
-<dd><p>Plot Z1 and Z2 in function of IBS2* ratio.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>x</strong> (<em>numpy.array of floats</em>) &#8211; the x axis of the plot (<code class="docutils literal"><span class="pre">IBS2</span> <span class="pre">ratio</span></code>).</li>
-<li><strong>y</strong> (<em>numpy.array of floats</em>) &#8211; the y axis of the plot (either <code class="docutils literal"><span class="pre">z1</span></code> or <code class="docutils literal"><span class="pre">z2</span></code>).</li>
-<li><strong>code</strong> (<a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.array.html#numpy.array" title="(in NumPy v1.9)"><em>numpy.array</em></a>) &#8211; the code of the relatedness of each sample pair.</li>
-<li><strong>ylabel</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the label of the y axis (either <code class="docutils literal"><span class="pre">z1</span></code> or <code class="docutils literal"><span class="pre">z2</span></code>).</li>
-<li><strong>fileName</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the name of the output file.</li>
-<li><strong>options</strong> (<a class="reference external" href="http://docs.python.org/library/argparse.html#argparse.Namespace" title="(in Python v2.7)"><em>argparse.Namespace</em></a>) &#8211; the options.</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-<p>There are four different relation codes (represented by 4 different color
-in the plots:</p>
-<table border="1" class="docutils">
-<colgroup>
-<col width="6%" />
-<col width="76%" />
-<col width="18%" />
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Code</th>
-<th class="head">Relation</th>
-<th class="head">Color</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr class="row-even"><td>1</td>
-<td>Full-sbis</td>
-<td><code class="docutils literal"><span class="pre">#CC0000</span></code></td>
-</tr>
-<tr class="row-odd"><td>2</td>
-<td>Half-sibs or Grand-parent-Child or Uncle-Nephew</td>
-<td><code class="docutils literal"><span class="pre">#0099CC</span></code></td>
-</tr>
-<tr class="row-even"><td>3</td>
-<td>Parent-Child</td>
-<td><code class="docutils literal"><span class="pre">#FF8800</span></code></td>
-</tr>
-<tr class="row-odd"><td>4</td>
-<td>Twins or Duplicated samples</td>
-<td><code class="docutils literal"><span class="pre">#9933CC</span></code></td>
-</tr>
-</tbody>
-</table>
-<p>Sample pairs with unknown relation are plotted using <code class="docutils literal"><span class="pre">#669900</span></code> as color.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="pyGenClean.RelatedSamples.find_related_samples.runCommand">
-<code class="descclassname">pyGenClean.RelatedSamples.find_related_samples.</code><code class="descname">runCommand</code><span class="sig-paren">(</span><em>command</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/RelatedSamples/find_related_samples.html#runCommand"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.RelatedSamples.find_related_samples.runCommand" title="Permalink to this definition">¶</a></dt>
-<dd><p>Run a command.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>command</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; the command to run.</td>
-</tr>
-</tbody>
-</table>
-<p>Tries to run a command. If it fails, raise a <a class="reference internal" href="#pyGenClean.RelatedSamples.find_related_samples.ProgramError" title="pyGenClean.RelatedSamples.find_related_samples.ProgramError"><code class="xref py py-class docutils literal"><span class="pre">ProgramError</span></code></a>. This
-function uses the <a class="reference external" href="http://docs.python.org/library/subprocess.html#module-subprocess" title="(in Python v2.7)"><code class="xref py py-mod docutils literal"><span class="pre">subprocess</span></code></a> module.</p>
-<div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">The variable <code class="docutils literal"><span class="pre">command</span></code> should be a list of strings (no other type).</p>
-</div>
-</dd></dl>
-
-<dl class="function">
-<dt id="pyGenClean.RelatedSamples.find_related_samples.runGenome">
-<code class="descclassname">pyGenClean.RelatedSamples.find_related_samples.</code><code class="descname">runGenome</code><span class="sig-paren">(</span><em>bfile</em>, <em>options</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/RelatedSamples/find_related_samples.html#runGenome"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.RelatedSamples.find_related_samples.runGenome" title="Permalink to this definition">¶</a></dt>
-<dd><p>Runs the genome command from plink.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>bfile</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the input file prefix.</li>
-<li><strong>options</strong> (<a class="reference external" href="http://docs.python.org/library/argparse.html#argparse.Namespace" title="(in Python v2.7)"><em>argparse.Namespace</em></a>) &#8211; the options.</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">the name of the <code class="docutils literal"><span class="pre">genome</span></code> file.</p>
-</td>
-</tr>
-</tbody>
-</table>
-<p>Runs Plink with the <code class="docutils literal"><span class="pre">genome</span></code> option. If the user asks for SGE
-(<code class="docutils literal"><span class="pre">options.sge</span></code> is True), a frequency file is first created by plink.
-Then, the input files are split in <code class="docutils literal"><span class="pre">options.line_per_file_for_sge</span></code> and
-Plink is called (using the <code class="docutils literal"><span class="pre">genome</span></code> option) on the cluster using SGE
-(<a class="reference internal" href="#pyGenClean.RelatedSamples.find_related_samples.runGenomeSGE" title="pyGenClean.RelatedSamples.find_related_samples.runGenomeSGE"><code class="xref py py-func docutils literal"><span class="pre">runGenomeSGE()</span></code></a>). After the analysis, Plink&#8217;s output files and
-logs are merged using <a class="reference internal" href="#pyGenClean.RelatedSamples.find_related_samples.mergeGenomeLogFiles" title="pyGenClean.RelatedSamples.find_related_samples.mergeGenomeLogFiles"><code class="xref py py-func docutils literal"><span class="pre">mergeGenomeLogFiles()</span></code></a>.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="pyGenClean.RelatedSamples.find_related_samples.runGenomeSGE">
-<code class="descclassname">pyGenClean.RelatedSamples.find_related_samples.</code><code class="descname">runGenomeSGE</code><span class="sig-paren">(</span><em>bfile</em>, <em>freqFile</em>, <em>nbJob</em>, <em>outPrefix</em>, <em>options</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/RelatedSamples/find_related_samples.html#runGenomeSGE"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.RelatedSamples.find_related_samples.runGenomeSGE" title="Permalink to this definition">¶</a></dt>
-<dd><p>Runs the genome command from plink, on SGE.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>bfile</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the prefix of the input file.</li>
-<li><strong>freqFile</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the name of the frequency file (from Plink).</li>
-<li><strong>nbJob</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; the number of jobs to launch.</li>
-<li><strong>outPrefix</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the prefix of all the output files.</li>
-<li><strong>options</strong> (<a class="reference external" href="http://docs.python.org/library/argparse.html#argparse.Namespace" title="(in Python v2.7)"><em>argparse.Namespace</em></a>) &#8211; the options.</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-<p>Runs Plink with the <code class="docutils literal"><span class="pre">genome</span></code> options on the cluster (using SGE).</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="pyGenClean.RelatedSamples.find_related_samples.safe_main">
-<code class="descclassname">pyGenClean.RelatedSamples.find_related_samples.</code><code class="descname">safe_main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/RelatedSamples/find_related_samples.html#safe_main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.RelatedSamples.find_related_samples.safe_main" title="Permalink to this definition">¶</a></dt>
-<dd><p>A safe version of the main function (that catches ProgramError).</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="pyGenClean.RelatedSamples.find_related_samples.selectSNPsAccordingToLD">
-<code class="descclassname">pyGenClean.RelatedSamples.find_related_samples.</code><code class="descname">selectSNPsAccordingToLD</code><span class="sig-paren">(</span><em>options</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/RelatedSamples/find_related_samples.html#selectSNPsAccordingToLD"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.RelatedSamples.find_related_samples.selectSNPsAccordingToLD" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute LD using Plink.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>options</strong> (<a class="reference external" href="http://docs.python.org/library/argparse.html#argparse.Namespace" title="(in Python v2.7)"><em>argparse.Namespace</em></a>) &#8211; the options.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">the name of the output file (from Plink).</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="pyGenClean.RelatedSamples.find_related_samples.splitFile">
-<code class="descclassname">pyGenClean.RelatedSamples.find_related_samples.</code><code class="descname">splitFile</code><span class="sig-paren">(</span><em>inputFileName</em>, <em>linePerFile</em>, <em>outPrefix</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/RelatedSamples/find_related_samples.html#splitFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.RelatedSamples.find_related_samples.splitFile" title="Permalink to this definition">¶</a></dt>
-<dd><p>Split a file.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>inputFileName</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the name of the input file.</li>
-<li><strong>linePerFile</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; the number of line per file (after splitting).</li>
-<li><strong>outPrefix</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the prefix of the output files.</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">the number of created temporary files.</p>
-</td>
-</tr>
-</tbody>
-</table>
-<p>Splits a file (<code class="docutils literal"><span class="pre">inputFileName</span></code> into multiple files containing at most
-<code class="docutils literal"><span class="pre">linePerFile</span></code> lines.</p>
-</dd></dl>
-
-</div>
-<div class="section" id="module-pyGenClean.RelatedSamples.merge_related_samples">
-<span id="pygenclean-relatedsamples-merge-related-samples"></span><h3>pyGenClean.RelatedSamples.merge_related_samples<a class="headerlink" href="#module-pyGenClean.RelatedSamples.merge_related_samples" title="Permalink to this headline">¶</a></h3>
-<dl class="exception">
-<dt id="pyGenClean.RelatedSamples.merge_related_samples.ProgramError">
-<em class="property">exception </em><code class="descclassname">pyGenClean.RelatedSamples.merge_related_samples.</code><code class="descname">ProgramError</code><span class="sig-paren">(</span><em>msg</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/RelatedSamples/merge_related_samples.html#ProgramError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.RelatedSamples.merge_related_samples.ProgramError" title="Permalink to this definition">¶</a></dt>
-<dd><p>An <code class="xref py py-class docutils literal"><span class="pre">Exception</span></code> raised in case of a problem.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>msg</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the message to print to the user before exiting.</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="pyGenClean.RelatedSamples.merge_related_samples.checkArgs">
-<code class="descclassname">pyGenClean.RelatedSamples.merge_related_samples.</code><code class="descname">checkArgs</code><span class="sig-paren">(</span><em>args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/RelatedSamples/merge_related_samples.html#checkArgs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.RelatedSamples.merge_related_samples.checkArgs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Checks the arguments and options.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>args</strong> (<a class="reference external" href="http://docs.python.org/library/argparse.html#argparse.Namespace" title="(in Python v2.7)"><em>argparse.Namespace</em></a>) &#8211; a an object containing the options of the program.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><code class="docutils literal"><span class="pre">True</span></code> if everything was OK.</td>
-</tr>
-</tbody>
-</table>
-<p>If there is a problem with an option, an exception is raised using the
-<a class="reference internal" href="#pyGenClean.RelatedSamples.merge_related_samples.ProgramError" title="pyGenClean.RelatedSamples.merge_related_samples.ProgramError"><code class="xref py py-class docutils literal"><span class="pre">ProgramError</span></code></a> class, a message is printed to the
-<code class="xref py py-class docutils literal"><span class="pre">sys.stderr</span></code> and the program exists with code 1.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="pyGenClean.RelatedSamples.merge_related_samples.main">
-<code class="descclassname">pyGenClean.RelatedSamples.merge_related_samples.</code><code class="descname">main</code><span class="sig-paren">(</span><em>argString=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/RelatedSamples/merge_related_samples.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.RelatedSamples.merge_related_samples.main" title="Permalink to this definition">¶</a></dt>
-<dd><p>The main function of the module.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>argString</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; the options.</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="pyGenClean.RelatedSamples.merge_related_samples.merge_related_samples">
-<code class="descclassname">pyGenClean.RelatedSamples.merge_related_samples.</code><code class="descname">merge_related_samples</code><span class="sig-paren">(</span><em>file_name</em>, <em>out_prefix</em>, <em>no_status</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/RelatedSamples/merge_related_samples.html#merge_related_samples"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.RelatedSamples.merge_related_samples.merge_related_samples" title="Permalink to this definition">¶</a></dt>
-<dd><p>Merge related samples.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>file_name</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the name of the input file.</li>
-<li><strong>out_prefix</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the prefix of the output files.</li>
-<li><strong>no_status</strong> (<em>boolean</em>) &#8211; is there a status column in the file?</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-<p>In the output file, there are a pair of samples per line. Hence, one can
-find related individuals by merging overlapping pairs.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="pyGenClean.RelatedSamples.merge_related_samples.parseArgs">
-<code class="descclassname">pyGenClean.RelatedSamples.merge_related_samples.</code><code class="descname">parseArgs</code><span class="sig-paren">(</span><em>argString=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/RelatedSamples/merge_related_samples.html#parseArgs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.RelatedSamples.merge_related_samples.parseArgs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Parses the command line options and arguments.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>argString</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; the options.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A <a class="reference external" href="http://docs.python.org/library/argparse.html#argparse.Namespace" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">argparse.Namespace</span></code></a> object created by the
-<a class="reference external" href="http://docs.python.org/library/argparse.html#module-argparse" title="(in Python v2.7)"><code class="xref py py-mod docutils literal"><span class="pre">argparse</span></code></a> module. It contains the values of the
-different options.</td>
-</tr>
-</tbody>
-</table>
-<table border="1" class="docutils">
-<colgroup>
-<col width="24%" />
-<col width="8%" />
-<col width="68%" />
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Options</th>
-<th class="head">Type</th>
-<th class="head">Description</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr class="row-even"><td><code class="docutils literal"><span class="pre">--ibs-related</span></code></td>
-<td>string</td>
-<td>The input file containing related individuals
-according to IBS value.</td>
-</tr>
-<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--no-status</span></code></td>
-<td>bool</td>
-<td>The input file doesn&#8217;t have a <code class="docutils literal"><span class="pre">status</span></code> column.</td>
-</tr>
-<tr class="row-even"><td><code class="docutils literal"><span class="pre">--out</span></code></td>
-<td>string</td>
-<td>The prefix of the output files.</td>
-</tr>
-</tbody>
-</table>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">No option check is done here (except for the one automatically done by
-argparse). Those need to be done elsewhere (see <a class="reference internal" href="#pyGenClean.RelatedSamples.merge_related_samples.checkArgs" title="pyGenClean.RelatedSamples.merge_related_samples.checkArgs"><code class="xref py py-func docutils literal"><span class="pre">checkArgs()</span></code></a>).</p>
-</div>
-</dd></dl>
-
-<dl class="function">
-<dt id="pyGenClean.RelatedSamples.merge_related_samples.safe_main">
-<code class="descclassname">pyGenClean.RelatedSamples.merge_related_samples.</code><code class="descname">safe_main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyGenClean/RelatedSamples/merge_related_samples.html#safe_main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.RelatedSamples.merge_related_samples.safe_main" title="Permalink to this definition">¶</a></dt>
-<dd><p>A safe version of the main function (that catches ProgramError).</p>
-</dd></dl>
-
-</div>
 </div>
 </div>
 
@@ -920,7 +341,7 @@ argparse). Those need to be done elsewhere (see <a class="reference internal" hr
         <li class="right" >
           <a href="remove_heterozygous_haploid.html" title="Heterozygous Haploid Module"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">pyGenClean 1.7.0 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">pyGenClean 1.7.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">

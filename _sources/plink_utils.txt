@@ -1,3 +1,5 @@
+.. _plink_utils_label:
+
 Plink Utils
 ===========
 
@@ -20,12 +22,14 @@ one. Here is the usage of the standalone script:
 .. code-block:: console
 
     $ pyGenClean_compare_bim --help
-    usage: pyGenClean_compare_bim [-h] --before FILE --after FILE [--out FILE]
+    usage: pyGenClean_compare_bim [-h] [-v] --before FILE --after FILE
+                                  [--out FILE]
 
-    Compare BIM file
+    Compares BIM file.
 
     optional arguments:
       -h, --help     show this help message and exit
+      -v, --version  show program's version number and exit
 
     Input File:
       --before FILE  The name of the bim FILE before modification.
@@ -33,6 +37,7 @@ one. Here is the usage of the standalone script:
 
     Output File:
       --out FILE     The prefix of the output files. [default: snp_removed]
+
 
 Subsetting a dataset
 --------------------
@@ -45,14 +50,15 @@ following standalone script is available for the user:
 .. code-block:: console
 
     $ pyGenClean_subset_data --help
-    usage: pyGenClean_subset_data [-h] --ifile FILE [--is-bfile] [--is-tfile]
+    usage: pyGenClean_subset_data [-h] [-v] --ifile FILE [--is-bfile] [--is-tfile]
                                   [--is-file] [--exclude FILE] [--extract FILE]
                                   [--remove FILE] [--keep FILE] [--out FILE]
 
-    Subset genotype data using Plink.
+    Subsets genotype data using Plink.
 
     optional arguments:
       -h, --help      show this help message and exit
+      -v, --version   show program's version number and exit
 
     Input File:
       --ifile FILE    The input file prefix. The format will be specified by --is-
@@ -71,7 +77,8 @@ following standalone script is available for the user:
                       data set.
 
     Output File:
-      --out FILE      The prefix of the output files. [default: subset]    
+      --out FILE      The prefix of the output files. [default: subset]
+
 
 The standalone script works with the three most used PLINK's format: pedfile,
 transposed and binary pedfiles. The ``--is-bfile``, ``--is-tfile`` and
@@ -81,25 +88,9 @@ file. The output file format will be the same as the input one.
 The Algorithm
 -------------
 
-For more information about the actual algorithms and source codes (the
-:py:mod:`pyGenClean.PlinkUtils`, :py:mod:`pyGenClean.PlinkUtils.compare_bim`
-and :py:mod:`pyGenClean.PlinkUtils.subset_data` modules), refer to the
-following sections.
+For more information about the actual algorithms and source codes, refer to the
+following pages.
 
-pyGenClean.PlinkUtils
-.....................
-
-.. automodule:: pyGenClean.PlinkUtils
-    :members:
-
-pyGenClean.PlinkUtils.compare_bim
-.................................
-
-.. automodule:: pyGenClean.PlinkUtils.compare_bim
-    :members:
-
-pyGenClean.PlinkUtils.subset_data
-.................................
-
-.. automodule:: pyGenClean.PlinkUtils.subset_data
-    :members:
+* :py:mod:`pyGenClean.PlinkUtils`
+* :py:mod:`pyGenClean.PlinkUtils.compare_bim`
+* :py:mod:`pyGenClean.PlinkUtils.subset_data`

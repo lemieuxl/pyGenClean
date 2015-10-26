@@ -1,0 +1,198 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Automatic Report &mdash; pyGenClean 1.7.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.7.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="pyGenClean 1.7.1 documentation" href="index.html" />
+    <link rel="next" title="Main pyGenClean pipeline" href="module_content/modules.html" />
+    <link rel="prev" title="How to Run the Pipeline" href="how_to_run.html" /> 
+  </head>
+  <body role="document">
+
+<div style="background-color: white; text-align: left; padding: 10px 10px 15px 15px">
+<a href="index.html"><img src="_static/logo.png" border="0" alt="py4sci"/></a>
+</div>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="module_content/modules.html" title="Main pyGenClean pipeline"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="how_to_run.html" title="How to Run the Pipeline"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">pyGenClean 1.7.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Automatic Report</a><ul>
+<li><a class="reference internal" href="#report-merging">Report merging</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="how_to_run.html"
+                        title="previous chapter">How to Run the Pipeline</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="module_content/modules.html"
+                        title="next chapter">Main pyGenClean pipeline</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/automatic_report.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="automatic-report">
+<span id="id1"></span><h1>Automatic Report<a class="headerlink" href="#automatic-report" title="Permalink to this headline">¶</a></h1>
+<p>The <a class="reference internal" href="module_content/pyGenClean.html#module-pyGenClean" title="pyGenClean"><code class="xref py py-mod docutils literal"><span class="pre">pyGenClean</span></code></a> module creates an automatic report using <em>LaTeX</em>. Each
+of the output directory will contain a final report (named
+<code class="docutils literal"><span class="pre">automatic_report.tex</span></code>). The report, once compiled into the PDF format,
+includes various quality metrics. To compile the report, perform the following
+commands:</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> pdflatex automatic_report.tex
+<span class="gp">$</span> pdflatex automatic_report.tex
+<span class="gp">$</span> pdflatex automatic_report.tex
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Executing the command three times insure that the links in the automatic
+report are properly formed.</p>
+</div>
+<div class="section" id="report-merging">
+<h2>Report merging<a class="headerlink" href="#report-merging" title="Permalink to this headline">¶</a></h2>
+<p>On a typical data clean up pipeline, multiple directories will be created (one
+for each of the parts of the pipeline. A script is provided to merge all those
+reports (one per <code class="docutils literal"><span class="pre">data_clean_up.YYYY-MM-DD_HH.MM.SS</span></code> directory) into a single
+report. Here is the usage of this script:</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> pyGenClean_merge_reports --help
+<span class="go">usage: pyGenClean_merge_reports [-h] --qc-dir DIR [DIR ...]</span>
+<span class="go">                                [--report-title TITLE]</span>
+<span class="go">                                [--report-author AUTHOR]</span>
+<span class="go">                                [--report-number NUMBER]</span>
+<span class="go">                                [--report-background BACKGROUND]</span>
+<span class="go">                                [--out-dir FILE]</span>
+
+<span class="go">Merges automatic reports from other pyGenClean runs.</span>
+
+<span class="go">optional arguments:</span>
+<span class="go">  -h, --help            show this help message and exit</span>
+
+<span class="go">Input:</span>
+<span class="go">  --qc-dir DIR [DIR ...]</span>
+<span class="go">                        A list of directory containing pyGenClean runs.</span>
+
+<span class="go">Report Options:</span>
+<span class="go">  --report-title TITLE  The report title. [default: Genetic Data Clean Up]</span>
+<span class="go">  --report-author AUTHOR</span>
+<span class="go">                        The current project number. [default: pyGenClean]</span>
+<span class="go">  --report-number NUMBER</span>
+<span class="go">                        The current project author. [default: Simple Project]</span>
+<span class="go">  --report-background BACKGROUND</span>
+<span class="go">                        Text of file containing the background section of the</span>
+<span class="go">                        report.</span>
+
+<span class="go">Output Directory:</span>
+<span class="go">  --out-dir FILE        The name of the directory that will contain the final</span>
+<span class="go">                        report. [default: pyGenClean_report]</span>
+</pre></div>
+</div>
+<p>To execute the report merging procedure, perform the following command:</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> pyGenClean_merge_reports --qc-dir data_clean_up.*
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">It is possible to change the title, the author, the number or the
+background of the automatic report by using the <code class="docutils literal"><span class="pre">--report-title</span></code>,
+<code class="docutils literal"><span class="pre">--report-author</span></code>, <code class="docutils literal"><span class="pre">--report-number</span></code> or <code class="docutils literal"><span class="pre">--report-background</span></code>
+options, respectively.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="module_content/modules.html" title="Main pyGenClean pipeline"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="how_to_run.html" title="How to Run the Pipeline"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">pyGenClean 1.7.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2012, Louis-Philippe Lemieux Perreault.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+    </div>
+  </body>
+</html>

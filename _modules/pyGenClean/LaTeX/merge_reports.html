@@ -1,0 +1,542 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>pyGenClean.LaTeX.merge_reports &mdash; pyGenClean 1.7.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '1.7.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="pyGenClean 1.7.1 documentation" href="../../../index.html" />
+    <link rel="up" title="pyGenClean" href="../../pyGenClean.html" /> 
+  </head>
+  <body role="document">
+
+<div style="background-color: white; text-align: left; padding: 10px 10px 15px 15px">
+<a href="../../../index.html"><img src="../../../_static/logo.png" border="0" alt="py4sci"/></a>
+</div>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">pyGenClean 1.7.1 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &raquo;</li>
+          <li class="nav-item nav-item-2"><a href="../../pyGenClean.html" accesskey="U">pyGenClean</a> &raquo;</li> 
+      </ul>
+    </div>
+
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for pyGenClean.LaTeX.merge_reports</h1><div class="highlight"><pre>
+<span class="c">#!/usr/bin/env python2.7</span>
+
+<span class="c"># This file is part of pyGenClean.</span>
+<span class="c">#</span>
+<span class="c"># pyGenClean is free software: you can redistribute it and/or modify it under</span>
+<span class="c"># the terms of the GNU General Public License as published by the Free Software</span>
+<span class="c"># Foundation, either version 3 of the License, or (at your option) any later</span>
+<span class="c"># version.</span>
+<span class="c">#</span>
+<span class="c"># pyGenClean is distributed in the hope that it will be useful, but WITHOUT ANY</span>
+<span class="c"># WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR</span>
+<span class="c"># A PARTICULAR PURPOSE.  See the GNU General Public License for more details.</span>
+<span class="c">#</span>
+<span class="c"># You should have received a copy of the GNU General Public License along with</span>
+<span class="c"># pyGenClean.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
+
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">from</span> <span class="nn">glob</span> <span class="kn">import</span> <span class="n">glob</span>
+
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">auto_report</span>
+<span class="kn">from</span> <span class="nn">..PlinkUtils</span> <span class="kn">import</span> <span class="n">get_plink_version</span>
+
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&quot;merge_reports&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../../module_content/pyGenClean.LaTeX.html#pyGenClean.LaTeX.merge_reports.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">argString</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;The main function of this module.</span>
+
+<span class="sd">    :param argString: the options.</span>
+
+<span class="sd">    :type argString: list of strings</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c"># Getting and checking the options</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">parseArgs</span><span class="p">(</span><span class="n">argString</span><span class="p">)</span>
+    <span class="n">checkArgs</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Options used:&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">vars</span><span class="p">(</span><span class="n">args</span><span class="p">)</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;  --{} {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;_&quot;</span><span class="p">,</span> <span class="s">&quot;-&quot;</span><span class="p">),</span> <span class="n">value</span><span class="p">))</span>
+
+    <span class="c"># Checking if the output directory exists, creating it otherwise</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">out_dir</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">out_dir</span><span class="p">)</span>
+
+    <span class="c"># Ordering the directories according to their name</span>
+    <span class="n">qc_dir</span> <span class="o">=</span> <span class="n">order_qc_dir</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">qc_dir</span><span class="p">)</span>
+
+    <span class="c"># First, we want to merge the required files</span>
+    <span class="n">merge_required_files</span><span class="p">(</span><span class="n">qc_dir</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">out_dir</span><span class="p">)</span>
+
+    <span class="c"># Then, we want to copy the initial_files file</span>
+    <span class="n">copy_initial_files</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">qc_dir</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s">&quot;initial_files.txt&quot;</span><span class="p">),</span>
+                       <span class="n">args</span><span class="o">.</span><span class="n">out_dir</span><span class="p">)</span>
+
+    <span class="c"># Get the final number of markers and samples</span>
+    <span class="n">final_nb_markers</span><span class="p">,</span> <span class="n">final_nb_samples</span> <span class="o">=</span> <span class="n">get_final_numbers</span><span class="p">(</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">qc_dir</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="s">&quot;final_files.txt&quot;</span><span class="p">),</span>
+        <span class="n">args</span><span class="o">.</span><span class="n">out_dir</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c"># Getting the steps summary file (TeX)</span>
+    <span class="n">summary_files</span> <span class="o">=</span> <span class="n">get_summary_files</span><span class="p">(</span><span class="n">qc_dir</span><span class="p">)</span>
+
+    <span class="c"># Generating the report</span>
+    <span class="n">generate_report</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">out_dir</span><span class="p">,</span> <span class="n">summary_files</span><span class="p">,</span> <span class="n">final_nb_markers</span><span class="p">,</span>
+                    <span class="n">final_nb_samples</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="order_qc_dir"><a class="viewcode-back" href="../../../module_content/pyGenClean.LaTeX.html#pyGenClean.LaTeX.merge_reports.order_qc_dir">[docs]</a><span class="k">def</span> <span class="nf">order_qc_dir</span><span class="p">(</span><span class="n">dirnames</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Order the QC directory names according to their date.</span>
+
+<span class="sd">    :param dirnames: the list of directories to merge data from.</span>
+
+<span class="sd">    :type dirnames: list</span>
+
+<span class="sd">    :returns: the sorted list of directories</span>
+<span class="sd">    :rtype: list</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span>
+        <span class="n">dirnames</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">dn</span><span class="p">:</span> <span class="n">time</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">dn</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s">&quot;/&quot;</span><span class="p">))[</span><span class="mi">14</span><span class="p">:],</span>
+            <span class="s">&quot;%Y-%m-</span><span class="si">%d</span><span class="s">_%H.%M.%S&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="merge_required_files"><a class="viewcode-back" href="../../../module_content/pyGenClean.LaTeX.html#pyGenClean.LaTeX.merge_reports.merge_required_files">[docs]</a><span class="k">def</span> <span class="nf">merge_required_files</span><span class="p">(</span><span class="n">dirnames</span><span class="p">,</span> <span class="n">out_dir</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Merges the required files from each of the directories.</span>
+
+<span class="sd">    :param dirnames: the list of directories to merge data from.</span>
+<span class="sd">    :param out_dir: the name of the output directory.</span>
+
+<span class="sd">    :type dirnames: list</span>
+<span class="sd">    :type out_dir: str</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c"># The list of files to merge</span>
+    <span class="n">fn_to_merge</span> <span class="o">=</span> <span class="p">(</span><span class="s">&quot;steps_summary.tex&quot;</span><span class="p">,</span> <span class="s">&quot;excluded_markers.txt&quot;</span><span class="p">,</span>
+                   <span class="s">&quot;excluded_samples.txt&quot;</span><span class="p">)</span>
+
+    <span class="c"># Merging the files</span>
+    <span class="k">for</span> <span class="n">fn</span> <span class="ow">in</span> <span class="n">fn_to_merge</span><span class="p">:</span>
+        <span class="n">o_fn</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="n">fn</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">o_fn</span><span class="p">,</span> <span class="s">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">o_file</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">dn</span> <span class="ow">in</span> <span class="n">dirnames</span><span class="p">:</span>
+                <span class="n">i_fn</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dn</span><span class="p">,</span> <span class="n">fn</span><span class="p">)</span>
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">i_fn</span><span class="p">,</span> <span class="s">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">i_file</span><span class="p">:</span>
+                    <span class="n">o_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">i_file</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+
+    <span class="c"># Merging the result summary file</span>
+    <span class="n">o_fn</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="s">&quot;results_summary.txt&quot;</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">o_fn</span><span class="p">,</span> <span class="s">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">o_file</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">dn</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">dirnames</span><span class="p">):</span>
+            <span class="n">i_fn</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dn</span><span class="p">,</span> <span class="s">&quot;results_summary.txt&quot;</span><span class="p">)</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">i_fn</span><span class="p">,</span> <span class="s">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">i_file</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">i</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="c"># We skip the first 4 lines (file descriptions)</span>
+                    <span class="p">[</span><span class="n">i_file</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">)]</span>
+                <span class="n">o_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">i_file</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+
+    <span class="c"># Merging the graphic paths file</span>
+    <span class="n">graphic_paths</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">dn</span> <span class="ow">in</span> <span class="n">dirnames</span><span class="p">:</span>
+        <span class="n">fn</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dn</span><span class="p">,</span> <span class="s">&quot;graphic_paths.txt&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">fn</span><span class="p">):</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="s">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">i_file</span><span class="p">:</span>
+                <span class="n">graphic_paths</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
+                    <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dn</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">i_file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span>
+                <span class="p">})</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">graphic_paths</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="s">&quot;graphic_paths.txt&quot;</span><span class="p">),</span> <span class="s">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">o_file</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">graphic_paths</span><span class="p">):</span>
+                <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">o_file</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">out_dir</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="copy_initial_files"><a class="viewcode-back" href="../../../module_content/pyGenClean.LaTeX.html#pyGenClean.LaTeX.merge_reports.copy_initial_files">[docs]</a><span class="k">def</span> <span class="nf">copy_initial_files</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">out_dir</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Copy the initial_files file to the final directory.</span>
+
+<span class="sd">    :param filename: the name of the file.</span>
+<span class="sd">    :param out_dir: the name of the output directory</span>
+
+<span class="sd">    :type dirname: str</span>
+<span class="sd">    :type out_dir: str</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">out_dir</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="get_final_numbers"><a class="viewcode-back" href="../../../module_content/pyGenClean.LaTeX.html#pyGenClean.LaTeX.merge_reports.get_final_numbers">[docs]</a><span class="k">def</span> <span class="nf">get_final_numbers</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">out_dir</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Copy the final_files file and get the number of markers and samples.</span>
+
+<span class="sd">    :param filename: the name of the file.</span>
+<span class="sd">    :param out_dir: the output directory.</span>
+
+<span class="sd">    :type filename: str</span>
+<span class="sd">    :type out_dir: str</span>
+
+<span class="sd">    :returns: the final number of markers and samples</span>
+<span class="sd">    :rtype: tuple</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c"># Copying the file</span>
+    <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">out_dir</span><span class="p">)</span>
+
+    <span class="c"># Reading the number of markers and samples</span>
+    <span class="n">nb_samples</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">nb_markers</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">i_file</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">i_file</span><span class="p">:</span>
+            <span class="n">row</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\r\n</span><span class="s">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\t</span><span class="s">&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">path</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">ext</span> <span class="ow">in</span> <span class="p">{</span><span class="s">&quot;.bim&quot;</span><span class="p">,</span> <span class="s">&quot;.tped&quot;</span><span class="p">,</span> <span class="s">&quot;.map&quot;</span><span class="p">}:</span>
+                <span class="n">nb_markers</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="n">ext</span> <span class="ow">in</span> <span class="p">{</span><span class="s">&quot;.fam&quot;</span><span class="p">,</span> <span class="s">&quot;.ped&quot;</span><span class="p">,</span> <span class="s">&quot;.tfam&quot;</span><span class="p">}:</span>
+                <span class="n">nb_samples</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="k">assert</span> <span class="n">nb_samples</span>
+    <span class="k">assert</span> <span class="n">nb_markers</span>
+
+    <span class="k">return</span> <span class="n">nb_markers</span><span class="p">,</span> <span class="n">nb_samples</span>
+
+</div>
+<div class="viewcode-block" id="get_summary_files"><a class="viewcode-back" href="../../../module_content/pyGenClean.LaTeX.html#pyGenClean.LaTeX.merge_reports.get_summary_files">[docs]</a><span class="k">def</span> <span class="nf">get_summary_files</span><span class="p">(</span><span class="n">dirnames</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Gets the TeX summary files for each test.</span>
+
+<span class="sd">    :param dirnames: the list of directories to merge data from.</span>
+
+<span class="sd">    :type dirnames: list</span>
+
+<span class="sd">    :returns: a list of summary file names.</span>
+<span class="sd">    :rtype: list</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c"># A useful regular expression to get step number in the current directory</span>
+    <span class="n">step_nb_re</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s">r&quot;^([0-9]+)_\S+&quot;</span><span class="p">)</span>
+
+    <span class="c"># The final list of summary files</span>
+    <span class="n">final_summary_files</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c"># For each of the directory</span>
+    <span class="k">for</span> <span class="n">dn</span> <span class="ow">in</span> <span class="n">dirnames</span><span class="p">:</span>
+        <span class="c"># Getting the step directories</span>
+        <span class="n">step_dir</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">n</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">dn</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dn</span><span class="p">,</span> <span class="n">n</span><span class="p">))</span> <span class="ow">and</span> <span class="n">step_nb_re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+        <span class="p">]</span>
+
+        <span class="c"># Sorting the step directories</span>
+        <span class="n">step_dir</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">step_nb_re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)))</span>
+
+        <span class="c"># Getting the name of the summary file for each of the step directory</span>
+        <span class="n">step_summary_files</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">glob</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dn</span><span class="p">,</span> <span class="n">sn</span><span class="p">,</span> <span class="s">&quot;*.summary.tex&quot;</span><span class="p">))</span> <span class="k">for</span> <span class="n">sn</span> <span class="ow">in</span> <span class="n">step_dir</span>
+        <span class="p">]</span>
+
+        <span class="c"># Checking we have only one summary file</span>
+        <span class="k">for</span> <span class="n">summary_file</span> <span class="ow">in</span> <span class="n">step_summary_files</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">summary_file</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="s">&quot;{}: multiple summary files&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dn</span><span class="p">,</span> <span class="n">sn</span><span class="p">),</span>
+                <span class="p">))</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">summary_file</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="s">&quot;{}: missing summary file&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="n">os</span><span class="o">.</span><span class="n">apth</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dn</span><span class="p">,</span> <span class="n">sn</span><span class="p">),</span>
+                <span class="p">))</span>
+
+        <span class="n">final_summary_files</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">i</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">step_summary_files</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span> <span class="k">for</span> <span class="n">fn</span> <span class="ow">in</span> <span class="n">final_summary_files</span><span class="p">]</span>
+
+</div>
+<div class="viewcode-block" id="generate_report"><a class="viewcode-back" href="../../../module_content/pyGenClean.LaTeX.html#pyGenClean.LaTeX.merge_reports.generate_report">[docs]</a><span class="k">def</span> <span class="nf">generate_report</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="n">latex_summaries</span><span class="p">,</span> <span class="n">nb_markers</span><span class="p">,</span> <span class="n">nb_samples</span><span class="p">,</span> <span class="n">options</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Generates the report.</span>
+
+<span class="sd">    :param out_dir: the output directory.</span>
+<span class="sd">    :param latex_summaries: the list of LaTeX summaries.</span>
+<span class="sd">    :param nb_markers: the final number of markers.</span>
+<span class="sd">    :param nb_samples: the final number of samples.</span>
+<span class="sd">    :param options: the list of options.</span>
+
+<span class="sd">    :type out_dir: str</span>
+<span class="sd">    :type latex_summaries: list</span>
+<span class="sd">    :type nb_markers: str</span>
+<span class="sd">    :type nb_samples: str</span>
+<span class="sd">    :type options: argparse.Namespace</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c"># Getting the graphic paths file</span>
+    <span class="n">graphic_paths_fn</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="s">&quot;graphic_paths.txt&quot;</span><span class="p">)):</span>
+        <span class="n">graphic_paths_fn</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="s">&quot;graphic_paths.txt&quot;</span><span class="p">)</span>
+
+    <span class="c"># We create the automatic report</span>
+    <span class="n">report_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="s">&quot;merged_report.tex&quot;</span><span class="p">)</span>
+    <span class="n">auto_report</span><span class="o">.</span><span class="n">create_report</span><span class="p">(</span>
+        <span class="n">out_dir</span><span class="p">,</span>
+        <span class="n">report_name</span><span class="p">,</span>
+        <span class="n">project_name</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">report_number</span><span class="p">,</span>
+        <span class="n">steps_filename</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="s">&quot;steps_summary.tex&quot;</span><span class="p">),</span>
+        <span class="n">summaries</span><span class="o">=</span><span class="n">latex_summaries</span><span class="p">,</span>
+        <span class="n">background</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">report_background</span><span class="p">,</span>
+        <span class="n">summary_fn</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="s">&quot;results_summary.txt&quot;</span><span class="p">),</span>
+        <span class="n">report_title</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">report_title</span><span class="p">,</span>
+        <span class="n">report_author</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">report_author</span><span class="p">,</span>
+        <span class="n">initial_files</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="s">&quot;initial_files.txt&quot;</span><span class="p">),</span>
+        <span class="n">final_files</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="s">&quot;final_files.txt&quot;</span><span class="p">),</span>
+        <span class="n">final_nb_markers</span><span class="o">=</span><span class="n">nb_markers</span><span class="p">,</span>
+        <span class="n">final_nb_samples</span><span class="o">=</span><span class="n">nb_samples</span><span class="p">,</span>
+        <span class="n">plink_version</span><span class="o">=</span><span class="n">get_plink_version</span><span class="p">(),</span>
+        <span class="n">graphic_paths_fn</span><span class="o">=</span><span class="n">graphic_paths_fn</span><span class="p">,</span>
+    <span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="checkArgs"><a class="viewcode-back" href="../../../module_content/pyGenClean.LaTeX.html#pyGenClean.LaTeX.merge_reports.checkArgs">[docs]</a><span class="k">def</span> <span class="nf">checkArgs</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Checks the arguments and options.</span>
+
+<span class="sd">    :param args: an object containing the options of the program.</span>
+
+<span class="sd">    :type args: argparse.Namespace</span>
+
+<span class="sd">    :returns: ``True`` if everything was OK.</span>
+
+<span class="sd">    If there is a problem with an option, an exception is raised using the</span>
+<span class="sd">    :py:class:`ProgramError` class, a message is printed to the</span>
+<span class="sd">    :class:`sys.stderr` and the program exists with code 1.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c"># For all input directories</span>
+    <span class="k">for</span> <span class="n">dn</span> <span class="ow">in</span> <span class="n">args</span><span class="o">.</span><span class="n">qc_dir</span><span class="p">:</span>
+        <span class="c"># Checking that all the directories exists</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">dn</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="s">&quot;{}: no such directory&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dn</span><span class="p">))</span>
+
+        <span class="c"># Checking that this is a directory created from pyGenClean</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">dn</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s">&quot;/&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&quot;data_clean_up.&quot;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="s">&quot;{}: not a pyGenClean directory&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dn</span><span class="p">))</span>
+
+        <span class="c"># Checking that each directory contains the required files</span>
+        <span class="k">for</span> <span class="n">fn</span> <span class="ow">in</span> <span class="p">(</span><span class="s">&quot;excluded_markers.txt&quot;</span><span class="p">,</span> <span class="s">&quot;excluded_samples.txt&quot;</span><span class="p">,</span>
+                   <span class="s">&quot;results_summary.txt&quot;</span><span class="p">,</span> <span class="s">&quot;steps_summary.tex&quot;</span><span class="p">,</span>
+                   <span class="s">&quot;initial_files.txt&quot;</span><span class="p">,</span> <span class="s">&quot;final_files.txt&quot;</span><span class="p">):</span>
+            <span class="n">required_fn</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dn</span><span class="p">,</span> <span class="n">fn</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">required_fn</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="s">&quot;{}: missing required &quot;</span>
+                                   <span class="s">&quot;file&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">required_fn</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="bp">True</span>
+
+</div>
+<div class="viewcode-block" id="parseArgs"><a class="viewcode-back" href="../../../module_content/pyGenClean.LaTeX.html#pyGenClean.LaTeX.merge_reports.parseArgs">[docs]</a><span class="k">def</span> <span class="nf">parseArgs</span><span class="p">(</span><span class="n">argString</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>  <span class="c"># pragma: no cover</span>
+    <span class="sd">&quot;&quot;&quot;Parses the command line options and arguments.</span>
+
+<span class="sd">    :param argString: the options.</span>
+
+<span class="sd">    :type argString: list of strings</span>
+
+<span class="sd">    :returns: A :py:class:`argparse.Namespace` object created by the</span>
+<span class="sd">              :py:mod:`argparse` module. It contains the values of the</span>
+<span class="sd">              different options.</span>
+
+<span class="sd">    ======================= ====== ============================================</span>
+<span class="sd">             Options         Type                    Description</span>
+<span class="sd">    ======================= ====== ============================================</span>
+<span class="sd">    ``--report-author``     String The current project number.</span>
+<span class="sd">    ``--report-number``     String The current project author.</span>
+<span class="sd">    ``--report-background`` String Text of file containing the background</span>
+<span class="sd">                                   section of the report.</span>
+<span class="sd">    ======================= ====== ============================================</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">        No option check is done here (except for the one automatically done by</span>
+<span class="sd">        argparse). Those need to be done elsewhere (see :py:func:`checkArgs`).</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">if</span> <span class="n">argString</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">(</span><span class="n">argString</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">args</span>
+
+</div>
+<div class="viewcode-block" id="add_custom_options"><a class="viewcode-back" href="../../../module_content/pyGenClean.LaTeX.html#pyGenClean.LaTeX.merge_reports.add_custom_options">[docs]</a><span class="k">def</span> <span class="nf">add_custom_options</span><span class="p">(</span><span class="n">parser</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Adds custom options to a parser.</span>
+
+<span class="sd">    :param parser: the parser to which to add options.</span>
+
+<span class="sd">    :type parser: argparse.ArgumentParser</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;--report-title&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s">&quot;TITLE&quot;</span><span class="p">,</span>
+                        <span class="n">default</span><span class="o">=</span><span class="s">&quot;Genetic Data Clean Up&quot;</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s">&quot;The report title. [default: </span><span class="si">%(default)s</span><span class="s">]&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;--report-author&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s">&quot;AUTHOR&quot;</span><span class="p">,</span>
+                        <span class="n">default</span><span class="o">=</span><span class="s">&quot;pyGenClean&quot;</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s">&quot;The current project number. &quot;</span>
+                             <span class="s">&quot;[default: </span><span class="si">%(default)s</span><span class="s">]&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;--report-number&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s">&quot;NUMBER&quot;</span><span class="p">,</span>
+                        <span class="n">default</span><span class="o">=</span><span class="s">&quot;Simple Project&quot;</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s">&quot;The current project author. &quot;</span>
+                             <span class="s">&quot;[default: </span><span class="si">%(default)s</span><span class="s">]&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;--report-background&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s">&quot;BACKGROUND&quot;</span><span class="p">,</span>
+                        <span class="n">default</span><span class="o">=</span><span class="s">&quot;The aim of this project is to perform data &quot;</span>
+                                <span class="s">&quot;QC prior to genetic analysis.&quot;</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s">&quot;Text of file containing the background section &quot;</span>
+                             <span class="s">&quot;of the report.&quot;</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="ProgramError"><a class="viewcode-back" href="../../../module_content/pyGenClean.LaTeX.html#pyGenClean.LaTeX.merge_reports.ProgramError">[docs]</a><span class="k">class</span> <span class="nc">ProgramError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;An :py:class:`Exception` raised in case of a problem.</span>
+
+<span class="sd">    :param msg: the message to print to the user before exiting.</span>
+
+<span class="sd">    :type msg: str</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Construction of the :py:class:`ProgramError` class.</span>
+
+<span class="sd">        :param msg: the message to print to the user</span>
+
+<span class="sd">        :type msg: str</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span>
+
+
+<span class="c"># The parser object</span></div>
+<span class="n">pretty_name</span> <span class="o">=</span> <span class="s">&quot;Merge reports&quot;</span>
+<span class="n">desc</span> <span class="o">=</span> <span class="s">&quot;&quot;&quot;Merges automatic reports from other pyGenClean runs.&quot;&quot;&quot;</span>
+<span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="n">desc</span><span class="p">)</span>
+
+<span class="c"># The INPUT files</span>
+<span class="n">group</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s">&quot;Input&quot;</span><span class="p">)</span>
+<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;--qc-dir&quot;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s">&quot;+&quot;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s">&quot;DIR&quot;</span><span class="p">,</span>
+                   <span class="n">help</span><span class="o">=</span><span class="s">&quot;A list of directory containing pyGenClean runs.&quot;</span><span class="p">)</span>
+
+<span class="c"># The options</span>
+<span class="n">group</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s">&quot;Report Options&quot;</span><span class="p">)</span>
+<span class="n">add_custom_options</span><span class="p">(</span><span class="n">group</span><span class="p">)</span>
+
+<span class="c"># The OUTPUT files</span>
+<span class="n">group</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s">&quot;Output Directory&quot;</span><span class="p">)</span>
+<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;--out-dir&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s">&quot;FILE&quot;</span><span class="p">,</span>
+                   <span class="n">default</span><span class="o">=</span><span class="s">&quot;pyGenClean_report&quot;</span><span class="p">,</span>
+                   <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s">&quot;The name of the directory that will contain the &quot;</span>
+                         <span class="s">&quot;final report. [default: </span><span class="si">%(default)s</span><span class="s">]&quot;</span><span class="p">))</span>
+
+
+<div class="viewcode-block" id="safe_main"><a class="viewcode-back" href="../../../module_content/pyGenClean.LaTeX.html#pyGenClean.LaTeX.merge_reports.safe_main">[docs]</a><span class="k">def</span> <span class="nf">safe_main</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;A safe version of the main function (that catches ProgramError).&quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">main</span><span class="p">()</span>
+    <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Cancelled by user&quot;</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">ProgramError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">message</span><span class="p">)</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">message</span><span class="p">)</span>
+
+</div>
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">safe_main</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">pyGenClean 1.7.1 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &raquo;</li>
+          <li class="nav-item nav-item-2"><a href="../../pyGenClean.html" >pyGenClean</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2012, Louis-Philippe Lemieux Perreault.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+    </div>
+  </body>
+</html>

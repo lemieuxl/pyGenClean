@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>pyGenClean.Misc.compare_gold_standard &mdash; pyGenClean 1.7.0 documentation</title>
+    <title>pyGenClean.Misc.compare_gold_standard &mdash; pyGenClean 1.7.1 documentation</title>
     
     <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '1.7.0',
+        VERSION:     '1.7.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,8 +24,8 @@
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="pyGenClean 1.7.0 documentation" href="../../../index.html" />
-    <link rel="up" title="Module code" href="../../index.html" /> 
+    <link rel="top" title="pyGenClean 1.7.1 documentation" href="../../../index.html" />
+    <link rel="up" title="pyGenClean" href="../../pyGenClean.html" /> 
   </head>
   <body role="document">
 
@@ -42,8 +42,9 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">pyGenClean 1.7.0 documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../../index.html">pyGenClean 1.7.1 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &raquo;</li>
+          <li class="nav-item nav-item-2"><a href="../../pyGenClean.html" accesskey="U">pyGenClean</a> &raquo;</li> 
       </ul>
     </div>
 
@@ -97,6 +98,7 @@
 <span class="kn">import</span> <span class="nn">argparse</span>
 <span class="kn">import</span> <span class="nn">subprocess</span>
 
+<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">__version__</span>
 <span class="kn">from</span> <span class="nn">..PlinkUtils</span> <span class="kn">import</span> <span class="n">createRowFromPlinkSpacedOutput</span>
 <span class="kn">from</span> <span class="nn">..DupSNPs.duplicated_snps</span> <span class="kn">import</span> <span class="n">flipGenotype</span>
 
@@ -104,7 +106,7 @@
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&quot;compare_gold_standard&quot;</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">argString</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../../module_content/pyGenClean.Misc.html#pyGenClean.Misc.compare_gold_standard.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">argString</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="c"># Getting and checking the options</span>
     <span class="n">args</span> <span class="o">=</span> <span class="n">parseArgs</span><span class="p">(</span><span class="n">argString</span><span class="p">)</span>
     <span class="n">checkArgs</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
@@ -212,8 +214,8 @@
                            <span class="n">args</span><span class="o">.</span><span class="n">out</span> <span class="o">+</span> <span class="s">&quot;.source_panel.cleaned&quot;</span><span class="p">,</span> <span class="n">same_samples</span><span class="p">,</span>
                            <span class="n">args</span><span class="o">.</span><span class="n">sge</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">out</span><span class="p">)</span>
 
-
-<div class="viewcode-block" id="read_source_manifest"><a class="viewcode-back" href="../../../compare_gold_standard.html#pyGenClean.Misc.compare_gold_standard.read_source_manifest">[docs]</a><span class="k">def</span> <span class="nf">read_source_manifest</span><span class="p">(</span><span class="n">file_name</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="read_source_manifest"><a class="viewcode-back" href="../../../module_content/pyGenClean.Misc.html#pyGenClean.Misc.compare_gold_standard.read_source_manifest">[docs]</a><span class="k">def</span> <span class="nf">read_source_manifest</span><span class="p">(</span><span class="n">file_name</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Reads Illumina manifest.&quot;&quot;&quot;</span>
     <span class="n">alleles</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="n">open_function</span> <span class="o">=</span> <span class="nb">open</span>
@@ -244,7 +246,7 @@
     <span class="k">return</span> <span class="n">alleles</span>
 
 </div>
-<div class="viewcode-block" id="read_source_alleles"><a class="viewcode-back" href="../../../compare_gold_standard.html#pyGenClean.Misc.compare_gold_standard.read_source_alleles">[docs]</a><span class="k">def</span> <span class="nf">read_source_alleles</span><span class="p">(</span><span class="n">file_name</span><span class="p">):</span>
+<div class="viewcode-block" id="read_source_alleles"><a class="viewcode-back" href="../../../module_content/pyGenClean.Misc.html#pyGenClean.Misc.compare_gold_standard.read_source_alleles">[docs]</a><span class="k">def</span> <span class="nf">read_source_alleles</span><span class="p">(</span><span class="n">file_name</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Reads an allele file.&quot;&quot;&quot;</span>
     <span class="n">alleles</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="n">open_function</span> <span class="o">=</span> <span class="nb">open</span>
@@ -260,7 +262,7 @@
     <span class="k">return</span> <span class="n">alleles</span>
 
 </div>
-<div class="viewcode-block" id="illumina_to_snp"><a class="viewcode-back" href="../../../compare_gold_standard.html#pyGenClean.Misc.compare_gold_standard.illumina_to_snp">[docs]</a><span class="k">def</span> <span class="nf">illumina_to_snp</span><span class="p">(</span><span class="n">strand</span><span class="p">,</span> <span class="n">snp</span><span class="p">):</span>
+<div class="viewcode-block" id="illumina_to_snp"><a class="viewcode-back" href="../../../module_content/pyGenClean.Misc.html#pyGenClean.Misc.compare_gold_standard.illumina_to_snp">[docs]</a><span class="k">def</span> <span class="nf">illumina_to_snp</span><span class="p">(</span><span class="n">strand</span><span class="p">,</span> <span class="n">snp</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Return the TOP strand of the marker.</span>
 
 <span class="sd">    Function that takes a strand (TOP or BOT) and a SNP (e.g. : [A/C]) and</span>
@@ -317,7 +319,7 @@
     <span class="k">return</span> <span class="n">illumina_correspondance</span><span class="p">[</span><span class="n">snp</span><span class="p">][</span><span class="n">strand</span><span class="p">]</span>
 
 </div>
-<div class="viewcode-block" id="compute_statistics"><a class="viewcode-back" href="../../../compare_gold_standard.html#pyGenClean.Misc.compare_gold_standard.compute_statistics">[docs]</a><span class="k">def</span> <span class="nf">compute_statistics</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="n">gold_prefix</span><span class="p">,</span> <span class="n">source_prefix</span><span class="p">,</span> <span class="n">same_samples</span><span class="p">,</span>
+<div class="viewcode-block" id="compute_statistics"><a class="viewcode-back" href="../../../module_content/pyGenClean.Misc.html#pyGenClean.Misc.compare_gold_standard.compute_statistics">[docs]</a><span class="k">def</span> <span class="nf">compute_statistics</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="n">gold_prefix</span><span class="p">,</span> <span class="n">source_prefix</span><span class="p">,</span> <span class="n">same_samples</span><span class="p">,</span>
                        <span class="n">use_sge</span><span class="p">,</span> <span class="n">final_out_prefix</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Compute the statistics.&quot;&quot;&quot;</span>
     <span class="c"># Now, creating a temporary directory</span>
@@ -473,7 +475,7 @@
         <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">,</span> <span class="s">&quot;   - Can&#39;t delete {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">out_dir</span><span class="p">)</span>
 
 </div>
-<div class="viewcode-block" id="check_fam_for_samples"><a class="viewcode-back" href="../../../compare_gold_standard.html#pyGenClean.Misc.compare_gold_standard.check_fam_for_samples">[docs]</a><span class="k">def</span> <span class="nf">check_fam_for_samples</span><span class="p">(</span><span class="n">required_samples</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">gold</span><span class="p">):</span>
+<div class="viewcode-block" id="check_fam_for_samples"><a class="viewcode-back" href="../../../module_content/pyGenClean.Misc.html#pyGenClean.Misc.compare_gold_standard.check_fam_for_samples">[docs]</a><span class="k">def</span> <span class="nf">check_fam_for_samples</span><span class="p">(</span><span class="n">required_samples</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">gold</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Check fam files for required_samples.&quot;&quot;&quot;</span>
     <span class="c"># Checking the source panel</span>
     <span class="n">source_samples</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
@@ -505,7 +507,7 @@
         <span class="k">return</span> <span class="bp">True</span>
 
 </div>
-<div class="viewcode-block" id="read_same_samples_file"><a class="viewcode-back" href="../../../compare_gold_standard.html#pyGenClean.Misc.compare_gold_standard.read_same_samples_file">[docs]</a><span class="k">def</span> <span class="nf">read_same_samples_file</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">out_prefix</span><span class="p">):</span>
+<div class="viewcode-block" id="read_same_samples_file"><a class="viewcode-back" href="../../../module_content/pyGenClean.Misc.html#pyGenClean.Misc.compare_gold_standard.read_same_samples_file">[docs]</a><span class="k">def</span> <span class="nf">read_same_samples_file</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">out_prefix</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Reads a file containing same samples.&quot;&quot;&quot;</span>
     <span class="c"># The same samples</span>
     <span class="n">same_samples</span> <span class="o">=</span> <span class="p">[]</span>
@@ -546,14 +548,14 @@
     <span class="k">return</span> <span class="n">same_samples</span>
 
 </div>
-<div class="viewcode-block" id="flipSNPs"><a class="viewcode-back" href="../../../compare_gold_standard.html#pyGenClean.Misc.compare_gold_standard.flipSNPs">[docs]</a><span class="k">def</span> <span class="nf">flipSNPs</span><span class="p">(</span><span class="n">inPrefix</span><span class="p">,</span> <span class="n">outPrefix</span><span class="p">,</span> <span class="n">flipFileName</span><span class="p">):</span>
+<div class="viewcode-block" id="flipSNPs"><a class="viewcode-back" href="../../../module_content/pyGenClean.Misc.html#pyGenClean.Misc.compare_gold_standard.flipSNPs">[docs]</a><span class="k">def</span> <span class="nf">flipSNPs</span><span class="p">(</span><span class="n">inPrefix</span><span class="p">,</span> <span class="n">outPrefix</span><span class="p">,</span> <span class="n">flipFileName</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Flip SNPs using Plink.&quot;&quot;&quot;</span>
     <span class="n">plinkCommand</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;plink&quot;</span><span class="p">,</span> <span class="s">&quot;--noweb&quot;</span><span class="p">,</span> <span class="s">&quot;--bfile&quot;</span><span class="p">,</span> <span class="n">inPrefix</span><span class="p">,</span> <span class="s">&quot;--flip&quot;</span><span class="p">,</span>
                     <span class="n">flipFileName</span><span class="p">,</span> <span class="s">&quot;--make-bed&quot;</span><span class="p">,</span> <span class="s">&quot;--out&quot;</span><span class="p">,</span> <span class="n">outPrefix</span><span class="p">]</span>
     <span class="n">runCommand</span><span class="p">(</span><span class="n">plinkCommand</span><span class="p">)</span>
 
 </div>
-<div class="viewcode-block" id="exclude_SNPs_samples"><a class="viewcode-back" href="../../../compare_gold_standard.html#pyGenClean.Misc.compare_gold_standard.exclude_SNPs_samples">[docs]</a><span class="k">def</span> <span class="nf">exclude_SNPs_samples</span><span class="p">(</span><span class="n">inPrefix</span><span class="p">,</span> <span class="n">outPrefix</span><span class="p">,</span> <span class="n">exclusionSNP</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+<div class="viewcode-block" id="exclude_SNPs_samples"><a class="viewcode-back" href="../../../module_content/pyGenClean.Misc.html#pyGenClean.Misc.compare_gold_standard.exclude_SNPs_samples">[docs]</a><span class="k">def</span> <span class="nf">exclude_SNPs_samples</span><span class="p">(</span><span class="n">inPrefix</span><span class="p">,</span> <span class="n">outPrefix</span><span class="p">,</span> <span class="n">exclusionSNP</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
                          <span class="n">keepSample</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">transpose</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Exclude some SNPs and keep some samples using Plink.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">exclusionSNP</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">keepSample</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">):</span>
@@ -577,7 +579,7 @@
     <span class="n">runCommand</span><span class="p">(</span><span class="n">plinkCommand</span><span class="p">)</span>
 
 </div>
-<div class="viewcode-block" id="renameSNPs"><a class="viewcode-back" href="../../../compare_gold_standard.html#pyGenClean.Misc.compare_gold_standard.renameSNPs">[docs]</a><span class="k">def</span> <span class="nf">renameSNPs</span><span class="p">(</span><span class="n">inPrefix</span><span class="p">,</span> <span class="n">updateFileName</span><span class="p">,</span> <span class="n">outPrefix</span><span class="p">):</span>
+<div class="viewcode-block" id="renameSNPs"><a class="viewcode-back" href="../../../module_content/pyGenClean.Misc.html#pyGenClean.Misc.compare_gold_standard.renameSNPs">[docs]</a><span class="k">def</span> <span class="nf">renameSNPs</span><span class="p">(</span><span class="n">inPrefix</span><span class="p">,</span> <span class="n">updateFileName</span><span class="p">,</span> <span class="n">outPrefix</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Updates the name of the SNPs using Plink.&quot;&quot;&quot;</span>
     <span class="n">plinkCommand</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;plink&quot;</span><span class="p">,</span> <span class="s">&quot;--noweb&quot;</span><span class="p">,</span> <span class="s">&quot;--bfile&quot;</span><span class="p">,</span> <span class="n">inPrefix</span><span class="p">,</span> <span class="s">&quot;--update-map&quot;</span><span class="p">,</span>
                     <span class="n">updateFileName</span><span class="p">,</span> <span class="s">&quot;--update-name&quot;</span><span class="p">,</span> <span class="s">&quot;--make-bed&quot;</span><span class="p">,</span> <span class="s">&quot;--out&quot;</span><span class="p">,</span>
@@ -585,7 +587,7 @@
     <span class="n">runCommand</span><span class="p">(</span><span class="n">plinkCommand</span><span class="p">)</span>
 
 </div>
-<div class="viewcode-block" id="findFlippedSNPs"><a class="viewcode-back" href="../../../compare_gold_standard.html#pyGenClean.Misc.compare_gold_standard.findFlippedSNPs">[docs]</a><span class="k">def</span> <span class="nf">findFlippedSNPs</span><span class="p">(</span><span class="n">goldFrqFile1</span><span class="p">,</span> <span class="n">sourceAlleles</span><span class="p">,</span> <span class="n">outPrefix</span><span class="p">):</span>
+<div class="viewcode-block" id="findFlippedSNPs"><a class="viewcode-back" href="../../../module_content/pyGenClean.Misc.html#pyGenClean.Misc.compare_gold_standard.findFlippedSNPs">[docs]</a><span class="k">def</span> <span class="nf">findFlippedSNPs</span><span class="p">(</span><span class="n">goldFrqFile1</span><span class="p">,</span> <span class="n">sourceAlleles</span><span class="p">,</span> <span class="n">outPrefix</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Find flipped SNPs and flip them in the data1.&quot;&quot;&quot;</span>
     <span class="n">goldAlleles</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">goldFrqFile1</span><span class="p">,</span> <span class="s">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">inputFile</span><span class="p">:</span>
@@ -697,14 +699,14 @@
     <span class="n">toRemoveOutputFileExplanation</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
 </div>
-<div class="viewcode-block" id="computeFrequency"><a class="viewcode-back" href="../../../compare_gold_standard.html#pyGenClean.Misc.compare_gold_standard.computeFrequency">[docs]</a><span class="k">def</span> <span class="nf">computeFrequency</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span> <span class="n">outPrefix</span><span class="p">):</span>
+<div class="viewcode-block" id="computeFrequency"><a class="viewcode-back" href="../../../module_content/pyGenClean.Misc.html#pyGenClean.Misc.compare_gold_standard.computeFrequency">[docs]</a><span class="k">def</span> <span class="nf">computeFrequency</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span> <span class="n">outPrefix</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Compute the frequency using Plink.&quot;&quot;&quot;</span>
     <span class="n">plinkCommand</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;plink&quot;</span><span class="p">,</span> <span class="s">&quot;--noweb&quot;</span><span class="p">,</span> <span class="s">&quot;--bfile&quot;</span><span class="p">,</span> <span class="n">prefix</span><span class="p">,</span> <span class="s">&quot;--freq&quot;</span><span class="p">,</span> <span class="s">&quot;--out&quot;</span><span class="p">,</span>
                     <span class="n">outPrefix</span><span class="p">]</span>
     <span class="n">runCommand</span><span class="p">(</span><span class="n">plinkCommand</span><span class="p">)</span>
 
 </div>
-<div class="viewcode-block" id="findOverlappingSNPsWithGoldStandard"><a class="viewcode-back" href="../../../compare_gold_standard.html#pyGenClean.Misc.compare_gold_standard.findOverlappingSNPsWithGoldStandard">[docs]</a><span class="k">def</span> <span class="nf">findOverlappingSNPsWithGoldStandard</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span> <span class="n">gold_prefixe</span><span class="p">,</span> <span class="n">out_prefix</span><span class="p">,</span>
+<div class="viewcode-block" id="findOverlappingSNPsWithGoldStandard"><a class="viewcode-back" href="../../../module_content/pyGenClean.Misc.html#pyGenClean.Misc.compare_gold_standard.findOverlappingSNPsWithGoldStandard">[docs]</a><span class="k">def</span> <span class="nf">findOverlappingSNPsWithGoldStandard</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span> <span class="n">gold_prefixe</span><span class="p">,</span> <span class="n">out_prefix</span><span class="p">,</span>
                                         <span class="n">use_marker_names</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Find the overlapping SNPs in 4 different data sets.&quot;&quot;&quot;</span>
     <span class="c"># Reading the main file</span>
@@ -801,7 +803,7 @@
     <span class="n">changeNameOutputFile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
 </div>
-<div class="viewcode-block" id="extractSNPs"><a class="viewcode-back" href="../../../compare_gold_standard.html#pyGenClean.Misc.compare_gold_standard.extractSNPs">[docs]</a><span class="k">def</span> <span class="nf">extractSNPs</span><span class="p">(</span><span class="n">prefixes</span><span class="p">,</span> <span class="n">snpToExtractFileNames</span><span class="p">,</span> <span class="n">outPrefixes</span><span class="p">,</span> <span class="n">runSGE</span><span class="p">):</span>
+<div class="viewcode-block" id="extractSNPs"><a class="viewcode-back" href="../../../module_content/pyGenClean.Misc.html#pyGenClean.Misc.compare_gold_standard.extractSNPs">[docs]</a><span class="k">def</span> <span class="nf">extractSNPs</span><span class="p">(</span><span class="n">prefixes</span><span class="p">,</span> <span class="n">snpToExtractFileNames</span><span class="p">,</span> <span class="n">outPrefixes</span><span class="p">,</span> <span class="n">runSGE</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Extract a list of SNPs using Plink.&quot;&quot;&quot;</span>
     <span class="n">s</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">jobIDs</span> <span class="o">=</span> <span class="p">[]</span>
@@ -869,7 +871,7 @@
                 <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
 </div>
-<div class="viewcode-block" id="keepSamples"><a class="viewcode-back" href="../../../compare_gold_standard.html#pyGenClean.Misc.compare_gold_standard.keepSamples">[docs]</a><span class="k">def</span> <span class="nf">keepSamples</span><span class="p">(</span><span class="n">prefixes</span><span class="p">,</span> <span class="n">samplesToExtractFileNames</span><span class="p">,</span> <span class="n">outPrefixes</span><span class="p">,</span>
+<div class="viewcode-block" id="keepSamples"><a class="viewcode-back" href="../../../module_content/pyGenClean.Misc.html#pyGenClean.Misc.compare_gold_standard.keepSamples">[docs]</a><span class="k">def</span> <span class="nf">keepSamples</span><span class="p">(</span><span class="n">prefixes</span><span class="p">,</span> <span class="n">samplesToExtractFileNames</span><span class="p">,</span> <span class="n">outPrefixes</span><span class="p">,</span>
                 <span class="n">runSGE</span><span class="p">,</span> <span class="n">transpose</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Extract a list of SNPs using Plink.&quot;&quot;&quot;</span>
     <span class="n">s</span> <span class="o">=</span> <span class="bp">None</span>
@@ -938,7 +940,7 @@
                 <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
 </div>
-<div class="viewcode-block" id="runCommand"><a class="viewcode-back" href="../../../compare_gold_standard.html#pyGenClean.Misc.compare_gold_standard.runCommand">[docs]</a><span class="k">def</span> <span class="nf">runCommand</span><span class="p">(</span><span class="n">command</span><span class="p">):</span>
+<div class="viewcode-block" id="runCommand"><a class="viewcode-back" href="../../../module_content/pyGenClean.Misc.html#pyGenClean.Misc.compare_gold_standard.runCommand">[docs]</a><span class="k">def</span> <span class="nf">runCommand</span><span class="p">(</span><span class="n">command</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Run a command.&quot;&quot;&quot;</span>
     <span class="n">output</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="k">try</span><span class="p">:</span>
@@ -949,7 +951,7 @@
         <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
 </div>
-<div class="viewcode-block" id="checkArgs"><a class="viewcode-back" href="../../../compare_gold_standard.html#pyGenClean.Misc.compare_gold_standard.checkArgs">[docs]</a><span class="k">def</span> <span class="nf">checkArgs</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+<div class="viewcode-block" id="checkArgs"><a class="viewcode-back" href="../../../module_content/pyGenClean.Misc.html#pyGenClean.Misc.compare_gold_standard.checkArgs">[docs]</a><span class="k">def</span> <span class="nf">checkArgs</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Checks the arguments and options.</span>
 
 <span class="sd">    :param args: a :py:class:`Namespace` object containing the options of the</span>
@@ -1001,7 +1003,7 @@
     <span class="k">return</span> <span class="bp">True</span>
 
 </div>
-<div class="viewcode-block" id="parseArgs"><a class="viewcode-back" href="../../../compare_gold_standard.html#pyGenClean.Misc.compare_gold_standard.parseArgs">[docs]</a><span class="k">def</span> <span class="nf">parseArgs</span><span class="p">(</span><span class="n">argString</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>  <span class="c"># pragma: no cover</span>
+<div class="viewcode-block" id="parseArgs"><a class="viewcode-back" href="../../../module_content/pyGenClean.Misc.html#pyGenClean.Misc.compare_gold_standard.parseArgs">[docs]</a><span class="k">def</span> <span class="nf">parseArgs</span><span class="p">(</span><span class="n">argString</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>  <span class="c"># pragma: no cover</span>
     <span class="sd">&quot;&quot;&quot;Parses the command line options and arguments.</span>
 
 <span class="sd">    :returns: A :py:class:`numpy.Namespace` object created by</span>
@@ -1060,7 +1062,7 @@
     <span class="k">return</span> <span class="n">args</span>
 
 </div>
-<div class="viewcode-block" id="ProgramError"><a class="viewcode-back" href="../../../compare_gold_standard.html#pyGenClean.Misc.compare_gold_standard.ProgramError">[docs]</a><span class="k">class</span> <span class="nc">ProgramError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<div class="viewcode-block" id="ProgramError"><a class="viewcode-back" href="../../../module_content/pyGenClean.Misc.html#pyGenClean.Misc.compare_gold_standard.ProgramError">[docs]</a><span class="k">class</span> <span class="nc">ProgramError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;An :py:class:`Exception` raised in case of a problem.</span>
 
 <span class="sd">    :param msg: the message to print to the user before exiting.</span>
@@ -1082,8 +1084,12 @@
 
 <span class="c"># The parser object</span></div>
 <span class="n">pretty_name</span> <span class="o">=</span> <span class="s">&quot;Gold standard comparison&quot;</span>
-<span class="n">desc</span> <span class="o">=</span> <span class="s">&quot;&quot;&quot;Compares the dataset with a gold standard.&quot;&quot;&quot;</span>
+<span class="n">desc</span> <span class="o">=</span> <span class="s">&quot;Compares the dataset with a gold standard.&quot;</span>
+<span class="n">long_desc</span> <span class="o">=</span> <span class="p">(</span><span class="s">&quot;The script compares two dataset (the study dataset and a gold &quot;</span>
+             <span class="s">&quot;standard) to find genotyping discordance.&quot;</span><span class="p">)</span>
 <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="n">desc</span><span class="p">)</span>
+<span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;-v&quot;</span><span class="p">,</span> <span class="s">&quot;--version&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s">&quot;version&quot;</span><span class="p">,</span>
+                    <span class="n">version</span><span class="o">=</span><span class="s">&quot;pyGenClean version {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">__version__</span><span class="p">))</span>
 
 <span class="c"># The INPUT files</span>
 <span class="n">group</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s">&quot;Input File&quot;</span><span class="p">)</span>
@@ -1132,7 +1138,7 @@
                          <span class="s">&quot;</span><span class="si">%(default)s</span><span class="s">]&quot;</span><span class="p">))</span>
 
 
-<div class="viewcode-block" id="safe_main"><a class="viewcode-back" href="../../../compare_gold_standard.html#pyGenClean.Misc.compare_gold_standard.safe_main">[docs]</a><span class="k">def</span> <span class="nf">safe_main</span><span class="p">():</span>
+<div class="viewcode-block" id="safe_main"><a class="viewcode-back" href="../../../module_content/pyGenClean.Misc.html#pyGenClean.Misc.compare_gold_standard.safe_main">[docs]</a><span class="k">def</span> <span class="nf">safe_main</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;A safe version of the main function (that catches ProgramError).&quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">main</span><span class="p">()</span>
@@ -1162,8 +1168,9 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">pyGenClean 1.7.0 documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../../index.html">pyGenClean 1.7.1 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &raquo;</li>
+          <li class="nav-item nav-item-2"><a href="../../pyGenClean.html" >pyGenClean</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">

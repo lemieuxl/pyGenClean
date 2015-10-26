@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>pyGenClean.RelatedSamples.find_related_samples &mdash; pyGenClean 1.7.0 documentation</title>
+    <title>pyGenClean.RelatedSamples.find_related_samples &mdash; pyGenClean 1.7.1 documentation</title>
     
     <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '1.7.0',
+        VERSION:     '1.7.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,8 +24,8 @@
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="pyGenClean 1.7.0 documentation" href="../../../index.html" />
-    <link rel="up" title="Module code" href="../../index.html" /> 
+    <link rel="top" title="pyGenClean 1.7.1 documentation" href="../../../index.html" />
+    <link rel="up" title="pyGenClean" href="../../pyGenClean.html" /> 
   </head>
   <body role="document">
 
@@ -42,8 +42,9 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">pyGenClean 1.7.0 documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../../index.html">pyGenClean 1.7.1 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &raquo;</li>
+          <li class="nav-item nav-item-2"><a href="../../pyGenClean.html" accesskey="U">pyGenClean</a> &raquo;</li> 
       </ul>
     </div>
 
@@ -97,16 +98,17 @@
 <span class="kn">import</span> <span class="nn">subprocess</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">npy</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 
+<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">__version__</span>
 <span class="kn">from</span> <span class="nn">..PlinkUtils</span> <span class="kn">import</span> <span class="n">createRowFromPlinkSpacedOutput</span>
-<span class="kn">from</span> <span class="nn">..RelatedSamples</span> <span class="kn">import</span> <span class="n">merge_related_samples</span>
+<span class="kn">from</span> <span class="nn">..RelatedSamples.merge_related_samples</span> <span class="kn">import</span> <span class="n">merge_related_samples</span>
 
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&quot;find_related_samples&quot;</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../../find_related_samples.html#pyGenClean.RelatedSamples.find_related_samples.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">argString</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../../module_content/pyGenClean.RelatedSamples.html#pyGenClean.RelatedSamples.find_related_samples.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">argString</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;The main function of this module.</span>
 
 <span class="sd">    :param argString: the options.</span>
@@ -181,7 +183,7 @@
                               <span class="n">args</span><span class="o">.</span><span class="n">out</span> <span class="o">+</span> <span class="s">&quot;.related_individuals_z2.png&quot;</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
 
 </div>
-<div class="viewcode-block" id="plot_related_data"><a class="viewcode-back" href="../../../find_related_samples.html#pyGenClean.RelatedSamples.find_related_samples.plot_related_data">[docs]</a><span class="k">def</span> <span class="nf">plot_related_data</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">code</span><span class="p">,</span> <span class="n">ylabel</span><span class="p">,</span> <span class="n">fileName</span><span class="p">,</span> <span class="n">options</span><span class="p">):</span>
+<div class="viewcode-block" id="plot_related_data"><a class="viewcode-back" href="../../../module_content/pyGenClean.RelatedSamples.html#pyGenClean.RelatedSamples.find_related_samples.plot_related_data">[docs]</a><span class="k">def</span> <span class="nf">plot_related_data</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">code</span><span class="p">,</span> <span class="n">ylabel</span><span class="p">,</span> <span class="n">fileName</span><span class="p">,</span> <span class="n">options</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Plot Z1 and Z2 in function of IBS2* ratio.</span>
 
 <span class="sd">    :param x: the x axis of the plot (``IBS2 ratio``).</span>
@@ -243,13 +245,13 @@
     <span class="c"># The legend</span>
     <span class="n">prop</span> <span class="o">=</span> <span class="n">mpl</span><span class="o">.</span><span class="n">font_manager</span><span class="o">.</span><span class="n">FontProperties</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
     <span class="n">leg</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">([</span><span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">,</span> <span class="n">c3</span><span class="p">,</span> <span class="n">c4</span><span class="p">,</span> <span class="n">c5</span><span class="p">],</span>
-                    <span class="p">[</span><span class="s">&quot;Full sibs (n={})&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">npy</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">code</span> <span class="o">==</span> <span class="s">&quot;1&quot;</span><span class="p">)),</span>
+                    <span class="p">[</span><span class="s">&quot;Full sibs (n={})&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">code</span> <span class="o">==</span> <span class="s">&quot;1&quot;</span><span class="p">)),</span>
                      <span class="p">(</span><span class="s">&quot;Half sibs, grand-parent-child or uncle-nephew &quot;</span>
-                      <span class="s">&quot;(n={})&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">npy</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">code</span> <span class="o">==</span> <span class="s">&quot;2&quot;</span><span class="p">))),</span>
-                     <span class="s">&quot;Parent-child (n={})&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">npy</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">code</span> <span class="o">==</span> <span class="s">&quot;3&quot;</span><span class="p">)),</span>
+                      <span class="s">&quot;(n={})&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">code</span> <span class="o">==</span> <span class="s">&quot;2&quot;</span><span class="p">))),</span>
+                     <span class="s">&quot;Parent-child (n={})&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">code</span> <span class="o">==</span> <span class="s">&quot;3&quot;</span><span class="p">)),</span>
                      <span class="p">(</span><span class="s">&quot;Twins or duplicated samples &quot;</span>
-                      <span class="s">&quot;(n={})&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">npy</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">code</span> <span class="o">==</span> <span class="s">&quot;4&quot;</span><span class="p">))),</span>
-                     <span class="s">&quot;Unknown (n={})&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">npy</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">code</span> <span class="o">==</span> <span class="s">&quot;5&quot;</span><span class="p">))],</span>
+                      <span class="s">&quot;(n={})&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">code</span> <span class="o">==</span> <span class="s">&quot;4&quot;</span><span class="p">))),</span>
+                     <span class="s">&quot;Unknown (n={})&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">code</span> <span class="o">==</span> <span class="s">&quot;5&quot;</span><span class="p">))],</span>
                     <span class="n">loc</span><span class="o">=</span><span class="s">&quot;best&quot;</span><span class="p">,</span> <span class="n">numpoints</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">fancybox</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">prop</span><span class="o">=</span><span class="n">prop</span><span class="p">)</span>
     <span class="n">leg</span><span class="o">.</span><span class="n">get_frame</span><span class="p">()</span><span class="o">.</span><span class="n">set_alpha</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
 
@@ -267,7 +269,7 @@
     <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">fileName</span><span class="p">)</span>
 
 </div>
-<div class="viewcode-block" id="extractRelatedIndividuals"><a class="viewcode-back" href="../../../find_related_samples.html#pyGenClean.RelatedSamples.find_related_samples.extractRelatedIndividuals">[docs]</a><span class="k">def</span> <span class="nf">extractRelatedIndividuals</span><span class="p">(</span><span class="n">fileName</span><span class="p">,</span> <span class="n">outPrefix</span><span class="p">,</span> <span class="n">ibs2_ratio_threshold</span><span class="p">):</span>
+<div class="viewcode-block" id="extractRelatedIndividuals"><a class="viewcode-back" href="../../../module_content/pyGenClean.RelatedSamples.html#pyGenClean.RelatedSamples.find_related_samples.extractRelatedIndividuals">[docs]</a><span class="k">def</span> <span class="nf">extractRelatedIndividuals</span><span class="p">(</span><span class="n">fileName</span><span class="p">,</span> <span class="n">outPrefix</span><span class="p">,</span> <span class="n">ibs2_ratio_threshold</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Extract related individuals according IBS2* ratio.</span>
 
 <span class="sd">    :param fileName: the name of the input file.</span>
@@ -437,7 +439,7 @@
         <span class="k">return</span> <span class="bp">None</span>
 
     <span class="c"># Creating the numpy array if there are related samples</span>
-    <span class="n">data</span> <span class="o">=</span> <span class="n">npy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="p">[</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="p">[</span>
         <span class="p">(</span><span class="s">&quot;IBS2_RATIO&quot;</span><span class="p">,</span> <span class="nb">float</span><span class="p">),</span>
         <span class="p">(</span><span class="s">&quot;Z1&quot;</span><span class="p">,</span> <span class="nb">float</span><span class="p">),</span>
         <span class="p">(</span><span class="s">&quot;Z2&quot;</span><span class="p">,</span> <span class="nb">float</span><span class="p">),</span>
@@ -447,7 +449,7 @@
     <span class="k">return</span> <span class="n">data</span>
 
 </div>
-<div class="viewcode-block" id="checkNumberOfSNP"><a class="viewcode-back" href="../../../find_related_samples.html#pyGenClean.RelatedSamples.find_related_samples.checkNumberOfSNP">[docs]</a><span class="k">def</span> <span class="nf">checkNumberOfSNP</span><span class="p">(</span><span class="n">fileName</span><span class="p">,</span> <span class="n">minimumNumber</span><span class="p">):</span>
+<div class="viewcode-block" id="checkNumberOfSNP"><a class="viewcode-back" href="../../../module_content/pyGenClean.RelatedSamples.html#pyGenClean.RelatedSamples.find_related_samples.checkNumberOfSNP">[docs]</a><span class="k">def</span> <span class="nf">checkNumberOfSNP</span><span class="p">(</span><span class="n">fileName</span><span class="p">,</span> <span class="n">minimumNumber</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Check there is enough SNPs in the file (with minimum).</span>
 
 <span class="sd">    :param fileName: the name of the file.</span>
@@ -477,7 +479,7 @@
     <span class="k">return</span> <span class="bp">True</span>
 
 </div>
-<div class="viewcode-block" id="splitFile"><a class="viewcode-back" href="../../../find_related_samples.html#pyGenClean.RelatedSamples.find_related_samples.splitFile">[docs]</a><span class="k">def</span> <span class="nf">splitFile</span><span class="p">(</span><span class="n">inputFileName</span><span class="p">,</span> <span class="n">linePerFile</span><span class="p">,</span> <span class="n">outPrefix</span><span class="p">):</span>
+<div class="viewcode-block" id="splitFile"><a class="viewcode-back" href="../../../module_content/pyGenClean.RelatedSamples.html#pyGenClean.RelatedSamples.find_related_samples.splitFile">[docs]</a><span class="k">def</span> <span class="nf">splitFile</span><span class="p">(</span><span class="n">inputFileName</span><span class="p">,</span> <span class="n">linePerFile</span><span class="p">,</span> <span class="n">outPrefix</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Split a file.</span>
 
 <span class="sd">    :param inputFileName: the name of the input file.</span>
@@ -544,7 +546,7 @@
     <span class="k">return</span> <span class="n">nbTmpFile</span>
 
 </div>
-<div class="viewcode-block" id="runGenome"><a class="viewcode-back" href="../../../find_related_samples.html#pyGenClean.RelatedSamples.find_related_samples.runGenome">[docs]</a><span class="k">def</span> <span class="nf">runGenome</span><span class="p">(</span><span class="n">bfile</span><span class="p">,</span> <span class="n">options</span><span class="p">):</span>
+<div class="viewcode-block" id="runGenome"><a class="viewcode-back" href="../../../module_content/pyGenClean.RelatedSamples.html#pyGenClean.RelatedSamples.find_related_samples.runGenome">[docs]</a><span class="k">def</span> <span class="nf">runGenome</span><span class="p">(</span><span class="n">bfile</span><span class="p">,</span> <span class="n">options</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Runs the genome command from plink.</span>
 
 <span class="sd">    :param bfile: the input file prefix.</span>
@@ -589,7 +591,7 @@
     <span class="k">return</span> <span class="n">outPrefix</span> <span class="o">+</span> <span class="s">&quot;.genome&quot;</span>
 
 </div>
-<div class="viewcode-block" id="mergeGenomeLogFiles"><a class="viewcode-back" href="../../../find_related_samples.html#pyGenClean.RelatedSamples.find_related_samples.mergeGenomeLogFiles">[docs]</a><span class="k">def</span> <span class="nf">mergeGenomeLogFiles</span><span class="p">(</span><span class="n">outPrefix</span><span class="p">,</span> <span class="n">nbSet</span><span class="p">):</span>
+<div class="viewcode-block" id="mergeGenomeLogFiles"><a class="viewcode-back" href="../../../module_content/pyGenClean.RelatedSamples.html#pyGenClean.RelatedSamples.find_related_samples.mergeGenomeLogFiles">[docs]</a><span class="k">def</span> <span class="nf">mergeGenomeLogFiles</span><span class="p">(</span><span class="n">outPrefix</span><span class="p">,</span> <span class="n">nbSet</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Merge genome and log files together.</span>
 
 <span class="sd">    :param outPrefix: the prefix of the output files.</span>
@@ -681,7 +683,7 @@
     <span class="k">return</span> <span class="n">outPrefix</span> <span class="o">+</span> <span class="s">&quot;.genome&quot;</span>
 
 </div>
-<div class="viewcode-block" id="runGenomeSGE"><a class="viewcode-back" href="../../../find_related_samples.html#pyGenClean.RelatedSamples.find_related_samples.runGenomeSGE">[docs]</a><span class="k">def</span> <span class="nf">runGenomeSGE</span><span class="p">(</span><span class="n">bfile</span><span class="p">,</span> <span class="n">freqFile</span><span class="p">,</span> <span class="n">nbJob</span><span class="p">,</span> <span class="n">outPrefix</span><span class="p">,</span> <span class="n">options</span><span class="p">):</span>
+<div class="viewcode-block" id="runGenomeSGE"><a class="viewcode-back" href="../../../module_content/pyGenClean.RelatedSamples.html#pyGenClean.RelatedSamples.find_related_samples.runGenomeSGE">[docs]</a><span class="k">def</span> <span class="nf">runGenomeSGE</span><span class="p">(</span><span class="n">bfile</span><span class="p">,</span> <span class="n">freqFile</span><span class="p">,</span> <span class="n">nbJob</span><span class="p">,</span> <span class="n">outPrefix</span><span class="p">,</span> <span class="n">options</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Runs the genome command from plink, on SGE.</span>
 
 <span class="sd">    :param bfile: the prefix of the input file.</span>
@@ -766,7 +768,7 @@
             <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
 </div>
-<div class="viewcode-block" id="extractSNPs"><a class="viewcode-back" href="../../../find_related_samples.html#pyGenClean.RelatedSamples.find_related_samples.extractSNPs">[docs]</a><span class="k">def</span> <span class="nf">extractSNPs</span><span class="p">(</span><span class="n">snpsToExtract</span><span class="p">,</span> <span class="n">options</span><span class="p">):</span>
+<div class="viewcode-block" id="extractSNPs"><a class="viewcode-back" href="../../../module_content/pyGenClean.RelatedSamples.html#pyGenClean.RelatedSamples.find_related_samples.extractSNPs">[docs]</a><span class="k">def</span> <span class="nf">extractSNPs</span><span class="p">(</span><span class="n">snpsToExtract</span><span class="p">,</span> <span class="n">options</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Extract markers using Plink.</span>
 
 <span class="sd">    :param snpsToExtract: the name of the file containing markers to extract.</span>
@@ -785,7 +787,7 @@
     <span class="k">return</span> <span class="n">outPrefix</span>
 
 </div>
-<div class="viewcode-block" id="selectSNPsAccordingToLD"><a class="viewcode-back" href="../../../find_related_samples.html#pyGenClean.RelatedSamples.find_related_samples.selectSNPsAccordingToLD">[docs]</a><span class="k">def</span> <span class="nf">selectSNPsAccordingToLD</span><span class="p">(</span><span class="n">options</span><span class="p">):</span>
+<div class="viewcode-block" id="selectSNPsAccordingToLD"><a class="viewcode-back" href="../../../module_content/pyGenClean.RelatedSamples.html#pyGenClean.RelatedSamples.find_related_samples.selectSNPsAccordingToLD">[docs]</a><span class="k">def</span> <span class="nf">selectSNPsAccordingToLD</span><span class="p">(</span><span class="n">options</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Compute LD using Plink.</span>
 
 <span class="sd">    :param options: the options.</span>
@@ -810,7 +812,7 @@
     <span class="k">return</span> <span class="n">outPrefix</span> <span class="o">+</span> <span class="s">&quot;.prune.in&quot;</span>
 
 </div>
-<div class="viewcode-block" id="runCommand"><a class="viewcode-back" href="../../../find_related_samples.html#pyGenClean.RelatedSamples.find_related_samples.runCommand">[docs]</a><span class="k">def</span> <span class="nf">runCommand</span><span class="p">(</span><span class="n">command</span><span class="p">):</span>
+<div class="viewcode-block" id="runCommand"><a class="viewcode-back" href="../../../module_content/pyGenClean.RelatedSamples.html#pyGenClean.RelatedSamples.find_related_samples.runCommand">[docs]</a><span class="k">def</span> <span class="nf">runCommand</span><span class="p">(</span><span class="n">command</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Run a command.</span>
 
 <span class="sd">    :param command: the command to run.</span>
@@ -833,7 +835,7 @@
         <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
 </div>
-<div class="viewcode-block" id="checkArgs"><a class="viewcode-back" href="../../../find_related_samples.html#pyGenClean.RelatedSamples.find_related_samples.checkArgs">[docs]</a><span class="k">def</span> <span class="nf">checkArgs</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+<div class="viewcode-block" id="checkArgs"><a class="viewcode-back" href="../../../module_content/pyGenClean.RelatedSamples.html#pyGenClean.RelatedSamples.find_related_samples.checkArgs">[docs]</a><span class="k">def</span> <span class="nf">checkArgs</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Checks the arguments and options.</span>
 
 <span class="sd">    :param args: an object containing the options of the program.</span>
@@ -888,7 +890,7 @@
     <span class="k">return</span> <span class="bp">True</span>
 
 </div>
-<div class="viewcode-block" id="parseArgs"><a class="viewcode-back" href="../../../find_related_samples.html#pyGenClean.RelatedSamples.find_related_samples.parseArgs">[docs]</a><span class="k">def</span> <span class="nf">parseArgs</span><span class="p">(</span><span class="n">argString</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>  <span class="c"># pragma: no cover</span>
+<div class="viewcode-block" id="parseArgs"><a class="viewcode-back" href="../../../module_content/pyGenClean.RelatedSamples.html#pyGenClean.RelatedSamples.find_related_samples.parseArgs">[docs]</a><span class="k">def</span> <span class="nf">parseArgs</span><span class="p">(</span><span class="n">argString</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>  <span class="c"># pragma: no cover</span>
     <span class="sd">&quot;&quot;&quot;Parses the command line options and arguments.</span>
 
 <span class="sd">    :param argString: the options.</span>
@@ -935,7 +937,7 @@
     <span class="k">return</span> <span class="n">args</span>
 
 </div>
-<div class="viewcode-block" id="ProgramError"><a class="viewcode-back" href="../../../find_related_samples.html#pyGenClean.RelatedSamples.find_related_samples.ProgramError">[docs]</a><span class="k">class</span> <span class="nc">ProgramError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<div class="viewcode-block" id="ProgramError"><a class="viewcode-back" href="../../../module_content/pyGenClean.RelatedSamples.html#pyGenClean.RelatedSamples.find_related_samples.ProgramError">[docs]</a><span class="k">class</span> <span class="nc">ProgramError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;An :py:class:`Exception` raised in case of a problem.</span>
 
 <span class="sd">    :param msg: the message to print to the user before exiting.</span>
@@ -957,10 +959,20 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span>
 
 
-<span class="c"># The parser object</span></div>
+<span class="c"># Default values</span></div>
+<span class="n">_ibs2_ratio_default</span> <span class="o">=</span> <span class="mf">0.8</span>
+<span class="n">_indep_pairwise_r2_default</span> <span class="o">=</span> <span class="s">&quot;0.1&quot;</span>
+
+<span class="c"># The parser object</span>
 <span class="n">pretty_name</span> <span class="o">=</span> <span class="s">&quot;Related samples&quot;</span>
-<span class="n">desc</span> <span class="o">=</span> <span class="s">&quot;&quot;&quot;Finds related samples according to IBS values.&quot;&quot;&quot;</span>
+<span class="n">desc</span> <span class="o">=</span> <span class="s">&quot;Finds related samples according to IBS values.&quot;</span>
+<span class="n">long_desc</span> <span class="o">=</span> <span class="p">(</span><span class="s">&quot;The script conducts close familial relationship checks with &quot;</span>
+             <span class="s">&quot;pairwise IBD. It flags and removes all but one pair-member of &quot;</span>
+             <span class="s">r&quot;samples duplicates ($IBS2^\ast_{ratio}&gt;{ratio_value}$) based &quot;</span>
+             <span class="s">&quot;on a selection of uncorrelated markers ($r^2 &lt; {r_squared}$).&quot;</span><span class="p">)</span>
 <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="n">desc</span><span class="p">)</span>
+<span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;-v&quot;</span><span class="p">,</span> <span class="s">&quot;--version&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s">&quot;version&quot;</span><span class="p">,</span>
+                    <span class="n">version</span><span class="o">=</span><span class="s">&quot;pyGenClean version {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">__version__</span><span class="p">))</span>
 
 <span class="c"># The INPUT files</span>
 <span class="n">group</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s">&quot;Input File&quot;</span><span class="p">)</span>
@@ -976,13 +988,14 @@
                    <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s">&quot;The minimum number of markers needed to compute IBS &quot;</span>
                          <span class="s">&quot;values. [Default: </span><span class="si">%(default)d</span><span class="s">]&quot;</span><span class="p">))</span>
 <span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;--indep-pairwise&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s">&quot;STR&quot;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
-                   <span class="n">default</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;50&quot;</span><span class="p">,</span> <span class="s">&quot;5&quot;</span><span class="p">,</span> <span class="s">&quot;0.1&quot;</span><span class="p">],</span>
+                   <span class="n">default</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;50&quot;</span><span class="p">,</span> <span class="s">&quot;5&quot;</span><span class="p">,</span> <span class="n">_indep_pairwise_r2_default</span><span class="p">],</span>
                    <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s">&quot;Three numbers: window size, window shift and the r2 &quot;</span>
                          <span class="s">&quot;threshold. [default: </span><span class="si">%(default)s</span><span class="s">]&quot;</span><span class="p">))</span>
 <span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;--maf&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s">&quot;FLOAT&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s">&quot;0.05&quot;</span><span class="p">,</span>
                    <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s">&quot;Restrict to SNPs with MAF &gt;= threshold. [default: &quot;</span>
                          <span class="s">&quot;</span><span class="si">%(default)s</span><span class="s">]&quot;</span><span class="p">))</span>
-<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;--ibs2-ratio&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s">&quot;FLOAT&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span>
+<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;--ibs2-ratio&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s">&quot;FLOAT&quot;</span><span class="p">,</span>
+                   <span class="n">default</span><span class="o">=</span><span class="n">_ibs2_ratio_default</span><span class="p">,</span>
                    <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s">&quot;The initial IBS2* ratio (the minimum value to show &quot;</span>
                          <span class="s">&quot;in the plot. [default: </span><span class="si">%(default).1f</span><span class="s">]&quot;</span><span class="p">))</span>
 <span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;--sge&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s">&quot;store_true&quot;</span><span class="p">,</span>
@@ -1009,7 +1022,7 @@
                          <span class="s">&quot;</span><span class="si">%(default)s</span><span class="s">]&quot;</span><span class="p">))</span>
 
 
-<div class="viewcode-block" id="safe_main"><a class="viewcode-back" href="../../../find_related_samples.html#pyGenClean.RelatedSamples.find_related_samples.safe_main">[docs]</a><span class="k">def</span> <span class="nf">safe_main</span><span class="p">():</span>
+<div class="viewcode-block" id="safe_main"><a class="viewcode-back" href="../../../module_content/pyGenClean.RelatedSamples.html#pyGenClean.RelatedSamples.find_related_samples.safe_main">[docs]</a><span class="k">def</span> <span class="nf">safe_main</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;A safe version of the main function (that catches ProgramError).&quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">main</span><span class="p">()</span>
@@ -1039,8 +1052,9 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">pyGenClean 1.7.0 documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../../index.html">pyGenClean 1.7.1 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &raquo;</li>
+          <li class="nav-item nav-item-2"><a href="../../pyGenClean.html" >pyGenClean</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">

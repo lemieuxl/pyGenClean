@@ -1,3 +1,5 @@
+.. _hetero_haplo_label:
+
 Heterozygous Haploid Module
 ===========================
 
@@ -6,21 +8,24 @@ The usage of the standalone module is shown below:
 .. code-block:: console
 
     $ pyGenClean_remove_heterozygous_haploid --help
-    usage: pyGenClean_remove_heterozygous_haploid [-h] --bfile FILE [--out FILE]
+    Usage: pyGenClean_remove_heterozygous_haploid [-h] [-v] --bfile FILE
+                                                  [--out FILE]
 
     Removes heterozygous haploid genotypes.
 
-    optional arguments:
-      -h, --help    show this help message and exit
+    Optional arguments:
+      -h, --help     show this help message and exit
+      -v, --version  show program's version number and exit
 
     Input File:
-      --bfile FILE  The input file prefix (will find the plink binary files by
-                    appending the prefix to the .bim, .bed and .fam files,
-                    respectively.
+      --bfile FILE   The input file prefix (will find the plink binary files by
+                     appending the prefix to the .bim, .bed and .fam files,
+                     respectively.
 
     Output File:
-      --out FILE    The prefix of the output files. [default:
-                    without_hh_genotypes]
+      --out FILE     The prefix of the output files. [default:
+                     without_hh_genotypes]
+
 
 Input Files
 -----------
@@ -50,12 +55,7 @@ the output prefix shown is the one by default [*i.e.*
 The Algorithm
 -------------
 
-For more information about the actual algorithms and source codes (the
-:py:mod:`pyGenClean.HeteroHap.remove_heterozygous_haploid` module), refer to
-the following sections.
+For more information about the actual algorithms and source codes, refer to the
+following page.
 
-pyGenClean.HeteroHap.remove_heterozygous_haploid
-................................................
-
-.. automodule:: pyGenClean.HeteroHap.remove_heterozygous_haploid
-    :members:
+* :py:mod:`pyGenClean.HeteroHap.remove_heterozygous_haploid`

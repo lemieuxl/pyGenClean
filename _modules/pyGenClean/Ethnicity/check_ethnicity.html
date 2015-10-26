@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>pyGenClean.Ethnicity.check_ethnicity &mdash; pyGenClean 1.7.0 documentation</title>
+    <title>pyGenClean.Ethnicity.check_ethnicity &mdash; pyGenClean 1.7.1 documentation</title>
     
     <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '1.7.0',
+        VERSION:     '1.7.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,8 +24,8 @@
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="pyGenClean 1.7.0 documentation" href="../../../index.html" />
-    <link rel="up" title="Module code" href="../../index.html" /> 
+    <link rel="top" title="pyGenClean 1.7.1 documentation" href="../../../index.html" />
+    <link rel="up" title="pyGenClean" href="../../pyGenClean.html" /> 
   </head>
   <body role="document">
 
@@ -42,8 +42,9 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">pyGenClean 1.7.0 documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../../index.html">pyGenClean 1.7.1 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &raquo;</li>
+          <li class="nav-item nav-item-2"><a href="../../pyGenClean.html" accesskey="U">pyGenClean</a> &raquo;</li> 
       </ul>
     </div>
 
@@ -99,6 +100,7 @@
 <span class="kn">from</span> <span class="nn">..PlinkUtils</span> <span class="kn">import</span> <span class="n">plot_MDS</span> <span class="k">as</span> <span class="n">PlotMDS</span>
 <span class="kn">from</span> <span class="nn">..PlinkUtils</span> <span class="kn">import</span> <span class="n">createRowFromPlinkSpacedOutput</span>
 
+<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">__version__</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">find_outliers</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">plot_eigenvalues</span> <span class="k">as</span> <span class="n">PlotEigenvalues</span>
 <span class="kn">from</span> <span class="nn">..DupSNPs.duplicated_snps</span> <span class="kn">import</span> <span class="n">flipGenotype</span>
@@ -108,11 +110,11 @@
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&quot;check_ethnicity&quot;</span><span class="p">)</span>
 
 
-<span class="k">class</span> <span class="nc">Dummy</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="Dummy"><a class="viewcode-back" href="../../../module_content/pyGenClean.Ethnicity.html#pyGenClean.Ethnicity.check_ethnicity.Dummy">[docs]</a><span class="k">class</span> <span class="nc">Dummy</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="k">pass</span>
 
-
-<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../../check_ethnicity.html#pyGenClean.Ethnicity.check_ethnicity.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">argString</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../../module_content/pyGenClean.Ethnicity.html#pyGenClean.Ethnicity.check_ethnicity.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">argString</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;The main function.</span>
 
 <span class="sd">    :param argString: the options.</span>
@@ -348,7 +350,7 @@
         <span class="p">)</span>
 
 </div>
-<div class="viewcode-block" id="create_scree_plot"><a class="viewcode-back" href="../../../check_ethnicity.html#pyGenClean.Ethnicity.check_ethnicity.create_scree_plot">[docs]</a><span class="k">def</span> <span class="nf">create_scree_plot</span><span class="p">(</span><span class="n">in_filename</span><span class="p">,</span> <span class="n">out_filename</span><span class="p">,</span> <span class="n">plot_title</span><span class="p">):</span>
+<div class="viewcode-block" id="create_scree_plot"><a class="viewcode-back" href="../../../module_content/pyGenClean.Ethnicity.html#pyGenClean.Ethnicity.check_ethnicity.create_scree_plot">[docs]</a><span class="k">def</span> <span class="nf">create_scree_plot</span><span class="p">(</span><span class="n">in_filename</span><span class="p">,</span> <span class="n">out_filename</span><span class="p">,</span> <span class="n">plot_title</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Creates a scree plot using smartpca results.</span>
 
 <span class="sd">    :param in_filename: the name of the input file.</span>
@@ -372,7 +374,7 @@
         <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
 </div>
-<div class="viewcode-block" id="compute_eigenvalues"><a class="viewcode-back" href="../../../check_ethnicity.html#pyGenClean.Ethnicity.check_ethnicity.compute_eigenvalues">[docs]</a><span class="k">def</span> <span class="nf">compute_eigenvalues</span><span class="p">(</span><span class="n">in_prefix</span><span class="p">,</span> <span class="n">out_prefix</span><span class="p">):</span>
+<div class="viewcode-block" id="compute_eigenvalues"><a class="viewcode-back" href="../../../module_content/pyGenClean.Ethnicity.html#pyGenClean.Ethnicity.check_ethnicity.compute_eigenvalues">[docs]</a><span class="k">def</span> <span class="nf">compute_eigenvalues</span><span class="p">(</span><span class="n">in_prefix</span><span class="p">,</span> <span class="n">out_prefix</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Computes the Eigenvalues using smartpca from Eigensoft.</span>
 
 <span class="sd">    :param in_prefix: the prefix of the input files.</span>
@@ -399,7 +401,7 @@
     <span class="n">runCommand</span><span class="p">(</span><span class="n">command</span><span class="p">)</span>
 
 </div>
-<div class="viewcode-block" id="find_the_outliers"><a class="viewcode-back" href="../../../check_ethnicity.html#pyGenClean.Ethnicity.check_ethnicity.find_the_outliers">[docs]</a><span class="k">def</span> <span class="nf">find_the_outliers</span><span class="p">(</span><span class="n">mds_file_name</span><span class="p">,</span> <span class="n">population_file_name</span><span class="p">,</span> <span class="n">ref_pop_name</span><span class="p">,</span>
+<div class="viewcode-block" id="find_the_outliers"><a class="viewcode-back" href="../../../module_content/pyGenClean.Ethnicity.html#pyGenClean.Ethnicity.check_ethnicity.find_the_outliers">[docs]</a><span class="k">def</span> <span class="nf">find_the_outliers</span><span class="p">(</span><span class="n">mds_file_name</span><span class="p">,</span> <span class="n">population_file_name</span><span class="p">,</span> <span class="n">ref_pop_name</span><span class="p">,</span>
                       <span class="n">multiplier</span><span class="p">,</span> <span class="n">out_prefix</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Finds the outliers of a given population.</span>
 
@@ -433,7 +435,7 @@
         <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
 </div>
-<div class="viewcode-block" id="createPopulationFile"><a class="viewcode-back" href="../../../check_ethnicity.html#pyGenClean.Ethnicity.check_ethnicity.createPopulationFile">[docs]</a><span class="k">def</span> <span class="nf">createPopulationFile</span><span class="p">(</span><span class="n">inputFiles</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">outputFileName</span><span class="p">):</span>
+<div class="viewcode-block" id="createPopulationFile"><a class="viewcode-back" href="../../../module_content/pyGenClean.Ethnicity.html#pyGenClean.Ethnicity.check_ethnicity.createPopulationFile">[docs]</a><span class="k">def</span> <span class="nf">createPopulationFile</span><span class="p">(</span><span class="n">inputFiles</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">outputFileName</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Creates a population file.</span>
 
 <span class="sd">    :param inputFiles: the list of input files.</span>
@@ -484,7 +486,7 @@
     <span class="n">outputFile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
 </div>
-<div class="viewcode-block" id="plotMDS"><a class="viewcode-back" href="../../../check_ethnicity.html#pyGenClean.Ethnicity.check_ethnicity.plotMDS">[docs]</a><span class="k">def</span> <span class="nf">plotMDS</span><span class="p">(</span><span class="n">inputFileName</span><span class="p">,</span> <span class="n">outPrefix</span><span class="p">,</span> <span class="n">populationFileName</span><span class="p">,</span> <span class="n">options</span><span class="p">):</span>
+<div class="viewcode-block" id="plotMDS"><a class="viewcode-back" href="../../../module_content/pyGenClean.Ethnicity.html#pyGenClean.Ethnicity.check_ethnicity.plotMDS">[docs]</a><span class="k">def</span> <span class="nf">plotMDS</span><span class="p">(</span><span class="n">inputFileName</span><span class="p">,</span> <span class="n">outPrefix</span><span class="p">,</span> <span class="n">populationFileName</span><span class="p">,</span> <span class="n">options</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Plots the MDS value.</span>
 
 <span class="sd">    :param inputFileName: the name of the ``mds`` file.</span>
@@ -541,7 +543,7 @@
         <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
 </div>
-<div class="viewcode-block" id="createMDSFile"><a class="viewcode-back" href="../../../check_ethnicity.html#pyGenClean.Ethnicity.check_ethnicity.createMDSFile">[docs]</a><span class="k">def</span> <span class="nf">createMDSFile</span><span class="p">(</span><span class="n">nb_components</span><span class="p">,</span> <span class="n">inPrefix</span><span class="p">,</span> <span class="n">outPrefix</span><span class="p">,</span> <span class="n">genomeFileName</span><span class="p">):</span>
+<div class="viewcode-block" id="createMDSFile"><a class="viewcode-back" href="../../../module_content/pyGenClean.Ethnicity.html#pyGenClean.Ethnicity.check_ethnicity.createMDSFile">[docs]</a><span class="k">def</span> <span class="nf">createMDSFile</span><span class="p">(</span><span class="n">nb_components</span><span class="p">,</span> <span class="n">inPrefix</span><span class="p">,</span> <span class="n">outPrefix</span><span class="p">,</span> <span class="n">genomeFileName</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Creates a MDS file using Plink.</span>
 
 <span class="sd">    :param nb_components: the number of component.</span>
@@ -565,7 +567,7 @@
     <span class="n">runCommand</span><span class="p">(</span><span class="n">plinkCommand</span><span class="p">)</span>
 
 </div>
-<div class="viewcode-block" id="runRelatedness"><a class="viewcode-back" href="../../../check_ethnicity.html#pyGenClean.Ethnicity.check_ethnicity.runRelatedness">[docs]</a><span class="k">def</span> <span class="nf">runRelatedness</span><span class="p">(</span><span class="n">inputPrefix</span><span class="p">,</span> <span class="n">outPrefix</span><span class="p">,</span> <span class="n">options</span><span class="p">):</span>
+<div class="viewcode-block" id="runRelatedness"><a class="viewcode-back" href="../../../module_content/pyGenClean.Ethnicity.html#pyGenClean.Ethnicity.check_ethnicity.runRelatedness">[docs]</a><span class="k">def</span> <span class="nf">runRelatedness</span><span class="p">(</span><span class="n">inputPrefix</span><span class="p">,</span> <span class="n">outPrefix</span><span class="p">,</span> <span class="n">options</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Run the relatedness step of the data clean up.</span>
 
 <span class="sd">    :param inputPrefix: the prefix of the input file.</span>
@@ -613,7 +615,7 @@
     <span class="k">return</span> <span class="n">newBfile</span>
 
 </div>
-<div class="viewcode-block" id="allFileExists"><a class="viewcode-back" href="../../../check_ethnicity.html#pyGenClean.Ethnicity.check_ethnicity.allFileExists">[docs]</a><span class="k">def</span> <span class="nf">allFileExists</span><span class="p">(</span><span class="n">fileList</span><span class="p">):</span>
+<div class="viewcode-block" id="allFileExists"><a class="viewcode-back" href="../../../module_content/pyGenClean.Ethnicity.html#pyGenClean.Ethnicity.check_ethnicity.allFileExists">[docs]</a><span class="k">def</span> <span class="nf">allFileExists</span><span class="p">(</span><span class="n">fileList</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Check that all file exists.</span>
 
 <span class="sd">    :param fileList: the list of file to check.</span>
@@ -629,7 +631,7 @@
     <span class="k">return</span> <span class="n">allExists</span>
 
 </div>
-<div class="viewcode-block" id="flipSNPs"><a class="viewcode-back" href="../../../check_ethnicity.html#pyGenClean.Ethnicity.check_ethnicity.flipSNPs">[docs]</a><span class="k">def</span> <span class="nf">flipSNPs</span><span class="p">(</span><span class="n">inPrefix</span><span class="p">,</span> <span class="n">outPrefix</span><span class="p">,</span> <span class="n">flipFileName</span><span class="p">):</span>
+<div class="viewcode-block" id="flipSNPs"><a class="viewcode-back" href="../../../module_content/pyGenClean.Ethnicity.html#pyGenClean.Ethnicity.check_ethnicity.flipSNPs">[docs]</a><span class="k">def</span> <span class="nf">flipSNPs</span><span class="p">(</span><span class="n">inPrefix</span><span class="p">,</span> <span class="n">outPrefix</span><span class="p">,</span> <span class="n">flipFileName</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Flip SNPs using Plink.</span>
 
 <span class="sd">    :param inPrefix: the prefix of the input file.</span>
@@ -649,7 +651,7 @@
     <span class="n">runCommand</span><span class="p">(</span><span class="n">plinkCommand</span><span class="p">)</span>
 
 </div>
-<div class="viewcode-block" id="excludeSNPs"><a class="viewcode-back" href="../../../check_ethnicity.html#pyGenClean.Ethnicity.check_ethnicity.excludeSNPs">[docs]</a><span class="k">def</span> <span class="nf">excludeSNPs</span><span class="p">(</span><span class="n">inPrefix</span><span class="p">,</span> <span class="n">outPrefix</span><span class="p">,</span> <span class="n">exclusionFileName</span><span class="p">):</span>
+<div class="viewcode-block" id="excludeSNPs"><a class="viewcode-back" href="../../../module_content/pyGenClean.Ethnicity.html#pyGenClean.Ethnicity.check_ethnicity.excludeSNPs">[docs]</a><span class="k">def</span> <span class="nf">excludeSNPs</span><span class="p">(</span><span class="n">inPrefix</span><span class="p">,</span> <span class="n">outPrefix</span><span class="p">,</span> <span class="n">exclusionFileName</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Exclude some SNPs using Plink.</span>
 
 <span class="sd">    :param inPrefix: the prefix of the input file.</span>
@@ -670,7 +672,7 @@
     <span class="n">runCommand</span><span class="p">(</span><span class="n">plinkCommand</span><span class="p">)</span>
 
 </div>
-<div class="viewcode-block" id="renameSNPs"><a class="viewcode-back" href="../../../check_ethnicity.html#pyGenClean.Ethnicity.check_ethnicity.renameSNPs">[docs]</a><span class="k">def</span> <span class="nf">renameSNPs</span><span class="p">(</span><span class="n">inPrefix</span><span class="p">,</span> <span class="n">updateFileName</span><span class="p">,</span> <span class="n">outPrefix</span><span class="p">):</span>
+<div class="viewcode-block" id="renameSNPs"><a class="viewcode-back" href="../../../module_content/pyGenClean.Ethnicity.html#pyGenClean.Ethnicity.check_ethnicity.renameSNPs">[docs]</a><span class="k">def</span> <span class="nf">renameSNPs</span><span class="p">(</span><span class="n">inPrefix</span><span class="p">,</span> <span class="n">updateFileName</span><span class="p">,</span> <span class="n">outPrefix</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Updates the name of the SNPs using Plink.</span>
 
 <span class="sd">    :param inPrefix: the prefix of the input file.</span>
@@ -692,7 +694,7 @@
     <span class="n">runCommand</span><span class="p">(</span><span class="n">plinkCommand</span><span class="p">)</span>
 
 </div>
-<div class="viewcode-block" id="findFlippedSNPs"><a class="viewcode-back" href="../../../check_ethnicity.html#pyGenClean.Ethnicity.check_ethnicity.findFlippedSNPs">[docs]</a><span class="k">def</span> <span class="nf">findFlippedSNPs</span><span class="p">(</span><span class="n">frqFile1</span><span class="p">,</span> <span class="n">frqFile2</span><span class="p">,</span> <span class="n">outPrefix</span><span class="p">):</span>
+<div class="viewcode-block" id="findFlippedSNPs"><a class="viewcode-back" href="../../../module_content/pyGenClean.Ethnicity.html#pyGenClean.Ethnicity.check_ethnicity.findFlippedSNPs">[docs]</a><span class="k">def</span> <span class="nf">findFlippedSNPs</span><span class="p">(</span><span class="n">frqFile1</span><span class="p">,</span> <span class="n">frqFile2</span><span class="p">,</span> <span class="n">outPrefix</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Find flipped SNPs and flip them in the data.</span>
 
 <span class="sd">    :param frqFile1: the name of the first frequency file.</span>
@@ -798,7 +800,7 @@
     <span class="n">toRemoveOutputFile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
 </div>
-<div class="viewcode-block" id="computeFrequency"><a class="viewcode-back" href="../../../check_ethnicity.html#pyGenClean.Ethnicity.check_ethnicity.computeFrequency">[docs]</a><span class="k">def</span> <span class="nf">computeFrequency</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span> <span class="n">outPrefix</span><span class="p">):</span>
+<div class="viewcode-block" id="computeFrequency"><a class="viewcode-back" href="../../../module_content/pyGenClean.Ethnicity.html#pyGenClean.Ethnicity.check_ethnicity.computeFrequency">[docs]</a><span class="k">def</span> <span class="nf">computeFrequency</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span> <span class="n">outPrefix</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Compute the frequency using Plink.</span>
 
 <span class="sd">    :param prefix: the prefix of the file binary file for which we need to</span>
@@ -817,7 +819,7 @@
     <span class="n">runCommand</span><span class="p">(</span><span class="n">plinkCommand</span><span class="p">)</span>
 
 </div>
-<div class="viewcode-block" id="combinePlinkBinaryFiles"><a class="viewcode-back" href="../../../check_ethnicity.html#pyGenClean.Ethnicity.check_ethnicity.combinePlinkBinaryFiles">[docs]</a><span class="k">def</span> <span class="nf">combinePlinkBinaryFiles</span><span class="p">(</span><span class="n">prefixes</span><span class="p">,</span> <span class="n">outPrefix</span><span class="p">):</span>
+<div class="viewcode-block" id="combinePlinkBinaryFiles"><a class="viewcode-back" href="../../../module_content/pyGenClean.Ethnicity.html#pyGenClean.Ethnicity.check_ethnicity.combinePlinkBinaryFiles">[docs]</a><span class="k">def</span> <span class="nf">combinePlinkBinaryFiles</span><span class="p">(</span><span class="n">prefixes</span><span class="p">,</span> <span class="n">outPrefix</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Combine Plink binary files.</span>
 
 <span class="sd">    :param prefixes: a list of the prefix of the files that need to be</span>
@@ -855,7 +857,7 @@
     <span class="n">runCommand</span><span class="p">(</span><span class="n">plinkCommand</span><span class="p">)</span>
 
 </div>
-<div class="viewcode-block" id="findOverlappingSNPsWithReference"><a class="viewcode-back" href="../../../check_ethnicity.html#pyGenClean.Ethnicity.check_ethnicity.findOverlappingSNPsWithReference">[docs]</a><span class="k">def</span> <span class="nf">findOverlappingSNPsWithReference</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span> <span class="n">referencePrefixes</span><span class="p">,</span>
+<div class="viewcode-block" id="findOverlappingSNPsWithReference"><a class="viewcode-back" href="../../../module_content/pyGenClean.Ethnicity.html#pyGenClean.Ethnicity.check_ethnicity.findOverlappingSNPsWithReference">[docs]</a><span class="k">def</span> <span class="nf">findOverlappingSNPsWithReference</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span> <span class="n">referencePrefixes</span><span class="p">,</span>
                                      <span class="n">referencePopulations</span><span class="p">,</span> <span class="n">outPrefix</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Find the overlapping SNPs in 4 different data sets.</span>
 
@@ -992,7 +994,7 @@
         <span class="n">changeNameOutputFile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
 </div>
-<div class="viewcode-block" id="extractSNPs"><a class="viewcode-back" href="../../../check_ethnicity.html#pyGenClean.Ethnicity.check_ethnicity.extractSNPs">[docs]</a><span class="k">def</span> <span class="nf">extractSNPs</span><span class="p">(</span><span class="n">snpToExtractFileNames</span><span class="p">,</span> <span class="n">referencePrefixes</span><span class="p">,</span> <span class="n">popNames</span><span class="p">,</span> <span class="n">outPrefix</span><span class="p">,</span>
+<div class="viewcode-block" id="extractSNPs"><a class="viewcode-back" href="../../../module_content/pyGenClean.Ethnicity.html#pyGenClean.Ethnicity.check_ethnicity.extractSNPs">[docs]</a><span class="k">def</span> <span class="nf">extractSNPs</span><span class="p">(</span><span class="n">snpToExtractFileNames</span><span class="p">,</span> <span class="n">referencePrefixes</span><span class="p">,</span> <span class="n">popNames</span><span class="p">,</span> <span class="n">outPrefix</span><span class="p">,</span>
                 <span class="n">runSGE</span><span class="p">,</span> <span class="n">options</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Extract a list of SNPs using Plink.</span>
 
@@ -1091,7 +1093,7 @@
                 <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
 </div>
-<div class="viewcode-block" id="runCommand"><a class="viewcode-back" href="../../../check_ethnicity.html#pyGenClean.Ethnicity.check_ethnicity.runCommand">[docs]</a><span class="k">def</span> <span class="nf">runCommand</span><span class="p">(</span><span class="n">command</span><span class="p">):</span>
+<div class="viewcode-block" id="runCommand"><a class="viewcode-back" href="../../../module_content/pyGenClean.Ethnicity.html#pyGenClean.Ethnicity.check_ethnicity.runCommand">[docs]</a><span class="k">def</span> <span class="nf">runCommand</span><span class="p">(</span><span class="n">command</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Run a command.</span>
 
 <span class="sd">    :param command: the command to run.</span>
@@ -1117,7 +1119,7 @@
         <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
 </div>
-<div class="viewcode-block" id="checkArgs"><a class="viewcode-back" href="../../../check_ethnicity.html#pyGenClean.Ethnicity.check_ethnicity.checkArgs">[docs]</a><span class="k">def</span> <span class="nf">checkArgs</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+<div class="viewcode-block" id="checkArgs"><a class="viewcode-back" href="../../../module_content/pyGenClean.Ethnicity.html#pyGenClean.Ethnicity.check_ethnicity.checkArgs">[docs]</a><span class="k">def</span> <span class="nf">checkArgs</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Checks the arguments and options.</span>
 
 <span class="sd">    :param args: an object containing the options of the program.</span>
@@ -1193,7 +1195,7 @@
     <span class="k">return</span> <span class="bp">True</span>
 
 </div>
-<div class="viewcode-block" id="parseArgs"><a class="viewcode-back" href="../../../check_ethnicity.html#pyGenClean.Ethnicity.check_ethnicity.parseArgs">[docs]</a><span class="k">def</span> <span class="nf">parseArgs</span><span class="p">(</span><span class="n">argString</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>  <span class="c"># pragma: no cover</span>
+<div class="viewcode-block" id="parseArgs"><a class="viewcode-back" href="../../../module_content/pyGenClean.Ethnicity.html#pyGenClean.Ethnicity.check_ethnicity.parseArgs">[docs]</a><span class="k">def</span> <span class="nf">parseArgs</span><span class="p">(</span><span class="n">argString</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>  <span class="c"># pragma: no cover</span>
     <span class="sd">&quot;&quot;&quot;Parses the command line options and arguments.</span>
 
 <span class="sd">    :param argString: the options.</span>
@@ -1242,6 +1244,9 @@
 <span class="sd">    ``--title``                 string The title of the MDS plot.</span>
 <span class="sd">    ``--xlabel``                string The label of the X axis.</span>
 <span class="sd">    ``--ylabel``                string The label of the Y axis.</span>
+<span class="sd">    ``--create-scree-plot``     bool   Computes Eigenvalues and creates a scree</span>
+<span class="sd">                                       plot.</span>
+<span class="sd">    ``--scree-plot-title``      string The main title of the scree plot</span>
 <span class="sd">    ``--out``                   string The prefix of the output files.</span>
 <span class="sd">    =========================== ====== ========================================</span>
 
@@ -1259,7 +1264,7 @@
     <span class="k">return</span> <span class="n">args</span>
 
 </div>
-<div class="viewcode-block" id="ProgramError"><a class="viewcode-back" href="../../../check_ethnicity.html#pyGenClean.Ethnicity.check_ethnicity.ProgramError">[docs]</a><span class="k">class</span> <span class="nc">ProgramError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<div class="viewcode-block" id="ProgramError"><a class="viewcode-back" href="../../../module_content/pyGenClean.Ethnicity.html#pyGenClean.Ethnicity.check_ethnicity.ProgramError">[docs]</a><span class="k">class</span> <span class="nc">ProgramError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;An :py:class:`Exception` raised in case of a problem.</span>
 
 <span class="sd">    :param msg: the message to print to the user before exiting.</span>
@@ -1283,8 +1288,13 @@
 
 <span class="c"># The parser object</span></div>
 <span class="n">pretty_name</span> <span class="o">=</span> <span class="s">&quot;Ethnicity&quot;</span>
-<span class="n">desc</span> <span class="o">=</span> <span class="s">&quot;&quot;&quot;Check samples&#39; ethnicity using reference populations and IBS.&quot;&quot;&quot;</span>
+<span class="n">desc</span> <span class="o">=</span> <span class="s">&quot;Checks sample&#39;s ethnicity using reference populations and IBS.&quot;</span>
+<span class="n">long_desc</span> <span class="o">=</span> <span class="p">(</span><span class="s">&quot;The script uses pairwise IBS matrix as a distance metric to &quot;</span>
+             <span class="s">&quot;identify cryptic relatedness among samples and sample outliers &quot;</span>
+             <span class="s">&quot;by multi-dimensional scaling (MDS).&quot;</span><span class="p">)</span>
 <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="n">desc</span><span class="p">)</span>
+<span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;-v&quot;</span><span class="p">,</span> <span class="s">&quot;--version&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s">&quot;version&quot;</span><span class="p">,</span>
+                    <span class="n">version</span><span class="o">=</span><span class="s">&quot;pyGenClean version {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">__version__</span><span class="p">))</span>
 
 <span class="c"># The INPUT files</span>
 <span class="n">group</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s">&quot;Input File&quot;</span><span class="p">)</span>
@@ -1375,7 +1385,7 @@
                          <span class="s">&quot;</span><span class="si">%(default)s</span><span class="s">]&quot;</span><span class="p">))</span>
 
 
-<div class="viewcode-block" id="safe_main"><a class="viewcode-back" href="../../../check_ethnicity.html#pyGenClean.Ethnicity.check_ethnicity.safe_main">[docs]</a><span class="k">def</span> <span class="nf">safe_main</span><span class="p">():</span>
+<div class="viewcode-block" id="safe_main"><a class="viewcode-back" href="../../../module_content/pyGenClean.Ethnicity.html#pyGenClean.Ethnicity.check_ethnicity.safe_main">[docs]</a><span class="k">def</span> <span class="nf">safe_main</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;A safe version of the main function (that catches ProgramError).&quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">main</span><span class="p">()</span>
@@ -1405,8 +1415,9 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">pyGenClean 1.7.0 documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../../index.html">pyGenClean 1.7.1 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &raquo;</li>
+          <li class="nav-item nav-item-2"><a href="../../pyGenClean.html" >pyGenClean</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
