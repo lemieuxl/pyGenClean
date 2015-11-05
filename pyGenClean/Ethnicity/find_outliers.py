@@ -241,7 +241,7 @@ def find_outliers(mds, centers, center_info, ref_pop, options):
                                        len(distances) - 1))
         outliers = np.logical_and(
             (distances > options.multiplier * sigma).flatten(),
-            subset_mds != ref_pop_name[label],
+            subset_mds["pop"] != ref_pop_name[label],
         )
         logger.info("  - {} outliers for the {} cluster".format(
             np.sum(outliers),
