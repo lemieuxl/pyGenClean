@@ -95,6 +95,7 @@ def setup_package():
                 "pyGenClean_subset_data=pyGenClean.PlinkUtils.subset_data:safe_main",
                 "pyGenClean_plot_eigenvalues=pyGenClean.Ethnicity.plot_eigenvalues:safe_main",
                 "pyGenClean_merge_reports=pyGenClean.LaTeX.merge_reports:safe_main",
+                "pyGenClean_check_contamination=pyGenClean.Contamination.contamination:safe_main",
             ],
         },
         install_requires=["matplotlib >= 1.2.0", "numpy >= 1.6.2",

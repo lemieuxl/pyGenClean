@@ -119,6 +119,17 @@ def create_report(outdirname, report_filename, **kwargs):
         volume="81",
         number="3",
         pages="559--575",
+    ) + "\n" * 2 + latex.bib_entry(
+        name="bafRegress",
+        authors=r"Goo J, Matthew F, Kurt NH, Jane MR, Kimberly FD, "
+                r"Gon{\c{c}}alo RA, Michael B, Hyun Min K",
+        title="Detecting and estimating contamination of human DNA samples in "
+              "sequencing and array-based genotype data",
+        journal="The American Journal of Human Genetics",
+        year="2012",
+        volume="91",
+        number="5",
+        pages="839--848",
     )
 
     # Getting the template

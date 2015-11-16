@@ -40,6 +40,7 @@ from .FlagMAF import flag_maf_zero
 from .DupSNPs import duplicated_snps
 from .Ethnicity import check_ethnicity
 from .Misc import compare_gold_standard
+from .Contamination import contamination
 from .DupSamples import duplicated_samples
 from .MarkerMissingness import snp_missingness
 from .RelatedSamples import find_related_samples
@@ -1056,6 +1057,155 @@ def run_snp_missingness(in_prefix, in_type, out_prefix, base_dir, options):
             long_description, None)
 
 
+def run_contamination(in_prefix, in_type, out_prefix, base_dir, options):
+    """Runs the contamination check for samples.
+
+    :param in_prefix: the prefix of the input files.
+    :param in_type: the type of the input files.
+    :param out_prefix: the output prefix.
+    :param base_dir: the output directory.
+    :param options: the options needed.
+
+    :type in_prefix: str
+    :type in_type: str
+    :type out_prefix: str
+    :type base_dir: str
+    :type options: list
+
+    :returns: a tuple containing the prefix of the output files (the input
+              prefix for the next script) and the type of the output files
+              (``bfile``).
+
+    """
+    # Creating the output directory
+    os.mkdir(out_prefix)
+
+    # We know we need a bfile
+    required_type = "bfile"
+    check_input_files(in_prefix, in_type, required_type)
+
+    # We need to inject the name of the input file and the name of the output
+    # prefix
+    script_prefix = os.path.join(out_prefix, "contamination")
+    options += ["--{}".format(required_type), in_prefix,
+                "--out", script_prefix]
+
+    # We run the script
+    try:
+        contamination.main(options)
+    except contamination.ProgramError as e:
+        msg = "contamination {}".format(e)
+        raise ProgramError(msg)
+
+    # Reading the "contamination" file
+    nb_tested_samples = 0
+    contaminated_table = []
+    nb_contaminated_samples = 0
+    with open(script_prefix + ".bafRegress", "r") as i_file:
+        header = None
+        for i, line in enumerate(i_file):
+            row = line.rstrip("\r\n").split("\t")
+            if i == 0:
+                contaminated_table.append(tuple(row))
+                header = {name: i for i, name in enumerate(row)}
+
+                for name in ("sample", "estimate", "stderr", "tval", "pval",
+                             "callrate", "Nhom"):
+                    if name not in header:
+                        raise ProgramError("{}: missing column {}".format(
+                            script_prefix + ".bafRegress",
+                            name,
+                        ))
+                continue
+
+            # One more sample
+            nb_tested_samples += 1
+
+            # Reading the data
+            estimate = float(row[header["estimate"]])
+            if estimate > 0.01:
+                # This might be a contaminated samples
+                contaminated_table.append((
+                    latex_template.sanitize_tex(row[header["sample"]]),
+                    "{:.4f}".format(float(row[header["estimate"]])),
+                    "{:.4f}".format(float(row[header["stderr"]])),
+                    "{:.4f}".format(float(row[header["tval"]])),
+                    latex_template.format_numbers("{:.3e}".format(
+                        float(row[header["pval"]]),
+                    )),
+                    "{:.4f}".format(float(row[header["callrate"]])),
+                    "{:,d}".format(int(row[header["Nhom"]])),
+                ))
+                nb_contaminated_samples += 1
+
+    # We write a LaTeX summary
+    latex_file = os.path.join(script_prefix + ".summary.tex")
+    try:
+        with open(latex_file, "w") as o_file:
+            print >>o_file, latex_template.subsection(
+                contamination.pretty_name,
+            )
+            text = ("A total of {:,d} sample{} {} analyzed for contamination "
+                    r"using \textit{bafRegress}\cite{bafRegress}. Using a "
+                    "threshold of 0.01, {:,d} sample{} {} estimated to be "
+                    "contaminated.".format(
+                        nb_tested_samples,
+                        "s" if nb_tested_samples > 1 else "",
+                        "were" if nb_tested_samples > 1 else "was",
+                        nb_contaminated_samples,
+                        "s" if nb_contaminated_samples > 1 else "",
+                        "were" if nb_contaminated_samples > 1 else "was",
+                        bafRegress="{bafRegress}",
+                    ))
+            print text
+            print >>o_file, latex_template.wrap_lines(text)
+
+            if nb_contaminated_samples > 0:
+                label = re.sub(r"[/\\]", "_", script_prefix)
+                text = (
+                    r"Table~\ref{" + label + "} list all the samples that "
+                    r"were estimated to be contaminated (\textit{i.e.} with "
+                    r"an estimate $>0.01$)."
+                )
+                print >>o_file, latex_template.wrap_lines(text)
+
+                # Getting the template
+                longtable_template = latex_template.jinja2_env.get_template(
+                    "longtable_template.tex",
+                )
+
+                # Rendering
+                print >>o_file, longtable_template.render(
+                    table_caption=r"List of all possible contaminated samples "
+                                  r"(\textit{i.e.} with an estimate computed "
+                                  r"by \textit{bafRegress} $>0.01$).",
+                    table_label=label,
+                    nb_col=len(contaminated_table[1]),
+                    col_alignments="lrrrrrr",
+                    text_size="scriptsize",
+                    header_data=zip(contaminated_table[0],
+                                    [1 for i in contaminated_table[0]]),
+                    tabular_data=sorted(
+                        contaminated_table[1:],
+                        key=lambda item: item[0],
+                    ),
+                )
+
+    except IOError:
+        msg = "{}: cannot write LaTeX summary".format(latex_file)
+        raise ProgramError(msg)
+
+    # Writing the summary results
+    with open(os.path.join(base_dir, "results_summary.txt"), "a") as o_file:
+        print >>o_file, "# {}".format(script_prefix)
+        print >>o_file, ("Number of possibly contaminated "
+                         "samples\t{:,d}".format(nb_contaminated_samples))
+        print >>o_file, "---"
+
+    return (in_prefix, required_type, latex_file, contamination.desc,
+            contamination.long_desc, None)
+
+
 def run_sex_check(in_prefix, in_type, out_prefix, base_dir, options):
     """Runs step6 (sexcheck).
 
@@ -1282,10 +1432,7 @@ def run_sex_check(in_prefix, in_type, out_prefix, base_dir, options):
                     col_alignments="llrrlrrrr",
                     text_size="scriptsize",
                     header_data=zip(table[0], [1 for i in table[0]]),
-                    tabular_data=sorted(
-                        sorted(table[1:], key=lambda item: item[1]),
-                        key=lambda item: (item[0], item[1]),
-                    ),
+                    tabular_data=sorted(table[1:], key=lambda item: item[1]),
                 )
 
             # If there is a figure, we add it here
@@ -3037,6 +3184,7 @@ def read_config_file(filename):
     * ``snp_missingness`` (:py:func:`run_snp_missingness`)
     * ``sex_check`` (:py:func:`run_sex_check`)
     * ``plate_bias`` (:py:func:`run_plate_bias`)
+    * ``contamination`` (:py:func:`run_contamination`)
     * ``remove_heterozygous_haploid``
       (:py:func:`run_remove_heterozygous_haploid`)
     * ``find_related_samples`` (:py:func:`run_find_related_samples`)
@@ -3229,6 +3377,7 @@ available_modules = {
     "remove_heterozygous_haploid": remove_heterozygous_haploid,
     "find_related_samples": find_related_samples,
     "check_ethnicity": check_ethnicity,
+    "contamination": contamination,
     "flag_maf_zero": flag_maf_zero,
     "flag_hw": flag_hw,
     "subset": subset_data,
@@ -3245,6 +3394,7 @@ available_functions = {
     "remove_heterozygous_haploid": run_remove_heterozygous_haploid,
     "find_related_samples": run_find_related_samples,
     "check_ethnicity": run_check_ethnicity,
+    "contamination": run_contamination,
     "flag_maf_zero": run_flag_maf_zero,
     "flag_hw": run_flag_hw,
     "subset": run_subset_data,
