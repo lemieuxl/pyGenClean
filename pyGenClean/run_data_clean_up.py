@@ -23,7 +23,6 @@ import shutil
 import logging
 import datetime
 import argparse
-import itertools
 import subprocess
 import ConfigParser
 from glob import glob
@@ -59,6 +58,14 @@ from .PlinkUtils import createRowFromPlinkSpacedOutput
 
 # Configuring logging
 logger = logging.getLogger("pyGenClean")
+
+
+# A namedtuple that will represent what each steps returns
+_StepResult = namedtuple(
+    "_StepResult",
+    ["next_file", "next_file_type", "latex_summary", "description",
+     "long_description", "graph_path"],
+)
 
 
 def main():
@@ -181,22 +188,25 @@ def main():
         logger.info("  - Results will be in [ {} ]".format(output_prefix))
 
         # Executing the function
-        r_values = function_to_use(
+        step_results = function_to_use(
             in_prefix=current_in,
             in_type=current_in_type,
             out_prefix=output_prefix,
             base_dir=dirname,
             options=options,
         )
-        current_in, current_in_type, summary, desc, l_desc, graphs = r_values
+
+        # Updating the input files and input file types
+        current_in = step_results.next_file
+        current_in_type = step_results.next_file_type
 
         # Saving what's necessary for the LaTeX report
-        latex_summaries.append(summary)
+        latex_summaries.append(step_results.latex_summary)
         steps.append(script_name)
-        descriptions.append(desc)
-        long_descriptions.append(l_desc)
-        if graphs is not None:
-            graphic_paths.update(graphs)
+        descriptions.append(step_results.description)
+        long_descriptions.append(step_results.long_description)
+        if step_results.graph_path is not None:
+            graphic_paths.update(step_results.graph_path)
 
     # Counting the final number of samples and markers
     logger.info("Counting final number of samples and markers")
@@ -473,8 +483,14 @@ def run_duplicated_samples(in_prefix, in_type, out_prefix, base_dir, options):
         print >>o_file, "---"
 
     # We know this step does produce a new data set (tfile), so we return it
-    return (os.path.join(out_prefix, "dup_samples.final"), "tfile", latex_file,
-            duplicated_samples.desc, duplicated_samples.long_desc, None)
+    return _StepResult(
+        next_file=os.path.join(out_prefix, "dup_samples.final"),
+        next_file_type="tfile",
+        latex_summary=latex_file,
+        description=duplicated_samples.desc,
+        long_description=duplicated_samples.long_desc,
+        graph_path=None,
+    )
 
 
 def run_duplicated_snps(in_prefix, in_type, out_prefix, base_dir, options):
@@ -705,8 +721,14 @@ def run_duplicated_snps(in_prefix, in_type, out_prefix, base_dir, options):
         raise ProgramError(msg)
 
     # We know this step does produce a new data set (tfile), so we return it
-    return (os.path.join(out_prefix, "dup_snps.final"), "tfile", latex_file,
-            duplicated_snps.desc, duplicated_snps.long_desc, None)
+    return _StepResult(
+        next_file=os.path.join(out_prefix, "dup_snps.final"),
+        next_file_type="tfile",
+        latex_summary=latex_file,
+        description=duplicated_snps.desc,
+        long_description=duplicated_snps.long_desc,
+        graph_path=None,
+    )
 
 
 def run_noCall_hetero_snps(in_prefix, in_type, out_prefix, base_dir, options):
@@ -817,9 +839,14 @@ def run_noCall_hetero_snps(in_prefix, in_type, out_prefix, base_dir, options):
 
     # We know this step does produce a new data set (tfile), so we return it
     # along with the report name
-    return (os.path.join(out_prefix, "clean_noCall_hetero"), "tfile",
-            latex_file, noCall_hetero_snps.desc, noCall_hetero_snps.long_desc,
-            None)
+    return _StepResult(
+        next_file=os.path.join(out_prefix, "clean_noCall_hetero"),
+        next_file_type="tfile",
+        latex_summary=latex_file,
+        description=noCall_hetero_snps.desc,
+        long_description=noCall_hetero_snps.long_desc,
+        graph_path=None,
+    )
 
 
 def run_sample_missingness(in_prefix, in_type, out_prefix, base_dir, options):
@@ -937,8 +964,14 @@ def run_sample_missingness(in_prefix, in_type, out_prefix, base_dir, options):
         print >>o_file, "---"
 
     # We know this step does produce a new data set (bfile), so we return it
-    return (os.path.join(out_prefix, "clean_mind"), "bfile", latex_file, desc,
-            long_description, None)
+    return _StepResult(
+        next_file=os.path.join(out_prefix, "clean_mind"),
+        next_file_type="bfile",
+        latex_summary=latex_file,
+        description=desc,
+        long_description=long_description,
+        graph_path=None,
+    )
 
 
 def run_snp_missingness(in_prefix, in_type, out_prefix, base_dir, options):
@@ -1053,8 +1086,14 @@ def run_snp_missingness(in_prefix, in_type, out_prefix, base_dir, options):
         print >>o_file, "---"
 
     # We know this step does produce a new data set (bfile), so we return it
-    return (os.path.join(out_prefix, "clean_geno"), "bfile", latex_file, desc,
-            long_description, None)
+    return _StepResult(
+        next_file=os.path.join(out_prefix, "clean_geno"),
+        next_file_type="bfile",
+        latex_summary=latex_file,
+        description=desc,
+        long_description=long_description,
+        graph_path=None,
+    )
 
 
 def run_contamination(in_prefix, in_type, out_prefix, base_dir, options):
@@ -1202,8 +1241,16 @@ def run_contamination(in_prefix, in_type, out_prefix, base_dir, options):
                          "samples\t{:,d}".format(nb_contaminated_samples))
         print >>o_file, "---"
 
-    return (in_prefix, required_type, latex_file, contamination.desc,
-            contamination.long_desc, None)
+    # We know this step doesn't produce an new data set, so we return the old
+    # prefix and the old in_type
+    return _StepResult(
+        next_file=in_prefix,
+        next_file_type=required_type,
+        latex_summary=latex_file,
+        description=contamination.desc,
+        long_description=contamination.long_desc,
+        graph_path=None,
+    )
 
 
 def run_sex_check(in_prefix, in_type, out_prefix, base_dir, options):
@@ -1566,8 +1613,14 @@ def run_sex_check(in_prefix, in_type, out_prefix, base_dir, options):
 
     # We know this step does not produce a new data set, so we return the
     # original one
-    return (in_prefix, required_type, latex_file, sex_check.desc,
-            sex_check.long_desc, graphics_paths)
+    return _StepResult(
+        next_file=in_prefix,
+        next_file_type=required_type,
+        latex_summary=latex_file,
+        description=sex_check.desc,
+        long_description=sex_check.long_desc,
+        graph_path=graphics_paths,
+    )
 
 
 def run_plate_bias(in_prefix, in_type, out_prefix, base_dir, options):
@@ -1727,8 +1780,14 @@ def run_plate_bias(in_prefix, in_type, out_prefix, base_dir, options):
 
     # We know this step doesn't produce an new data set, so we return the old
     # prefix and the old in_type
-    return (in_prefix, required_type, latex_file, plate_bias.desc,
-            plate_bias.long_desc, None)
+    return _StepResult(
+        next_file=in_prefix,
+        next_file_type=required_type,
+        latex_summary=latex_file,
+        description=plate_bias.desc,
+        long_description=plate_bias.long_desc,
+        graph_path=None,
+    )
 
 
 def run_remove_heterozygous_haploid(in_prefix, in_type, out_prefix, base_dir,
@@ -1816,9 +1875,14 @@ def run_remove_heterozygous_haploid(in_prefix, in_type, out_prefix, base_dir,
         print >>o_file, "---"
 
     # We know this step produces an new data set (bfile), so we return it
-    return (os.path.join(out_prefix, "without_hh_genotypes"), "bfile",
-            latex_file, remove_heterozygous_haploid.desc,
-            remove_heterozygous_haploid.long_desc, None)
+    return _StepResult(
+        next_file=os.path.join(out_prefix, "without_hh_genotypes"),
+        next_file_type="bfile",
+        latex_summary=latex_file,
+        description=remove_heterozygous_haploid.desc,
+        long_description=remove_heterozygous_haploid.long_desc,
+        graph_path=None,
+    )
 
 
 def run_find_related_samples(in_prefix, in_type, out_prefix, base_dir,
@@ -2064,8 +2128,14 @@ def run_find_related_samples(in_prefix, in_type, out_prefix, base_dir,
 
     # We know this step doesn't produce an new data set, so we return the old
     # prefix and the old in_type
-    return (in_prefix, required_type, latex_file, find_related_samples.desc,
-            long_description, graphics_paths)
+    return _StepResult(
+        next_file=in_prefix,
+        next_file_type=required_type,
+        latex_summary=latex_file,
+        description=find_related_samples.desc,
+        long_description=long_description,
+        graph_path=graphics_paths,
+    )
 
 
 def run_check_ethnicity(in_prefix, in_type, out_prefix, base_dir, options):
@@ -2288,8 +2358,14 @@ def run_check_ethnicity(in_prefix, in_type, out_prefix, base_dir, options):
 
     # We know this step doesn't produce an new data set, so we return the old
     # prefix and the old in_type
-    return (in_prefix, required_type, latex_file, check_ethnicity.desc,
-            check_ethnicity.long_desc, graphics_paths)
+    return _StepResult(
+        next_file=in_prefix,
+        next_file_type=required_type,
+        latex_summary=latex_file,
+        description=check_ethnicity.desc,
+        long_description=check_ethnicity.long_desc,
+        graph_path=graphics_paths,
+    )
 
 
 def run_flag_maf_zero(in_prefix, in_type, out_prefix, base_dir, options):
@@ -2381,8 +2457,14 @@ def run_flag_maf_zero(in_prefix, in_type, out_prefix, base_dir, options):
 
     # We know this step doesn't produce an new data set, so we return the old
     # prefix and the old in_type
-    return (in_prefix, required_type, latex_file, flag_maf_zero.desc,
-            flag_maf_zero.long_desc, None)
+    return _StepResult(
+        next_file=in_prefix,
+        next_file_type=required_type,
+        latex_summary=latex_file,
+        description=flag_maf_zero.desc,
+        long_description=flag_maf_zero.long_desc,
+        graph_path=None,
+    )
 
 
 def run_flag_hw(in_prefix, in_type, out_prefix, base_dir, options):
@@ -2511,8 +2593,14 @@ def run_flag_hw(in_prefix, in_type, out_prefix, base_dir, options):
 
     # We know this step doesn't produce an new data set, so we return the old
     # prefix and the old in_type
-    return (in_prefix, required_type, latex_file, flag_hw.desc,
-            flag_hw.long_desc, None)
+    return _StepResult(
+        next_file=in_prefix,
+        next_file_type=required_type,
+        latex_summary=latex_file,
+        description=flag_hw.desc,
+        long_description=flag_hw.long_desc,
+        graph_path=None,
+    )
 
 
 def run_compare_gold_standard(in_prefix, in_type, out_prefix, base_dir,
@@ -2580,8 +2668,14 @@ def run_compare_gold_standard(in_prefix, in_type, out_prefix, base_dir,
 
     # We know this step doesn't produce an new data set, so we return the old
     # prefix and the old in_type
-    return (in_prefix, required_type, latex_file, compare_gold_standard.desc,
-            compare_gold_standard.long_desc, None)
+    return _StepResult(
+        next_file=in_prefix,
+        next_file_type=required_type,
+        latex_summary=latex_file,
+        description=compare_gold_standard.desc,
+        long_description=compare_gold_standard.long_desc,
+        graph_path=None,
+    )
 
 
 def run_subset_data(in_prefix, in_type, out_prefix, base_dir, options):
@@ -2920,8 +3014,14 @@ def run_subset_data(in_prefix, in_type, out_prefix, base_dir, options):
             print >>o_file, "---"
 
     # We know this step does produce a new data set (bfile), so we return it
-    return (os.path.join(out_prefix, "subset"), required_type, latex_file,
-            subset_data.desc, subset_data.long_desc, None)
+    return _StepResult(
+        next_file=os.path.join(out_prefix, "subset"),
+        next_file_type=required_type,
+        latex_summary=latex_file,
+        description=subset_data.desc,
+        long_description=subset_data.long_desc,
+        graph_path=None,
+    )
 
 
 def run_command(command):
