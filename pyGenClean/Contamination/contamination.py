@@ -106,6 +106,9 @@ def check_sample_files(fam_filename, raw_dirname):
     for sample in fam_samples - all_samples:
         logger.warning("{}: sample not in raw directory".format(sample))
 
+    if len(sample_files) == 0:
+        raise ProgramError("no sample left for analysis")
+
     return sample_files
 
 

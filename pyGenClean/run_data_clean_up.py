@@ -1133,7 +1133,7 @@ def run_contamination(in_prefix, in_type, out_prefix, base_dir, options):
     try:
         contamination.main(options)
     except contamination.ProgramError as e:
-        msg = "contamination {}".format(e)
+        msg = "contamination: {}".format(e)
         raise ProgramError(msg)
 
     # Reading the "contamination" file
