@@ -261,8 +261,8 @@ def _create_summary_table(fn, template, nb_samples, nb_markers):
             if line.startswith("  -"):
                 tmp = line[4:].rstrip("\r\n").split("\t")
                 if data["header"].endswith("/subset"):
-                    if "/" in tmp[0]:
-                        tmp[0] = r"\path{" + tmp[0] + "}"
+                    if tmp[0].startswith("_file_path:"):
+                        tmp[0] = r"\path{" + tmp[0][11:] + "}"
                 elif data["header"].endswith("/flag_hw"):
                     tmp[0] = latex.format_numbers(tmp[0], prefix="p < ")
                 else:

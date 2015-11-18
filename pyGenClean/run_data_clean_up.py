@@ -3037,7 +3037,7 @@ def run_subset_data(in_prefix, in_type, out_prefix, base_dir, options):
     with open(os.path.join(base_dir, "results_summary.txt"), "a") as o_file:
         print >>o_file, "# {}".format(script_prefix)
         if nb_marker_end != nb_marker_start:
-            reason = marker_subset_fn
+            reason = "_file_path:" + marker_subset_fn
             if m_subset_reason is not None:
                 reason = m_subset_reason
 
@@ -3048,7 +3048,7 @@ def run_subset_data(in_prefix, in_type, out_prefix, base_dir, options):
             ))
             print >>o_file, "---"
         if nb_sample_end != nb_sample_start:
-            reason = sample_subset_fn
+            reason = "_file_path:" + sample_subset_fn
             if s_subset_reason is not None:
                 reason = s_subset_reason
 
