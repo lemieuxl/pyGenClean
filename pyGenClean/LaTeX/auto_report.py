@@ -73,7 +73,7 @@ def create_report(outdirname, report_filename, **kwargs):
                     desc = desc[:-1]
                 step = step.replace("_", r"\_")
                 to_print = latex.item(desc)
-                to_print += " ({}).".format(latex.texttt(step))
+                to_print += " [{}].".format(latex.texttt(step))
                 if long_desc is not None:
                     to_print += " " + long_desc
                 print >>o_file, latex.wrap_lines(to_print) + "\n"
@@ -261,7 +261,8 @@ def _create_summary_table(fn, template, nb_samples, nb_markers):
             if line.startswith("  -"):
                 tmp = line[4:].rstrip("\r\n").split("\t")
                 if data["header"].endswith("/subset"):
-                    tmp[0] = r"\path{" + tmp[0] + "}"
+                    if "/" in tmp[0]:
+                        tmp[0] = r"\path{" + tmp[0] + "}"
                 elif data["header"].endswith("/flag_hw"):
                     tmp[0] = latex.format_numbers(tmp[0], prefix="p < ")
                 else:

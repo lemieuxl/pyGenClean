@@ -2740,6 +2740,38 @@ def run_subset_data(in_prefix, in_type, out_prefix, base_dir, options):
     # Checking the input file
     check_input_files(in_prefix, in_type, required_type)
 
+    # What is going to be done
+    is_extract = "--extract" in options
+    is_exclude = "--exclude" in options
+    is_keep = "--keep" in options
+    is_remove = "--remove" in options
+
+    # Checking if we have a reason for markers
+    m_subset_reason = None
+    if "--reason-marker" in options:
+        m_subset_reason = latex_template.sanitize_tex(
+            options.pop(options.index("--reason-marker")+1),
+        )
+        options.pop(options.index("--reason-marker"))
+
+        if (not is_extract) and (not is_exclude):
+            # There was a reason for marker exclusion, but no exclusion will be
+            # performed, so we skip in the report
+            m_subset_reason = None
+
+    # Checking if we have a reason for samples
+    s_subset_reason = None
+    if "--reason-sample" in options:
+        s_subset_reason = latex_template.sanitize_tex(
+            options.pop(options.index("--reason-sample")+1),
+        )
+        options.pop(options.index("--reason-sample"))
+
+        if (not is_keep) and (not is_remove):
+            # There was a reason for sample exclusion, but no exclusion will be
+            # performed, so we skip in the report
+            s_subset_reason = None
+
     # We need to inject the name of the input file and the name of the output
     # prefix
     options += ["--ifile", in_prefix,
@@ -2758,12 +2790,6 @@ def run_subset_data(in_prefix, in_type, out_prefix, base_dir, options):
     except subset_data.ProgramError as e:
         msg = "subset_data: {}".format(e)
         raise ProgramError(msg)
-
-    # What was done
-    is_extract = "--extract" in options
-    is_exclude = "--exclude" in options
-    is_keep = "--keep" in options
-    is_remove = "--remove" in options
 
     # The files before the subset
     samples_before_fn = in_prefix
@@ -2820,11 +2846,12 @@ def run_subset_data(in_prefix, in_type, out_prefix, base_dir, options):
                 createRowFromPlinkSpacedOutput(line)[1] for line in i_file
             }
 
+        reason = os.path.relpath(marker_subset_fn, base_dir)
+        if m_subset_reason is not None:
+            reason = m_subset_reason
         removed_markers = {
-            name: "subset {}".format(os.path.relpath(
-                marker_subset_fn,
-                base_dir,
-            )) for name in markers_before - markers_after
+            name: "subset {}".format(reason)
+            for name in markers_before - markers_after
         }
 
     # Samples were kept
@@ -2858,11 +2885,12 @@ def run_subset_data(in_prefix, in_type, out_prefix, base_dir, options):
                 for line in i_file
             }
 
+        reason = os.path.relpath(sample_subset_fn, base_dir)
+        if s_subset_reason is not None:
+            reason = s_subset_reason
         removed_samples = {
-            "\t".join(name): "subset {}".format(os.path.relpath(
-                sample_subset_fn,
-                base_dir,
-            )) for name in samples_before - samples_after
+            "\t".join(name): "subset {}".format(reason)
+            for name in samples_before - samples_after
         }
 
     # Reading the log file to gather what is left
@@ -2919,11 +2947,21 @@ def run_subset_data(in_prefix, in_type, out_prefix, base_dir, options):
         raise ProgramError("Something went wrong with Plink's subset (numbers "
                            "are different from data and log file)")
 
+    # Creating the reasons
+    reasons = []
+    if m_subset_reason is not None:
+        reasons.append(m_subset_reason)
+    if s_subset_reason is not None:
+        reasons.append(s_subset_reason)
+
     # We write a LaTeX summary
     latex_file = os.path.join(script_prefix + ".summary.tex")
     try:
         with open(latex_file, "w") as o_file:
-            print >>o_file, latex_template.subsection(subset_data.pretty_name)
+            section_name = subset_data.pretty_name
+            if len(reasons) > 0:
+                section_name += " ({})".format(", ".join(reasons))
+            print >>o_file, latex_template.subsection(section_name)
             text = ""
             if is_extract:
                 text += (
@@ -2999,26 +3037,39 @@ def run_subset_data(in_prefix, in_type, out_prefix, base_dir, options):
     with open(os.path.join(base_dir, "results_summary.txt"), "a") as o_file:
         print >>o_file, "# {}".format(script_prefix)
         if nb_marker_end != nb_marker_start:
+            reason = marker_subset_fn
+            if m_subset_reason is not None:
+                reason = m_subset_reason
+
             print >>o_file, "Number of markers excluded"
-            print >>o_file, ("  - {fn}\t{nb:,d}\t-{nb:,d}".format(
-                                fn=marker_subset_fn,
-                                nb=nb_marker_start - nb_marker_end,
-                            ))
+            print >>o_file, ("  - {reason}\t{nb:,d}\t-{nb:,d}".format(
+                reason=reason,
+                nb=nb_marker_start - nb_marker_end,
+            ))
             print >>o_file, "---"
         if nb_sample_end != nb_sample_start:
+            reason = sample_subset_fn
+            if s_subset_reason is not None:
+                reason = s_subset_reason
+
             print >>o_file, "Number of samples removed"
-            print >>o_file, ("  - {fn}\t{nb:,d}\t\t-{nb:,d}".format(
-                                fn=sample_subset_fn,
-                                nb=nb_sample_start - nb_sample_end,
-                            ))
+            print >>o_file, ("  - {reason}\t{nb:,d}\t\t-{nb:,d}".format(
+                reason=reason,
+                nb=nb_sample_start - nb_sample_end,
+            ))
             print >>o_file, "---"
+
+    # Modifying the description
+    description = subset_data.desc
+    if len(reasons) > 0:
+        description += " ({})".format(", ".join(reasons))
 
     # We know this step does produce a new data set (bfile), so we return it
     return _StepResult(
         next_file=os.path.join(out_prefix, "subset"),
         next_file_type=required_type,
         latex_summary=latex_file,
-        description=subset_data.desc,
+        description=description,
         long_description=subset_data.long_desc,
         graph_path=None,
     )
@@ -3323,12 +3374,17 @@ def read_config_file(filename):
         try:
             script_name = config.get(section, "script")
         except ConfigParser.NoOptionError:
-            msg = ("{}: section {}: no variable called "
-                   "'script'".format(filename, section))
+            msg = ("{}: section {}: no variable called 'script'".format(
+                filename,
+                section,
+            ))
             raise ProgramError(msg)
         if script_name not in available_modules:
-            msg = ("{}: section {}: script {}: invalid script "
-                   "name".format(filename, section, script_name))
+            msg = ("{}: section {}: script {}: invalid script name".format(
+                filename,
+                section,
+                script_name,
+            ))
             raise ProgramError(msg)
 
         # Getting the variables
