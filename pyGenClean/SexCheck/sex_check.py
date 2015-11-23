@@ -115,9 +115,13 @@ def main(argString=None):
         # If required, let's plot the LRR and BAF plot
         if args.lrr_baf:
             logger.info("Creating the LRR and BAF plot")
-            createLrrBafPlot(args.lrr_baf_raw_dir,
-                             args.out + ".list_problem_sex_ids",
-                             args.lrr_baf_format, args.out)
+            createLrrBafPlot(
+                raw_dir=args.lrr_baf_raw_dir,
+                problematic_samples=args.out + ".list_problem_sex_ids",
+                format=args.lrr_baf_format,
+                dpi=args.lrr_baf_dpi,
+                out_prefix=args.out,
+            )
 
 
 def createGenderPlot(bfile, intensities, problematic_samples, format,
@@ -150,12 +154,13 @@ def createGenderPlot(bfile, intensities, problematic_samples, format,
         raise ProgramError(msg)
 
 
-def createLrrBafPlot(raw_dir, problematic_samples, format, out_prefix):
+def createLrrBafPlot(raw_dir, problematic_samples, format, dpi, out_prefix):
     """Creates the LRR and BAF plot.
 
     :param raw_dir: the directory containing the intensities.
     :param problematic_samples: the file containing the problematic samples.
     :param format: the format of the plot.
+    :param dpi: the DPI of the resulting images.
     :param out_prefix: the prefix of the output file.
 
     :type raw_dir: str
@@ -175,8 +180,9 @@ def createLrrBafPlot(raw_dir, problematic_samples, format, out_prefix):
 
     # The options
     baf_lrr_plot_options = ["--problematic-samples", problematic_samples,
-                            "--raw-dir", raw_dir, "--format", format, "--out",
-                            os.path.join(dir_name, "baf_lrr")]
+                            "--raw-dir", raw_dir, "--format", format,
+                            "--dpi", str(dpi),
+                            "--out", os.path.join(dir_name, "baf_lrr")]
     try:
         baf_lrr_plot.main(baf_lrr_plot_options)
     except baf_lrr_plot.ProgramError as e:
@@ -552,6 +558,9 @@ def checkArgs(args):
         if not os.path.isdir(args.lrr_baf_raw_dir):
             msg = "{}: no such directory".format(args.lrr_baf_raw_dir)
             raise ProgramError(msg)
+        if args.lrr_baf_dpi < 10:
+            msg = "{}: DPI too low".format(args.dpi)
+            raise ProgramError(msg)
 
     return True
 
@@ -677,6 +686,9 @@ group.add_argument("--lrr-baf-format", type=str, metavar="FORMAT",
                    help=("The output file format for the LRR and BAF plot "
                          "(png, ps, pdf, or X11 formats are available). "
                          "[default: %(default)s]"))
+group.add_argument("--lrr-baf-dpi", type=int, metavar="DPI", default=300,
+                   help=("The pixel density of the figure(s) (DPI). "
+                         "[default: %(default)d]"))
 # The OUTPUT files
 group = parser.add_argument_group("Output File")
 group.add_argument("--out", type=str, metavar="FILE", default="sexcheck",

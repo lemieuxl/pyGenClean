@@ -1482,13 +1482,13 @@ def run_sex_check(in_prefix, in_type, out_prefix, base_dir, options):
                     tabular_data=sorted(table[1:], key=lambda item: item[1]),
                 )
 
+            # Getting the templates
+            graphic_template = latex_template.jinja2_env.get_template(
+                "graphics_template.tex",
+            )
+
             # If there is a figure, we add it here
             if os.path.isfile(script_prefix + ".png"):
-                # Getting the templates
-                graphic_template = latex_template.jinja2_env.get_template(
-                    "graphics_template.tex",
-                )
-
                 # Adding the figure
                 figure_label = re.sub(r"[/\\]", "_", script_prefix)
                 text = (
