@@ -76,8 +76,11 @@
 % The plain fancy header
 \fancypagestyle{plain}{
     \fancyhf{} % clear all header and footer fields
+    \fancyfoot[RO,LE]{{\footnotesize \texttt{pyGenClean} version \VAR{ pygenclean_version }}}
+    \fancyfoot[LO,RE]{{\footnotesize\ProjectName}}
+    \fancyfoot[CO,CE]{{\footnotesize\thepage}}
     \renewcommand{\headrulewidth}{0pt}
-    \renewcommand{\footrulewidth}{0pt}
+    \renewcommand{\footrulewidth}{1pt}
 }
 
 % Table's numerotations are in Roman numbers
