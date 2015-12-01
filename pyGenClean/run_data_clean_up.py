@@ -2335,7 +2335,7 @@ def run_check_ethnicity(in_prefix, in_type, out_prefix, base_dir, options):
                     float_caption=caption,
                     float_label=label,
                     float_content=graphic_template.render(
-                        width=r"0.95\textheight",
+                        height=r"0.95\textheight",
                         path=latex_template.sanitize_fig_name(path),
                     ),
                 )
