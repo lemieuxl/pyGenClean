@@ -2219,6 +2219,7 @@ def run_check_ethnicity(in_prefix, in_type, out_prefix, base_dir, options):
     latex_file = os.path.join(script_prefix + ".summary.tex")
     graphics_paths = set()
     try:
+        # TODO: IF THIS CHANGE, code in find_outliers needs to change to...
         with open(latex_file, "w") as o_file:
             print >>o_file, latex_template.subsection(
                 check_ethnicity.pretty_name,
@@ -2278,7 +2279,7 @@ def run_check_ethnicity(in_prefix, in_type, out_prefix, base_dir, options):
                     "the source dataset with the reference panels. The "
                     "outliers of the {} population are shown in grey, while "
                     "samples of the source dataset that resemble the {} "
-                    "population is shown in orange. A multiplier of {} was "
+                    "population are shown in orange. A multiplier of {} was "
                     "used to find the {:,d} outlier{}.".format(
                         outliers_of,
                         outliers_of,
@@ -2290,7 +2291,7 @@ def run_check_ethnicity(in_prefix, in_type, out_prefix, base_dir, options):
                 print >>o_file, float_template.render(
                     float_type="figure",
                     float_placement="H",
-                    float_caption=caption,
+                    float_caption=latex_template.wrap_lines(caption),
                     float_label=label,
                     float_content=graphic_template.render(
                         width=r"0.8\textwidth",
