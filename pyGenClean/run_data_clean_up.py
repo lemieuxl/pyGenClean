@@ -2900,7 +2900,8 @@ def run_subset_data(in_prefix, in_type, out_prefix, base_dir, options):
 
     # Checking the number of markers at the beginning
     nb_marker_start = re.search(
-        r"(\d+) markers to be included from \[ {}".format(in_prefix),
+        r"(\d+) (\(of \d+\) )?markers to be included "
+        "from \[ {}".format(in_prefix),
         log_file,
     )
     if nb_marker_start:
