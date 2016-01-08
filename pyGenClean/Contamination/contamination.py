@@ -40,7 +40,7 @@ def main(argString=None):
 
     1. Prints the options.
     2. Compute frequency using Plink.
-    2. Runs bafRegress.
+    3. Runs bafRegress.
 
     """
     # Getting and checking the options
@@ -403,7 +403,6 @@ def parseArgs(argString=None):  # pragma: no cover
     ============================ ====== =======================================
                Options            Type                Description
     ============================ ====== =======================================
-
     ``--bfile``                  string The input file prefix (will find the
                                         plink binary files by appending the
                                         prefix to the .bim, .bed and .fam
@@ -418,7 +417,7 @@ def parseArgs(argString=None):  # pragma: no cover
     ``--colab1``                 string The AB Allele 1 column.
     ``--colab2``                 string The AB Allele 2 column.
     ``--out``                    string The prefix of the output files.
-    ``--sge"                     bool   Use SGE for parallelization.
+    ``--sge``                    bool   Use SGE for parallelization.
     ``--sge-walltime``           string The walltime for the job to run on the
                                         cluster. Do not use if you are not
                                         required to specify a walltime for your

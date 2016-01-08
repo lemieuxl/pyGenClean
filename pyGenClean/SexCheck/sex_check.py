@@ -595,6 +595,7 @@ def parseArgs(argString=None):  # pragma: no cover
     ``--lrr-baf-raw-dir``     string Directory containing information about
                                      every samples (BAF and LRR).
     ``--lrr-baf-format``      string The output file format.
+    ``--lrr-baf-dpi``         int    The pixel density of the figure(s) (DPI).
     ``--out``                 string The prefix of the output files.
     ========================= ====== ==========================================
 
