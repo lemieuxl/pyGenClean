@@ -6,6 +6,7 @@ Subpackages
 
 .. toctree::
 
+    pyGenClean.Contamination
     pyGenClean.DupSNPs
     pyGenClean.DupSamples
     pyGenClean.Ethnicity
