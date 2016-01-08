@@ -25,7 +25,7 @@ Report merging
 ==============
 
 On a typical data clean up pipeline, multiple directories will be created (one
-for each of the parts of the pipeline. A script is provided to merge all those
+for each of the parts of the pipeline). A script is provided to merge all those
 reports (one per ``data_clean_up.YYYY-MM-DD_HH.MM.SS`` directory) into a single
 report. Here is the usage of this script:
 
@@ -76,3 +76,12 @@ To execute the report merging procedure, perform the following command:
     background of the automatic report by using the ``--report-title``,
     ``--report-author``, ``--report-number`` or ``--report-background``
     options, respectively.
+
+
+Once again, to compile the final report, perform the following command:
+
+.. code-block:: console
+
+    $ pdflatex pyGenClean_report.tex
+    $ pdflatex pyGenClean_report.tex
+    $ pdflatex pyGenClean_report.tex
