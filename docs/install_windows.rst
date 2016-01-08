@@ -119,7 +119,7 @@ created an new text file using ``notepad``:
 .. code-block:: none
 
     > cd Desktop\pyGenClean_test
-    > notepad conf.txt
+    > notepad conf.ini
 
 Insert the following code in the file:
 
@@ -142,7 +142,7 @@ Finally, run the following command:
 .. code-block:: none
 
     > run_pyGenClean ^
-          --conf conf.txt ^
+          --conf conf.ini ^
           --bfile pyGenClean_test_data\1000G_EUR-MXL_Human610-Quad-v1_H
 
 Valuable information will be shown on the command prompt. Once the program has

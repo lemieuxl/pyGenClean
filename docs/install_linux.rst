@@ -225,7 +225,7 @@ Perform the following commands:
     $ tar -C ~/test_pyGenClean -jxf pyGenClean_test_data.tar.bz2
     $ cd ~/test_pyGenClean
 
-Create a text file named ``conf.txt`` inside the ``~/test_pyGenClean``
+Create a text file named ``conf.ini`` inside the ``~/test_pyGenClean``
 directory, containing the following text:
 
 .. code-block:: lighttpd
@@ -247,7 +247,7 @@ Run the following command:
 .. code-block:: console
 
     $ run_pyGenClean \
-    >     --conf conf.txt \
+    >     --conf conf.ini \
     >     --bfile pyGenClean_test_data/1000G_EUR-MXL_Human610-Quad-v1_H
 
 Valuable information will be shown in the terminal. Once the program has
