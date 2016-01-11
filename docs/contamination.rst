@@ -63,8 +63,9 @@ The usage of the standalone module is shown below:
 Input Files
 -----------
 
-This module uses PLINK's binary file format (``bed``, ``bim`` and ``fam`` files)
-for the source data set (the data of interest).
+This module uses PLINK's binary file format (``bed``, ``bim`` and ``fam``
+files) for the source data set (the data of interest). It also uses intensities
+file (one per sample to test) usually provided by the genotyping platform.
 
 
 Procedure
@@ -72,21 +73,22 @@ Procedure
 
 Here are the steps performed by the module:
 
-1.  Computes the frequencies using Plink.
-2.  Finds markers with a MAF of zero.
+1.  Selects only markers located on autosomes.
+2.  Compute frequency for each autosomal markers (as required by *bafRegress*).
+3.  Execute *bafRegress* on the dataset (in parallel if required).
 
 
 Output Files
 ------------
 
 The output files of each of the steps described above are as follow (note that
-the output prefix shown is the one by default [*i.e.* ``flag_maf_0``]):
+the output prefix shown is the one by default [*i.e.* ``contamination``]):
 
-1.  One file and one set of PLINK's result file:
-
-    *   ``flag_maf_0``: the frequency of each marker in the source dataset.
-    *   ``flag_maf_0.list``: the list of markers with a minor allele frequency
-        of zero.
+1.  ``contamination.to_extract``: the autosomal markers that will be used by
+    *bafRegress*.
+2. ``contamination.frq``: the frequency of each of the autosomal markers.
+3. ``contamination.bafRegress``: the *bafRegress* results for each of the
+    tested sample.
 
 
 The Algorithm
