@@ -735,7 +735,26 @@ def selectSNPsAccordingToLD(options):
 
     runCommand(plinkCommand)
 
-    return outPrefix + ".prune.in"
+    # Finding the autosomal markers
+    autosomes = {str(i) for i in range(1, 23)}
+    autosomal_snps = set()
+    with open(options.bfile + ".bim", "r") as i_file:
+        for line in i_file:
+            chrom, snp = line.rstrip("\r\n").split("\t")[:2]
+            if chrom in autosomes:
+                autosomal_snps.add(snp)
+
+    # Reading the pruned markers
+    pruned_snps = None
+    with open(outPrefix + ".prune.in", "r") as i_file:
+        pruned_snps = set(i_file.read().splitlines())
+
+    # Writing the pruned markers located on an autosome
+    with open(outPrefix + ".prune.in.autosomal", "w") as o_file:
+        for snp in autosomal_snps & pruned_snps:
+            print >>o_file, snp
+
+    return outPrefix + ".prune.in.autosomal"
 
 
 def runCommand(command):
