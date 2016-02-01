@@ -1136,6 +1136,11 @@ def run_contamination(in_prefix, in_type, out_prefix, base_dir, options):
         msg = "contamination: {}".format(e)
         raise ProgramError(msg)
 
+    # Counting the number of markers used for contamination
+    nb_autosomal = 0
+    with open(script_prefix + ".to_extract", "r") as i_file:
+        nb_autosomal = len(i_file.read().splitlines())
+
     # Reading the "contamination" file
     nb_tested_samples = 0
     contaminated_table = []
@@ -1145,7 +1150,9 @@ def run_contamination(in_prefix, in_type, out_prefix, base_dir, options):
         for i, line in enumerate(i_file):
             row = line.rstrip("\r\n").split("\t")
             if i == 0:
-                contaminated_table.append(tuple(row))
+                contaminated_table.append(("sample", "estimate$^1$",
+                                           "stderr$^1$", "tval", "pval",
+                                           "callrate", "Nhom$^2$"))
                 header = {name: i for i, name in enumerate(row)}
 
                 for name in ("sample", "estimate", "stderr", "tval", "pval",
@@ -1185,18 +1192,20 @@ def run_contamination(in_prefix, in_type, out_prefix, base_dir, options):
                 contamination.pretty_name,
             )
             text = ("A total of {:,d} sample{} {} analyzed for contamination "
-                    r"using \textit{bafRegress}\cite{bafRegress}. Using a "
-                    "threshold of 0.01, {:,d} sample{} {} estimated to be "
-                    "contaminated.".format(
+                    r"using \textit{bafRegress}\cite{bafRegress}. The "
+                    "analysis was performed using {:,d} autosomal marker{}. "
+                    "Using a threshold of 0.01, {:,d} sample{} {} estimated "
+                    "to be contaminated.".format(
                         nb_tested_samples,
                         "s" if nb_tested_samples > 1 else "",
                         "were" if nb_tested_samples > 1 else "was",
+                        nb_autosomal,
+                        "s" if nb_autosomal > 1 else "",
                         nb_contaminated_samples,
                         "s" if nb_contaminated_samples > 1 else "",
                         "were" if nb_contaminated_samples > 1 else "was",
                         bafRegress="{bafRegress}",
                     ))
-            print text
             print >>o_file, latex_template.wrap_lines(text)
 
             if nb_contaminated_samples > 0:
@@ -1228,6 +1237,10 @@ def run_contamination(in_prefix, in_type, out_prefix, base_dir, options):
                         contaminated_table[1:],
                         key=lambda item: item[0],
                     ),
+                    footnotes=[
+                        "$^1$Contamination estimate (with standard error)",
+                        "$^2$Number of homozygous genotypes used in the model",
+                    ],
                 )
 
     except IOError:
