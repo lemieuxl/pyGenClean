@@ -21,9 +21,9 @@ the conduct of a thorough data clean up and quality control to remove poor
 quality genotypes and generate metrics to inform and select individuals for
 downstream statistical analysis.
 
-:py:mod:`pyGenClean` is an informatics tool to facilitate and standardize the
-genetic data clean up pipeline with genotyping array data. In conjuction with a
-source batch-queuing system, the tool minimizes data manipulation errors, it
+:py:mod:`pyGenClean` is a bioinformatics tool to facilitate and standardize the
+genetic data clean up pipeline with genotyping array data. In conjunction with
+a source batch-queuing system, the tool minimizes data manipulation errors, it
 accelerates the completion of the data clean up process and it provides
 informative graphics and metrics to guide decision making for statistical
 analysis.
@@ -39,7 +39,7 @@ operating systems. Its usage is shown below:
                           [--report-number NUMBER]
                           [--report-background BACKGROUND] --conf FILE
 
-    Runs the data clean up (pyGenClean version 1.7.1).
+    Runs the data clean up (pyGenClean version 1.8.0).
 
     optional arguments:
       -h, --help            show this help message and exit
@@ -102,27 +102,27 @@ Windows in the following sections.
     install_windows
 
 
-Input Files
+Input files
 ===========
 
 To use :py:mod:`pyGenClean`, two sets of files are required: a set of genotype
-files and a configuration file.
+files and a configuration file (using the
+`INI format <https://wikipedia.org/wiki/INI_file>`_).
 
-Genotype Files
+Genotype files
 --------------
 
-The input files of the main program (``run_pyGenClean``) is one of the
-following:
+The input files of the main program (``run_pyGenClean``) are either:
 
 *   PLINK's pedfile format (use :py:mod:`pyGenClean`'s ``--file`` option)
-    consist of two files with the following extensions: ``PED`` and ``MAP``.
+    consists of two files with the following extensions: ``PED`` and ``MAP``.
 
 *   PLINK's transposed pedfile format (use :py:mod:`pyGenClean`'s ``--tfile``
-    option) consist of two files with the following extensions: ``TPED`` and
+    option) consists of two files with the following extensions: ``TPED`` and
     ``TFAM``.
 
 *   PLINK's binary pedfile format (use :py:mod:`pyGenClean`'s ``--bfile``
-    option) consist of three files with the following extensions: ``BED``,
+    option) consists of three files with the following extensions: ``BED``,
     ``BIM`` and ``FAM``.
 
 For more information about these file formats, have a look at PLINK's website,
@@ -133,7 +133,7 @@ in the *Basic usage/data formats* section
 .. warning::
 
     If the format used is the *transposed* one, the columns **must** be
-    separated using **tabulations**, but alleles of each markers need to be
+    separated using **tabulations**, but alleles of each marker need to be
     separated by a single space.
 
     To create this exact transposed pedfile format, you need to use the
@@ -144,21 +144,23 @@ in the *Basic usage/data formats* section
         format.
     *   ``--tab`` to use tabulations.
 
-Configuration File
+Configuration file
 ------------------
 
 To customized :py:mod:`pyGenClean`, a basic configuration file is required. It
 tells which script to use in a specific order. It also sets the different
 options and input files, so that the analysis is easy to replicate or modify.
 
-The configuration file consists of sections, led by a ``[section]`` header
-(contiguous integers which gives the order of the pipeline) and followed by
-customization of this particular part of the pipeline. Lines preceded by a
-``#`` are comments and are not read by :py:mod:`pyGenClean`.
+The configuration file uses the `INI format <https://wikipedia.org/wiki/INI_file>`_.
+It consists of sections, led by a ``[section]`` header (contiguous integers
+which gives the order of the pipeline) and followed by customization of this
+particular part of the pipeline. Lines preceded by a ``#`` are comments and are
+not read by :py:mod:`pyGenClean`.
 
-The following example first removes samples with a missing rate of 10% and
-more, then removes markers with a missing rate of 2% and more. Finally, it
-removes the samples with a missing rate of 2% and more.
+The following example first removes samples with a missing rate of 10% and more
+(section starting at line ``1``), then removes markers with a missing rate of
+2% and more (section starting at line ``6``). Finally, it removes the samples
+with a missing rate of 2% and more (section starting at line ``3``).
 
 .. code-block:: lighttpd
     :linenos:
@@ -189,7 +191,7 @@ and standalone script, refer to the :ref:`list_of_scripts`.
     list_of_options
 
 
-Information about the Protocol
+Information about the protocol
 ==============================
 
 The following sections describe the proposed protocol and provides information
@@ -215,6 +217,7 @@ following section:
     :maxdepth: 1
 
     module_content/modules
+    contamination
     duplicated_samples
     duplicated_markers
     clean_noCall_hetero_snps
@@ -229,6 +232,18 @@ following section:
     flag_hw
     compare_gold_standard
     plink_utils
+
+
+Citing pyGenClean
+=================
+
+If you use :py:mod:`pyGenClean` in any published work, please cite the
+published scientific paper describing the tool.
+
+    Lemieux Perreault LP, Provost S, Legault MA, Barhdadi A, Dubé MP:
+    **pyGenClean: efficient tool for genetic data clean up before association
+    testing.** *Bioinformatics* 2013, 29(13):1704-1705
+    [DOI:`10.1093/bioinformatics/btt261 <http://dx.doi.org/10.1093/bioinformatics/btt261>`_]
 
 
 Appendix

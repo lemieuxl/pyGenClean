@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Proposed Protocol &mdash; pyGenClean 1.7.1 documentation</title>
+    <title>Proposed Protocol &mdash; pyGenClean 1.8.0 documentation</title>
     
     <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '1.7.1',
+        VERSION:     '1.8.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="pyGenClean 1.7.1 documentation" href="index.html" />
+    <link rel="top" title="pyGenClean 1.8.0 documentation" href="index.html" />
     <link rel="next" title="Configuration Files" href="configuration_files.html" />
     <link rel="prev" title="List of Modules and their Options" href="list_of_options.html" /> 
   </head>
@@ -49,7 +49,7 @@
         <li class="right" >
           <a href="list_of_options.html" title="List of Modules and their Options"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">pyGenClean 1.7.1 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">pyGenClean 1.8.0 documentation</a> &raquo;</li> 
       </ul>
     </div>
 
@@ -58,6 +58,7 @@
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Proposed Protocol</a><ul>
+<li><a class="reference internal" href="#contamination-module">Contamination Module</a></li>
 <li><a class="reference internal" href="#preprocessing-steps">Preprocessing Steps</a></li>
 <li><a class="reference internal" href="#duplicated-samples-module">Duplicated Samples Module</a></li>
 <li><a class="reference internal" href="#first-subset-module-optional">First Subset Module (optional)</a></li>
@@ -117,6 +118,23 @@
             
   <div class="section" id="proposed-protocol">
 <span id="proposed-protocol-label"></span><h1>Proposed Protocol<a class="headerlink" href="#proposed-protocol" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="contamination-module">
+<span id="contamination-module-label"></span><h2>Contamination Module<a class="headerlink" href="#contamination-module" title="Permalink to this headline">¶</a></h2>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p><strong>Input files:</strong></p>
+<ul class="last simple">
+<li>PLINK binary pedfiles (BED, BIM and FAM)</li>
+</ul>
+</div>
+<ol class="arabic simple">
+<li>Examine the output file named <code class="docutils literal"><span class="pre">contamination.bafRegress</span></code>. It will contain
+the contamination estimates (along with confidence values). Usually, an
+estimate higher than 0.01 means possible contamination.</li>
+<li>The automatic report will contain the list of samples with possible
+contamination (<em>i.e.</em> an estimate value higher than 0.01).</li>
+</ol>
+</div>
 <div class="section" id="preprocessing-steps">
 <span id="preprocessing-label"></span><h2>Preprocessing Steps<a class="headerlink" href="#preprocessing-steps" title="Permalink to this headline">¶</a></h2>
 <ul>
@@ -608,7 +626,7 @@ calculated by PLINK.</p>
 </li>
 <li><p class="first">Examine <code class="docutils literal"><span class="pre">ethnicity.mds.png</span></code>, <code class="docutils literal"><span class="pre">ethnicity.before.png</span></code>,
 <code class="docutils literal"><span class="pre">ethnicity.after.png</span></code> and <code class="docutils literal"><span class="pre">ethnicity.outliers.png</span></code> to detect samples
-outside the selected cluster (see the generated <a class="reference internal" href="check_ethnicity.html#ethnicity-plots-label"><span>The Plots</span></a>
+outside the selected cluster (see <a class="reference internal" href="check_ethnicity.html#ethnicity-plots-label"><span>The Plots</span></a> generated
 from the <a class="reference internal" href="check_ethnicity.html#ethnicity-module-label"><span>Ethnicity Module</span></a> for more information).</p>
 <p>If there are too many outliers still present in the data set (<em>i.e.</em> radius
 is too large), analysis can be redone using the <code class="docutils literal"><span class="pre">pyGenClean_find_outliers</span></code>
@@ -789,12 +807,12 @@ while running the script.</li>
         <li class="right" >
           <a href="list_of_options.html" title="List of Modules and their Options"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">pyGenClean 1.7.1 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">pyGenClean 1.8.0 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2012, Louis-Philippe Lemieux Perreault.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.5.
     </div>
   </body>
 </html>

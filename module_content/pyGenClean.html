@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>pyGenClean package &mdash; pyGenClean 1.7.1 documentation</title>
+    <title>pyGenClean package &mdash; pyGenClean 1.8.0 documentation</title>
     
     <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '1.7.1',
+        VERSION:     '1.8.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,9 +24,9 @@
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="pyGenClean 1.7.1 documentation" href="../index.html" />
+    <link rel="top" title="pyGenClean 1.8.0 documentation" href="../index.html" />
     <link rel="up" title="Main pyGenClean pipeline" href="modules.html" />
-    <link rel="next" title="pyGenClean.DupSNPs package" href="pyGenClean.DupSNPs.html" />
+    <link rel="next" title="pyGenClean.Contamination package" href="pyGenClean.Contamination.html" />
     <link rel="prev" title="Main pyGenClean pipeline" href="modules.html" /> 
   </head>
   <body role="document">
@@ -45,12 +45,12 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="pyGenClean.DupSNPs.html" title="pyGenClean.DupSNPs package"
+          <a href="pyGenClean.Contamination.html" title="pyGenClean.Contamination package"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="modules.html" title="Main pyGenClean pipeline"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">pyGenClean 1.7.1 documentation</a> &raquo;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">pyGenClean 1.8.0 documentation</a> &raquo;</li>
           <li class="nav-item nav-item-1"><a href="modules.html" accesskey="U">Main pyGenClean pipeline</a> &raquo;</li> 
       </ul>
     </div>
@@ -74,8 +74,8 @@
   <p class="topless"><a href="modules.html"
                         title="previous chapter">Main pyGenClean pipeline</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="pyGenClean.DupSNPs.html"
-                        title="next chapter">pyGenClean.DupSNPs package</a></p>
+  <p class="topless"><a href="pyGenClean.Contamination.html"
+                        title="next chapter">pyGenClean.Contamination package</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -110,6 +110,14 @@
 <h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="pyGenClean.Contamination.html">pyGenClean.Contamination package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pyGenClean.Contamination.html#module-pyGenClean.Contamination">Module contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyGenClean.Contamination.html#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pyGenClean.Contamination.html#module-pyGenClean.Contamination.contamination">pyGenClean.Contamination.contamination module</a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="pyGenClean.DupSNPs.html">pyGenClean.DupSNPs package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="pyGenClean.DupSNPs.html#module-pyGenClean.DupSNPs">Module contents</a></li>
 <li class="toctree-l2"><a class="reference internal" href="pyGenClean.DupSNPs.html#submodules">Submodules</a><ul>
@@ -453,29 +461,29 @@ values).</td>
 </table>
 <p>The structure of the configuration file is important. Here is an example of
 a configuration file:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="c"># Computes statistics on duplicated samples</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="c1"># Computes statistics on duplicated samples</span>
 <span class="n">script</span> <span class="o">=</span> <span class="n">duplicated_samples</span>
 
-<span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="c"># Removes samples according to missingness</span>
+<span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="c1"># Removes samples according to missingness</span>
 <span class="n">script</span> <span class="o">=</span> <span class="n">sample_missingness</span>
 
-<span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="c"># Removes markers according to missingness</span>
+<span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="c1"># Removes markers according to missingness</span>
 <span class="n">script</span> <span class="o">=</span> <span class="n">snp_missingness</span>
 
-<span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="c"># Removes samples according to missingness (98%)</span>
+<span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="c1"># Removes samples according to missingness (98%)</span>
 <span class="n">script</span> <span class="o">=</span> <span class="n">sample_missingness</span>
 <span class="n">mind</span> <span class="o">=</span> <span class="mf">0.02</span>
 
-<span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="c"># Performs a sex check</span>
+<span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="c1"># Performs a sex check</span>
 <span class="n">script</span> <span class="o">=</span> <span class="n">sex_check</span>
 
-<span class="p">[</span><span class="mi">6</span><span class="p">]</span> <span class="c"># Flags markers with MAF=0</span>
+<span class="p">[</span><span class="mi">6</span><span class="p">]</span> <span class="c1"># Flags markers with MAF=0</span>
 <span class="n">script</span> <span class="o">=</span> <span class="n">flag_maf_zero</span>
 
-<span class="p">[</span><span class="mi">7</span><span class="p">]</span> <span class="c"># Flags markers according to Hardy Weinberg</span>
+<span class="p">[</span><span class="mi">7</span><span class="p">]</span> <span class="c1"># Flags markers according to Hardy Weinberg</span>
 <span class="n">script</span> <span class="o">=</span> <span class="n">flag_hw</span>
 
-<span class="p">[</span><span class="mi">8</span><span class="p">]</span> <span class="c"># Subset the dataset (excludes markers and remove samples)</span>
+<span class="p">[</span><span class="mi">8</span><span class="p">]</span> <span class="c1"># Subset the dataset (excludes markers and remove samples)</span>
 <span class="n">script</span> <span class="o">=</span> <span class="n">subset</span>
 <span class="n">exclude</span> <span class="o">=</span> <span class="o">.../</span><span class="n">filename</span>
 <span class="n">rempove</span> <span class="o">=</span> <span class="o">.../</span><span class="n">filename</span>
@@ -497,6 +505,7 @@ option <code class="docutils literal"><span class="pre">mind</span></code> sets 
 <li><code class="docutils literal"><span class="pre">snp_missingness</span></code> (<a class="reference internal" href="#pyGenClean.run_data_clean_up.run_snp_missingness" title="pyGenClean.run_data_clean_up.run_snp_missingness"><code class="xref py py-func docutils literal"><span class="pre">run_snp_missingness()</span></code></a>)</li>
 <li><code class="docutils literal"><span class="pre">sex_check</span></code> (<a class="reference internal" href="#pyGenClean.run_data_clean_up.run_sex_check" title="pyGenClean.run_data_clean_up.run_sex_check"><code class="xref py py-func docutils literal"><span class="pre">run_sex_check()</span></code></a>)</li>
 <li><code class="docutils literal"><span class="pre">plate_bias</span></code> (<a class="reference internal" href="#pyGenClean.run_data_clean_up.run_plate_bias" title="pyGenClean.run_data_clean_up.run_plate_bias"><code class="xref py py-func docutils literal"><span class="pre">run_plate_bias()</span></code></a>)</li>
+<li><code class="docutils literal"><span class="pre">contamination</span></code> (<a class="reference internal" href="#pyGenClean.run_data_clean_up.run_contamination" title="pyGenClean.run_data_clean_up.run_contamination"><code class="xref py py-func docutils literal"><span class="pre">run_contamination()</span></code></a>)</li>
 <li><code class="docutils literal"><span class="pre">remove_heterozygous_haploid</span></code>
 (<a class="reference internal" href="#pyGenClean.run_data_clean_up.run_remove_heterozygous_haploid" title="pyGenClean.run_data_clean_up.run_remove_heterozygous_haploid"><code class="xref py py-func docutils literal"><span class="pre">run_remove_heterozygous_haploid()</span></code></a>)</li>
 <li><code class="docutils literal"><span class="pre">find_related_samples</span></code> (<a class="reference internal" href="#pyGenClean.run_data_clean_up.run_find_related_samples" title="pyGenClean.run_data_clean_up.run_find_related_samples"><code class="xref py py-func docutils literal"><span class="pre">run_find_related_samples()</span></code></a>)</li>
@@ -597,6 +606,32 @@ type is the good one, or to create it if needed.</p>
 return usable output files. Hence, this function returns the input file
 prefix and its type.</p>
 </div>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.run_data_clean_up.run_contamination">
+<code class="descclassname">pyGenClean.run_data_clean_up.</code><code class="descname">run_contamination</code><span class="sig-paren">(</span><em>in_prefix</em>, <em>in_type</em>, <em>out_prefix</em>, <em>base_dir</em>, <em>options</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyGenClean/run_data_clean_up.html#run_contamination"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.run_data_clean_up.run_contamination" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs the contamination check for samples.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>in_prefix</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the prefix of the input files.</li>
+<li><strong>in_type</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the type of the input files.</li>
+<li><strong>out_prefix</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the output prefix.</li>
+<li><strong>base_dir</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the output directory.</li>
+<li><strong>options</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; the options needed.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">a tuple containing the prefix of the output files (the input
+prefix for the next script) and the type of the output files
+(<code class="docutils literal"><span class="pre">bfile</span></code>).</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
@@ -1049,18 +1084,18 @@ good one, or to create it if needed.</p>
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="pyGenClean.DupSNPs.html" title="pyGenClean.DupSNPs package"
+          <a href="pyGenClean.Contamination.html" title="pyGenClean.Contamination package"
              >next</a> |</li>
         <li class="right" >
           <a href="modules.html" title="Main pyGenClean pipeline"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">pyGenClean 1.7.1 documentation</a> &raquo;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">pyGenClean 1.8.0 documentation</a> &raquo;</li>
           <li class="nav-item nav-item-1"><a href="modules.html" >Main pyGenClean pipeline</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2012, Louis-Philippe Lemieux Perreault.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.5.
     </div>
   </body>
 </html>

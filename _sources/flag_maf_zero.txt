@@ -47,7 +47,7 @@ the output prefix shown is the one by default [*i.e.* ``flag_maf_0``]):
 
 1.  One file and one set of PLINK's result file:
 
-    *   ``flag_maf_0``: the frequency of each marker in the source dataset.
+    *   ``flag_maf_0.frq``: the frequency of each marker in the source dataset.
     *   ``flag_maf_0.list``: the list of markers with a minor allele frequency
         of zero.
 

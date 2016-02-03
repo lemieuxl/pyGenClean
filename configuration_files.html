@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Configuration Files &mdash; pyGenClean 1.7.1 documentation</title>
+    <title>Configuration Files &mdash; pyGenClean 1.8.0 documentation</title>
     
     <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '1.7.1',
+        VERSION:     '1.8.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="pyGenClean 1.7.1 documentation" href="index.html" />
+    <link rel="top" title="pyGenClean 1.8.0 documentation" href="index.html" />
     <link rel="next" title="How to Run the Pipeline" href="how_to_run.html" />
     <link rel="prev" title="Proposed Protocol" href="protocol.html" /> 
   </head>
@@ -49,7 +49,7 @@
         <li class="right" >
           <a href="protocol.html" title="Proposed Protocol"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">pyGenClean 1.7.1 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">pyGenClean 1.8.0 documentation</a> &raquo;</li> 
       </ul>
     </div>
 
@@ -284,12 +284,55 @@ provide the intensities (<code class="docutils literal"><span class="pre">sex-ch
 166
 167
 168
-169</pre></div></td><td class="code"><div class="highlight"><pre><span class="c1"># This is the first part of example configuration files for performing efficient</span>
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191</pre></div></td><td class="code"><div class="highlight"><pre><span class="c1"># This is the first part of example configuration files for performing efficient</span>
 <span class="c1"># data clean up. All commented out parameters are those that are used by</span>
 <span class="c1"># default.</span>
 
 
 <span class="p">[</span><span class="m">1</span><span class="p">]</span>
+<span class="c1"># ##############################################################################</span>
+<span class="c1"># Checks sample contamination using the bafRegress tool</span>
+<span class="c1"># (http://genome.sph.umich.edu/wiki/BAFRegress). Field name can be modify using</span>
+<span class="c1"># options (as describe below).</span>
+<span class="c1"># ##############################################################################</span>
+
+<span class="k">script</span> <span class="o">=</span> <span class="k">contamination</span>
+<span class="k">raw-dir</span> <span class="o">=</span> <span class="n">/PATH/TO/DIRECTORY/CONTAINING/INTENSITIES.txt</span>
+<span class="c1"># colsample = Sample Name</span>
+<span class="c1"># colmarker = SNP Name</span>
+<span class="c1"># colbaf = B Allele Freq</span>
+<span class="c1"># colab1 = Allele1 - AB</span>
+<span class="c1"># colab2 = Allele2 - AB</span>
+<span class="c1"># sge</span>
+<span class="c1"># sge-walltime = WRITE WALLTIME ONLY IF REQUIRED</span>
+<span class="c1"># sge-nodes = WRITE NB NODES AND NB PROCESSOR PER NODE ONLY IF REQUIRED</span>
+<span class="c1"># sample-per-run-for-sge = 30</span>
+
+
+
+<span class="p">[</span><span class="m">2</span><span class="p">]</span>
 <span class="c1"># ##############################################################################</span>
 <span class="c1"># Checks missing rate and pairwise concordance of duplicated samples. Duplicated</span>
 <span class="c1"># samples should have same family and individual identification numbers. The</span>
@@ -302,7 +345,7 @@ provide the intensities (<code class="docutils literal"><span class="pre">sex-ch
 
 
 
-<span class="p">[</span><span class="m">2</span><span class="p">]</span>
+<span class="p">[</span><span class="m">3</span><span class="p">]</span>
 <span class="c1"># ##############################################################################</span>
 <span class="c1"># Checks missing rate and pairwise concordance of duplicated markers. Duplicated</span>
 <span class="c1"># markers are found by looking at their chromosomal position. No modification of</span>
@@ -316,7 +359,7 @@ provide the intensities (<code class="docutils literal"><span class="pre">sex-ch
 
 
 
-<span class="p">[</span><span class="m">3</span><span class="p">]</span>
+<span class="p">[</span><span class="m">4</span><span class="p">]</span>
 <span class="c1"># ##############################################################################</span>
 <span class="c1"># Finds and removes markers which have a missing rate of 100% or markers (not</span>
 <span class="c1"># located on mitochondrial chromosome) that have a heterozygosity rate of 0%.</span>
@@ -326,7 +369,7 @@ provide the intensities (<code class="docutils literal"><span class="pre">sex-ch
 
 
 
-<span class="p">[</span><span class="m">4</span><span class="p">]</span>
+<span class="p">[</span><span class="m">5</span><span class="p">]</span>
 <span class="c1"># ##############################################################################</span>
 <span class="c1"># Removes sample with a missing rate higher than a user defined threshold. For</span>
 <span class="c1"># this step, we recommend using a threshold of 10% missing rate as samples with</span>
@@ -338,7 +381,7 @@ provide the intensities (<code class="docutils literal"><span class="pre">sex-ch
 
 
 
-<span class="p">[</span><span class="m">5</span><span class="p">]</span>
+<span class="p">[</span><span class="m">6</span><span class="p">]</span>
 <span class="c1"># ##############################################################################</span>
 <span class="c1"># Removes markers with a missing rate higher than a user defined threshold. For</span>
 <span class="c1"># this step, we recommend using a threshold of 2% missing rate.</span>
@@ -349,7 +392,7 @@ provide the intensities (<code class="docutils literal"><span class="pre">sex-ch
 
 
 
-<span class="p">[</span><span class="m">6</span><span class="p">]</span>
+<span class="p">[</span><span class="m">7</span><span class="p">]</span>
 <span class="c1"># ##############################################################################</span>
 <span class="c1"># Removes sample with a missing rate higher than a user defined threshold. For</span>
 <span class="c1"># this step, we recommend using a threshold of 2% missing rate.</span>
@@ -360,7 +403,7 @@ provide the intensities (<code class="docutils literal"><span class="pre">sex-ch
 
 
 
-<span class="p">[</span><span class="m">7</span><span class="p">]</span>
+<span class="p">[</span><span class="m">8</span><span class="p">]</span>
 <span class="c1"># ##############################################################################</span>
 <span class="c1"># Using PLINK, finds samples with gender issues, according to heterozygosity</span>
 <span class="c1"># rate on the X chromosome. If you want to produce a gender plot, you need to</span>
@@ -381,10 +424,11 @@ provide the intensities (<code class="docutils literal"><span class="pre">sex-ch
 <span class="c1"># lrr-baf</span>
 <span class="c1"># lrr-baf-raw-dir = /PATH/TO/DIRECTORY/CONTAINING/BAF_LRR_FILES.txt</span>
 <span class="c1"># lrr-baf-format = png</span>
+<span class="c1"># lrr-baf-dpi = 300</span>
 
 
 
-<span class="p">[</span><span class="m">8</span><span class="p">]</span>
+<span class="p">[</span><span class="m">9</span><span class="p">]</span>
 <span class="c1"># ##############################################################################</span>
 <span class="c1"># Using PLINK, performs a plate bias analysis, using a p value threshold of</span>
 <span class="c1"># 1.0e-7.</span>
@@ -396,7 +440,7 @@ provide the intensities (<code class="docutils literal"><span class="pre">sex-ch
 
 
 
-<span class="p">[</span><span class="m">9</span><span class="p">]</span>
+<span class="p">[</span><span class="m">10</span><span class="p">]</span>
 <span class="c1"># ##############################################################################</span>
 <span class="c1"># Checks for related individual and randomly keeps one of each related group. If</span>
 <span class="c1"># you have a server with a DRMAA-compliant distributed resource management</span>
@@ -416,7 +460,7 @@ provide the intensities (<code class="docutils literal"><span class="pre">sex-ch
 
 
 
-<span class="p">[</span><span class="m">10</span><span class="p">]</span>
+<span class="p">[</span><span class="m">11</span><span class="p">]</span>
 <span class="c1"># ##############################################################################</span>
 <span class="c1"># Using PLINK, computes the MDS value of each sample, and using three reference</span>
 <span class="c1"># populations (CEU, YRI and JPT-CHB), finds outliers of one of those three</span>
@@ -526,7 +570,11 @@ and <code class="docutils literal"><span class="pre">plate_bias</span></code> se
 60
 61
 62
-63</pre></div></td><td class="code"><div class="highlight"><pre><span class="c1"># This is the second part of example configuration files for performing</span>
+63
+64
+65
+66
+67</pre></div></td><td class="code"><div class="highlight"><pre><span class="c1"># This is the second part of example configuration files for performing</span>
 <span class="c1"># efficient data clean up. All commented out parameters are those that are used</span>
 <span class="c1"># by default.</span>
 
@@ -547,21 +595,25 @@ and <code class="docutils literal"><span class="pre">plate_bias</span></code> se
 <span class="c1"># directories using the PLINK&#39;s binary file located in</span>
 <span class="c1"># &quot;remove_heterozygous_haploid&quot;.</span>
 
-<span class="p">[</span><span class="m">11</span><span class="p">]</span>
+<span class="p">[</span><span class="m">12</span><span class="p">]</span>
 <span class="c1"># ##############################################################################</span>
 <span class="c1"># After manually checking that everything went fine in the previous steps, you</span>
 <span class="c1"># need to create a list of samples to remove from steps [7] to [10] and a list</span>
 <span class="c1"># of markers to exclude from steps [6]. Just create a file containing family and</span>
-<span class="c1"># individual identification numbers for all those samples to remove.</span>
+<span class="c1"># individual identification numbers for all those samples to remove. Note that</span>
+<span class="c1"># the two options &#39;reason-marker&#39; and &#39;reason-sample&#39; are for the automatic</span>
+<span class="c1"># report generated after the analysis.</span>
 <span class="c1"># ##############################################################################</span>
 
 <span class="k">script</span> <span class="o">=</span> <span class="k">subset</span>
+<span class="k">reason-marker</span> <span class="o">=</span> <span class="k">reason</span> <span class="k">for</span> <span class="k">marker</span> <span class="k">exclusion</span>
+<span class="k">reason-sample</span> <span class="o">=</span> <span class="k">reason</span> <span class="k">for</span> <span class="k">sample</span> <span class="k">exclusion</span>
 <span class="k">remove</span> <span class="o">=</span> <span class="n">/PATH/TO/FILE/CONTAINING/ALL_SAMPLES_FROM_PREVIOUS_STEPS_TO_REMOVE.txt</span>
 <span class="k">exclude</span> <span class="o">=</span> <span class="n">/PATH/TO/FILE/CONTAINING/ALL_MARKERS_FROM_PREVIOUS_STEPS_TO_EXCLUDE.txt</span>
 
 
 
-<span class="p">[</span><span class="m">12</span><span class="p">]</span>
+<span class="p">[</span><span class="m">13</span><span class="p">]</span>
 <span class="c1"># ##############################################################################</span>
 <span class="c1"># Removes heterozygous haploid genotypes from the dataset.</span>
 <span class="c1"># ##############################################################################</span>
@@ -570,7 +622,7 @@ and <code class="docutils literal"><span class="pre">plate_bias</span></code> se
 
 
 
-<span class="p">[</span><span class="m">13</span><span class="p">]</span>
+<span class="p">[</span><span class="m">14</span><span class="p">]</span>
 <span class="c1"># ##############################################################################</span>
 <span class="c1"># Flags uninformative markers (with a MAF of 0). This step only flag markers.</span>
 <span class="c1"># You might want to exclude them later on.</span>
@@ -580,7 +632,7 @@ and <code class="docutils literal"><span class="pre">plate_bias</span></code> se
 
 
 
-<span class="p">[</span><span class="m">14</span><span class="p">]</span>
+<span class="p">[</span><span class="m">15</span><span class="p">]</span>
 <span class="c1"># ##############################################################################</span>
 <span class="c1"># Flags markers that fail HWE test for a p value of 1e-4 and after Bonferroni</span>
 <span class="c1"># correction. This step only flag markers. You might want to exclude them later</span>
@@ -615,12 +667,12 @@ and <code class="docutils literal"><span class="pre">plate_bias</span></code> se
         <li class="right" >
           <a href="protocol.html" title="Proposed Protocol"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">pyGenClean 1.7.1 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">pyGenClean 1.8.0 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2012, Louis-Philippe Lemieux Perreault.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.5.
     </div>
   </body>
 </html>

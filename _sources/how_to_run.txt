@@ -5,27 +5,14 @@ How to Run the Pipeline
 
 .. warning::
 
-    If you are working in a Linux environment, before doing anything, be sure to
-    activate the Python virtual environment (refer to the
-    :ref:`python_virtual_environment_label` installation section for more
-    information).
+    Before using :py:mod:`pyGenClean`, be sure to activate the appropriate
+    Python virtual environment (refer to the Linux
+    :ref:`virtualenv <activate_virtual_environment_label>` or
+    :ref:`conda <activate_conda_virtual_environment_label>` installation
+    section, or the
+    :ref:`Windows <activate_conda_virtual_environment_win_label>` installation
+    section for more information.
 
-    If you are working in a Windows environment, you will need to modify the
-    command so that it loads correctly. For example, the following command
-
-    .. code-block:: console
-
-        $ run_pyGenClean \
-        >     --conf conf_1.txt \
-        >     --tfile /PATH/TO/ORIGINAL/DATASET_PREFIX
-
-    will become
-
-    .. code-block:: none
-
-       > python C:\Python27\Scripts\run_pyGenClean ^
-           --conf conf_1.txt ^
-           --bfile \PATH\TO\ORIGINAL\DATASET_PREFIX
 
 Modify the :ref:`first_conf_file` so that it suits your needs. After following
 the :ref:`preprocessing_label` described in the :ref:`proposed_protocol_label`
@@ -34,7 +21,7 @@ section, run the following command:
 .. code-block:: console
 
     $ run_pyGenClean \
-    >     --conf conf_1.txt \
+    >     --conf configuration_example_1_of_2.ini \
     >     --tfile /PATH/TO/ORIGINAL/DATASET_PREFIX
 
 While the protocol is running, check the outputs according to the
@@ -69,12 +56,12 @@ it reads:
 Once everything was checked, run the following command to finish the data clean
 up pipeline:
 
-.. code-block:: console
+.. code-block:: bash
 
-    $ output_dir=data_clean_up.YYYY-MM-DD_HH.MM.SS
-    $ run_pyGenClean \
-    >     --conf conf_2.txt \
-    >     --bfile $output_dir/6_sample_missingness/clean_mind
+    output_dir=data_clean_up.YYYY-MM-DD_HH.MM.SS
+    run_pyGenClean \
+        --conf configuration_example_2_of_2.ini \
+        --bfile $output_dir/6_sample_missingness/clean_mind
 
 If you want to removed the markers that were flagged in the ``flag_maf_zero``
 and ``flag_hw`` section, performed the following commands (using the newly

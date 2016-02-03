@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>pyGenClean.LaTeX.utils &mdash; pyGenClean 1.7.1 documentation</title>
+    <title>pyGenClean.LaTeX.utils &mdash; pyGenClean 1.8.0 documentation</title>
     
     <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '1.7.1',
+        VERSION:     '1.8.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="pyGenClean 1.7.1 documentation" href="../../../index.html" />
+    <link rel="top" title="pyGenClean 1.8.0 documentation" href="../../../index.html" />
     <link rel="up" title="pyGenClean" href="../../pyGenClean.html" /> 
   </head>
   <body role="document">
@@ -42,7 +42,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">pyGenClean 1.7.1 documentation</a> &raquo;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">pyGenClean 1.8.0 documentation</a> &raquo;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &raquo;</li>
           <li class="nav-item nav-item-2"><a href="../../pyGenClean.html" accesskey="U">pyGenClean</a> &raquo;</li> 
       </ul>
@@ -72,21 +72,21 @@
           <div class="body" role="main">
             
   <h1>Source code for pyGenClean.LaTeX.utils</h1><div class="highlight"><pre>
-<span class="c">#!/usr/bin/env python2.7</span>
+<span class="ch">#!/usr/bin/env python2.7</span>
 
-<span class="c"># This file is part of pyGenClean.</span>
-<span class="c">#</span>
-<span class="c"># pyGenClean is free software: you can redistribute it and/or modify it under</span>
-<span class="c"># the terms of the GNU General Public License as published by the Free Software</span>
-<span class="c"># Foundation, either version 3 of the License, or (at your option) any later</span>
-<span class="c"># version.</span>
-<span class="c">#</span>
-<span class="c"># pyGenClean is distributed in the hope that it will be useful, but WITHOUT ANY</span>
-<span class="c"># WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR</span>
-<span class="c"># A PARTICULAR PURPOSE.  See the GNU General Public License for more details.</span>
-<span class="c">#</span>
-<span class="c"># You should have received a copy of the GNU General Public License along with</span>
-<span class="c"># pyGenClean.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
+<span class="c1"># This file is part of pyGenClean.</span>
+<span class="c1">#</span>
+<span class="c1"># pyGenClean is free software: you can redistribute it and/or modify it under</span>
+<span class="c1"># the terms of the GNU General Public License as published by the Free Software</span>
+<span class="c1"># Foundation, either version 3 of the License, or (at your option) any later</span>
+<span class="c1"># version.</span>
+<span class="c1">#</span>
+<span class="c1"># pyGenClean is distributed in the hope that it will be useful, but WITHOUT ANY</span>
+<span class="c1"># WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR</span>
+<span class="c1"># A PARTICULAR PURPOSE.  See the GNU General Public License for more details.</span>
+<span class="c1">#</span>
+<span class="c1"># You should have received a copy of the GNU General Public License along with</span>
+<span class="c1"># pyGenClean.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
 
 
 <span class="kn">import</span> <span class="nn">os</span>
@@ -98,24 +98,24 @@
 
 
 <span class="n">_char_mod</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s">&quot;~&quot;</span><span class="p">:</span> <span class="s">r&quot;$\sim$&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;~&quot;</span><span class="p">:</span> <span class="s2">r&quot;$\sim$&quot;</span><span class="p">,</span>
 <span class="p">}</span>
-<span class="n">_escaped_char</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;$&quot;</span><span class="p">,</span> <span class="s">&quot;%&quot;</span><span class="p">,</span> <span class="s">&quot;_&quot;</span><span class="p">,</span> <span class="s">&quot;}&quot;</span><span class="p">,</span> <span class="s">&quot;{&quot;</span><span class="p">,</span> <span class="s">&quot;&amp;&quot;</span><span class="p">,</span> <span class="s">&quot;#&quot;</span><span class="p">]</span>
+<span class="n">_escaped_char</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;$&quot;</span><span class="p">,</span> <span class="s2">&quot;%&quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="s2">&quot;}&quot;</span><span class="p">,</span> <span class="s2">&quot;{&quot;</span><span class="p">,</span> <span class="s2">&quot;&amp;&quot;</span><span class="p">,</span> <span class="s2">&quot;#&quot;</span><span class="p">]</span>
 
 
-<span class="c"># The document template</span>
+<span class="c1"># The document template</span>
 <span class="n">jinja2_env</span> <span class="o">=</span> <span class="n">jinja2</span><span class="o">.</span><span class="n">Environment</span><span class="p">(</span>
-        <span class="n">block_start_string</span><span class="o">=</span><span class="s">&#39;\BLOCK{&#39;</span><span class="p">,</span>
-        <span class="n">block_end_string</span><span class="o">=</span><span class="s">&#39;}&#39;</span><span class="p">,</span>
-        <span class="n">variable_start_string</span><span class="o">=</span><span class="s">&#39;\VAR{&#39;</span><span class="p">,</span>
-        <span class="n">variable_end_string</span><span class="o">=</span><span class="s">&#39;}&#39;</span><span class="p">,</span>
-        <span class="n">comment_start_string</span><span class="o">=</span><span class="s">&#39;\#{&#39;</span><span class="p">,</span>
-        <span class="n">comment_end_string</span><span class="o">=</span><span class="s">&#39;}&#39;</span><span class="p">,</span>
-        <span class="n">line_statement_prefix</span><span class="o">=</span><span class="s">&#39;%-&#39;</span><span class="p">,</span>
-        <span class="n">line_comment_prefix</span><span class="o">=</span><span class="s">&#39;%#&#39;</span><span class="p">,</span>
+        <span class="n">block_start_string</span><span class="o">=</span><span class="s1">&#39;\BLOCK{&#39;</span><span class="p">,</span>
+        <span class="n">block_end_string</span><span class="o">=</span><span class="s1">&#39;}&#39;</span><span class="p">,</span>
+        <span class="n">variable_start_string</span><span class="o">=</span><span class="s1">&#39;\VAR{&#39;</span><span class="p">,</span>
+        <span class="n">variable_end_string</span><span class="o">=</span><span class="s1">&#39;}&#39;</span><span class="p">,</span>
+        <span class="n">comment_start_string</span><span class="o">=</span><span class="s1">&#39;\#{&#39;</span><span class="p">,</span>
+        <span class="n">comment_end_string</span><span class="o">=</span><span class="s1">&#39;}&#39;</span><span class="p">,</span>
+        <span class="n">line_statement_prefix</span><span class="o">=</span><span class="s1">&#39;%-&#39;</span><span class="p">,</span>
+        <span class="n">line_comment_prefix</span><span class="o">=</span><span class="s1">&#39;%#&#39;</span><span class="p">,</span>
         <span class="n">trim_blocks</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
         <span class="n">autoescape</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
-        <span class="n">loader</span><span class="o">=</span><span class="n">jinja2</span><span class="o">.</span><span class="n">PackageLoader</span><span class="p">(</span><span class="n">__name__</span><span class="p">,</span> <span class="s">&quot;templates&quot;</span><span class="p">),</span>
+        <span class="n">loader</span><span class="o">=</span><span class="n">jinja2</span><span class="o">.</span><span class="n">PackageLoader</span><span class="p">(</span><span class="n">__name__</span><span class="p">,</span> <span class="s2">&quot;templates&quot;</span><span class="p">),</span>
 <span class="p">)</span>
 
 
@@ -129,9 +129,9 @@
 <span class="sd">    :rtype: str</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="s">r&quot;\section{&quot;</span> <span class="o">+</span> <span class="n">name</span> <span class="o">+</span> <span class="s">&quot;}&quot;</span>
+    <span class="k">return</span> <span class="s2">r&quot;\section{&quot;</span> <span class="o">+</span> <span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;}&quot;</span></div>
 
-</div>
+
 <div class="viewcode-block" id="subsection"><a class="viewcode-back" href="../../../module_content/pyGenClean.LaTeX.html#pyGenClean.LaTeX.utils.subsection">[docs]</a><span class="k">def</span> <span class="nf">subsection</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Creates a new section in LaTeX.</span>
 
@@ -142,9 +142,9 @@
 <span class="sd">    :rtype: str</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="s">r&quot;\subsection{&quot;</span> <span class="o">+</span> <span class="n">name</span> <span class="o">+</span> <span class="s">&quot;}&quot;</span>
+    <span class="k">return</span> <span class="s2">r&quot;\subsection{&quot;</span> <span class="o">+</span> <span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;}&quot;</span></div>
 
-</div>
+
 <div class="viewcode-block" id="item"><a class="viewcode-back" href="../../../module_content/pyGenClean.LaTeX.html#pyGenClean.LaTeX.utils.item">[docs]</a><span class="k">def</span> <span class="nf">item</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Returns an LaTeX item (for enumerate or itemize).</span>
 
@@ -154,9 +154,9 @@
 <span class="sd">    :returns: a LaTeX item.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="s">r&quot;\item &quot;</span> <span class="o">+</span> <span class="n">text</span>
+    <span class="k">return</span> <span class="s2">r&quot;\item &quot;</span> <span class="o">+</span> <span class="n">text</span></div>
 
-</div>
+
 <div class="viewcode-block" id="texttt"><a class="viewcode-back" href="../../../module_content/pyGenClean.LaTeX.html#pyGenClean.LaTeX.utils.texttt">[docs]</a><span class="k">def</span> <span class="nf">texttt</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Returns type writer font.</span>
 
@@ -166,9 +166,9 @@
 <span class="sd">    :returns: a type writer font.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="s">r&quot;\texttt{&quot;</span> <span class="o">+</span> <span class="n">text</span> <span class="o">+</span> <span class="s">&quot;}&quot;</span>
+    <span class="k">return</span> <span class="s2">r&quot;\texttt{&quot;</span> <span class="o">+</span> <span class="n">text</span> <span class="o">+</span> <span class="s2">&quot;}&quot;</span></div>
 
-</div>
+
 <div class="viewcode-block" id="textit"><a class="viewcode-back" href="../../../module_content/pyGenClean.LaTeX.html#pyGenClean.LaTeX.utils.textit">[docs]</a><span class="k">def</span> <span class="nf">textit</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Returns italic font.</span>
 
@@ -178,9 +178,9 @@
 <span class="sd">    :returns: an italic font.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="s">r&quot;\textit{&quot;</span> <span class="o">+</span> <span class="n">text</span> <span class="o">+</span> <span class="s">&quot;}&quot;</span>
+    <span class="k">return</span> <span class="s2">r&quot;\textit{&quot;</span> <span class="o">+</span> <span class="n">text</span> <span class="o">+</span> <span class="s2">&quot;}&quot;</span></div>
 
-</div>
+
 <div class="viewcode-block" id="textbf"><a class="viewcode-back" href="../../../module_content/pyGenClean.LaTeX.html#pyGenClean.LaTeX.utils.textbf">[docs]</a><span class="k">def</span> <span class="nf">textbf</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Returns bold font.</span>
 
@@ -190,9 +190,9 @@
 <span class="sd">    :returns: an bold font.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="s">r&quot;\textbf{&quot;</span> <span class="o">+</span> <span class="n">text</span> <span class="o">+</span> <span class="s">&quot;}&quot;</span>
+    <span class="k">return</span> <span class="s2">r&quot;\textbf{&quot;</span> <span class="o">+</span> <span class="n">text</span> <span class="o">+</span> <span class="s2">&quot;}&quot;</span></div>
 
-</div>
+
 <div class="viewcode-block" id="bib_entry"><a class="viewcode-back" href="../../../module_content/pyGenClean.LaTeX.html#pyGenClean.LaTeX.utils.bib_entry">[docs]</a><span class="k">def</span> <span class="nf">bib_entry</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Creates a bibliography entry.</span>
 
@@ -217,15 +217,15 @@
 <span class="sd">    :returns: a bib entry.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">bib_entry</span> <span class="o">=</span> <span class="n">Template</span><span class="p">(</span><span class="s">r&quot;&quot;&quot;\bibitem{${name}}</span>
-<span class="s">    ${authors}:</span>
-<span class="s">    \textbf{${title}.}</span>
-<span class="s">    \emph{${journal}} ${year},</span>
-<span class="s">    \textbf{${volume}}(${number}): ${pages}&quot;&quot;&quot;</span><span class="p">)</span>
+    <span class="n">bib_entry</span> <span class="o">=</span> <span class="n">Template</span><span class="p">(</span><span class="s2">r&quot;&quot;&quot;\bibitem{${name}}</span>
+<span class="s2">    ${authors}:</span>
+<span class="s2">    \textbf{${title}.}</span>
+<span class="s2">    \emph{${journal}} ${year},</span>
+<span class="s2">    \textbf{${volume}}(${number}): ${pages}&quot;&quot;&quot;</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">bib_entry</span><span class="o">.</span><span class="n">substitute</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">bib_entry</span><span class="o">.</span><span class="n">substitute</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span></div>
 
-</div>
+
 <div class="viewcode-block" id="wrap_lines"><a class="viewcode-back" href="../../../module_content/pyGenClean.LaTeX.html#pyGenClean.LaTeX.utils.wrap_lines">[docs]</a><span class="k">def</span> <span class="nf">wrap_lines</span><span class="p">(</span><span class="n">content</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="mi">80</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Wraps long lines to a maximum length of 80.</span>
 
@@ -239,10 +239,10 @@
 <span class="sd">    :rtype: str</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">textwrap</span><span class="o">.</span><span class="n">wrap</span><span class="p">(</span><span class="n">content</span><span class="p">,</span> <span class="n">length</span><span class="p">,</span> <span class="n">break_long_words</span><span class="o">=</span><span class="bp">False</span><span class="p">))</span>
+    <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">textwrap</span><span class="o">.</span><span class="n">wrap</span><span class="p">(</span><span class="n">content</span><span class="p">,</span> <span class="n">length</span><span class="p">,</span> <span class="n">break_long_words</span><span class="o">=</span><span class="bp">False</span><span class="p">))</span></div>
 
-</div>
-<div class="viewcode-block" id="format_numbers"><a class="viewcode-back" href="../../../module_content/pyGenClean.LaTeX.html#pyGenClean.LaTeX.utils.format_numbers">[docs]</a><span class="k">def</span> <span class="nf">format_numbers</span><span class="p">(</span><span class="n">number</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">):</span>
+
+<div class="viewcode-block" id="format_numbers"><a class="viewcode-back" href="../../../module_content/pyGenClean.LaTeX.html#pyGenClean.LaTeX.utils.format_numbers">[docs]</a><span class="k">def</span> <span class="nf">format_numbers</span><span class="p">(</span><span class="n">number</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Formats number in the scientific notation for LaTeX.</span>
 
 <span class="sd">    :param number: the number to format.</span>
@@ -255,23 +255,23 @@
 <span class="sd">    :rtype: str</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c"># Matching</span>
-    <span class="n">r</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="s">r&quot;^([-+]?\d*\.\d+|\d+)e([-+]?\d+)$&quot;</span><span class="p">,</span> <span class="n">number</span><span class="p">)</span>
+    <span class="c1"># Matching</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="s2">r&quot;^([-+]?\d*\.\d+|\d+)e([-+]?\d+)$&quot;</span><span class="p">,</span> <span class="n">number</span><span class="p">)</span>
 
-    <span class="c"># Nothing matched</span>
+    <span class="c1"># Nothing matched</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">r</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">prefix</span> <span class="o">!=</span> <span class="s">&quot;&quot;</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s">&quot;$&quot;</span> <span class="o">+</span> <span class="n">prefix</span> <span class="o">+</span> <span class="n">number</span> <span class="o">+</span> <span class="s">&quot;$&quot;</span>
+        <span class="k">if</span> <span class="n">prefix</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;$&quot;</span> <span class="o">+</span> <span class="n">prefix</span> <span class="o">+</span> <span class="n">number</span> <span class="o">+</span> <span class="s2">&quot;$&quot;</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">number</span>
 
-    <span class="c"># Getting the coefficient and the exponent</span>
+    <span class="c1"># Getting the coefficient and the exponent</span>
     <span class="n">coefficient</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
     <span class="n">exponent</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
 
-    <span class="k">return</span> <span class="s">&quot;$&quot;</span> <span class="o">+</span> <span class="n">prefix</span> <span class="o">+</span> <span class="n">coefficient</span> <span class="o">+</span> <span class="s">r&quot;\times 10^{&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">exponent</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;}$&quot;</span>
+    <span class="k">return</span> <span class="s2">&quot;$&quot;</span> <span class="o">+</span> <span class="n">prefix</span> <span class="o">+</span> <span class="n">coefficient</span> <span class="o">+</span> <span class="s2">r&quot;\times 10^{&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">exponent</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;}$&quot;</span></div>
 
-</div>
+
 <div class="viewcode-block" id="sanitize_fig_name"><a class="viewcode-back" href="../../../module_content/pyGenClean.LaTeX.html#pyGenClean.LaTeX.utils.sanitize_fig_name">[docs]</a><span class="k">def</span> <span class="nf">sanitize_fig_name</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Sanitizes the name of a file (for including graphics in LaTeX).</span>
 
@@ -285,9 +285,9 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">name</span><span class="p">,</span> <span class="n">extension</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
-    <span class="k">return</span> <span class="s">&quot;{&quot;</span> <span class="o">+</span> <span class="n">name</span> <span class="o">+</span> <span class="s">&quot;}&quot;</span> <span class="o">+</span> <span class="n">extension</span>
+    <span class="k">return</span> <span class="s2">&quot;{&quot;</span> <span class="o">+</span> <span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;}&quot;</span> <span class="o">+</span> <span class="n">extension</span></div>
 
-</div>
+
 <div class="viewcode-block" id="sanitize_tex"><a class="viewcode-back" href="../../../module_content/pyGenClean.LaTeX.html#pyGenClean.LaTeX.utils.sanitize_tex">[docs]</a><span class="k">def</span> <span class="nf">sanitize_tex</span><span class="p">(</span><span class="n">original_text</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Sanitize TeX text.</span>
 
@@ -306,23 +306,23 @@
 <span class="sd">       (*e.g.* from ``~`` to ``$\\sim$``).</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c"># The backslashes</span>
-    <span class="n">sanitized_tex</span> <span class="o">=</span> <span class="n">original_text</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\\</span><span class="s">&quot;</span><span class="p">,</span> <span class="s">r&quot;\textbackslash &quot;</span><span class="p">)</span>
+    <span class="c1"># The backslashes</span>
+    <span class="n">sanitized_tex</span> <span class="o">=</span> <span class="n">original_text</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">r&quot;\textbackslash &quot;</span><span class="p">)</span>
 
-    <span class="c"># Escaping</span>
-    <span class="n">sanitized_tex</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s">r&quot;([{}])&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_escaped_char</span><span class="p">)),</span>
-                           <span class="s">r&quot;</span><span class="se">\\</span><span class="s">\g&lt;1&gt;&quot;</span><span class="p">,</span> <span class="n">sanitized_tex</span><span class="p">)</span>
+    <span class="c1"># Escaping</span>
+    <span class="n">sanitized_tex</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s2">r&quot;([{}])&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_escaped_char</span><span class="p">)),</span>
+                           <span class="s2">r&quot;</span><span class="se">\\</span><span class="s2">\g&lt;1&gt;&quot;</span><span class="p">,</span> <span class="n">sanitized_tex</span><span class="p">)</span>
 
-    <span class="c"># Replacing</span>
+    <span class="c1"># Replacing</span>
     <span class="k">for</span> <span class="n">character</span><span class="p">,</span> <span class="n">mod</span> <span class="ow">in</span> <span class="n">_char_mod</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="n">sanitized_tex</span> <span class="o">=</span> <span class="n">sanitized_tex</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">character</span><span class="p">,</span> <span class="n">mod</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">sanitized_tex</span>
+    <span class="k">return</span> <span class="n">sanitized_tex</span></div>
 
-</div>
+
 <div class="viewcode-block" id="inline_math"><a class="viewcode-back" href="../../../module_content/pyGenClean.LaTeX.html#pyGenClean.LaTeX.utils.inline_math">[docs]</a><span class="k">def</span> <span class="nf">inline_math</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Creates an inline mathematical formula.&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="s">&quot;$&quot;</span> <span class="o">+</span> <span class="n">text</span> <span class="o">+</span> <span class="s">&quot;$&quot;</span></div>
+    <span class="k">return</span> <span class="s2">&quot;$&quot;</span> <span class="o">+</span> <span class="n">text</span> <span class="o">+</span> <span class="s2">&quot;$&quot;</span></div>
 </pre></div>
 
           </div>
@@ -339,14 +339,14 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">pyGenClean 1.7.1 documentation</a> &raquo;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">pyGenClean 1.8.0 documentation</a> &raquo;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &raquo;</li>
           <li class="nav-item nav-item-2"><a href="../../pyGenClean.html" >pyGenClean</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2012, Louis-Philippe Lemieux Perreault.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.5.
     </div>
   </body>
 </html>

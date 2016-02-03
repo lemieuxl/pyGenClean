@@ -1,0 +1,423 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>pyGenClean.Contamination package &mdash; pyGenClean 1.8.0 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.8.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="pyGenClean 1.8.0 documentation" href="../index.html" />
+    <link rel="up" title="pyGenClean package" href="pyGenClean.html" />
+    <link rel="next" title="pyGenClean.DupSNPs package" href="pyGenClean.DupSNPs.html" />
+    <link rel="prev" title="pyGenClean package" href="pyGenClean.html" /> 
+  </head>
+  <body role="document">
+
+<div style="background-color: white; text-align: left; padding: 10px 10px 15px 15px">
+<a href="../index.html"><img src="../_static/logo.png" border="0" alt="py4sci"/></a>
+</div>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="pyGenClean.DupSNPs.html" title="pyGenClean.DupSNPs package"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="pyGenClean.html" title="pyGenClean package"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">pyGenClean 1.8.0 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="modules.html" >Main pyGenClean pipeline</a> &raquo;</li>
+          <li class="nav-item nav-item-2"><a href="pyGenClean.html" accesskey="U">pyGenClean package</a> &raquo;</li> 
+      </ul>
+    </div>
+
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">pyGenClean.Contamination package</a><ul>
+<li><a class="reference internal" href="#module-pyGenClean.Contamination">Module contents</a></li>
+<li><a class="reference internal" href="#submodules">Submodules</a><ul>
+<li><a class="reference internal" href="#module-pyGenClean.Contamination.contamination">pyGenClean.Contamination.contamination module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="pyGenClean.html"
+                        title="previous chapter">pyGenClean package</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="pyGenClean.DupSNPs.html"
+                        title="next chapter">pyGenClean.DupSNPs package</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/module_content/pyGenClean.Contamination.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="pygenclean-contamination-package">
+<h1>pyGenClean.Contamination package<a class="headerlink" href="#pygenclean-contamination-package" title="Permalink to this headline">¶</a></h1>
+<p>For more information about how to use this module, refer to the
+<a class="reference internal" href="../contamination.html#contamination-label"><span>Contamination Module</span></a>.</p>
+<div class="section" id="module-pyGenClean.Contamination">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-pyGenClean.Contamination" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-pyGenClean.Contamination.contamination">
+<span id="pygenclean-contamination-contamination-module"></span><h3>pyGenClean.Contamination.contamination module<a class="headerlink" href="#module-pyGenClean.Contamination.contamination" title="Permalink to this headline">¶</a></h3>
+<dl class="exception">
+<dt id="pyGenClean.Contamination.contamination.ProgramError">
+<em class="property">exception </em><code class="descclassname">pyGenClean.Contamination.contamination.</code><code class="descname">ProgramError</code><span class="sig-paren">(</span><em>msg</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyGenClean/Contamination/contamination.html#ProgramError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.Contamination.contamination.ProgramError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="http://docs.python.org/library/exceptions.html#exceptions.Exception" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">exceptions.Exception</span></code></a></p>
+<p>An <code class="xref py py-class docutils literal"><span class="pre">Exception</span></code> raised in case of a problem.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>msg</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the message to print to the user before exiting.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.Contamination.contamination.checkArgs">
+<code class="descclassname">pyGenClean.Contamination.contamination.</code><code class="descname">checkArgs</code><span class="sig-paren">(</span><em>args</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyGenClean/Contamination/contamination.html#checkArgs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.Contamination.contamination.checkArgs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks the arguments and options.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>args</strong> (<a class="reference external" href="http://docs.python.org/library/argparse.html#argparse.Namespace" title="(in Python v2.7)"><em>argparse.Namespace</em></a>) &#8211; an object containing the options of the program.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><code class="docutils literal"><span class="pre">True</span></code> if everything was OK.</td>
+</tr>
+</tbody>
+</table>
+<p>If there is a problem with an option, an exception is raised using the
+<a class="reference internal" href="#pyGenClean.Contamination.contamination.ProgramError" title="pyGenClean.Contamination.contamination.ProgramError"><code class="xref py py-class docutils literal"><span class="pre">ProgramError</span></code></a> class, a message is printed to the
+<code class="xref py py-class docutils literal"><span class="pre">sys.stderr</span></code> and the program exists with code 1.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.Contamination.contamination.check_sample_files">
+<code class="descclassname">pyGenClean.Contamination.contamination.</code><code class="descname">check_sample_files</code><span class="sig-paren">(</span><em>fam_filename</em>, <em>raw_dirname</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyGenClean/Contamination/contamination.html#check_sample_files"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.Contamination.contamination.check_sample_files" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks the raw sample files.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>fam_filename</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the name of the FAM file.</li>
+<li><strong>raw_dirname</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the name of the directory containing the raw file.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">the set of all the sample files that are compatible with the FAM
+file.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="http://docs.python.org/library/stdtypes.html#set" title="(in Python v2.7)">set</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.Contamination.contamination.create_extraction_file">
+<code class="descclassname">pyGenClean.Contamination.contamination.</code><code class="descname">create_extraction_file</code><span class="sig-paren">(</span><em>bim_filename</em>, <em>out_prefix</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyGenClean/Contamination/contamination.html#create_extraction_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.Contamination.contamination.create_extraction_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates an extraction file (keeping only markers on autosomes).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>bim_filename</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the name of the BIM file.</li>
+<li><strong>out_prefix</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the prefix for the output file.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.Contamination.contamination.main">
+<code class="descclassname">pyGenClean.Contamination.contamination.</code><code class="descname">main</code><span class="sig-paren">(</span><em>argString=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyGenClean/Contamination/contamination.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.Contamination.contamination.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>The main function of the module.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>argString</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; the options.</td>
+</tr>
+</tbody>
+</table>
+<p>These are the steps:</p>
+<ol class="arabic simple">
+<li>Prints the options.</li>
+<li>Compute frequency using Plink.</li>
+<li>Runs bafRegress.</li>
+</ol>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.Contamination.contamination.parseArgs">
+<code class="descclassname">pyGenClean.Contamination.contamination.</code><code class="descname">parseArgs</code><span class="sig-paren">(</span><em>argString=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyGenClean/Contamination/contamination.html#parseArgs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.Contamination.contamination.parseArgs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parses the command line options and arguments.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>argString</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; the options.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A <a class="reference external" href="http://docs.python.org/library/argparse.html#argparse.Namespace" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">argparse.Namespace</span></code></a> object created by the
+<a class="reference external" href="http://docs.python.org/library/argparse.html#module-argparse" title="(in Python v2.7)"><code class="xref py py-mod docutils literal"><span class="pre">argparse</span></code></a> module. It contains the values of the
+different options.</td>
+</tr>
+</tbody>
+</table>
+<table border="1" class="docutils">
+<colgroup>
+<col width="38%" />
+<col width="8%" />
+<col width="53%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Options</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--bfile</span></code></td>
+<td>string</td>
+<td>The input file prefix (will find the
+plink binary files by appending the
+prefix to the .bim, .bed and .fam
+files, respectively).</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--raw-dir</span></code></td>
+<td>string</td>
+<td>Directory containing the raw data (one
+file per sample, where the name of the
+file (minus the extension) is the
+sample identification number.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--colsample</span></code></td>
+<td>string</td>
+<td>The sample column.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--colmarker</span></code></td>
+<td>string</td>
+<td>The marker column.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--colbaf</span></code></td>
+<td>string</td>
+<td>The B allele frequency column.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--colab1</span></code></td>
+<td>string</td>
+<td>The AB Allele 1 column.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--colab2</span></code></td>
+<td>string</td>
+<td>The AB Allele 2 column.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--out</span></code></td>
+<td>string</td>
+<td>The prefix of the output files.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--sge</span></code></td>
+<td>bool</td>
+<td>Use SGE for parallelization.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--sge-walltime</span></code></td>
+<td>string</td>
+<td>The walltime for the job to run on the
+cluster. Do not use if you are not
+required to specify a walltime for your
+jobs on your cluster (e.g. &#8216;qsub
+-lwalltime=1:0:0&#8217; on the cluster).</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--sge-nodes</span></code></td>
+<td>int</td>
+<td>The number of nodes and the number of
+processor per nodes to use (e.g. &#8216;qsub
+-lnodes=X:ppn=Y&#8217; on the cluster, where
+X is the number of nodes and Y is  the
+number of processor to use. Do not use
+if you are not required to specify the
+number of nodes for your jobs on the
+cluster.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--sample-per-run-for-sge</span></code></td>
+<td>int</td>
+<td>The number of sample to run for a
+single SGE job.</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">No option check is done here (except for the one automatically done by
+argparse). Those need to be done elsewhere (see <a class="reference internal" href="#pyGenClean.Contamination.contamination.checkArgs" title="pyGenClean.Contamination.contamination.checkArgs"><code class="xref py py-func docutils literal"><span class="pre">checkArgs()</span></code></a>).</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.Contamination.contamination.run_bafRegress">
+<code class="descclassname">pyGenClean.Contamination.contamination.</code><code class="descname">run_bafRegress</code><span class="sig-paren">(</span><em>filenames</em>, <em>out_prefix</em>, <em>extract_filename</em>, <em>freq_filename</em>, <em>options</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyGenClean/Contamination/contamination.html#run_bafRegress"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.Contamination.contamination.run_bafRegress" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs the bafRegress function.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>filenames</strong> (<a class="reference external" href="http://docs.python.org/library/stdtypes.html#set" title="(in Python v2.7)"><em>set</em></a>) &#8211; the set of all sample files.</li>
+<li><strong>out_prefix</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the output prefix.</li>
+<li><strong>extract_filename</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the name of the markers to extract.</li>
+<li><strong>freq_filename</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the name of the file containing the frequency.</li>
+<li><strong>options</strong> (<a class="reference external" href="http://docs.python.org/library/argparse.html#argparse.Namespace" title="(in Python v2.7)"><em>argparse.Namespace</em></a>) &#8211; the other options.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.Contamination.contamination.run_bafRegress_sge">
+<code class="descclassname">pyGenClean.Contamination.contamination.</code><code class="descname">run_bafRegress_sge</code><span class="sig-paren">(</span><em>filenames</em>, <em>out_prefix</em>, <em>extract_filename</em>, <em>freq_filename</em>, <em>options</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyGenClean/Contamination/contamination.html#run_bafRegress_sge"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.Contamination.contamination.run_bafRegress_sge" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs the bafRegress function using SGE.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>filenames</strong> (<a class="reference external" href="http://docs.python.org/library/stdtypes.html#set" title="(in Python v2.7)"><em>set</em></a>) &#8211; the set of all sample files.</li>
+<li><strong>out_prefix</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the output prefix.</li>
+<li><strong>extract_filename</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the name of the markers to extract.</li>
+<li><strong>freq_filename</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the name of the file containing the frequency.</li>
+<li><strong>options</strong> (<a class="reference external" href="http://docs.python.org/library/argparse.html#argparse.Namespace" title="(in Python v2.7)"><em>argparse.Namespace</em></a>) &#8211; the other options.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.Contamination.contamination.run_plink">
+<code class="descclassname">pyGenClean.Contamination.contamination.</code><code class="descname">run_plink</code><span class="sig-paren">(</span><em>in_prefix</em>, <em>out_prefix</em>, <em>extract_filename</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyGenClean/Contamination/contamination.html#run_plink"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.Contamination.contamination.run_plink" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs Plink with the geno option.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>in_prefix</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the input prefix.</li>
+<li><strong>out_prefix</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the output prefix.</li>
+<li><strong>extract_filename</strong> &#8211; the name of the file containing markers to
+extract.</li>
+<li><strong>extract_filename</strong> &#8211; str</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyGenClean.Contamination.contamination.safe_main">
+<code class="descclassname">pyGenClean.Contamination.contamination.</code><code class="descname">safe_main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyGenClean/Contamination/contamination.html#safe_main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.Contamination.contamination.safe_main" title="Permalink to this definition">¶</a></dt>
+<dd><p>A safe version of the main function (that catches ProgramError).</p>
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="pyGenClean.DupSNPs.html" title="pyGenClean.DupSNPs package"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="pyGenClean.html" title="pyGenClean package"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">pyGenClean 1.8.0 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="modules.html" >Main pyGenClean pipeline</a> &raquo;</li>
+          <li class="nav-item nav-item-2"><a href="pyGenClean.html" >pyGenClean package</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2012, Louis-Philippe Lemieux Perreault.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.5.
+    </div>
+  </body>
+</html>

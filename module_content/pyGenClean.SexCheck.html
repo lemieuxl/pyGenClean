@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>pyGenClean.SexCheck package &mdash; pyGenClean 1.7.1 documentation</title>
+    <title>pyGenClean.SexCheck package &mdash; pyGenClean 1.8.0 documentation</title>
     
     <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '1.7.1',
+        VERSION:     '1.8.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,9 +24,9 @@
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="pyGenClean 1.7.1 documentation" href="../index.html" />
+    <link rel="top" title="pyGenClean 1.8.0 documentation" href="../index.html" />
     <link rel="up" title="pyGenClean package" href="pyGenClean.html" />
-    <link rel="next" title="Duplicated Samples Module" href="../duplicated_samples.html" />
+    <link rel="next" title="Contamination Module" href="../contamination.html" />
     <link rel="prev" title="pyGenClean.SampleMissingness package" href="pyGenClean.SampleMissingness.html" /> 
   </head>
   <body role="document">
@@ -45,12 +45,12 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="../duplicated_samples.html" title="Duplicated Samples Module"
+          <a href="../contamination.html" title="Contamination Module"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="pyGenClean.SampleMissingness.html" title="pyGenClean.SampleMissingness package"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">pyGenClean 1.7.1 documentation</a> &raquo;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">pyGenClean 1.8.0 documentation</a> &raquo;</li>
           <li class="nav-item nav-item-1"><a href="modules.html" >Main pyGenClean pipeline</a> &raquo;</li>
           <li class="nav-item nav-item-2"><a href="pyGenClean.html" accesskey="U">pyGenClean package</a> &raquo;</li> 
       </ul>
@@ -76,8 +76,8 @@
   <p class="topless"><a href="pyGenClean.SampleMissingness.html"
                         title="previous chapter">pyGenClean.SampleMissingness package</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="../duplicated_samples.html"
-                        title="next chapter">Duplicated Samples Module</a></p>
+  <p class="topless"><a href="../contamination.html"
+                        title="next chapter">Contamination Module</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -196,11 +196,11 @@ respectively.</p>
 <p class="first admonition-title">Note</p>
 <p class="last">Only the sexual chromosomes are encoded.</p>
 </div>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">encode_chromosome</span><span class="p">(</span><span class="s">&quot;23&quot;</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">encode_chromosome</span><span class="p">(</span><span class="s2">&quot;23&quot;</span><span class="p">)</span>
 <span class="go">&#39;X&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">encode_chromosome</span><span class="p">(</span><span class="s">&quot;24&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">encode_chromosome</span><span class="p">(</span><span class="s2">&quot;24&quot;</span><span class="p">)</span>
 <span class="go">&#39;Y&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">encode_chromosome</span><span class="p">(</span><span class="s">&quot;This is not a chromosome&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">encode_chromosome</span><span class="p">(</span><span class="s2">&quot;This is not a chromosome&quot;</span><span class="p">)</span>
 <span class="go">&#39;This is not a chromosome&#39;</span>
 </pre></div>
 </div>
@@ -403,13 +403,13 @@ also raised. If a chromosome as a value below 1 or above 26, a
 <span class="go">[11, 12, 13, 14, 15, 16, 17, 18, 19, 20]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="n">encode_chr</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">21</span><span class="p">,</span> <span class="mi">27</span><span class="p">)]</span>
 <span class="go">[21, 22, 23, 24, 25, 26]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="n">encode_chr</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&quot;X&quot;</span><span class="p">,</span> <span class="s">&quot;Y&quot;</span><span class="p">,</span> <span class="s">&quot;XY&quot;</span><span class="p">,</span> <span class="s">&quot;MT&quot;</span><span class="p">]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="n">encode_chr</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;X&quot;</span><span class="p">,</span> <span class="s2">&quot;Y&quot;</span><span class="p">,</span> <span class="s2">&quot;XY&quot;</span><span class="p">,</span> <span class="s2">&quot;MT&quot;</span><span class="p">]]</span>
 <span class="go">[23, 24, 25, 26]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">encode_chr</span><span class="p">(</span><span class="s">&quot;27&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">encode_chr</span><span class="p">(</span><span class="s2">&quot;27&quot;</span><span class="p">)</span>
 <span class="gt">Traceback (most recent call last):</span>
     <span class="o">...</span>
 <span class="gr">ProgramError</span>: <span class="n">27: invalid chromosome</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">encode_chr</span><span class="p">(</span><span class="s">&quot;XX&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">encode_chr</span><span class="p">(</span><span class="s2">&quot;XX&quot;</span><span class="p">)</span>
 <span class="gt">Traceback (most recent call last):</span>
     <span class="o">...</span>
 <span class="gr">ProgramError</span>: <span class="n">XX: invalid chromosome</span>
@@ -433,13 +433,13 @@ also raised. If a chromosome as a value below 1 or above 26, a
 </table>
 <p>It changes <code class="docutils literal"><span class="pre">1</span></code> and <code class="docutils literal"><span class="pre">2</span></code> to <code class="docutils literal"><span class="pre">Male</span></code> and <code class="docutils literal"><span class="pre">Female</span></code> respectively. It
 encodes everything else to <code class="docutils literal"><span class="pre">Unknown</span></code>.</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">encode_gender</span><span class="p">(</span><span class="s">&quot;1&quot;</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">encode_gender</span><span class="p">(</span><span class="s2">&quot;1&quot;</span><span class="p">)</span>
 <span class="go">&#39;Male&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">encode_gender</span><span class="p">(</span><span class="s">&quot;2&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">encode_gender</span><span class="p">(</span><span class="s2">&quot;2&quot;</span><span class="p">)</span>
 <span class="go">&#39;Female&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">encode_gender</span><span class="p">(</span><span class="s">&quot;0&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">encode_gender</span><span class="p">(</span><span class="s2">&quot;0&quot;</span><span class="p">)</span>
 <span class="go">&#39;Unknown&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">encode_gender</span><span class="p">(</span><span class="s">&quot;This is not a gender code&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">encode_gender</span><span class="p">(</span><span class="s2">&quot;This is not a gender code&quot;</span><span class="p">)</span>
 <span class="go">&#39;Unknown&#39;</span>
 </pre></div>
 </div>
@@ -878,7 +878,7 @@ of no calls on the chromosome <code class="docutils literal"><span class="pre">2
 
 <dl class="function">
 <dt id="pyGenClean.SexCheck.sex_check.createLrrBafPlot">
-<code class="descclassname">pyGenClean.SexCheck.sex_check.</code><code class="descname">createLrrBafPlot</code><span class="sig-paren">(</span><em>raw_dir</em>, <em>problematic_samples</em>, <em>format</em>, <em>out_prefix</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyGenClean/SexCheck/sex_check.html#createLrrBafPlot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.SexCheck.sex_check.createLrrBafPlot" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">pyGenClean.SexCheck.sex_check.</code><code class="descname">createLrrBafPlot</code><span class="sig-paren">(</span><em>raw_dir</em>, <em>problematic_samples</em>, <em>format</em>, <em>dpi</em>, <em>out_prefix</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyGenClean/SexCheck/sex_check.html#createLrrBafPlot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyGenClean.SexCheck.sex_check.createLrrBafPlot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates the LRR and BAF plot.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -888,6 +888,7 @@ of no calls on the chromosome <code class="docutils literal"><span class="pre">2
 <li><strong>raw_dir</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the directory containing the intensities.</li>
 <li><strong>problematic_samples</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the file containing the problematic samples.</li>
 <li><strong>format</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the format of the plot.</li>
+<li><strong>dpi</strong> &#8211; the DPI of the resulting images.</li>
 <li><strong>out_prefix</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the prefix of the output file.</li>
 </ul>
 </td>
@@ -1041,7 +1042,11 @@ every samples (BAF and LRR).</td>
 <td>string</td>
 <td>The output file format.</td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal"><span class="pre">--out</span></code></td>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">--lrr-baf-dpi</span></code></td>
+<td>int</td>
+<td>The pixel density of the figure(s) (DPI).</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">--out</span></code></td>
 <td>string</td>
 <td>The prefix of the output files.</td>
 </tr>
@@ -1143,19 +1148,19 @@ function uses the <a class="reference external" href="http://docs.python.org/lib
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="../duplicated_samples.html" title="Duplicated Samples Module"
+          <a href="../contamination.html" title="Contamination Module"
              >next</a> |</li>
         <li class="right" >
           <a href="pyGenClean.SampleMissingness.html" title="pyGenClean.SampleMissingness package"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">pyGenClean 1.7.1 documentation</a> &raquo;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">pyGenClean 1.8.0 documentation</a> &raquo;</li>
           <li class="nav-item nav-item-1"><a href="modules.html" >Main pyGenClean pipeline</a> &raquo;</li>
           <li class="nav-item nav-item-2"><a href="pyGenClean.html" >pyGenClean package</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2012, Louis-Philippe Lemieux Perreault.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.5.
     </div>
   </body>
 </html>

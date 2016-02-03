@@ -4,6 +4,25 @@ Proposed Protocol
 *****************
 
 
+.. _contamination_module_label:
+
+Contamination Module
+====================
+
+.. note::
+
+    **Input files:**
+
+    * PLINK binary pedfiles (BED, BIM and FAM)
+
+1.  Examine the output file named ``contamination.bafRegress``. It will contain
+    the contamination estimates (along with confidence values). Usually, an
+    estimate higher than 0.01 means possible contamination.
+
+2.  The automatic report will contain the list of samples with possible
+    contamination (*i.e.* an estimate value higher than 0.01).
+
+
 .. _preprocessing_label:
 
 Preprocessing Steps
@@ -495,7 +514,7 @@ Ethnicity Module
 
 4.  Examine ``ethnicity.mds.png``, ``ethnicity.before.png``,
     ``ethnicity.after.png`` and ``ethnicity.outliers.png`` to detect samples
-    outside the selected cluster (see the generated :ref:`ethnicity_plots_label`
+    outside the selected cluster (see :ref:`ethnicity_plots_label` generated
     from the :ref:`ethnicity_module_label` for more information).
 
     If there are too many outliers still present in the data set (*i.e.* radius

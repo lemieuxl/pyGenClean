@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>pyGenClean.NoCallHetero.clean_noCall_hetero_snps &mdash; pyGenClean 1.7.1 documentation</title>
+    <title>pyGenClean.NoCallHetero.clean_noCall_hetero_snps &mdash; pyGenClean 1.8.0 documentation</title>
     
     <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '1.7.1',
+        VERSION:     '1.8.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="pyGenClean 1.7.1 documentation" href="../../../index.html" />
+    <link rel="top" title="pyGenClean 1.8.0 documentation" href="../../../index.html" />
     <link rel="up" title="pyGenClean" href="../../pyGenClean.html" /> 
   </head>
   <body role="document">
@@ -42,7 +42,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">pyGenClean 1.7.1 documentation</a> &raquo;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">pyGenClean 1.8.0 documentation</a> &raquo;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &raquo;</li>
           <li class="nav-item nav-item-2"><a href="../../pyGenClean.html" accesskey="U">pyGenClean</a> &raquo;</li> 
       </ul>
@@ -72,21 +72,21 @@
           <div class="body" role="main">
             
   <h1>Source code for pyGenClean.NoCallHetero.clean_noCall_hetero_snps</h1><div class="highlight"><pre>
-<span class="c">#!/usr/bin/env python2.7</span>
+<span class="ch">#!/usr/bin/env python2.7</span>
 
-<span class="c"># This file is part of pyGenClean.</span>
-<span class="c">#</span>
-<span class="c"># pyGenClean is free software: you can redistribute it and/or modify it under</span>
-<span class="c"># the terms of the GNU General Public License as published by the Free Software</span>
-<span class="c"># Foundation, either version 3 of the License, or (at your option) any later</span>
-<span class="c"># version.</span>
-<span class="c">#</span>
-<span class="c"># pyGenClean is distributed in the hope that it will be useful, but WITHOUT ANY</span>
-<span class="c"># WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR</span>
-<span class="c"># A PARTICULAR PURPOSE.  See the GNU General Public License for more details.</span>
-<span class="c">#</span>
-<span class="c"># You should have received a copy of the GNU General Public License along with</span>
-<span class="c"># pyGenClean.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
+<span class="c1"># This file is part of pyGenClean.</span>
+<span class="c1">#</span>
+<span class="c1"># pyGenClean is free software: you can redistribute it and/or modify it under</span>
+<span class="c1"># the terms of the GNU General Public License as published by the Free Software</span>
+<span class="c1"># Foundation, either version 3 of the License, or (at your option) any later</span>
+<span class="c1"># version.</span>
+<span class="c1">#</span>
+<span class="c1"># pyGenClean is distributed in the hope that it will be useful, but WITHOUT ANY</span>
+<span class="c1"># WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR</span>
+<span class="c1"># A PARTICULAR PURPOSE.  See the GNU General Public License for more details.</span>
+<span class="c1">#</span>
+<span class="c1"># You should have received a copy of the GNU General Public License along with</span>
+<span class="c1"># pyGenClean.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
 
 
 <span class="kn">import</span> <span class="nn">os</span>
@@ -100,7 +100,7 @@
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">__version__</span>
 
 
-<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&quot;noCall_hetero_snps&quot;</span><span class="p">)</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;noCall_hetero_snps&quot;</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="main"><a class="viewcode-back" href="../../../module_content/pyGenClean.NoCallHetero.html#pyGenClean.NoCallHetero.clean_noCall_hetero_snps.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">argString</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
@@ -117,19 +117,19 @@
 <span class="sd">       failed markers (:py:func:`processTPEDandTFAM`).</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c"># Getting and checking the options</span>
+    <span class="c1"># Getting and checking the options</span>
     <span class="n">args</span> <span class="o">=</span> <span class="n">parseArgs</span><span class="p">(</span><span class="n">argString</span><span class="p">)</span>
     <span class="n">checkArgs</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
 
-    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Options used:&quot;</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Options used:&quot;</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">vars</span><span class="p">(</span><span class="n">args</span><span class="p">)</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;  --{} {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;_&quot;</span><span class="p">,</span> <span class="s">&quot;-&quot;</span><span class="p">),</span> <span class="n">value</span><span class="p">))</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;  --{} {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">),</span> <span class="n">value</span><span class="p">))</span>
 
-    <span class="c"># Process the TPED and TFAM file</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Processing the TPED and TFAM file&quot;</span><span class="p">)</span>
-    <span class="n">processTPEDandTFAM</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">tfile</span> <span class="o">+</span> <span class="s">&quot;.tped&quot;</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">tfile</span> <span class="o">+</span> <span class="s">&quot;.tfam&quot;</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">out</span><span class="p">)</span>
+    <span class="c1"># Process the TPED and TFAM file</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Processing the TPED and TFAM file&quot;</span><span class="p">)</span>
+    <span class="n">processTPEDandTFAM</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">tfile</span> <span class="o">+</span> <span class="s2">&quot;.tped&quot;</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">tfile</span> <span class="o">+</span> <span class="s2">&quot;.tfam&quot;</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">out</span><span class="p">)</span></div>
 
-</div>
+
 <div class="viewcode-block" id="processTPEDandTFAM"><a class="viewcode-back" href="../../../module_content/pyGenClean.NoCallHetero.html#pyGenClean.NoCallHetero.clean_noCall_hetero_snps.processTPEDandTFAM">[docs]</a><span class="k">def</span> <span class="nf">processTPEDandTFAM</span><span class="p">(</span><span class="n">tped</span><span class="p">,</span> <span class="n">tfam</span><span class="p">,</span> <span class="n">prefix</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Process the TPED and TFAM files.</span>
 
@@ -154,74 +154,74 @@
 <span class="sd">        not remove.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c"># Copying the tfam file</span>
+    <span class="c1"># Copying the tfam file</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">tfam</span><span class="p">,</span> <span class="n">prefix</span> <span class="o">+</span> <span class="s">&quot;.tfam&quot;</span><span class="p">)</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">tfam</span><span class="p">,</span> <span class="n">prefix</span> <span class="o">+</span> <span class="s2">&quot;.tfam&quot;</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s">: can&#39;t write file&quot;</span> <span class="o">%</span> <span class="n">prefix</span> <span class="o">+</span> <span class="s">&quot;.tfam&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">: can&#39;t write file&quot;</span> <span class="o">%</span> <span class="n">prefix</span> <span class="o">+</span> <span class="s2">&quot;.tfam&quot;</span>
         <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="k">try</span><span class="p">:</span>
-        <span class="n">outputFile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">prefix</span> <span class="o">+</span> <span class="s">&quot;.tped&quot;</span><span class="p">,</span> <span class="s">&quot;w&quot;</span><span class="p">)</span>
+        <span class="n">outputFile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">prefix</span> <span class="o">+</span> <span class="s2">&quot;.tped&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s">: can&#39;t write to file&quot;</span> <span class="o">%</span> <span class="n">prefix</span> <span class="o">+</span> <span class="s">&quot;.tped&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">: can&#39;t write to file&quot;</span> <span class="o">%</span> <span class="n">prefix</span> <span class="o">+</span> <span class="s2">&quot;.tped&quot;</span>
         <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
-    <span class="c"># The name of the bad SNPs</span>
+    <span class="c1"># The name of the bad SNPs</span>
     <span class="n">allFailed</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
     <span class="n">allHetero</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
 
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">tped</span><span class="p">,</span> <span class="s">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">inputFile</span><span class="p">:</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">tped</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">inputFile</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">inputFile</span><span class="p">:</span>
-            <span class="n">row</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\r\n</span><span class="s">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\t</span><span class="s">&quot;</span><span class="p">)</span>
+            <span class="n">row</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\r\n</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span>
             <span class="n">snpInfo</span> <span class="o">=</span> <span class="n">row</span><span class="p">[:</span><span class="mi">4</span><span class="p">]</span>
             <span class="n">chromosome</span> <span class="o">=</span> <span class="n">snpInfo</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
             <span class="n">genotypes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">i</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">row</span><span class="p">[</span><span class="mi">4</span><span class="p">:]])</span>
 
-            <span class="c"># Testing the genotypes</span>
+            <span class="c1"># Testing the genotypes</span>
             <span class="n">uniqueGenotypes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">genotypes</span><span class="p">)</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">uniqueGenotypes</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="c"># We have only one kind of genotype, either all homo, all</span>
-                <span class="c"># hetero or all no call</span>
-                <span class="k">if</span> <span class="n">uniqueGenotypes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;0 0&quot;</span><span class="p">:</span>
-                    <span class="c"># This one is a no call</span>
+                <span class="c1"># We have only one kind of genotype, either all homo, all</span>
+                <span class="c1"># hetero or all no call</span>
+                <span class="k">if</span> <span class="n">uniqueGenotypes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;0 0&quot;</span><span class="p">:</span>
+                    <span class="c1"># This one is a no call</span>
                     <span class="n">allFailed</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">snpInfo</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-                <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">uniqueGenotypes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot; &quot;</span><span class="p">)))</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
-                    <span class="c"># There are two different alleles, hence, hetero</span>
-                    <span class="k">if</span> <span class="n">chromosome</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">{</span><span class="s">&quot;26&quot;</span><span class="p">,</span> <span class="s">&quot;MT&quot;</span><span class="p">}:</span>
-                        <span class="c"># The SNP is not on a mitochondrial chromosome</span>
-                        <span class="c"># (because we want to keep those)</span>
+                <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">uniqueGenotypes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)))</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                    <span class="c1"># There are two different alleles, hence, hetero</span>
+                    <span class="k">if</span> <span class="n">chromosome</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;26&quot;</span><span class="p">,</span> <span class="s2">&quot;MT&quot;</span><span class="p">}:</span>
+                        <span class="c1"># The SNP is not on a mitochondrial chromosome</span>
+                        <span class="c1"># (because we want to keep those)</span>
                         <span class="n">allHetero</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">snpInfo</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
 
-            <span class="c"># If the SNP is good (neither in allFailed or allHetero), we keep</span>
-            <span class="c"># the SNP</span>
+            <span class="c1"># If the SNP is good (neither in allFailed or allHetero), we keep</span>
+            <span class="c1"># the SNP</span>
             <span class="k">if</span> <span class="p">(</span><span class="n">snpInfo</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">allFailed</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">snpInfo</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">allHetero</span><span class="p">):</span>
-                <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">outputFile</span><span class="p">,</span> <span class="s">&quot;</span><span class="se">\t</span><span class="s">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+                <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">outputFile</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
 
     <span class="n">outputFile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
-    <span class="c"># Now printing the summary files</span>
-    <span class="c"># The SNPs with no calls</span>
-    <span class="n">fileName</span> <span class="o">=</span> <span class="n">prefix</span> <span class="o">+</span> <span class="s">&quot;.allFailed&quot;</span>
+    <span class="c1"># Now printing the summary files</span>
+    <span class="c1"># The SNPs with no calls</span>
+    <span class="n">fileName</span> <span class="o">=</span> <span class="n">prefix</span> <span class="o">+</span> <span class="s2">&quot;.allFailed&quot;</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fileName</span><span class="p">,</span> <span class="s">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">outputFile</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fileName</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">outputFile</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">allFailed</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">outputFile</span><span class="p">,</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">allFailed</span><span class="p">)</span>
+                <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">outputFile</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">allFailed</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%(fileName)s</span><span class="s">: can&#39;t write to file&quot;</span> <span class="o">%</span> <span class="nb">locals</span><span class="p">()</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%(fileName)s</span><span class="s2">: can&#39;t write to file&quot;</span> <span class="o">%</span> <span class="nb">locals</span><span class="p">()</span>
         <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
-    <span class="c"># The SNPs with only hetero calls</span>
-    <span class="n">fileName</span> <span class="o">=</span> <span class="n">prefix</span> <span class="o">+</span> <span class="s">&quot;.allHetero&quot;</span>
+    <span class="c1"># The SNPs with only hetero calls</span>
+    <span class="n">fileName</span> <span class="o">=</span> <span class="n">prefix</span> <span class="o">+</span> <span class="s2">&quot;.allHetero&quot;</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fileName</span><span class="p">,</span> <span class="s">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">outputFile</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fileName</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">outputFile</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">allHetero</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">outputFile</span><span class="p">,</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">allHetero</span><span class="p">)</span>
+                <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">outputFile</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">allHetero</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%(fileName)s</span><span class="s">: can&#39;t write to file&quot;</span> <span class="o">%</span> <span class="nb">locals</span><span class="p">()</span>
-        <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%(fileName)s</span><span class="s2">: can&#39;t write to file&quot;</span> <span class="o">%</span> <span class="nb">locals</span><span class="p">()</span>
+        <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span></div>
 
-</div>
+
 <div class="viewcode-block" id="checkArgs"><a class="viewcode-back" href="../../../module_content/pyGenClean.NoCallHetero.html#pyGenClean.NoCallHetero.clean_noCall_hetero_snps.checkArgs">[docs]</a><span class="k">def</span> <span class="nf">checkArgs</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Checks the arguments and options.</span>
 
@@ -236,17 +236,17 @@
 <span class="sd">    :class:`sys.stderr` and the program exists with code 1.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c"># Checking the input files</span>
-    <span class="k">for</span> <span class="n">suffix</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&quot;.tped&quot;</span><span class="p">,</span> <span class="s">&quot;.tfam&quot;</span><span class="p">]:</span>
+    <span class="c1"># Checking the input files</span>
+    <span class="k">for</span> <span class="n">suffix</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;.tped&quot;</span><span class="p">,</span> <span class="s2">&quot;.tfam&quot;</span><span class="p">]:</span>
         <span class="n">fileName</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">tfile</span> <span class="o">+</span> <span class="n">suffix</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">fileName</span><span class="p">):</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%(fileName)s</span><span class="s">: no such file&quot;</span> <span class="o">%</span> <span class="nb">locals</span><span class="p">()</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%(fileName)s</span><span class="s2">: no such file&quot;</span> <span class="o">%</span> <span class="nb">locals</span><span class="p">()</span>
             <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="bp">True</span>
+    <span class="k">return</span> <span class="bp">True</span></div>
 
-</div>
-<div class="viewcode-block" id="parseArgs"><a class="viewcode-back" href="../../../module_content/pyGenClean.NoCallHetero.html#pyGenClean.NoCallHetero.clean_noCall_hetero_snps.parseArgs">[docs]</a><span class="k">def</span> <span class="nf">parseArgs</span><span class="p">(</span><span class="n">argString</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>  <span class="c"># pragma: no cover</span>
+
+<div class="viewcode-block" id="parseArgs"><a class="viewcode-back" href="../../../module_content/pyGenClean.NoCallHetero.html#pyGenClean.NoCallHetero.clean_noCall_hetero_snps.parseArgs">[docs]</a><span class="k">def</span> <span class="nf">parseArgs</span><span class="p">(</span><span class="n">argString</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>  <span class="c1"># pragma: no cover</span>
     <span class="sd">&quot;&quot;&quot;Parses the command line options and arguments.</span>
 
 <span class="sd">    :param argString: the options.</span>
@@ -275,9 +275,9 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">(</span><span class="n">argString</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">args</span>
+    <span class="k">return</span> <span class="n">args</span></div>
 
-</div>
+
 <div class="viewcode-block" id="ProgramError"><a class="viewcode-back" href="../../../module_content/pyGenClean.NoCallHetero.html#pyGenClean.NoCallHetero.clean_noCall_hetero_snps.ProgramError">[docs]</a><span class="k">class</span> <span class="nc">ProgramError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;An :py:class:`Exception` raised in case of a problem.</span>
 
@@ -297,30 +297,30 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span></div>
 
 
-<span class="c"># The parser object</span></div>
-<span class="n">pretty_name</span> <span class="o">=</span> <span class="s">&quot;No calls and heterozygous only markers&quot;</span>
-<span class="n">desc</span> <span class="o">=</span> <span class="s">&#39;Removes &quot;no calls&quot; only and heterozygous only markers.&#39;</span>
-<span class="n">long_desc</span> <span class="o">=</span> <span class="p">(</span><span class="s">&quot;The script removes completely failed markers (no calls) or &quot;</span>
-             <span class="s">&quot;markers with only heterozygous genotypes.&quot;</span><span class="p">)</span>
+<span class="c1"># The parser object</span>
+<span class="n">pretty_name</span> <span class="o">=</span> <span class="s2">&quot;No calls and heterozygous only markers&quot;</span>
+<span class="n">desc</span> <span class="o">=</span> <span class="s1">&#39;Removes &quot;no calls&quot; only and heterozygous only markers.&#39;</span>
+<span class="n">long_desc</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;The script removes completely failed markers (no calls) or &quot;</span>
+             <span class="s2">&quot;markers with only heterozygous genotypes.&quot;</span><span class="p">)</span>
 <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="n">desc</span><span class="p">)</span>
-<span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;-v&quot;</span><span class="p">,</span> <span class="s">&quot;--version&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s">&quot;version&quot;</span><span class="p">,</span>
-                    <span class="n">version</span><span class="o">=</span><span class="s">&quot;pyGenClean version {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">__version__</span><span class="p">))</span>
+<span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-v&quot;</span><span class="p">,</span> <span class="s2">&quot;--version&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;version&quot;</span><span class="p">,</span>
+                    <span class="n">version</span><span class="o">=</span><span class="s2">&quot;pyGenClean version {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">__version__</span><span class="p">))</span>
 
-<span class="c"># The INPUT files</span>
-<span class="n">group</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s">&quot;Input File&quot;</span><span class="p">)</span>
-<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;--tfile&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s">&quot;FILE&quot;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
-                   <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s">&quot;The input file prefix (will find the tped and tfam &quot;</span>
-                         <span class="s">&quot;file by appending the prefix to .tped and .tfam, &quot;</span>
-                         <span class="s">&quot;respectively.&quot;</span><span class="p">))</span>
-<span class="c"># The OUTPUT files</span>
-<span class="n">group</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s">&quot;Output File&quot;</span><span class="p">)</span>
-<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;--out&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s">&quot;FILE&quot;</span><span class="p">,</span>
-                   <span class="n">default</span><span class="o">=</span><span class="s">&quot;clean_noCall_hetero&quot;</span><span class="p">,</span>
-                   <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s">&quot;The prefix of the output files. [default: &quot;</span>
-                         <span class="s">&quot;</span><span class="si">%(default)s</span><span class="s">]&quot;</span><span class="p">))</span>
+<span class="c1"># The INPUT files</span>
+<span class="n">group</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s2">&quot;Input File&quot;</span><span class="p">)</span>
+<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--tfile&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;FILE&quot;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+                   <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;The input file prefix (will find the tped and tfam &quot;</span>
+                         <span class="s2">&quot;file by appending the prefix to .tped and .tfam, &quot;</span>
+                         <span class="s2">&quot;respectively.&quot;</span><span class="p">))</span>
+<span class="c1"># The OUTPUT files</span>
+<span class="n">group</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s2">&quot;Output File&quot;</span><span class="p">)</span>
+<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--out&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;FILE&quot;</span><span class="p">,</span>
+                   <span class="n">default</span><span class="o">=</span><span class="s2">&quot;clean_noCall_hetero&quot;</span><span class="p">,</span>
+                   <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;The prefix of the output files. [default: &quot;</span>
+                         <span class="s2">&quot;</span><span class="si">%(default)s</span><span class="s2">]&quot;</span><span class="p">))</span>
 
 
 <div class="viewcode-block" id="safe_main"><a class="viewcode-back" href="../../../module_content/pyGenClean.NoCallHetero.html#pyGenClean.NoCallHetero.clean_noCall_hetero_snps.safe_main">[docs]</a><span class="k">def</span> <span class="nf">safe_main</span><span class="p">():</span>
@@ -328,14 +328,14 @@
     <span class="k">try</span><span class="p">:</span>
         <span class="n">main</span><span class="p">()</span>
     <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Cancelled by user&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Cancelled by user&quot;</span><span class="p">)</span>
         <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
     <span class="k">except</span> <span class="n">ProgramError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">message</span><span class="p">)</span>
-        <span class="n">parser</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">message</span><span class="p">)</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">message</span><span class="p">)</span></div>
 
-</div>
-<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&quot;__main__&quot;</span><span class="p">:</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
     <span class="n">safe_main</span><span class="p">()</span>
 </pre></div>
 
@@ -353,14 +353,14 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">pyGenClean 1.7.1 documentation</a> &raquo;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">pyGenClean 1.8.0 documentation</a> &raquo;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &raquo;</li>
           <li class="nav-item nav-item-2"><a href="../../pyGenClean.html" >pyGenClean</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2012, Louis-Philippe Lemieux Perreault.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.5.
     </div>
   </body>
 </html>

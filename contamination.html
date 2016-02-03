@@ -1,0 +1,231 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Contamination Module &mdash; pyGenClean 1.8.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.8.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="pyGenClean 1.8.0 documentation" href="index.html" />
+    <link rel="next" title="Duplicated Samples Module" href="duplicated_samples.html" />
+    <link rel="prev" title="pyGenClean.SexCheck package" href="module_content/pyGenClean.SexCheck.html" /> 
+  </head>
+  <body role="document">
+
+<div style="background-color: white; text-align: left; padding: 10px 10px 15px 15px">
+<a href="index.html"><img src="_static/logo.png" border="0" alt="py4sci"/></a>
+</div>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="duplicated_samples.html" title="Duplicated Samples Module"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="module_content/pyGenClean.SexCheck.html" title="pyGenClean.SexCheck package"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">pyGenClean 1.8.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Contamination Module</a><ul>
+<li><a class="reference internal" href="#input-files">Input Files</a></li>
+<li><a class="reference internal" href="#procedure">Procedure</a></li>
+<li><a class="reference internal" href="#output-files">Output Files</a></li>
+<li><a class="reference internal" href="#the-algorithm">The Algorithm</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="module_content/pyGenClean.SexCheck.html"
+                        title="previous chapter">pyGenClean.SexCheck package</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="duplicated_samples.html"
+                        title="next chapter">Duplicated Samples Module</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/contamination.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="contamination-module">
+<span id="contamination-label"></span><h1>Contamination Module<a class="headerlink" href="#contamination-module" title="Permalink to this headline">¶</a></h1>
+<p>The usage of the standalone module is shown below:</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> pyGenClean_check_contamination --help
+<span class="go">usage: pyGenClean_check_contamination [-h] [-v] --bfile FILE --raw-dir DIR</span>
+<span class="go">                                      [--colsample COL] [--colmarker COL]</span>
+<span class="go">                                      [--colbaf COL] [--colab1 COL]</span>
+<span class="go">                                      [--colab2 COL] [--sge]</span>
+<span class="go">                                      [--sge-walltime TIME]</span>
+<span class="go">                                      [--sge-nodes INT INT]</span>
+<span class="go">                                      [--sample-per-run-for-sge INT]</span>
+<span class="go">                                      [--out FILE]</span>
+
+<span class="go">Check BAF and LogR ratio for data contamination.</span>
+
+<span class="go">optional arguments:</span>
+<span class="go">  -h, --help            show this help message and exit</span>
+<span class="go">  -v, --version         show program&#39;s version number and exit</span>
+
+<span class="go">Input File:</span>
+<span class="go">  --bfile FILE          The input file prefix (will find the plink binary</span>
+<span class="go">                        files by appending the prefix to the .bim, .bed and</span>
+<span class="go">                        .fam files, respectively).</span>
+
+<span class="go">Raw Data:</span>
+<span class="go">  --raw-dir DIR         Directory containing the raw data (one file per</span>
+<span class="go">                        sample, where the name of the file (minus the</span>
+<span class="go">                        extension) is the sample identification number.</span>
+<span class="go">  --colsample COL       The sample column. [default: Sample Name]</span>
+<span class="go">  --colmarker COL       The marker column. [default: SNP Name]</span>
+<span class="go">  --colbaf COL          The B allele frequency column. [default: B Allele</span>
+<span class="go">                        Freq]</span>
+<span class="go">  --colab1 COL          The AB Allele 1 column. [default: Allele1 - AB]</span>
+<span class="go">  --colab2 COL          The AB Allele 2 column. [default: Allele2 - AB]</span>
+
+<span class="go">SGE Options:</span>
+<span class="go">  --sge                 Use SGE for parallelization.</span>
+<span class="go">  --sge-walltime TIME   The walltime for the job to run on the cluster. Do not</span>
+<span class="go">                        use if you are not required to specify a walltime for</span>
+<span class="go">                        your jobs on your cluster (e.g. &#39;qsub</span>
+<span class="go">                        -lwalltime=1:0:0&#39; on the cluster).</span>
+<span class="go">  --sge-nodes INT INT   The number of nodes and the number of processor per</span>
+<span class="go">                        nodes to use (e.g. &#39;qsub -lnodes=X:ppn=Y&#39; on the</span>
+<span class="go">                        cluster, where X is the number of nodes and Y is the</span>
+<span class="go">                        number of processor to use. Do not use if you are not</span>
+<span class="go">                        required to specify the number of nodes for your jobs</span>
+<span class="go">                        on the cluster.</span>
+<span class="go">  --sample-per-run-for-sge INT</span>
+<span class="go">                        The number of sample to run for a single SGE job.</span>
+<span class="go">                        [default: 30]</span>
+
+<span class="go">Output File:</span>
+<span class="go">  --out FILE            The prefix of the output files. [default:</span>
+<span class="go">                        contamination]</span>
+</pre></div>
+</div>
+<div class="section" id="input-files">
+<h2>Input Files<a class="headerlink" href="#input-files" title="Permalink to this headline">¶</a></h2>
+<p>This module uses PLINK&#8217;s binary file format (<code class="docutils literal"><span class="pre">bed</span></code>, <code class="docutils literal"><span class="pre">bim</span></code> and <code class="docutils literal"><span class="pre">fam</span></code>
+files) for the source data set (the data of interest). It also uses intensities
+file (one per sample to test) usually provided by the genotyping platform.</p>
+</div>
+<div class="section" id="procedure">
+<h2>Procedure<a class="headerlink" href="#procedure" title="Permalink to this headline">¶</a></h2>
+<p>Here are the steps performed by the module:</p>
+<ol class="arabic simple">
+<li>Selects only markers located on autosomes.</li>
+<li>Compute frequency for each autosomal markers (as required by <em>bafRegress</em>).</li>
+<li>Execute <em>bafRegress</em> on the dataset (in parallel if required).</li>
+</ol>
+</div>
+<div class="section" id="output-files">
+<h2>Output Files<a class="headerlink" href="#output-files" title="Permalink to this headline">¶</a></h2>
+<p>The output files of each of the steps described above are as follow (note that
+the output prefix shown is the one by default [<em>i.e.</em> <code class="docutils literal"><span class="pre">contamination</span></code>]):</p>
+<ol class="arabic">
+<li><p class="first"><code class="docutils literal"><span class="pre">contamination.to_extract</span></code>: the autosomal markers that will be used by
+<em>bafRegress</em>.</p>
+</li>
+<li><p class="first"><code class="docutils literal"><span class="pre">contamination.frq</span></code>: the frequency of each of the autosomal markers.</p>
+</li>
+<li><dl class="first docutils">
+<dt><code class="docutils literal"><span class="pre">contamination.bafRegress</span></code>: the <em>bafRegress</em> results for each of the</dt>
+<dd><p class="first last">tested sample.</p>
+</dd>
+</dl>
+</li>
+</ol>
+</div>
+<div class="section" id="the-algorithm">
+<h2>The Algorithm<a class="headerlink" href="#the-algorithm" title="Permalink to this headline">¶</a></h2>
+<p>For more information about the actual algorithms and source codes, refer to the
+following page.</p>
+<ul class="simple">
+<li><a class="reference internal" href="module_content/pyGenClean.Contamination.html#module-pyGenClean.Contamination.contamination" title="pyGenClean.Contamination.contamination"><code class="xref py py-mod docutils literal"><span class="pre">pyGenClean.Contamination.contamination</span></code></a></li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="duplicated_samples.html" title="Duplicated Samples Module"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="module_content/pyGenClean.SexCheck.html" title="pyGenClean.SexCheck package"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">pyGenClean 1.8.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2012, Louis-Philippe Lemieux Perreault.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.5.
+    </div>
+  </body>
+</html>

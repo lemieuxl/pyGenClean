@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>pyGenClean.MarkerMissingness.snp_missingness &mdash; pyGenClean 1.7.1 documentation</title>
+    <title>pyGenClean.MarkerMissingness.snp_missingness &mdash; pyGenClean 1.8.0 documentation</title>
     
     <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '1.7.1',
+        VERSION:     '1.8.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="pyGenClean 1.7.1 documentation" href="../../../index.html" />
+    <link rel="top" title="pyGenClean 1.8.0 documentation" href="../../../index.html" />
     <link rel="up" title="pyGenClean" href="../../pyGenClean.html" /> 
   </head>
   <body role="document">
@@ -42,7 +42,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">pyGenClean 1.7.1 documentation</a> &raquo;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">pyGenClean 1.8.0 documentation</a> &raquo;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &raquo;</li>
           <li class="nav-item nav-item-2"><a href="../../pyGenClean.html" accesskey="U">pyGenClean</a> &raquo;</li> 
       </ul>
@@ -72,21 +72,21 @@
           <div class="body" role="main">
             
   <h1>Source code for pyGenClean.MarkerMissingness.snp_missingness</h1><div class="highlight"><pre>
-<span class="c">#!/usr/bin/env python2.7</span>
+<span class="ch">#!/usr/bin/env python2.7</span>
 
-<span class="c"># This file is part of pyGenClean.</span>
-<span class="c">#</span>
-<span class="c"># pyGenClean is free software: you can redistribute it and/or modify it under</span>
-<span class="c"># the terms of the GNU General Public License as published by the Free Software</span>
-<span class="c"># Foundation, either version 3 of the License, or (at your option) any later</span>
-<span class="c"># version.</span>
-<span class="c">#</span>
-<span class="c"># pyGenClean is distributed in the hope that it will be useful, but WITHOUT ANY</span>
-<span class="c"># WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR</span>
-<span class="c"># A PARTICULAR PURPOSE.  See the GNU General Public License for more details.</span>
-<span class="c">#</span>
-<span class="c"># You should have received a copy of the GNU General Public License along with</span>
-<span class="c"># pyGenClean.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
+<span class="c1"># This file is part of pyGenClean.</span>
+<span class="c1">#</span>
+<span class="c1"># pyGenClean is free software: you can redistribute it and/or modify it under</span>
+<span class="c1"># the terms of the GNU General Public License as published by the Free Software</span>
+<span class="c1"># Foundation, either version 3 of the License, or (at your option) any later</span>
+<span class="c1"># version.</span>
+<span class="c1">#</span>
+<span class="c1"># pyGenClean is distributed in the hope that it will be useful, but WITHOUT ANY</span>
+<span class="c1"># WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR</span>
+<span class="c1"># A PARTICULAR PURPOSE.  See the GNU General Public License for more details.</span>
+<span class="c1">#</span>
+<span class="c1"># You should have received a copy of the GNU General Public License along with</span>
+<span class="c1"># pyGenClean.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
 
 
 <span class="kn">import</span> <span class="nn">os</span>
@@ -99,7 +99,7 @@
 <span class="kn">from</span> <span class="nn">..PlinkUtils</span> <span class="kn">import</span> <span class="n">compare_bim</span> <span class="k">as</span> <span class="n">CompareBIM</span>
 
 
-<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&quot;snp_missingness&quot;</span><span class="p">)</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;snp_missingness&quot;</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="main"><a class="viewcode-back" href="../../../module_content/pyGenClean.MarkerMissingness.html#pyGenClean.MarkerMissingness.snp_missingness.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">argString</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
@@ -117,23 +117,23 @@
 <span class="sd">       analysis) (:py:func:`compareBIM`).</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c"># Getting and checking the options</span>
+    <span class="c1"># Getting and checking the options</span>
     <span class="n">args</span> <span class="o">=</span> <span class="n">parseArgs</span><span class="p">(</span><span class="n">argString</span><span class="p">)</span>
     <span class="n">checkArgs</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
 
-    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Options used:&quot;</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Options used:&quot;</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">vars</span><span class="p">(</span><span class="n">args</span><span class="p">)</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;  --{} {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;_&quot;</span><span class="p">,</span> <span class="s">&quot;-&quot;</span><span class="p">),</span> <span class="n">value</span><span class="p">))</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;  --{} {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">),</span> <span class="n">value</span><span class="p">))</span>
 
-    <span class="c"># Run plink</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Running Plink&quot;</span><span class="p">)</span>
+    <span class="c1"># Run plink</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Running Plink&quot;</span><span class="p">)</span>
     <span class="n">runPlink</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
 
-    <span class="c"># Comparing the bim</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Comparing BIM files&quot;</span><span class="p">)</span>
-    <span class="n">compareBIM</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+    <span class="c1"># Comparing the bim</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Comparing BIM files&quot;</span><span class="p">)</span>
+    <span class="n">compareBIM</span><span class="p">(</span><span class="n">args</span><span class="p">)</span></div>
 
-</div>
+
 <div class="viewcode-block" id="compareBIM"><a class="viewcode-back" href="../../../module_content/pyGenClean.MarkerMissingness.html#pyGenClean.MarkerMissingness.snp_missingness.compareBIM">[docs]</a><span class="k">def</span> <span class="nf">compareBIM</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Compare two BIM file.</span>
 
@@ -146,28 +146,28 @@
 <span class="sd">    module.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c"># Creating the CompareBIM options</span>
+    <span class="c1"># Creating the CompareBIM options</span>
     <span class="k">class</span> <span class="nc">Dummy</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
         <span class="k">pass</span>
     <span class="n">compareBIM_args</span> <span class="o">=</span> <span class="n">Dummy</span><span class="p">()</span>
-    <span class="n">compareBIM_args</span><span class="o">.</span><span class="n">before</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">bfile</span> <span class="o">+</span> <span class="s">&quot;.bim&quot;</span>
-    <span class="n">compareBIM_args</span><span class="o">.</span><span class="n">after</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">out</span> <span class="o">+</span> <span class="s">&quot;.bim&quot;</span>
-    <span class="n">compareBIM_args</span><span class="o">.</span><span class="n">out</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">out</span> <span class="o">+</span> <span class="s">&quot;.removed_snps&quot;</span>
+    <span class="n">compareBIM_args</span><span class="o">.</span><span class="n">before</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">bfile</span> <span class="o">+</span> <span class="s2">&quot;.bim&quot;</span>
+    <span class="n">compareBIM_args</span><span class="o">.</span><span class="n">after</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">out</span> <span class="o">+</span> <span class="s2">&quot;.bim&quot;</span>
+    <span class="n">compareBIM_args</span><span class="o">.</span><span class="n">out</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">out</span> <span class="o">+</span> <span class="s2">&quot;.removed_snps&quot;</span>
 
     <span class="k">try</span><span class="p">:</span>
-        <span class="c"># Checking the arguments</span>
+        <span class="c1"># Checking the arguments</span>
         <span class="n">CompareBIM</span><span class="o">.</span><span class="n">checkArgs</span><span class="p">(</span><span class="n">compareBIM_args</span><span class="p">)</span>
 
-        <span class="c"># Reading the BIM files</span>
+        <span class="c1"># Reading the BIM files</span>
         <span class="n">beforeBIM</span> <span class="o">=</span> <span class="n">CompareBIM</span><span class="o">.</span><span class="n">readBIM</span><span class="p">(</span><span class="n">compareBIM_args</span><span class="o">.</span><span class="n">before</span><span class="p">)</span>
         <span class="n">afterBIM</span> <span class="o">=</span> <span class="n">CompareBIM</span><span class="o">.</span><span class="n">readBIM</span><span class="p">(</span><span class="n">compareBIM_args</span><span class="o">.</span><span class="n">after</span><span class="p">)</span>
 
-        <span class="c"># Comparing the BIM files</span>
+        <span class="c1"># Comparing the BIM files</span>
         <span class="n">CompareBIM</span><span class="o">.</span><span class="n">compareSNPs</span><span class="p">(</span><span class="n">beforeBIM</span><span class="p">,</span> <span class="n">afterBIM</span><span class="p">,</span> <span class="n">compareBIM_args</span><span class="o">.</span><span class="n">out</span><span class="p">)</span>
     <span class="k">except</span> <span class="n">CompareBIM</span><span class="o">.</span><span class="n">ProgramError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="s">&quot;CompareBIM: &quot;</span> <span class="o">+</span> <span class="n">e</span><span class="o">.</span><span class="n">message</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="s2">&quot;CompareBIM: &quot;</span> <span class="o">+</span> <span class="n">e</span><span class="o">.</span><span class="n">message</span><span class="p">)</span></div>
 
-</div>
+
 <div class="viewcode-block" id="runPlink"><a class="viewcode-back" href="../../../module_content/pyGenClean.MarkerMissingness.html#pyGenClean.MarkerMissingness.snp_missingness.runPlink">[docs]</a><span class="k">def</span> <span class="nf">runPlink</span><span class="p">(</span><span class="n">options</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Runs Plink with the geno option.</span>
 
@@ -176,19 +176,19 @@
 <span class="sd">    :type options: argparse.Namespace</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c"># The plink command</span>
-    <span class="n">plinkCommand</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;plink&quot;</span><span class="p">,</span> <span class="s">&quot;--noweb&quot;</span><span class="p">,</span> <span class="s">&quot;--bfile&quot;</span><span class="p">,</span> <span class="n">options</span><span class="o">.</span><span class="n">bfile</span><span class="p">,</span> <span class="s">&quot;--geno&quot;</span><span class="p">,</span>
-                    <span class="nb">str</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">geno</span><span class="p">),</span> <span class="s">&quot;--make-bed&quot;</span><span class="p">,</span> <span class="s">&quot;--out&quot;</span><span class="p">,</span> <span class="n">options</span><span class="o">.</span><span class="n">out</span><span class="p">]</span>
+    <span class="c1"># The plink command</span>
+    <span class="n">plinkCommand</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;plink&quot;</span><span class="p">,</span> <span class="s2">&quot;--noweb&quot;</span><span class="p">,</span> <span class="s2">&quot;--bfile&quot;</span><span class="p">,</span> <span class="n">options</span><span class="o">.</span><span class="n">bfile</span><span class="p">,</span> <span class="s2">&quot;--geno&quot;</span><span class="p">,</span>
+                    <span class="nb">str</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">geno</span><span class="p">),</span> <span class="s2">&quot;--make-bed&quot;</span><span class="p">,</span> <span class="s2">&quot;--out&quot;</span><span class="p">,</span> <span class="n">options</span><span class="o">.</span><span class="n">out</span><span class="p">]</span>
 
     <span class="n">output</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">output</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">(</span><span class="n">plinkCommand</span><span class="p">,</span>
                                          <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">STDOUT</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
     <span class="k">except</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;plink: couldn&#39;t run plink&quot;</span>
-        <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;plink: couldn&#39;t run plink&quot;</span>
+        <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span></div>
 
-</div>
+
 <div class="viewcode-block" id="checkArgs"><a class="viewcode-back" href="../../../module_content/pyGenClean.MarkerMissingness.html#pyGenClean.MarkerMissingness.snp_missingness.checkArgs">[docs]</a><span class="k">def</span> <span class="nf">checkArgs</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Checks the arguments and options.</span>
 
@@ -203,21 +203,21 @@
 <span class="sd">    :class:`sys.stderr` and the program exists with code 1.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c"># Check if we have the tped and the tfam files</span>
-    <span class="k">for</span> <span class="n">fileName</span> <span class="ow">in</span> <span class="p">[</span><span class="n">args</span><span class="o">.</span><span class="n">bfile</span> <span class="o">+</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&quot;.bed&quot;</span><span class="p">,</span> <span class="s">&quot;.bim&quot;</span><span class="p">,</span> <span class="s">&quot;.fam&quot;</span><span class="p">]]:</span>
+    <span class="c1"># Check if we have the tped and the tfam files</span>
+    <span class="k">for</span> <span class="n">fileName</span> <span class="ow">in</span> <span class="p">[</span><span class="n">args</span><span class="o">.</span><span class="n">bfile</span> <span class="o">+</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;.bed&quot;</span><span class="p">,</span> <span class="s2">&quot;.bim&quot;</span><span class="p">,</span> <span class="s2">&quot;.fam&quot;</span><span class="p">]]:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">fileName</span><span class="p">):</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%(fileName)s</span><span class="s">: no such file&quot;</span> <span class="o">%</span> <span class="nb">locals</span><span class="p">()</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%(fileName)s</span><span class="s2">: no such file&quot;</span> <span class="o">%</span> <span class="nb">locals</span><span class="p">()</span>
             <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
-    <span class="c"># Check the mind option (between 0 and 1, inclusive)</span>
+    <span class="c1"># Check the mind option (between 0 and 1, inclusive)</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">geno</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">geno</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">):</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;mind=</span><span class="si">%f</span><span class="s">: must be between 0 and 1 (inclusive)&quot;</span> <span class="o">%</span> <span class="n">args</span><span class="o">.</span><span class="n">geno</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;mind=</span><span class="si">%f</span><span class="s2">: must be between 0 and 1 (inclusive)&quot;</span> <span class="o">%</span> <span class="n">args</span><span class="o">.</span><span class="n">geno</span>
         <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="bp">True</span>
+    <span class="k">return</span> <span class="bp">True</span></div>
 
-</div>
-<div class="viewcode-block" id="parseArgs"><a class="viewcode-back" href="../../../module_content/pyGenClean.MarkerMissingness.html#pyGenClean.MarkerMissingness.snp_missingness.parseArgs">[docs]</a><span class="k">def</span> <span class="nf">parseArgs</span><span class="p">(</span><span class="n">argString</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>  <span class="c"># pragma: no cover</span>
+
+<div class="viewcode-block" id="parseArgs"><a class="viewcode-back" href="../../../module_content/pyGenClean.MarkerMissingness.html#pyGenClean.MarkerMissingness.snp_missingness.parseArgs">[docs]</a><span class="k">def</span> <span class="nf">parseArgs</span><span class="p">(</span><span class="n">argString</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>  <span class="c1"># pragma: no cover</span>
     <span class="sd">&quot;&quot;&quot;Parses the command line options and arguments.</span>
 
 <span class="sd">    :param argString: the options.</span>
@@ -247,9 +247,9 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">(</span><span class="n">argString</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">args</span>
+    <span class="k">return</span> <span class="n">args</span></div>
 
-</div>
+
 <div class="viewcode-block" id="ProgramError"><a class="viewcode-back" href="../../../module_content/pyGenClean.MarkerMissingness.html#pyGenClean.MarkerMissingness.snp_missingness.ProgramError">[docs]</a><span class="k">class</span> <span class="nc">ProgramError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;An :py:class:`Exception` raised in case of a problem.</span>
 
@@ -269,36 +269,36 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span></div>
 
 
-<span class="c"># The parser object</span></div>
-<span class="n">pretty_name</span> <span class="o">=</span> <span class="s">&quot;Marker missingness&quot;</span>
-<span class="n">desc</span> <span class="o">=</span> <span class="s">&quot;Computes marker missingness using Plink.&quot;</span>
-<span class="n">long_desc</span> <span class="o">=</span> <span class="p">(</span><span class="s">&quot;The script identifies poorly performing markers with genotyping &quot;</span>
-             <span class="s">r&quot;succes rate $&lt;{success_rate}$\%.&quot;</span><span class="p">)</span>
+<span class="c1"># The parser object</span>
+<span class="n">pretty_name</span> <span class="o">=</span> <span class="s2">&quot;Marker missingness&quot;</span>
+<span class="n">desc</span> <span class="o">=</span> <span class="s2">&quot;Computes marker missingness using Plink.&quot;</span>
+<span class="n">long_desc</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;The script identifies poorly performing markers with genotyping &quot;</span>
+             <span class="s2">r&quot;succes rate $&lt;{success_rate}$\%.&quot;</span><span class="p">)</span>
 <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="n">desc</span><span class="p">)</span>
-<span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;-v&quot;</span><span class="p">,</span> <span class="s">&quot;--version&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s">&quot;version&quot;</span><span class="p">,</span>
-                    <span class="n">version</span><span class="o">=</span><span class="s">&quot;pyGenClean version {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">__version__</span><span class="p">))</span>
+<span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-v&quot;</span><span class="p">,</span> <span class="s2">&quot;--version&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;version&quot;</span><span class="p">,</span>
+                    <span class="n">version</span><span class="o">=</span><span class="s2">&quot;pyGenClean version {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">__version__</span><span class="p">))</span>
 
-<span class="c"># The INPUT files</span>
-<span class="n">group</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s">&quot;Input File&quot;</span><span class="p">)</span>
-<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;--bfile&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s">&quot;FILE&quot;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
-                   <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s">&quot;The input file prefix (will find the plink binary &quot;</span>
-                         <span class="s">&quot;files by appending the prefix to the .bim, .bed and &quot;</span>
-                         <span class="s">&quot;.fam files, respectively.&quot;</span><span class="p">))</span>
-<span class="c"># The options</span>
-<span class="n">group</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s">&quot;Options&quot;</span><span class="p">)</span>
-<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;--geno&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s">&quot;FLOAT&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">0.02</span><span class="p">,</span>
-                   <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s">&quot;The missingness threshold (remove SNPs with more &quot;</span>
-                         <span class="s">&quot;than x percent missing genotypes). [Default: &quot;</span>
-                         <span class="s">&quot;</span><span class="si">%(default).3f</span><span class="s">]&quot;</span><span class="p">))</span>
-<span class="c"># The OUTPUT files</span>
-<span class="n">group</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s">&quot;Output File&quot;</span><span class="p">)</span>
-<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;--out&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s">&quot;FILE&quot;</span><span class="p">,</span>
-                   <span class="n">default</span><span class="o">=</span><span class="s">&quot;clean_geno&quot;</span><span class="p">,</span>
-                   <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s">&quot;The prefix of the output files. [default: &quot;</span>
-                         <span class="s">&quot;</span><span class="si">%(default)s</span><span class="s">]&quot;</span><span class="p">))</span>
+<span class="c1"># The INPUT files</span>
+<span class="n">group</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s2">&quot;Input File&quot;</span><span class="p">)</span>
+<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--bfile&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;FILE&quot;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+                   <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;The input file prefix (will find the plink binary &quot;</span>
+                         <span class="s2">&quot;files by appending the prefix to the .bim, .bed and &quot;</span>
+                         <span class="s2">&quot;.fam files, respectively.&quot;</span><span class="p">))</span>
+<span class="c1"># The options</span>
+<span class="n">group</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s2">&quot;Options&quot;</span><span class="p">)</span>
+<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--geno&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;FLOAT&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">0.02</span><span class="p">,</span>
+                   <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;The missingness threshold (remove SNPs with more &quot;</span>
+                         <span class="s2">&quot;than x percent missing genotypes). [Default: &quot;</span>
+                         <span class="s2">&quot;</span><span class="si">%(default).3f</span><span class="s2">]&quot;</span><span class="p">))</span>
+<span class="c1"># The OUTPUT files</span>
+<span class="n">group</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s2">&quot;Output File&quot;</span><span class="p">)</span>
+<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--out&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;FILE&quot;</span><span class="p">,</span>
+                   <span class="n">default</span><span class="o">=</span><span class="s2">&quot;clean_geno&quot;</span><span class="p">,</span>
+                   <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;The prefix of the output files. [default: &quot;</span>
+                         <span class="s2">&quot;</span><span class="si">%(default)s</span><span class="s2">]&quot;</span><span class="p">))</span>
 
 
 <div class="viewcode-block" id="safe_main"><a class="viewcode-back" href="../../../module_content/pyGenClean.MarkerMissingness.html#pyGenClean.MarkerMissingness.snp_missingness.safe_main">[docs]</a><span class="k">def</span> <span class="nf">safe_main</span><span class="p">():</span>
@@ -306,14 +306,14 @@
     <span class="k">try</span><span class="p">:</span>
         <span class="n">main</span><span class="p">()</span>
     <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Cancelled by user&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Cancelled by user&quot;</span><span class="p">)</span>
         <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
     <span class="k">except</span> <span class="n">ProgramError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">message</span><span class="p">)</span>
-        <span class="n">parser</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">message</span><span class="p">)</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">message</span><span class="p">)</span></div>
 
-</div>
-<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&quot;__main__&quot;</span><span class="p">:</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
     <span class="n">safe_main</span><span class="p">()</span>
 </pre></div>
 
@@ -331,14 +331,14 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">pyGenClean 1.7.1 documentation</a> &raquo;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">pyGenClean 1.8.0 documentation</a> &raquo;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &raquo;</li>
           <li class="nav-item nav-item-2"><a href="../../pyGenClean.html" >pyGenClean</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2012, Louis-Philippe Lemieux Perreault.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.5.
     </div>
   </body>
 </html>

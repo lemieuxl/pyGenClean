@@ -7,6 +7,68 @@ The following sections show a list the available scripts that can be used in the
 configuration file, along with their options for customization.
 
 
+Contamination
+=============
+
+The name to use in the configuration file is ``contamination`` and the
+:ref:`contamination_table` table shows its configuration.
+
+.. tabularcolumns:: p{6.6cm}Lp{7.5cm}
+.. _contamination_table:
+
+.. table:: List of options for the **contamination** script.
+
+    +------------------------------+------------+-----------------------------+
+    | Option                       | Type       | Description                 |
+    +==============================+============+=============================+
+    | ``--raw-dir``                | ``STRING`` | Directory containing the raw|
+    |                              |            | data (one file per sample,  |
+    |                              |            | where the name of the file  |
+    |                              |            | (minus the extension) is the|
+    |                              |            | sample identification       |
+    |                              |            | number.                     |
+    +------------------------------+------------+-----------------------------+
+    | ``--colsample``              | ``STRING`` | The sample column.          |
+    +------------------------------+------------+-----------------------------+
+    | ``--colmarker``              | ``STRING`` | The marker column.          |
+    +------------------------------+------------+-----------------------------+
+    | ``--colbaf``                 | ``STRING`` | The B allele frequency      |
+    |                              |            | column.                     |
+    +------------------------------+------------+-----------------------------+
+    | ``--colab1``                 | ``STRING`` | The AB Allele 1 column.     |
+    +------------------------------+------------+-----------------------------+
+    | ``--colab2``                 | ``STRING`` | The AB Allele 2 column.     |
+    +------------------------------+------------+-----------------------------+
+    | ``--sge``                    |            | Use SGE for parallelization.|
+    +------------------------------+------------+-----------------------------+
+    | ``--sge-walltime``           | ``STRING`` | The walltime for the job to |
+    |                              |            | run on the cluster. Do not  |
+    |                              |            | use if you are not required |
+    |                              |            | to specify a walltime for   |
+    |                              |            | your jobs on your cluster   |
+    |                              |            | (*e.g.*                     |
+    |                              |            | '``qsub -lwalltime=1:0:0``' |
+    |                              |            | on the cluster).            |
+    +------------------------------+------------+-----------------------------+
+    | ``--sge-nodes``              | ``INT``    | The number of nodes and the |
+    |                              |            | number of processor per     |
+    |                              |            | nodes to use (*e.g.*        |
+    |                              |            | '``qsub -lnodes=X:ppn=Y``'  |
+    |                              |            | on the cluster, where X is  |
+    |                              |            | the number of nodes and Y is|
+    |                              |            | the number of processor to  |
+    |                              |            | use. Do  not use if you are |
+    |                              |            | not required to specify the |
+    |                              |            | number of nodes  for your   |
+    |                              |            | jobs on the cluster.        |
+    +------------------------------+------------+-----------------------------+
+    | ``--sample-per-run-for-sge`` | ``INT``    | The number of sample to run |
+    |                              |            | for a single SGE job.       |
+    +------------------------------+------------+-----------------------------+
+
+The name of the standalone script is ``pyGenClean_check_contamination``.
+
+
 .. _duplicated_samples_options:
 
 Duplicated Samples
@@ -191,6 +253,9 @@ The name to use in the configuration file is ``sex_check`` and the
     |                           |            | LRR and BAF plot (png, ps or    |
     |                           |            | pdf formats are available).     |
     |                           |            | [default: png]                  |
+    +---------------------------+------------+---------------------------------+
+    | ``--lrr-baf-dpi``         | ``INT``    | The pixel density of the        |
+    |                           |            | figure(s) (DPI).                |
     +---------------------------+------------+---------------------------------+
 
 The name of the standalone script is ``pyGenClean_sex_check``. If you want to
@@ -437,11 +502,19 @@ The name to use in the configuration file is ``check_ethnicity`` and the
     | ``--ylabel``                | ``STRING`` | The label of the Y axis.      |
     |                             |            | [default: C2]                 |
     +-----------------------------+------------+-------------------------------+
+    | ``--create-scree-plot``     |            | Computes Eigenvalues and      |
+    |                             |            | creates a scree plot.         |
+    +-----------------------------+------------+-------------------------------+
+    | ``--scree-plot-title``      | ``STRING`` | The main title of the scree   |
+    |                             |            | plot                          |
+    +-----------------------------+------------+-------------------------------+
 
 The name of the standalone script is ``pyGenClean_check_ethnicity``. If you want
 to redo the outlier detection using a different multiplier, have a look at the
 ``pyGenClean_find_outliers`` script. If you want to redo any MDS plot, have a
-look at the ``pyGenClean_plot_MDS`` script.
+look at the ``pyGenClean_plot_MDS`` script. If you want to compute the
+*Eigenvectors* using the ``smartpca`` tool, have a look at the
+``pyGenClean_plot_eigenvalues`` script.
 
 
 Minor Allele Frequency of Zero

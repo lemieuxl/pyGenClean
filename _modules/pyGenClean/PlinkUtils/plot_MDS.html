@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>pyGenClean.PlinkUtils.plot_MDS &mdash; pyGenClean 1.7.1 documentation</title>
+    <title>pyGenClean.PlinkUtils.plot_MDS &mdash; pyGenClean 1.8.0 documentation</title>
     
     <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '1.7.1',
+        VERSION:     '1.8.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="pyGenClean 1.7.1 documentation" href="../../../index.html" />
+    <link rel="top" title="pyGenClean 1.8.0 documentation" href="../../../index.html" />
     <link rel="up" title="pyGenClean.PlinkUtils" href="../PlinkUtils.html" /> 
   </head>
   <body role="document">
@@ -42,7 +42,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">pyGenClean 1.7.1 documentation</a> &raquo;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">pyGenClean 1.8.0 documentation</a> &raquo;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &raquo;</li>
           <li class="nav-item nav-item-2"><a href="../../pyGenClean.html" >pyGenClean</a> &raquo;</li>
           <li class="nav-item nav-item-3"><a href="../PlinkUtils.html" accesskey="U">pyGenClean.PlinkUtils</a> &raquo;</li> 
@@ -73,21 +73,21 @@
           <div class="body" role="main">
             
   <h1>Source code for pyGenClean.PlinkUtils.plot_MDS</h1><div class="highlight"><pre>
-<span class="c">#!/usr/bin/env python2.7</span>
+<span class="ch">#!/usr/bin/env python2.7</span>
 
-<span class="c"># This file is part of pyGenClean.</span>
-<span class="c">#</span>
-<span class="c"># pyGenClean is free software: you can redistribute it and/or modify it under</span>
-<span class="c"># the terms of the GNU General Public License as published by the Free Software</span>
-<span class="c"># Foundation, either version 3 of the License, or (at your option) any later</span>
-<span class="c"># version.</span>
-<span class="c">#</span>
-<span class="c"># pyGenClean is distributed in the hope that it will be useful, but WITHOUT ANY</span>
-<span class="c"># WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR</span>
-<span class="c"># A PARTICULAR PURPOSE.  See the GNU General Public License for more details.</span>
-<span class="c">#</span>
-<span class="c"># You should have received a copy of the GNU General Public License along with</span>
-<span class="c"># pyGenClean.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
+<span class="c1"># This file is part of pyGenClean.</span>
+<span class="c1">#</span>
+<span class="c1"># pyGenClean is free software: you can redistribute it and/or modify it under</span>
+<span class="c1"># the terms of the GNU General Public License as published by the Free Software</span>
+<span class="c1"># Foundation, either version 3 of the License, or (at your option) any later</span>
+<span class="c1"># version.</span>
+<span class="c1">#</span>
+<span class="c1"># pyGenClean is distributed in the hope that it will be useful, but WITHOUT ANY</span>
+<span class="c1"># WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR</span>
+<span class="c1"># A PARTICULAR PURPOSE.  See the GNU General Public License for more details.</span>
+<span class="c1">#</span>
+<span class="c1"># You should have received a copy of the GNU General Public License along with</span>
+<span class="c1"># pyGenClean.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
 
 
 <span class="kn">import</span> <span class="nn">os</span>
@@ -100,10 +100,10 @@
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">createRowFromPlinkSpacedOutput</span>
 
 
-<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&quot;plot_MDS&quot;</span><span class="p">)</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;plot_MDS&quot;</span><span class="p">)</span>
 
 
-<span class="n">desc</span> <span class="o">=</span> <span class="s">&quot;Creates a MDS plot&quot;</span>
+<span class="n">desc</span> <span class="o">=</span> <span class="s2">&quot;Creates a MDS plot&quot;</span>
 <span class="n">long_desc</span> <span class="o">=</span> <span class="bp">None</span>
 <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="n">desc</span><span class="p">)</span>
 
@@ -118,14 +118,14 @@
 <span class="sd">    3. Plots the MDS data (:py:func:`plotMDS`).</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c"># Getting and checking the options</span>
+    <span class="c1"># Getting and checking the options</span>
     <span class="n">args</span> <span class="o">=</span> <span class="n">parseArgs</span><span class="p">()</span>
     <span class="n">checkArgs</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
 
-    <span class="c"># Reads the population file</span>
+    <span class="c1"># Reads the population file</span>
     <span class="n">populations</span> <span class="o">=</span> <span class="n">readPopulations</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">population_file</span><span class="p">)</span>
 
-    <span class="c"># Acquire the data</span>
+    <span class="c1"># Acquire the data</span>
     <span class="n">theData</span><span class="p">,</span> <span class="n">theLabels</span> <span class="o">=</span> <span class="n">extractData</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">file</span><span class="p">,</span> <span class="n">populations</span><span class="p">)</span>
     <span class="n">theOrders</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">theLabels</span><span class="p">))</span>
     <span class="n">theColors</span> <span class="o">=</span> <span class="p">[(</span><span class="mf">0.215686275</span><span class="p">,</span> <span class="mf">0.000494118</span><span class="p">,</span> <span class="mf">0.721568627</span><span class="p">),</span>
@@ -134,13 +134,13 @@
                  <span class="p">(</span><span class="mf">0.894117647</span><span class="p">,</span> <span class="mf">0.101960784</span><span class="p">,</span> <span class="mf">0.109803922</span><span class="p">),</span>
                  <span class="p">(</span><span class="mf">0.596078431</span><span class="p">,</span> <span class="mf">0.305882353</span><span class="p">,</span> <span class="mf">0.639215686</span><span class="p">)]</span>
     <span class="n">theSizes</span> <span class="o">=</span> <span class="p">[</span><span class="mi">12</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">12</span><span class="p">]</span>
-    <span class="n">theMarkers</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;.&quot;</span><span class="p">,</span> <span class="s">&quot;.&quot;</span><span class="p">,</span> <span class="s">&quot;.&quot;</span><span class="p">,</span> <span class="s">&quot;+&quot;</span><span class="p">,</span> <span class="s">&quot;D&quot;</span><span class="p">]</span>
+    <span class="n">theMarkers</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="s2">&quot;+&quot;</span><span class="p">,</span> <span class="s2">&quot;D&quot;</span><span class="p">]</span>
 
-    <span class="c"># Plot the data</span>
+    <span class="c1"># Plot the data</span>
     <span class="n">plotMDS</span><span class="p">(</span><span class="n">theData</span><span class="p">,</span> <span class="n">theOrders</span><span class="p">,</span> <span class="n">theLabels</span><span class="p">,</span> <span class="n">theColors</span><span class="p">,</span> <span class="n">theSizes</span><span class="p">,</span> <span class="n">theMarkers</span><span class="p">,</span>
-            <span class="n">args</span><span class="p">)</span>
+            <span class="n">args</span><span class="p">)</span></div>
 
-</div>
+
 <div class="viewcode-block" id="readPopulations"><a class="viewcode-back" href="../../../module_content/pyGenClean.PlinkUtils.html#pyGenClean.PlinkUtils.plot_MDS.readPopulations">[docs]</a><span class="k">def</span> <span class="nf">readPopulations</span><span class="p">(</span><span class="n">inputFileName</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Reads a population file.</span>
 
@@ -152,29 +152,29 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">populations</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">inputFileName</span><span class="p">,</span> <span class="s">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">inputFile</span><span class="p">:</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">inputFileName</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">inputFile</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">inputFile</span><span class="p">:</span>
-            <span class="n">row</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\r\n</span><span class="s">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\t</span><span class="s">&quot;</span><span class="p">)</span>
+            <span class="n">row</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\r\n</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span>
 
-            <span class="c"># Getting the informations</span>
+            <span class="c1"># Getting the informations</span>
             <span class="n">famID</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
             <span class="n">indID</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
             <span class="n">pop</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
 
-            <span class="c"># Check if we already saw this sample</span>
+            <span class="c1"># Check if we already saw this sample</span>
             <span class="k">if</span> <span class="p">(</span><span class="n">famID</span><span class="p">,</span> <span class="n">indID</span><span class="p">)</span> <span class="ow">in</span> <span class="n">populations</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">pop</span> <span class="o">!=</span> <span class="n">populations</span><span class="p">[(</span><span class="n">famID</span><span class="p">,</span> <span class="n">indID</span><span class="p">)]:</span>
-                    <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&quot;{} {}: sample has multiple population ({} and &quot;</span>
-                           <span class="s">&quot;{})&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">famID</span><span class="p">,</span> <span class="n">indID</span><span class="p">,</span> <span class="n">pop</span><span class="p">,</span>
+                    <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;{} {}: sample has multiple population ({} and &quot;</span>
+                           <span class="s2">&quot;{})&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">famID</span><span class="p">,</span> <span class="n">indID</span><span class="p">,</span> <span class="n">pop</span><span class="p">,</span>
                                         <span class="n">populations</span><span class="p">[(</span><span class="n">famID</span><span class="p">,</span> <span class="n">indID</span><span class="p">)]))</span>
                     <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
-            <span class="c"># Save the population</span>
+            <span class="c1"># Save the population</span>
             <span class="n">populations</span><span class="p">[(</span><span class="n">famID</span><span class="p">,</span> <span class="n">indID</span><span class="p">)]</span> <span class="o">=</span> <span class="n">pop</span>
 
-    <span class="k">return</span> <span class="n">populations</span>
+    <span class="k">return</span> <span class="n">populations</span></div>
 
-</div>
+
 <div class="viewcode-block" id="plotMDS"><a class="viewcode-back" href="../../../module_content/pyGenClean.PlinkUtils.html#pyGenClean.PlinkUtils.plot_MDS.plotMDS">[docs]</a><span class="k">def</span> <span class="nf">plotMDS</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">theOrders</span><span class="p">,</span> <span class="n">theLabels</span><span class="p">,</span> <span class="n">theColors</span><span class="p">,</span> <span class="n">theSizes</span><span class="p">,</span> <span class="n">theMarkers</span><span class="p">,</span>
             <span class="n">options</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Plot the MDS data.</span>
@@ -196,18 +196,18 @@
 <span class="sd">    :type options: argparse.Namespace</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c"># Do the import</span>
+    <span class="c1"># Do the import</span>
     <span class="kn">import</span> <span class="nn">matplotlib</span> <span class="kn">as</span> <span class="nn">mpl</span>
-    <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">format</span> <span class="o">!=</span> <span class="s">&quot;X11&quot;</span> <span class="ow">and</span> <span class="n">mpl</span><span class="o">.</span><span class="n">get_backend</span><span class="p">()</span> <span class="o">!=</span> <span class="s">&quot;agg&quot;</span><span class="p">:</span>
-        <span class="n">mpl</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s">&quot;Agg&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">format</span> <span class="o">!=</span> <span class="s2">&quot;X11&quot;</span> <span class="ow">and</span> <span class="n">mpl</span><span class="o">.</span><span class="n">get_backend</span><span class="p">()</span> <span class="o">!=</span> <span class="s2">&quot;agg&quot;</span><span class="p">:</span>
+        <span class="n">mpl</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s2">&quot;Agg&quot;</span><span class="p">)</span>
     <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
-    <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">format</span> <span class="o">!=</span> <span class="s">&quot;X11&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">format</span> <span class="o">!=</span> <span class="s2">&quot;X11&quot;</span><span class="p">:</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">ioff</span><span class="p">()</span>
 
     <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
     <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">)</span>
 
-    <span class="c"># The plot</span>
+    <span class="c1"># The plot</span>
     <span class="n">plotObject</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">labels</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">theOrders</span><span class="p">):</span>
@@ -217,28 +217,28 @@
         <span class="n">plotObject</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span>
         <span class="n">labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">theLabels</span><span class="p">[</span><span class="n">index</span><span class="p">])</span>
 
-    <span class="c"># The legend</span>
+    <span class="c1"># The legend</span>
     <span class="n">prop</span> <span class="o">=</span> <span class="n">mpl</span><span class="o">.</span><span class="n">font_manager</span><span class="o">.</span><span class="n">FontProperties</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
-    <span class="n">leg</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">plotObject</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="s">&quot;upper left&quot;</span><span class="p">,</span> <span class="n">numpoints</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">leg</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">plotObject</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="s2">&quot;upper left&quot;</span><span class="p">,</span> <span class="n">numpoints</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
                     <span class="n">fancybox</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">prop</span><span class="o">=</span><span class="n">prop</span><span class="p">)</span>
 
-    <span class="c"># The title and XY labels</span>
+    <span class="c1"># The title and XY labels</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">title</span><span class="p">)</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">xlabel</span><span class="p">)</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">ylabel</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">format</span> <span class="o">==</span> <span class="s">&quot;X11&quot;</span><span class="p">:</span>
-        <span class="c"># Show the plot</span>
+    <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">format</span> <span class="o">==</span> <span class="s2">&quot;X11&quot;</span><span class="p">:</span>
+        <span class="c1"># Show the plot</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">fileName</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">out</span> <span class="o">+</span> <span class="s">&quot;.&quot;</span> <span class="o">+</span> <span class="n">options</span><span class="o">.</span><span class="n">format</span>
+        <span class="n">fileName</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">out</span> <span class="o">+</span> <span class="s2">&quot;.&quot;</span> <span class="o">+</span> <span class="n">options</span><span class="o">.</span><span class="n">format</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">fileName</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%(fileName)s</span><span class="s">: can&#39;t write file&quot;</span> <span class="o">%</span> <span class="nb">locals</span><span class="p">()</span>
-            <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%(fileName)s</span><span class="s2">: can&#39;t write file&quot;</span> <span class="o">%</span> <span class="nb">locals</span><span class="p">()</span>
+            <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span></div>
 
-</div>
+
 <div class="viewcode-block" id="extractData"><a class="viewcode-back" href="../../../module_content/pyGenClean.PlinkUtils.html#pyGenClean.PlinkUtils.plot_MDS.extractData">[docs]</a><span class="k">def</span> <span class="nf">extractData</span><span class="p">(</span><span class="n">fileName</span><span class="p">,</span> <span class="n">populations</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Extract the C1 and C2 columns for plotting.</span>
 
@@ -259,37 +259,37 @@
 <span class="sd">        If a sample in the MDS file is not in the population file, it is skip.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c"># The different population labels</span>
+    <span class="c1"># The different population labels</span>
     <span class="n">possibleLabels</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">populations</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
     <span class="n">nbPossibleLabels</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">possibleLabels</span><span class="p">)</span>
 
     <span class="n">c1</span> <span class="o">=</span> <span class="p">[[]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">nbPossibleLabels</span><span class="p">)]</span>
     <span class="n">c2</span> <span class="o">=</span> <span class="p">[[]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">nbPossibleLabels</span><span class="p">)]</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fileName</span><span class="p">,</span> <span class="s">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">inputFile</span><span class="p">:</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fileName</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">inputFile</span><span class="p">:</span>
         <span class="n">headerIndex</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">inputFile</span><span class="p">):</span>
             <span class="n">row</span> <span class="o">=</span> <span class="n">createRowFromPlinkSpacedOutput</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="c"># This is the header</span>
+                <span class="c1"># This is the header</span>
                 <span class="n">headerIndex</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">([(</span><span class="n">row</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">j</span><span class="p">)</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">row</span><span class="p">))])</span>
 
-                <span class="k">for</span> <span class="n">columnName</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&quot;FID&quot;</span><span class="p">,</span> <span class="s">&quot;IID&quot;</span><span class="p">,</span> <span class="s">&quot;C1&quot;</span><span class="p">,</span> <span class="s">&quot;C2&quot;</span><span class="p">]:</span>
+                <span class="k">for</span> <span class="n">columnName</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;FID&quot;</span><span class="p">,</span> <span class="s2">&quot;IID&quot;</span><span class="p">,</span> <span class="s2">&quot;C1&quot;</span><span class="p">,</span> <span class="s2">&quot;C2&quot;</span><span class="p">]:</span>
                     <span class="k">if</span> <span class="n">columnName</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">headerIndex</span><span class="p">:</span>
-                        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%(fileName)s</span><span class="s">: no column named &quot;</span> \
-                              <span class="s">&quot;</span><span class="si">%(columnName)s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="nb">locals</span><span class="p">()</span>
+                        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%(fileName)s</span><span class="s2">: no column named &quot;</span> \
+                              <span class="s2">&quot;</span><span class="si">%(columnName)s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">locals</span><span class="p">()</span>
                         <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
             <span class="k">else</span><span class="p">:</span>
-                <span class="c"># Getting the component 1 and 2</span>
-                <span class="n">currC1</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">headerIndex</span><span class="p">[</span><span class="s">&quot;C1&quot;</span><span class="p">]]</span>
-                <span class="n">currC2</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">headerIndex</span><span class="p">[</span><span class="s">&quot;C2&quot;</span><span class="p">]]</span>
+                <span class="c1"># Getting the component 1 and 2</span>
+                <span class="n">currC1</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">headerIndex</span><span class="p">[</span><span class="s2">&quot;C1&quot;</span><span class="p">]]</span>
+                <span class="n">currC2</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">headerIndex</span><span class="p">[</span><span class="s2">&quot;C2&quot;</span><span class="p">]]</span>
 
-                <span class="c"># Getting the individual informations</span>
-                <span class="n">famID</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">headerIndex</span><span class="p">[</span><span class="s">&quot;FID&quot;</span><span class="p">]]</span>
-                <span class="n">indID</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">headerIndex</span><span class="p">[</span><span class="s">&quot;IID&quot;</span><span class="p">]]</span>
+                <span class="c1"># Getting the individual informations</span>
+                <span class="n">famID</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">headerIndex</span><span class="p">[</span><span class="s2">&quot;FID&quot;</span><span class="p">]]</span>
+                <span class="n">indID</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">headerIndex</span><span class="p">[</span><span class="s2">&quot;IID&quot;</span><span class="p">]]</span>
 
-                <span class="n">curLabel</span> <span class="o">=</span> <span class="s">&quot;&quot;</span>
+                <span class="n">curLabel</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
                 <span class="k">if</span> <span class="p">(</span><span class="n">famID</span><span class="p">,</span> <span class="n">indID</span><span class="p">)</span> <span class="ow">in</span> <span class="n">populations</span><span class="p">:</span>
                     <span class="n">curLabel</span> <span class="o">=</span> <span class="n">populations</span><span class="p">[(</span><span class="n">famID</span><span class="p">,</span> <span class="n">indID</span><span class="p">)]</span>
                 <span class="k">else</span><span class="p">:</span>
@@ -298,9 +298,9 @@
                 <span class="n">c1</span><span class="p">[</span><span class="n">possibleLabels</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">curLabel</span><span class="p">)]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">currC1</span><span class="p">)</span>
                 <span class="n">c2</span><span class="p">[</span><span class="n">possibleLabels</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">curLabel</span><span class="p">)]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">currC2</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">c1</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">c2</span><span class="p">)),</span> <span class="n">possibleLabels</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">c1</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">c2</span><span class="p">)),</span> <span class="n">possibleLabels</span></div>
 
-</div>
+
 <div class="viewcode-block" id="checkArgs"><a class="viewcode-back" href="../../../module_content/pyGenClean.PlinkUtils.html#pyGenClean.PlinkUtils.plot_MDS.checkArgs">[docs]</a><span class="k">def</span> <span class="nf">checkArgs</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Checks the arguments and options.</span>
 
@@ -315,23 +315,23 @@
 <span class="sd">    :class:`sys.stderr` and the program exists with code 1.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c"># Check in input file</span>
+    <span class="c1"># Check in input file</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">file</span><span class="p">):</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s">: no such file&quot;</span> <span class="o">%</span> <span class="n">args</span><span class="o">.</span><span class="n">file</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">: no such file&quot;</span> <span class="o">%</span> <span class="n">args</span><span class="o">.</span><span class="n">file</span>
         <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
-    <span class="c"># Check the population file</span>
+    <span class="c1"># Check the population file</span>
     <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">population_file</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;population-file: no population file&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;population-file: no population file&quot;</span>
         <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
     <span class="k">elif</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">population_file</span><span class="p">):</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s">: no such file&quot;</span> <span class="o">%</span> <span class="n">args</span><span class="o">.</span><span class="n">population_file</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">: no such file&quot;</span> <span class="o">%</span> <span class="n">args</span><span class="o">.</span><span class="n">population_file</span>
         <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="bp">True</span>
+    <span class="k">return</span> <span class="bp">True</span></div>
 
-</div>
-<div class="viewcode-block" id="parseArgs"><a class="viewcode-back" href="../../../module_content/pyGenClean.PlinkUtils.html#pyGenClean.PlinkUtils.plot_MDS.parseArgs">[docs]</a><span class="k">def</span> <span class="nf">parseArgs</span><span class="p">():</span>  <span class="c"># pragma: no cover</span>
+
+<div class="viewcode-block" id="parseArgs"><a class="viewcode-back" href="../../../module_content/pyGenClean.PlinkUtils.html#pyGenClean.PlinkUtils.plot_MDS.parseArgs">[docs]</a><span class="k">def</span> <span class="nf">parseArgs</span><span class="p">():</span>  <span class="c1"># pragma: no cover</span>
     <span class="sd">&quot;&quot;&quot;Parses the command line options and arguments.</span>
 
 <span class="sd">    :returns: A :py:class:`argparse.Namespace` object created by the</span>
@@ -355,32 +355,32 @@
 <span class="sd">        argparse). Those need to be done elsewhere (see :py:func:`checkArgs`).</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c"># The INPUT files</span>
-    <span class="n">group</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s">&quot;Input File&quot;</span><span class="p">)</span>
-    <span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;--file&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s">&quot;FILE&quot;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
-                       <span class="n">help</span><span class="o">=</span><span class="s">&quot;The MBS file.&quot;</span><span class="p">)</span>
-    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;--population-file&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s">&quot;FORMAT&quot;</span><span class="p">,</span>
+    <span class="c1"># The INPUT files</span>
+    <span class="n">group</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s2">&quot;Input File&quot;</span><span class="p">)</span>
+    <span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--file&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;FILE&quot;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+                       <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The MBS file.&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--population-file&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;FORMAT&quot;</span><span class="p">,</span>
                         <span class="n">required</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
-                        <span class="n">help</span><span class="o">=</span><span class="s">&quot;A file containing population information. &quot;</span>
-                             <span class="s">&quot;There must be three columns: famID, indID &quot;</span>
-                             <span class="s">&quot;and population information.&quot;</span><span class="p">)</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;A file containing population information. &quot;</span>
+                             <span class="s2">&quot;There must be three columns: famID, indID &quot;</span>
+                             <span class="s2">&quot;and population information.&quot;</span><span class="p">)</span>
 
-    <span class="c"># The graphical options</span>
-    <span class="n">group</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s">&quot;Graphical Options&quot;</span><span class="p">)</span>
+    <span class="c1"># The graphical options</span>
+    <span class="n">group</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s2">&quot;Graphical Options&quot;</span><span class="p">)</span>
     <span class="n">addCustomOptions</span><span class="p">(</span><span class="n">group</span><span class="p">)</span>
 
-    <span class="c"># The OUTPUT files</span>
-    <span class="n">group</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s">&quot;Output File&quot;</span><span class="p">)</span>
-    <span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;--out&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s">&quot;FILE&quot;</span><span class="p">,</span>
-                       <span class="n">default</span><span class="o">=</span><span class="s">&quot;mds&quot;</span><span class="p">,</span>
-                       <span class="n">help</span><span class="o">=</span><span class="s">&quot;The prefix of the output files. [default: &quot;</span>
-                            <span class="s">&quot;</span><span class="si">%(default)s</span><span class="s">]&quot;</span><span class="p">)</span>
+    <span class="c1"># The OUTPUT files</span>
+    <span class="n">group</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s2">&quot;Output File&quot;</span><span class="p">)</span>
+    <span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--out&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;FILE&quot;</span><span class="p">,</span>
+                       <span class="n">default</span><span class="o">=</span><span class="s2">&quot;mds&quot;</span><span class="p">,</span>
+                       <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The prefix of the output files. [default: &quot;</span>
+                            <span class="s2">&quot;</span><span class="si">%(default)s</span><span class="s2">]&quot;</span><span class="p">)</span>
 
     <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
 
-    <span class="k">return</span> <span class="n">args</span>
+    <span class="k">return</span> <span class="n">args</span></div>
 
-</div>
+
 <div class="viewcode-block" id="addCustomOptions"><a class="viewcode-back" href="../../../module_content/pyGenClean.PlinkUtils.html#pyGenClean.PlinkUtils.plot_MDS.addCustomOptions">[docs]</a><span class="k">def</span> <span class="nf">addCustomOptions</span><span class="p">(</span><span class="n">parser</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Adds custom options to a parser.</span>
 
@@ -389,20 +389,20 @@
 <span class="sd">    :type parser: argparse.parser</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;--format&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s">&quot;FORMAT&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s">&quot;png&quot;</span><span class="p">,</span>
-                        <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;png&quot;</span><span class="p">,</span> <span class="s">&quot;ps&quot;</span><span class="p">,</span> <span class="s">&quot;pdf&quot;</span><span class="p">,</span> <span class="s">&quot;X11&quot;</span><span class="p">],</span>
-                        <span class="n">help</span><span class="o">=</span><span class="s">&quot;The output file format (png, ps, pdf, or X11 &quot;</span>
-                             <span class="s">&quot;formats are available). [default: </span><span class="si">%(default)s</span><span class="s">]&quot;</span><span class="p">)</span>
-    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;--title&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s">&quot;STRING&quot;</span><span class="p">,</span>
-                        <span class="n">default</span><span class="o">=</span><span class="s">&quot;C2 in function of C1 - MDS&quot;</span><span class="p">,</span>
-                        <span class="n">help</span><span class="o">=</span><span class="s">&quot;The title of the MDS plot. [default: &quot;</span>
-                             <span class="s">&quot;</span><span class="si">%(default)s</span><span class="s">]&quot;</span><span class="p">)</span>
-    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;--xlabel&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s">&quot;STRING&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s">&quot;C1&quot;</span><span class="p">,</span>
-                        <span class="n">help</span><span class="o">=</span><span class="s">&quot;The label of the X axis. [default: </span><span class="si">%(default)s</span><span class="s">]&quot;</span><span class="p">)</span>
-    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;--ylabel&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s">&quot;STRING&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s">&quot;C2&quot;</span><span class="p">,</span>
-                        <span class="n">help</span><span class="o">=</span><span class="s">&quot;The label of the Y axis. [default: </span><span class="si">%(default)s</span><span class="s">]&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--format&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;FORMAT&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;png&quot;</span><span class="p">,</span>
+                        <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;png&quot;</span><span class="p">,</span> <span class="s2">&quot;ps&quot;</span><span class="p">,</span> <span class="s2">&quot;pdf&quot;</span><span class="p">,</span> <span class="s2">&quot;X11&quot;</span><span class="p">],</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The output file format (png, ps, pdf, or X11 &quot;</span>
+                             <span class="s2">&quot;formats are available). [default: </span><span class="si">%(default)s</span><span class="s2">]&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--title&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;STRING&quot;</span><span class="p">,</span>
+                        <span class="n">default</span><span class="o">=</span><span class="s2">&quot;C2 in function of C1 - MDS&quot;</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The title of the MDS plot. [default: &quot;</span>
+                             <span class="s2">&quot;</span><span class="si">%(default)s</span><span class="s2">]&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--xlabel&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;STRING&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;C1&quot;</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The label of the X axis. [default: </span><span class="si">%(default)s</span><span class="s2">]&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--ylabel&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;STRING&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;C2&quot;</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The label of the Y axis. [default: </span><span class="si">%(default)s</span><span class="s2">]&quot;</span><span class="p">)</span></div>
 
-</div>
+
 <div class="viewcode-block" id="ProgramError"><a class="viewcode-back" href="../../../module_content/pyGenClean.PlinkUtils.html#pyGenClean.PlinkUtils.plot_MDS.ProgramError">[docs]</a><span class="k">class</span> <span class="nc">ProgramError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;An :py:class:`Exception` raised in case of a problem.</span>
 
@@ -422,22 +422,22 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span></div>
 
-</div>
+
 <div class="viewcode-block" id="safe_main"><a class="viewcode-back" href="../../../module_content/pyGenClean.PlinkUtils.html#pyGenClean.PlinkUtils.plot_MDS.safe_main">[docs]</a><span class="k">def</span> <span class="nf">safe_main</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;A safe version of the main function (that catches ProgramError).&quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">main</span><span class="p">()</span>
     <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Cancelled by user&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Cancelled by user&quot;</span><span class="p">)</span>
         <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
     <span class="k">except</span> <span class="n">ProgramError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">message</span><span class="p">)</span>
-        <span class="n">parser</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">message</span><span class="p">)</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">message</span><span class="p">)</span></div>
 
-</div>
-<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&quot;__main__&quot;</span><span class="p">:</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
     <span class="n">safe_main</span><span class="p">()</span>
 </pre></div>
 
@@ -455,7 +455,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">pyGenClean 1.7.1 documentation</a> &raquo;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">pyGenClean 1.8.0 documentation</a> &raquo;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &raquo;</li>
           <li class="nav-item nav-item-2"><a href="../../pyGenClean.html" >pyGenClean</a> &raquo;</li>
           <li class="nav-item nav-item-3"><a href="../PlinkUtils.html" >pyGenClean.PlinkUtils</a> &raquo;</li> 
@@ -463,7 +463,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2012, Louis-Philippe Lemieux Perreault.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.5.
     </div>
   </body>
 </html>

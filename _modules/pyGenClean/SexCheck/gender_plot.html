@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>pyGenClean.SexCheck.gender_plot &mdash; pyGenClean 1.7.1 documentation</title>
+    <title>pyGenClean.SexCheck.gender_plot &mdash; pyGenClean 1.8.0 documentation</title>
     
     <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '1.7.1',
+        VERSION:     '1.8.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="pyGenClean 1.7.1 documentation" href="../../../index.html" />
+    <link rel="top" title="pyGenClean 1.8.0 documentation" href="../../../index.html" />
     <link rel="up" title="pyGenClean" href="../../pyGenClean.html" /> 
   </head>
   <body role="document">
@@ -42,7 +42,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">pyGenClean 1.7.1 documentation</a> &raquo;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">pyGenClean 1.8.0 documentation</a> &raquo;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &raquo;</li>
           <li class="nav-item nav-item-2"><a href="../../pyGenClean.html" accesskey="U">pyGenClean</a> &raquo;</li> 
       </ul>
@@ -72,21 +72,21 @@
           <div class="body" role="main">
             
   <h1>Source code for pyGenClean.SexCheck.gender_plot</h1><div class="highlight"><pre>
-<span class="c">#!/usr/bin/env python2.7</span>
+<span class="ch">#!/usr/bin/env python2.7</span>
 
-<span class="c"># This file is part of pyGenClean.</span>
-<span class="c">#</span>
-<span class="c"># pyGenClean is free software: you can redistribute it and/or modify it under</span>
-<span class="c"># the terms of the GNU General Public License as published by the Free Software</span>
-<span class="c"># Foundation, either version 3 of the License, or (at your option) any later</span>
-<span class="c"># version.</span>
-<span class="c">#</span>
-<span class="c"># pyGenClean is distributed in the hope that it will be useful, but WITHOUT ANY</span>
-<span class="c"># WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR</span>
-<span class="c"># A PARTICULAR PURPOSE.  See the GNU General Public License for more details.</span>
-<span class="c">#</span>
-<span class="c"># You should have received a copy of the GNU General Public License along with</span>
-<span class="c"># pyGenClean.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
+<span class="c1"># This file is part of pyGenClean.</span>
+<span class="c1">#</span>
+<span class="c1"># pyGenClean is free software: you can redistribute it and/or modify it under</span>
+<span class="c1"># the terms of the GNU General Public License as published by the Free Software</span>
+<span class="c1"># Foundation, either version 3 of the License, or (at your option) any later</span>
+<span class="c1"># version.</span>
+<span class="c1">#</span>
+<span class="c1"># pyGenClean is distributed in the hope that it will be useful, but WITHOUT ANY</span>
+<span class="c1"># WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR</span>
+<span class="c1"># A PARTICULAR PURPOSE.  See the GNU General Public License for more details.</span>
+<span class="c1">#</span>
+<span class="c1"># You should have received a copy of the GNU General Public License along with</span>
+<span class="c1"># pyGenClean.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
 
 
 <span class="kn">import</span> <span class="nn">os</span>
@@ -100,7 +100,7 @@
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">__version__</span>
 
 
-<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&quot;gender_plot&quot;</span><span class="p">)</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;gender_plot&quot;</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="main"><a class="viewcode-back" href="../../../module_content/pyGenClean.SexCheck.html#pyGenClean.SexCheck.gender_plot.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">argString</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
@@ -124,32 +124,32 @@
 <span class="sd">    7. Plots the summarized intensities (:py:func:`plot_gender`).</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c"># Getting and checking the options</span>
+    <span class="c1"># Getting and checking the options</span>
     <span class="n">args</span> <span class="o">=</span> <span class="n">parseArgs</span><span class="p">(</span><span class="n">argString</span><span class="p">)</span>
     <span class="n">checkArgs</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
 
     <span class="n">data</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">summarized_intensities</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="c"># Reading the BIM file</span>
-        <span class="n">marker_names_chr</span> <span class="o">=</span> <span class="n">read_bim</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">bfile</span> <span class="o">+</span> <span class="s">&quot;.bim&quot;</span><span class="p">)</span>
+        <span class="c1"># Reading the BIM file</span>
+        <span class="n">marker_names_chr</span> <span class="o">=</span> <span class="n">read_bim</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">bfile</span> <span class="o">+</span> <span class="s2">&quot;.bim&quot;</span><span class="p">)</span>
 
-        <span class="c"># Reading the FAM file</span>
-        <span class="n">sample_names_gender</span> <span class="o">=</span> <span class="n">read_fam</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">bfile</span> <span class="o">+</span> <span class="s">&quot;.fam&quot;</span><span class="p">)</span>
+        <span class="c1"># Reading the FAM file</span>
+        <span class="n">sample_names_gender</span> <span class="o">=</span> <span class="n">read_fam</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">bfile</span> <span class="o">+</span> <span class="s2">&quot;.fam&quot;</span><span class="p">)</span>
 
-        <span class="c"># Reading the sex problem file</span>
+        <span class="c1"># Reading the sex problem file</span>
         <span class="n">sex_problems</span> <span class="o">=</span> <span class="n">read_sex_problems</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">sex_problems</span><span class="p">)</span>
 
-        <span class="c"># Reading the intensity file</span>
+        <span class="c1"># Reading the intensity file</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">read_intensities</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">intensities</span><span class="p">,</span> <span class="n">marker_names_chr</span><span class="p">,</span>
                                 <span class="n">sample_names_gender</span><span class="p">,</span> <span class="n">sex_problems</span><span class="p">)</span>
 
     <span class="k">else</span><span class="p">:</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">read_summarized_intensities</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">summarized_intensities</span><span class="p">)</span>
 
-    <span class="c"># Plot the gender</span>
-    <span class="n">plot_gender</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
+    <span class="c1"># Plot the gender</span>
+    <span class="n">plot_gender</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span></div>
 
-</div>
+
 <div class="viewcode-block" id="read_sex_problems"><a class="viewcode-back" href="../../../module_content/pyGenClean.SexCheck.html#pyGenClean.SexCheck.gender_plot.read_sex_problems">[docs]</a><span class="k">def</span> <span class="nf">read_sex_problems</span><span class="p">(</span><span class="n">file_name</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Reads the sex problem file.</span>
 
@@ -167,22 +167,22 @@
         <span class="k">return</span> <span class="nb">frozenset</span><span class="p">()</span>
 
     <span class="n">problems</span> <span class="o">=</span> <span class="bp">None</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="s">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">input_file</span><span class="p">:</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">input_file</span><span class="p">:</span>
         <span class="n">header_index</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">([</span>
             <span class="p">(</span><span class="n">col_name</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">col_name</span> <span class="ow">in</span>
-            <span class="nb">enumerate</span><span class="p">(</span><span class="n">input_file</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\r\n</span><span class="s">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\t</span><span class="s">&quot;</span><span class="p">))</span>
+            <span class="nb">enumerate</span><span class="p">(</span><span class="n">input_file</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\r\n</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">))</span>
         <span class="p">])</span>
-        <span class="k">if</span> <span class="s">&quot;IID&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">header_index</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;{}: no column named IID&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;IID&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">header_index</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;{}: no column named IID&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
             <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
         <span class="n">problems</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">([</span>
-            <span class="n">i</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\r\n</span><span class="s">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\t</span><span class="s">&quot;</span><span class="p">)[</span><span class="n">header_index</span><span class="p">[</span><span class="s">&quot;IID&quot;</span><span class="p">]]</span>
+            <span class="n">i</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\r\n</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)[</span><span class="n">header_index</span><span class="p">[</span><span class="s2">&quot;IID&quot;</span><span class="p">]]</span>
             <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">input_file</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
         <span class="p">])</span>
-    <span class="k">return</span> <span class="n">problems</span>
+    <span class="k">return</span> <span class="n">problems</span></div>
 
-</div>
+
 <div class="viewcode-block" id="encode_chr"><a class="viewcode-back" href="../../../module_content/pyGenClean.SexCheck.html#pyGenClean.SexCheck.gender_plot.encode_chr">[docs]</a><span class="k">def</span> <span class="nf">encode_chr</span><span class="p">(</span><span class="n">chromosome</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Encodes chromosomes.</span>
 
@@ -223,25 +223,25 @@
 <span class="sd">        ProgramError: XX: invalid chromosome</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">chromosome</span> <span class="o">==</span> <span class="s">&quot;X&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">chromosome</span> <span class="o">==</span> <span class="s2">&quot;X&quot;</span><span class="p">:</span>
         <span class="k">return</span> <span class="mi">23</span>
-    <span class="k">if</span> <span class="n">chromosome</span> <span class="o">==</span> <span class="s">&quot;Y&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">chromosome</span> <span class="o">==</span> <span class="s2">&quot;Y&quot;</span><span class="p">:</span>
         <span class="k">return</span> <span class="mi">24</span>
-    <span class="k">if</span> <span class="n">chromosome</span> <span class="o">==</span> <span class="s">&quot;XY&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">chromosome</span> <span class="o">==</span> <span class="s2">&quot;XY&quot;</span><span class="p">:</span>
         <span class="k">return</span> <span class="mi">25</span>
-    <span class="k">if</span> <span class="n">chromosome</span> <span class="o">==</span> <span class="s">&quot;MT&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">chromosome</span> <span class="o">==</span> <span class="s2">&quot;MT&quot;</span><span class="p">:</span>
         <span class="k">return</span> <span class="mi">26</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">new_chromosome</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">chromosome</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">new_chromosome</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">new_chromosome</span> <span class="o">&gt;</span> <span class="mi">26</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;{}: invalid chromosome&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">chromosome</span><span class="p">)</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;{}: invalid chromosome&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">chromosome</span><span class="p">)</span>
             <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">new_chromosome</span>
     <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;{}: invalid chromosome&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">chromosome</span><span class="p">)</span>
-        <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;{}: invalid chromosome&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">chromosome</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span></div>
 
-</div>
+
 <div class="viewcode-block" id="encode_gender"><a class="viewcode-back" href="../../../module_content/pyGenClean.SexCheck.html#pyGenClean.SexCheck.gender_plot.encode_gender">[docs]</a><span class="k">def</span> <span class="nf">encode_gender</span><span class="p">(</span><span class="n">gender</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Encodes the gender.</span>
 
@@ -270,13 +270,13 @@
 <span class="sd">        &#39;Unknown&#39;</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">gender</span> <span class="o">==</span> <span class="s">&quot;1&quot;</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s">&quot;Male&quot;</span>
-    <span class="k">if</span> <span class="n">gender</span> <span class="o">==</span> <span class="s">&quot;2&quot;</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s">&quot;Female&quot;</span>
-    <span class="k">return</span> <span class="s">&quot;Unknown&quot;</span>
+    <span class="k">if</span> <span class="n">gender</span> <span class="o">==</span> <span class="s2">&quot;1&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;Male&quot;</span>
+    <span class="k">if</span> <span class="n">gender</span> <span class="o">==</span> <span class="s2">&quot;2&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;Female&quot;</span>
+    <span class="k">return</span> <span class="s2">&quot;Unknown&quot;</span></div>
 
-</div>
+
 <div class="viewcode-block" id="read_bim"><a class="viewcode-back" href="../../../module_content/pyGenClean.SexCheck.html#pyGenClean.SexCheck.gender_plot.read_bim">[docs]</a><span class="k">def</span> <span class="nf">read_bim</span><span class="p">(</span><span class="n">file_name</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Reads the BIM file to gather marker names.</span>
 
@@ -292,16 +292,16 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">marker_names_chr</span> <span class="o">=</span> <span class="bp">None</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="s">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">input_file</span><span class="p">:</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">input_file</span><span class="p">:</span>
         <span class="n">marker_names_chr</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">([</span>
             <span class="p">(</span><span class="n">i</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">encode_chr</span><span class="p">(</span><span class="n">i</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
             <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span>
-                <span class="n">j</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\r\n</span><span class="s">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\t</span><span class="s">&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">input_file</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+                <span class="n">j</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\r\n</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">input_file</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
             <span class="p">]</span> <span class="k">if</span> <span class="n">encode_chr</span><span class="p">(</span><span class="n">i</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="ow">in</span> <span class="p">{</span><span class="mi">23</span><span class="p">,</span> <span class="mi">24</span><span class="p">}</span>
         <span class="p">])</span>
-    <span class="k">return</span> <span class="n">marker_names_chr</span>
+    <span class="k">return</span> <span class="n">marker_names_chr</span></div>
 
-</div>
+
 <div class="viewcode-block" id="read_fam"><a class="viewcode-back" href="../../../module_content/pyGenClean.SexCheck.html#pyGenClean.SexCheck.gender_plot.read_fam">[docs]</a><span class="k">def</span> <span class="nf">read_fam</span><span class="p">(</span><span class="n">file_name</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Reads the FAM file to gather sample names.</span>
 
@@ -316,15 +316,15 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">sample_names_gender</span> <span class="o">=</span> <span class="bp">None</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="s">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">input_file</span><span class="p">:</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">input_file</span><span class="p">:</span>
         <span class="n">sample_names_gender</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">([</span>
             <span class="p">(</span><span class="n">i</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">encode_gender</span><span class="p">(</span><span class="n">i</span><span class="p">[</span><span class="mi">4</span><span class="p">]))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span>
-                <span class="n">j</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\r\n</span><span class="s">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot; &quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">input_file</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+                <span class="n">j</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\r\n</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">input_file</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
             <span class="p">]</span>
         <span class="p">])</span>
-    <span class="k">return</span> <span class="n">sample_names_gender</span>
+    <span class="k">return</span> <span class="n">sample_names_gender</span></div>
 
-</div>
+
 <div class="viewcode-block" id="plot_gender"><a class="viewcode-back" href="../../../module_content/pyGenClean.SexCheck.html#pyGenClean.SexCheck.gender_plot.plot_gender">[docs]</a><span class="k">def</span> <span class="nf">plot_gender</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">options</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Plots the gender.</span>
 
@@ -343,124 +343,124 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="c"># there is a problem...</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&quot;no data: specify either &#39;--bfile&#39; and &#39;--intensities&#39;, or &quot;</span>
-               <span class="s">&quot;&#39;--summarized-intensities&#39;&quot;</span><span class="p">)</span>
+        <span class="c1"># there is a problem...</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;no data: specify either &#39;--bfile&#39; and &#39;--intensities&#39;, or &quot;</span>
+               <span class="s2">&quot;&#39;--summarized-intensities&#39;&quot;</span><span class="p">)</span>
         <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="kn">import</span> <span class="nn">matplotlib</span> <span class="kn">as</span> <span class="nn">mpl</span>
-    <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">format</span> <span class="o">!=</span> <span class="s">&quot;X11&quot;</span> <span class="ow">and</span> <span class="n">mpl</span><span class="o">.</span><span class="n">get_backend</span><span class="p">()</span> <span class="o">!=</span> <span class="s">&quot;agg&quot;</span><span class="p">:</span>
-        <span class="n">mpl</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s">&quot;Agg&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">format</span> <span class="o">!=</span> <span class="s2">&quot;X11&quot;</span> <span class="ow">and</span> <span class="n">mpl</span><span class="o">.</span><span class="n">get_backend</span><span class="p">()</span> <span class="o">!=</span> <span class="s2">&quot;agg&quot;</span><span class="p">:</span>
+        <span class="n">mpl</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s2">&quot;Agg&quot;</span><span class="p">)</span>
     <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
-    <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">format</span> <span class="o">!=</span> <span class="s">&quot;X11&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">format</span> <span class="o">!=</span> <span class="s2">&quot;X11&quot;</span><span class="p">:</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">ioff</span><span class="p">()</span>
 
-    <span class="c"># The figure and axes</span>
+    <span class="c1"># The figure and axes</span>
     <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
     <span class="n">fig</span><span class="o">.</span><span class="n">subplots_adjust</span><span class="p">(</span><span class="n">top</span><span class="o">=</span><span class="mf">0.84</span><span class="p">)</span>
     <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">)</span>
 
-    <span class="c"># Changing the spines</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_ticks_position</span><span class="p">(</span><span class="s">&quot;bottom&quot;</span><span class="p">)</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">set_ticks_position</span><span class="p">(</span><span class="s">&quot;left&quot;</span><span class="p">)</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s">&quot;top&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s">&quot;right&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+    <span class="c1"># Changing the spines</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_ticks_position</span><span class="p">(</span><span class="s2">&quot;bottom&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">set_ticks_position</span><span class="p">(</span><span class="s2">&quot;left&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s2">&quot;top&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s2">&quot;right&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
 
-    <span class="c"># Setting the title</span>
+    <span class="c1"># Setting the title</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">xlabel</span><span class="p">)</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">ylabel</span><span class="p">)</span>
 
-    <span class="c"># For the legend</span>
+    <span class="c1"># For the legend</span>
     <span class="n">plot_object</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">labels</span> <span class="o">=</span> <span class="p">[]</span>
 
-    <span class="c"># Plotting the OK males</span>
-    <span class="n">males</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s">&quot;gender&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;Male&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="s">&quot;status&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;OK&quot;</span><span class="p">)</span>
-    <span class="n">tmp</span><span class="p">,</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s">&quot;chr23&quot;</span><span class="p">][</span><span class="n">males</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="s">&quot;chr24&quot;</span><span class="p">][</span><span class="n">males</span><span class="p">],</span> <span class="s">&quot;o&quot;</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
-                   <span class="n">mec</span><span class="o">=</span><span class="s">&quot;#0099CC&quot;</span><span class="p">,</span> <span class="n">mfc</span><span class="o">=</span><span class="s">&quot;#0099CC&quot;</span><span class="p">)</span>
+    <span class="c1"># Plotting the OK males</span>
+    <span class="n">males</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;gender&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Male&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;status&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;OK&quot;</span><span class="p">)</span>
+    <span class="n">tmp</span><span class="p">,</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;chr23&quot;</span><span class="p">][</span><span class="n">males</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;chr24&quot;</span><span class="p">][</span><span class="n">males</span><span class="p">],</span> <span class="s2">&quot;o&quot;</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+                   <span class="n">mec</span><span class="o">=</span><span class="s2">&quot;#0099CC&quot;</span><span class="p">,</span> <span class="n">mfc</span><span class="o">=</span><span class="s2">&quot;#0099CC&quot;</span><span class="p">)</span>
     <span class="n">plot_object</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span>
-    <span class="n">labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&quot;OK Males (n={})&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">males</span><span class="p">)))</span>
+    <span class="n">labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;OK Males (n={})&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">males</span><span class="p">)))</span>
     <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">summarized_intensities</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="n">print_data_to_file</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">males</span><span class="p">],</span> <span class="s">&quot;{}.ok_males.txt&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">out</span><span class="p">))</span>
+        <span class="n">print_data_to_file</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">males</span><span class="p">],</span> <span class="s2">&quot;{}.ok_males.txt&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">out</span><span class="p">))</span>
 
-    <span class="c"># Plotting the OK females</span>
-    <span class="n">females</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s">&quot;gender&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;Female&quot;</span><span class="p">,</span>
-                             <span class="n">data</span><span class="p">[</span><span class="s">&quot;status&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;OK&quot;</span><span class="p">)</span>
-    <span class="n">tmp</span><span class="p">,</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s">&quot;chr23&quot;</span><span class="p">][</span><span class="n">females</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="s">&quot;chr24&quot;</span><span class="p">][</span><span class="n">females</span><span class="p">],</span> <span class="s">&quot;o&quot;</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
-                   <span class="n">mec</span><span class="o">=</span><span class="s">&quot;#CC0000&quot;</span><span class="p">,</span> <span class="n">mfc</span><span class="o">=</span><span class="s">&quot;#CC0000&quot;</span><span class="p">)</span>
+    <span class="c1"># Plotting the OK females</span>
+    <span class="n">females</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;gender&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Female&quot;</span><span class="p">,</span>
+                             <span class="n">data</span><span class="p">[</span><span class="s2">&quot;status&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;OK&quot;</span><span class="p">)</span>
+    <span class="n">tmp</span><span class="p">,</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;chr23&quot;</span><span class="p">][</span><span class="n">females</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;chr24&quot;</span><span class="p">][</span><span class="n">females</span><span class="p">],</span> <span class="s2">&quot;o&quot;</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+                   <span class="n">mec</span><span class="o">=</span><span class="s2">&quot;#CC0000&quot;</span><span class="p">,</span> <span class="n">mfc</span><span class="o">=</span><span class="s2">&quot;#CC0000&quot;</span><span class="p">)</span>
     <span class="n">plot_object</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span>
-    <span class="n">labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&quot;OK Females (n={})&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">females</span><span class="p">)))</span>
+    <span class="n">labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;OK Females (n={})&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">females</span><span class="p">)))</span>
     <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">summarized_intensities</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
         <span class="n">print_data_to_file</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">females</span><span class="p">],</span>
-                           <span class="s">&quot;{}.ok_females.txt&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">out</span><span class="p">))</span>
+                           <span class="s2">&quot;{}.ok_females.txt&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">out</span><span class="p">))</span>
 
-    <span class="c"># Plotting the OK unknowns</span>
-    <span class="n">unknowns</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s">&quot;gender&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;Unknown&quot;</span><span class="p">,</span>
-                              <span class="n">data</span><span class="p">[</span><span class="s">&quot;status&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;OK&quot;</span><span class="p">)</span>
-    <span class="n">tmp</span><span class="p">,</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s">&quot;chr23&quot;</span><span class="p">][</span><span class="n">unknowns</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="s">&quot;chr24&quot;</span><span class="p">][</span><span class="n">unknowns</span><span class="p">],</span> <span class="s">&quot;o&quot;</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
-                   <span class="n">mec</span><span class="o">=</span><span class="s">&quot;#555555&quot;</span><span class="p">,</span> <span class="n">mfc</span><span class="o">=</span><span class="s">&quot;#555555&quot;</span><span class="p">)</span>
+    <span class="c1"># Plotting the OK unknowns</span>
+    <span class="n">unknowns</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;gender&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Unknown&quot;</span><span class="p">,</span>
+                              <span class="n">data</span><span class="p">[</span><span class="s2">&quot;status&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;OK&quot;</span><span class="p">)</span>
+    <span class="n">tmp</span><span class="p">,</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;chr23&quot;</span><span class="p">][</span><span class="n">unknowns</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;chr24&quot;</span><span class="p">][</span><span class="n">unknowns</span><span class="p">],</span> <span class="s2">&quot;o&quot;</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+                   <span class="n">mec</span><span class="o">=</span><span class="s2">&quot;#555555&quot;</span><span class="p">,</span> <span class="n">mfc</span><span class="o">=</span><span class="s2">&quot;#555555&quot;</span><span class="p">)</span>
     <span class="n">plot_object</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span>
-    <span class="n">labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&quot;OK Unknowns (n={})&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">unknowns</span><span class="p">)))</span>
+    <span class="n">labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;OK Unknowns (n={})&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">unknowns</span><span class="p">)))</span>
     <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">summarized_intensities</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
         <span class="n">print_data_to_file</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">unknowns</span><span class="p">],</span>
-                           <span class="s">&quot;{}.ok_unknowns.txt&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">out</span><span class="p">))</span>
+                           <span class="s2">&quot;{}.ok_unknowns.txt&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">out</span><span class="p">))</span>
 
-    <span class="c"># Plotting the Problem males</span>
-    <span class="n">males</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s">&quot;gender&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;Male&quot;</span><span class="p">,</span>
-                           <span class="n">data</span><span class="p">[</span><span class="s">&quot;status&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;Problem&quot;</span><span class="p">)</span>
-    <span class="n">tmp</span><span class="p">,</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s">&quot;chr23&quot;</span><span class="p">][</span><span class="n">males</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="s">&quot;chr24&quot;</span><span class="p">][</span><span class="n">males</span><span class="p">],</span> <span class="s">&quot;^&quot;</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span>
-                   <span class="n">mec</span><span class="o">=</span><span class="s">&quot;#000000&quot;</span><span class="p">,</span> <span class="n">mfc</span><span class="o">=</span><span class="s">&quot;#669900&quot;</span><span class="p">)</span>
+    <span class="c1"># Plotting the Problem males</span>
+    <span class="n">males</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;gender&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Male&quot;</span><span class="p">,</span>
+                           <span class="n">data</span><span class="p">[</span><span class="s2">&quot;status&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Problem&quot;</span><span class="p">)</span>
+    <span class="n">tmp</span><span class="p">,</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;chr23&quot;</span><span class="p">][</span><span class="n">males</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;chr24&quot;</span><span class="p">][</span><span class="n">males</span><span class="p">],</span> <span class="s2">&quot;^&quot;</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span>
+                   <span class="n">mec</span><span class="o">=</span><span class="s2">&quot;#000000&quot;</span><span class="p">,</span> <span class="n">mfc</span><span class="o">=</span><span class="s2">&quot;#669900&quot;</span><span class="p">)</span>
     <span class="n">plot_object</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span>
-    <span class="n">labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&quot;Problematic Males (n={})&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">males</span><span class="p">)))</span>
+    <span class="n">labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Problematic Males (n={})&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">males</span><span class="p">)))</span>
     <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">summarized_intensities</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
         <span class="n">print_data_to_file</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">males</span><span class="p">],</span>
-                           <span class="s">&quot;{}.problematic_males.txt&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">out</span><span class="p">))</span>
+                           <span class="s2">&quot;{}.problematic_males.txt&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">out</span><span class="p">))</span>
 
-    <span class="c"># Plotting the Problem females</span>
-    <span class="n">females</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s">&quot;gender&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;Female&quot;</span><span class="p">,</span>
-                             <span class="n">data</span><span class="p">[</span><span class="s">&quot;status&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;Problem&quot;</span><span class="p">)</span>
-    <span class="n">tmp</span><span class="p">,</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s">&quot;chr23&quot;</span><span class="p">][</span><span class="n">females</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="s">&quot;chr24&quot;</span><span class="p">][</span><span class="n">females</span><span class="p">],</span> <span class="s">&quot;v&quot;</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span>
-                   <span class="n">mec</span><span class="o">=</span><span class="s">&quot;#000000&quot;</span><span class="p">,</span> <span class="n">mfc</span><span class="o">=</span><span class="s">&quot;#9933CC&quot;</span><span class="p">)</span>
+    <span class="c1"># Plotting the Problem females</span>
+    <span class="n">females</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;gender&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Female&quot;</span><span class="p">,</span>
+                             <span class="n">data</span><span class="p">[</span><span class="s2">&quot;status&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Problem&quot;</span><span class="p">)</span>
+    <span class="n">tmp</span><span class="p">,</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;chr23&quot;</span><span class="p">][</span><span class="n">females</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;chr24&quot;</span><span class="p">][</span><span class="n">females</span><span class="p">],</span> <span class="s2">&quot;v&quot;</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span>
+                   <span class="n">mec</span><span class="o">=</span><span class="s2">&quot;#000000&quot;</span><span class="p">,</span> <span class="n">mfc</span><span class="o">=</span><span class="s2">&quot;#9933CC&quot;</span><span class="p">)</span>
     <span class="n">plot_object</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span>
-    <span class="n">labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&quot;Problematic Females (n={})&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">females</span><span class="p">)))</span>
+    <span class="n">labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Problematic Females (n={})&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">females</span><span class="p">)))</span>
     <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">summarized_intensities</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
         <span class="n">print_data_to_file</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">females</span><span class="p">],</span>
-                           <span class="s">&quot;{}.problematic_females.txt&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">out</span><span class="p">))</span>
+                           <span class="s2">&quot;{}.problematic_females.txt&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">out</span><span class="p">))</span>
 
-    <span class="c"># Plotting the Problem unknowns</span>
-    <span class="n">unknowns</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s">&quot;gender&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;Unknown&quot;</span><span class="p">,</span>
-                              <span class="n">data</span><span class="p">[</span><span class="s">&quot;status&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;Problem&quot;</span><span class="p">)</span>
-    <span class="n">tmp</span><span class="p">,</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s">&quot;chr23&quot;</span><span class="p">][</span><span class="n">unknowns</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="s">&quot;chr24&quot;</span><span class="p">][</span><span class="n">unknowns</span><span class="p">],</span> <span class="s">&quot;&gt;&quot;</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span>
-                   <span class="n">mec</span><span class="o">=</span><span class="s">&quot;#000000&quot;</span><span class="p">,</span> <span class="n">mfc</span><span class="o">=</span><span class="s">&quot;#555555&quot;</span><span class="p">)</span>
+    <span class="c1"># Plotting the Problem unknowns</span>
+    <span class="n">unknowns</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;gender&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Unknown&quot;</span><span class="p">,</span>
+                              <span class="n">data</span><span class="p">[</span><span class="s2">&quot;status&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Problem&quot;</span><span class="p">)</span>
+    <span class="n">tmp</span><span class="p">,</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;chr23&quot;</span><span class="p">][</span><span class="n">unknowns</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;chr24&quot;</span><span class="p">][</span><span class="n">unknowns</span><span class="p">],</span> <span class="s2">&quot;&gt;&quot;</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span>
+                   <span class="n">mec</span><span class="o">=</span><span class="s2">&quot;#000000&quot;</span><span class="p">,</span> <span class="n">mfc</span><span class="o">=</span><span class="s2">&quot;#555555&quot;</span><span class="p">)</span>
     <span class="n">plot_object</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span>
-    <span class="n">labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&quot;Problematic Unknown (n={})&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">unknowns</span><span class="p">)))</span>
+    <span class="n">labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Problematic Unknown (n={})&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">unknowns</span><span class="p">)))</span>
     <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">summarized_intensities</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
         <span class="n">print_data_to_file</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">unknowns</span><span class="p">],</span>
-                           <span class="s">&quot;{}.problematic_unknowns.txt&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">out</span><span class="p">))</span>
+                           <span class="s2">&quot;{}.problematic_unknowns.txt&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">out</span><span class="p">))</span>
 
-    <span class="c"># the legend</span>
+    <span class="c1"># the legend</span>
     <span class="n">prop</span> <span class="o">=</span> <span class="n">mpl</span><span class="o">.</span><span class="n">font_manager</span><span class="o">.</span><span class="n">FontProperties</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
     <span class="n">leg</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">plot_object</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">numpoints</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">fancybox</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
                     <span class="n">prop</span><span class="o">=</span><span class="n">prop</span><span class="p">,</span> <span class="n">ncol</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">1.02</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="o">.</span><span class="mi">102</span><span class="p">),</span>
                     <span class="n">borderaxespad</span><span class="o">=</span><span class="mf">0.</span><span class="p">)</span>
 
-    <span class="c"># Setting the limit</span>
+    <span class="c1"># Setting the limit</span>
     <span class="n">xlim</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_xlim</span><span class="p">()</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">((</span><span class="n">xlim</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">xlim</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="mf">0.01</span><span class="p">))</span>
     <span class="n">ylim</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_ylim</span><span class="p">()</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">((</span><span class="n">ylim</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">ylim</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="mf">0.01</span><span class="p">))</span>
 
-    <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">format</span> <span class="o">==</span> <span class="s">&quot;X11&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">format</span> <span class="o">==</span> <span class="s2">&quot;X11&quot;</span><span class="p">:</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">file_name</span> <span class="o">=</span> <span class="s">&quot;{}.{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">out</span><span class="p">,</span> <span class="n">options</span><span class="o">.</span><span class="n">format</span><span class="p">)</span>
+        <span class="n">file_name</span> <span class="o">=</span> <span class="s2">&quot;{}.{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">out</span><span class="p">,</span> <span class="n">options</span><span class="o">.</span><span class="n">format</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;{}: can&#39;t write file&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
-            <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;{}: can&#39;t write file&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span></div>
 
-</div>
+
 <div class="viewcode-block" id="print_data_to_file"><a class="viewcode-back" href="../../../module_content/pyGenClean.SexCheck.html#pyGenClean.SexCheck.gender_plot.print_data_to_file">[docs]</a><span class="k">def</span> <span class="nf">print_data_to_file</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">file_name</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Prints data to file.</span>
 
@@ -472,15 +472,15 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="s">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">output_file</span><span class="p">:</span>
-            <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">output_file</span><span class="p">,</span> <span class="s">&quot;</span><span class="se">\t</span><span class="s">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">output_file</span><span class="p">:</span>
+            <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">output_file</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
-                <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">output_file</span><span class="p">,</span> <span class="s">&quot;</span><span class="se">\t</span><span class="s">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">row</span><span class="p">))</span>
+                <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">output_file</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">row</span><span class="p">))</span>
     <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;{}: can&#39;t write file&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
-        <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;{}: can&#39;t write file&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span></div>
 
-</div>
+
 <div class="viewcode-block" id="read_summarized_intensities"><a class="viewcode-back" href="../../../module_content/pyGenClean.SexCheck.html#pyGenClean.SexCheck.gender_plot.read_summarized_intensities">[docs]</a><span class="k">def</span> <span class="nf">read_summarized_intensities</span><span class="p">(</span><span class="n">prefix</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Reads the summarized intensities from 6 files.</span>
 
@@ -527,56 +527,56 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">for</span> <span class="n">suffix</span> <span class="ow">in</span> <span class="p">{</span><span class="s">&quot;.ok_females.txt&quot;</span><span class="p">,</span> <span class="s">&quot;.ok_males.txt&quot;</span><span class="p">,</span> <span class="s">&quot;.ok_unknowns.txt&quot;</span><span class="p">,</span>
-                   <span class="s">&quot;.problematic_females.txt&quot;</span><span class="p">,</span> <span class="s">&quot;.problematic_males.txt&quot;</span><span class="p">,</span>
-                   <span class="s">&quot;.problematic_unknowns.txt&quot;</span><span class="p">}:</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">prefix</span> <span class="o">+</span> <span class="n">suffix</span><span class="p">,</span> <span class="s">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">input_file</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">suffix</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;.ok_females.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;.ok_males.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;.ok_unknowns.txt&quot;</span><span class="p">,</span>
+                   <span class="s2">&quot;.problematic_females.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;.problematic_males.txt&quot;</span><span class="p">,</span>
+                   <span class="s2">&quot;.problematic_unknowns.txt&quot;</span><span class="p">}:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">prefix</span> <span class="o">+</span> <span class="n">suffix</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">input_file</span><span class="p">:</span>
             <span class="n">header_index</span> <span class="o">=</span> <span class="bp">None</span>
             <span class="k">for</span> <span class="n">line_nb</span><span class="p">,</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">input_file</span><span class="p">):</span>
-                <span class="n">row</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\r\n</span><span class="s">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\t</span><span class="s">&quot;</span><span class="p">)</span>
+                <span class="n">row</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\r\n</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span>
 
                 <span class="k">if</span> <span class="n">line_nb</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                    <span class="c"># This is the header</span>
+                    <span class="c1"># This is the header</span>
                     <span class="n">header_index</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">([</span>
                         <span class="p">(</span><span class="n">col_name</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">col_name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
                     <span class="p">])</span>
-                    <span class="k">for</span> <span class="n">col_name</span> <span class="ow">in</span> <span class="p">{</span><span class="s">&quot;sampleID&quot;</span><span class="p">,</span> <span class="s">&quot;chr23&quot;</span><span class="p">,</span> <span class="s">&quot;chr24&quot;</span><span class="p">,</span> <span class="s">&quot;gender&quot;</span><span class="p">,</span>
-                                     <span class="s">&quot;status&quot;</span><span class="p">}:</span>
+                    <span class="k">for</span> <span class="n">col_name</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;sampleID&quot;</span><span class="p">,</span> <span class="s2">&quot;chr23&quot;</span><span class="p">,</span> <span class="s2">&quot;chr24&quot;</span><span class="p">,</span> <span class="s2">&quot;gender&quot;</span><span class="p">,</span>
+                                     <span class="s2">&quot;status&quot;</span><span class="p">}:</span>
                         <span class="k">if</span> <span class="n">col_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">header_index</span><span class="p">:</span>
-                            <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;{}: no column named {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;{}: no column named {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                                 <span class="n">prefix</span><span class="o">+</span><span class="n">suffix</span><span class="p">,</span>
                                 <span class="n">col_name</span><span class="p">,</span>
                             <span class="p">)</span>
                             <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="n">sampleID</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">header_index</span><span class="p">[</span><span class="s">&quot;sampleID&quot;</span><span class="p">]]</span>
-                    <span class="n">chr23</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">header_index</span><span class="p">[</span><span class="s">&quot;chr23&quot;</span><span class="p">]]</span>
-                    <span class="n">chr24</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">header_index</span><span class="p">[</span><span class="s">&quot;chr24&quot;</span><span class="p">]]</span>
-                    <span class="n">gender</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">header_index</span><span class="p">[</span><span class="s">&quot;gender&quot;</span><span class="p">]]</span>
-                    <span class="n">status</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">header_index</span><span class="p">[</span><span class="s">&quot;status&quot;</span><span class="p">]]</span>
+                    <span class="n">sampleID</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">header_index</span><span class="p">[</span><span class="s2">&quot;sampleID&quot;</span><span class="p">]]</span>
+                    <span class="n">chr23</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">header_index</span><span class="p">[</span><span class="s2">&quot;chr23&quot;</span><span class="p">]]</span>
+                    <span class="n">chr24</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">header_index</span><span class="p">[</span><span class="s2">&quot;chr24&quot;</span><span class="p">]]</span>
+                    <span class="n">gender</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">header_index</span><span class="p">[</span><span class="s2">&quot;gender&quot;</span><span class="p">]]</span>
+                    <span class="n">status</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">header_index</span><span class="p">[</span><span class="s2">&quot;status&quot;</span><span class="p">]]</span>
 
                     <span class="k">try</span><span class="p">:</span>
                         <span class="n">chr23</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">chr23</span><span class="p">)</span>
                         <span class="n">chr24</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">chr24</span><span class="p">)</span>
                     <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-                        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&quot;{} and {}: bad summarized intensities for &quot;</span>
-                               <span class="s">&quot;sample {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">chr23</span><span class="p">,</span> <span class="n">chr24</span><span class="p">,</span> <span class="n">sampleID</span><span class="p">))</span>
+                        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;{} and {}: bad summarized intensities for &quot;</span>
+                               <span class="s2">&quot;sample {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">chr23</span><span class="p">,</span> <span class="n">chr24</span><span class="p">,</span> <span class="n">sampleID</span><span class="p">))</span>
                         <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
                     <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">sampleID</span><span class="p">,</span> <span class="n">chr23</span><span class="p">,</span> <span class="n">chr24</span><span class="p">,</span> <span class="n">gender</span><span class="p">,</span> <span class="n">status</span><span class="p">))</span>
 
-    <span class="c"># Creating the data structure</span>
+    <span class="c1"># Creating the data structure</span>
     <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
         <span class="n">data</span><span class="p">,</span>
-        <span class="n">dtype</span><span class="o">=</span><span class="p">[(</span><span class="s">&quot;sampleID&quot;</span><span class="p">,</span> <span class="s">&quot;a{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">max</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">i</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">data</span><span class="p">]))),</span>
-               <span class="p">(</span><span class="s">&quot;chr23&quot;</span><span class="p">,</span> <span class="nb">float</span><span class="p">),</span> <span class="p">(</span><span class="s">&quot;chr24&quot;</span><span class="p">,</span> <span class="nb">float</span><span class="p">),</span>
-               <span class="p">(</span><span class="s">&quot;gender&quot;</span><span class="p">,</span> <span class="s">&quot;a{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">max</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">i</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">data</span><span class="p">]))),</span>
-               <span class="p">(</span><span class="s">&quot;status&quot;</span><span class="p">,</span> <span class="s">&quot;a{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">max</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">i</span><span class="p">[</span><span class="mi">4</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">data</span><span class="p">])))],</span>
+        <span class="n">dtype</span><span class="o">=</span><span class="p">[(</span><span class="s2">&quot;sampleID&quot;</span><span class="p">,</span> <span class="s2">&quot;a{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">max</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">i</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">data</span><span class="p">]))),</span>
+               <span class="p">(</span><span class="s2">&quot;chr23&quot;</span><span class="p">,</span> <span class="nb">float</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;chr24&quot;</span><span class="p">,</span> <span class="nb">float</span><span class="p">),</span>
+               <span class="p">(</span><span class="s2">&quot;gender&quot;</span><span class="p">,</span> <span class="s2">&quot;a{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">max</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">i</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">data</span><span class="p">]))),</span>
+               <span class="p">(</span><span class="s2">&quot;status&quot;</span><span class="p">,</span> <span class="s2">&quot;a{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">max</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">i</span><span class="p">[</span><span class="mi">4</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">data</span><span class="p">])))],</span>
     <span class="p">)</span>
-    <span class="k">return</span> <span class="n">data</span>
+    <span class="k">return</span> <span class="n">data</span></div>
 
-</div>
+
 <div class="viewcode-block" id="read_intensities"><a class="viewcode-back" href="../../../module_content/pyGenClean.SexCheck.html#pyGenClean.SexCheck.gender_plot.read_intensities">[docs]</a><span class="k">def</span> <span class="nf">read_intensities</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="n">needed_markers_chr</span><span class="p">,</span> <span class="n">needed_samples_gender</span><span class="p">,</span>
                      <span class="n">sex_problems</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Reads the intensities from a file.</span>
@@ -617,101 +617,101 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">input_file</span> <span class="o">=</span> <span class="bp">None</span>
-    <span class="k">if</span> <span class="n">file_name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s">&quot;.gz&quot;</span><span class="p">):</span>
-        <span class="n">input_file</span> <span class="o">=</span> <span class="n">gzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="s">&#39;rb&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">file_name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.gz&quot;</span><span class="p">):</span>
+        <span class="n">input_file</span> <span class="o">=</span> <span class="n">gzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">input_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="s">&#39;r&#39;</span><span class="p">)</span>
+        <span class="n">input_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span>
 
-    <span class="c"># The intensities</span>
+    <span class="c1"># The intensities</span>
     <span class="n">intensities</span> <span class="o">=</span> <span class="p">{}</span>
 
     <span class="n">header_index</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="k">for</span> <span class="n">line_nb</span><span class="p">,</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">input_file</span><span class="p">):</span>
-        <span class="n">row</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\r\n</span><span class="s">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\t</span><span class="s">&quot;</span><span class="p">)</span>
+        <span class="n">row</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\r\n</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">line_nb</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="c"># This is the header</span>
+            <span class="c1"># This is the header</span>
             <span class="n">header_index</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">([</span>
                 <span class="p">(</span><span class="n">col_name</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">col_name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
             <span class="p">])</span>
-            <span class="c"># Check the column names</span>
-            <span class="k">for</span> <span class="n">col_name</span> <span class="ow">in</span> <span class="p">{</span><span class="s">&quot;SNP Name&quot;</span><span class="p">,</span> <span class="s">&quot;Sample ID&quot;</span><span class="p">,</span> <span class="s">&quot;X&quot;</span><span class="p">,</span> <span class="s">&quot;Y&quot;</span><span class="p">,</span> <span class="s">&quot;Chr&quot;</span><span class="p">}:</span>
+            <span class="c1"># Check the column names</span>
+            <span class="k">for</span> <span class="n">col_name</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;SNP Name&quot;</span><span class="p">,</span> <span class="s2">&quot;Sample ID&quot;</span><span class="p">,</span> <span class="s2">&quot;X&quot;</span><span class="p">,</span> <span class="s2">&quot;Y&quot;</span><span class="p">,</span> <span class="s2">&quot;Chr&quot;</span><span class="p">}:</span>
                 <span class="k">if</span> <span class="n">col_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">header_index</span><span class="p">:</span>
-                    <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;{}: no column named {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="n">col_name</span><span class="p">)</span>
+                    <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;{}: no column named {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="n">col_name</span><span class="p">)</span>
                     <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="c"># This is the data</span>
-            <span class="c"># Check if we want this sample and this marker</span>
-            <span class="n">sampleID</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">header_index</span><span class="p">[</span><span class="s">&quot;Sample ID&quot;</span><span class="p">]]</span>
-            <span class="n">markerID</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">header_index</span><span class="p">[</span><span class="s">&quot;SNP Name&quot;</span><span class="p">]]</span>
-            <span class="n">chromosome</span> <span class="o">=</span> <span class="n">encode_chr</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">header_index</span><span class="p">[</span><span class="s">&quot;Chr&quot;</span><span class="p">]])</span>
+            <span class="c1"># This is the data</span>
+            <span class="c1"># Check if we want this sample and this marker</span>
+            <span class="n">sampleID</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">header_index</span><span class="p">[</span><span class="s2">&quot;Sample ID&quot;</span><span class="p">]]</span>
+            <span class="n">markerID</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">header_index</span><span class="p">[</span><span class="s2">&quot;SNP Name&quot;</span><span class="p">]]</span>
+            <span class="n">chromosome</span> <span class="o">=</span> <span class="n">encode_chr</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">header_index</span><span class="p">[</span><span class="s2">&quot;Chr&quot;</span><span class="p">]])</span>
             <span class="k">if</span> <span class="n">chromosome</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">{</span><span class="mi">23</span><span class="p">,</span> <span class="mi">24</span><span class="p">}:</span>
-                <span class="c"># Not good chromsoome</span>
+                <span class="c1"># Not good chromsoome</span>
                 <span class="k">continue</span>
             <span class="k">if</span> <span class="n">sampleID</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">needed_samples_gender</span><span class="p">:</span>
-                <span class="c"># Sample not needed</span>
+                <span class="c1"># Sample not needed</span>
                 <span class="k">continue</span>
             <span class="k">if</span> <span class="n">markerID</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">needed_markers_chr</span><span class="p">:</span>
-                <span class="c"># Marker not needed</span>
+                <span class="c1"># Marker not needed</span>
                 <span class="k">continue</span>
 
             <span class="k">if</span> <span class="n">sampleID</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">intensities</span><span class="p">:</span>
-                <span class="c"># First time we see this sample</span>
+                <span class="c1"># First time we see this sample</span>
                 <span class="n">intensities</span><span class="p">[</span><span class="n">sampleID</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
 
-            <span class="c"># We get the intensities</span>
-            <span class="n">allele_a</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">header_index</span><span class="p">[</span><span class="s">&quot;X&quot;</span><span class="p">]]</span>
-            <span class="n">allele_b</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">header_index</span><span class="p">[</span><span class="s">&quot;Y&quot;</span><span class="p">]]</span>
+            <span class="c1"># We get the intensities</span>
+            <span class="n">allele_a</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">header_index</span><span class="p">[</span><span class="s2">&quot;X&quot;</span><span class="p">]]</span>
+            <span class="n">allele_b</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">header_index</span><span class="p">[</span><span class="s2">&quot;Y&quot;</span><span class="p">]]</span>
 
-            <span class="c"># Check for NaN</span>
-            <span class="k">if</span> <span class="n">allele_a</span> <span class="o">==</span> <span class="s">&quot;NaN&quot;</span> <span class="ow">or</span> <span class="n">allele_b</span> <span class="o">==</span> <span class="s">&quot;NaN&quot;</span><span class="p">:</span>
+            <span class="c1"># Check for NaN</span>
+            <span class="k">if</span> <span class="n">allele_a</span> <span class="o">==</span> <span class="s2">&quot;NaN&quot;</span> <span class="ow">or</span> <span class="n">allele_b</span> <span class="o">==</span> <span class="s2">&quot;NaN&quot;</span><span class="p">:</span>
                 <span class="k">continue</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">allele_a</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">allele_a</span><span class="p">)</span>
                 <span class="n">allele_b</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">allele_b</span><span class="p">)</span>
             <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-                <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;{}: {} and {}: wrong intensities&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;{}: {} and {}: wrong intensities&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span>
                                                                 <span class="n">allele_a</span><span class="p">,</span>
                                                                 <span class="n">allele_b</span><span class="p">)</span>
                 <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="n">chromosome</span> <span class="o">==</span> <span class="mi">23</span><span class="p">:</span>
-                <span class="c"># Chromosome 23</span>
+                <span class="c1"># Chromosome 23</span>
                 <span class="n">intensities</span><span class="p">[</span><span class="n">sampleID</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">+=</span> <span class="n">allele_a</span> <span class="o">+</span> <span class="n">allele_b</span>
                 <span class="n">intensities</span><span class="p">[</span><span class="n">sampleID</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="c"># Chromosome 24</span>
+                <span class="c1"># Chromosome 24</span>
                 <span class="n">intensities</span><span class="p">[</span><span class="n">sampleID</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span> <span class="o">+=</span> <span class="n">allele_a</span> <span class="o">+</span> <span class="n">allele_b</span>
                 <span class="n">intensities</span><span class="p">[</span><span class="n">sampleID</span><span class="p">][</span><span class="mi">3</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
 
-    <span class="c"># Closing the input file</span>
+    <span class="c1"># Closing the input file</span>
     <span class="n">input_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
-    <span class="c"># Creating the data structure</span>
+    <span class="c1"># Creating the data structure</span>
     <span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">sampleID</span> <span class="ow">in</span> <span class="n">intensities</span><span class="o">.</span><span class="n">iterkeys</span><span class="p">():</span>
         <span class="n">sum_chr_23</span><span class="p">,</span> <span class="n">nb_chr_23</span><span class="p">,</span> <span class="n">sum_chr_24</span><span class="p">,</span> <span class="n">nb_chr_24</span> <span class="o">=</span> <span class="n">intensities</span><span class="p">[</span><span class="n">sampleID</span><span class="p">]</span>
-        <span class="n">status</span> <span class="o">=</span> <span class="s">&quot;OK&quot;</span>
+        <span class="n">status</span> <span class="o">=</span> <span class="s2">&quot;OK&quot;</span>
         <span class="k">if</span> <span class="n">sampleID</span> <span class="ow">in</span> <span class="n">sex_problems</span><span class="p">:</span>
-            <span class="n">status</span> <span class="o">=</span> <span class="s">&quot;Problem&quot;</span>
+            <span class="n">status</span> <span class="o">=</span> <span class="s2">&quot;Problem&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">sampleID</span><span class="p">,</span> <span class="n">sum_chr_23</span> <span class="o">/</span> <span class="n">nb_chr_23</span><span class="p">,</span> <span class="n">sum_chr_24</span> <span class="o">/</span>
                          <span class="n">nb_chr_24</span><span class="p">,</span> <span class="n">needed_samples_gender</span><span class="p">[</span><span class="n">sampleID</span><span class="p">],</span> <span class="n">status</span><span class="p">))</span>
         <span class="k">except</span> <span class="ne">ZeroDivisionError</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;0 marker on chr23 or chr24&quot;</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;0 marker on chr23 or chr24&quot;</span>
             <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
         <span class="n">data</span><span class="p">,</span>
-        <span class="n">dtype</span><span class="o">=</span><span class="p">[(</span><span class="s">&quot;sampleID&quot;</span><span class="p">,</span> <span class="s">&quot;a{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">max</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">i</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">data</span><span class="p">]))),</span>
-               <span class="p">(</span><span class="s">&quot;chr23&quot;</span><span class="p">,</span> <span class="nb">float</span><span class="p">),</span>
-               <span class="p">(</span><span class="s">&quot;chr24&quot;</span><span class="p">,</span> <span class="nb">float</span><span class="p">),</span>
-               <span class="p">(</span><span class="s">&quot;gender&quot;</span><span class="p">,</span> <span class="s">&quot;a{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">max</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">i</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">data</span><span class="p">]))),</span>
-               <span class="p">(</span><span class="s">&quot;status&quot;</span><span class="p">,</span> <span class="s">&quot;a{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">max</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">i</span><span class="p">[</span><span class="mi">4</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">data</span><span class="p">])))],</span>
+        <span class="n">dtype</span><span class="o">=</span><span class="p">[(</span><span class="s2">&quot;sampleID&quot;</span><span class="p">,</span> <span class="s2">&quot;a{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">max</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">i</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">data</span><span class="p">]))),</span>
+               <span class="p">(</span><span class="s2">&quot;chr23&quot;</span><span class="p">,</span> <span class="nb">float</span><span class="p">),</span>
+               <span class="p">(</span><span class="s2">&quot;chr24&quot;</span><span class="p">,</span> <span class="nb">float</span><span class="p">),</span>
+               <span class="p">(</span><span class="s2">&quot;gender&quot;</span><span class="p">,</span> <span class="s2">&quot;a{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">max</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">i</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">data</span><span class="p">]))),</span>
+               <span class="p">(</span><span class="s2">&quot;status&quot;</span><span class="p">,</span> <span class="s2">&quot;a{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">max</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">i</span><span class="p">[</span><span class="mi">4</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">data</span><span class="p">])))],</span>
     <span class="p">)</span>
-    <span class="k">return</span> <span class="n">data</span>
+    <span class="k">return</span> <span class="n">data</span></div>
 
-</div>
+
 <div class="viewcode-block" id="checkArgs"><a class="viewcode-back" href="../../../module_content/pyGenClean.SexCheck.html#pyGenClean.SexCheck.gender_plot.checkArgs">[docs]</a><span class="k">def</span> <span class="nf">checkArgs</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Checks the arguments and options.</span>
 
@@ -726,47 +726,47 @@
 <span class="sd">    :class:`sys.stderr` and the program exists with code 1.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c"># Checking if there are input files</span>
+    <span class="c1"># Checking if there are input files</span>
     <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">summarized_intensities</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">bfile</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">args</span><span class="o">.</span><span class="n">intensities</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&quot;need to specify either &#39;--bfile&#39; and &#39;--intensities&#39;, or &quot;</span>
-                   <span class="s">&quot;&#39;--summarized-intensities&#39;&quot;</span><span class="p">)</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;need to specify either &#39;--bfile&#39; and &#39;--intensities&#39;, or &quot;</span>
+                   <span class="s2">&quot;&#39;--summarized-intensities&#39;&quot;</span><span class="p">)</span>
             <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
-        <span class="c"># Checking the fam file bim</span>
-        <span class="k">for</span> <span class="n">suffix</span> <span class="ow">in</span> <span class="p">{</span><span class="s">&quot;.bim&quot;</span><span class="p">,</span> <span class="s">&quot;.fam&quot;</span><span class="p">}:</span>
+        <span class="c1"># Checking the fam file bim</span>
+        <span class="k">for</span> <span class="n">suffix</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;.bim&quot;</span><span class="p">,</span> <span class="s2">&quot;.fam&quot;</span><span class="p">}:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">bfile</span> <span class="o">+</span> <span class="n">suffix</span><span class="p">):</span>
-                <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;{}: no such file&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">bfile</span> <span class="o">+</span> <span class="n">suffix</span><span class="p">)</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;{}: no such file&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">bfile</span> <span class="o">+</span> <span class="n">suffix</span><span class="p">)</span>
                 <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
-        <span class="c"># Checking the intensity file</span>
+        <span class="c1"># Checking the intensity file</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">intensities</span><span class="p">):</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;{}: no such file&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">intensities</span><span class="p">)</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;{}: no such file&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">intensities</span><span class="p">)</span>
             <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">bfile</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">or</span> <span class="n">args</span><span class="o">.</span><span class="n">intensities</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&quot;need to specify either &#39;--bfile&#39; and &#39;--intensities&#39;, or &quot;</span>
-                   <span class="s">&quot;&#39;--summarized-intensities&#39;&quot;</span><span class="p">)</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;need to specify either &#39;--bfile&#39; and &#39;--intensities&#39;, or &quot;</span>
+                   <span class="s2">&quot;&#39;--summarized-intensities&#39;&quot;</span><span class="p">)</span>
             <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
-        <span class="k">for</span> <span class="n">suffix</span> <span class="ow">in</span> <span class="p">{</span><span class="s">&quot;.ok_females.txt&quot;</span><span class="p">,</span> <span class="s">&quot;.ok_males.txt&quot;</span><span class="p">,</span> <span class="s">&quot;.ok_unknowns.txt&quot;</span><span class="p">,</span>
-                       <span class="s">&quot;.problematic_females.txt&quot;</span><span class="p">,</span> <span class="s">&quot;.problematic_males.txt&quot;</span><span class="p">,</span>
-                       <span class="s">&quot;.problematic_unknowns.txt&quot;</span><span class="p">}:</span>
+        <span class="k">for</span> <span class="n">suffix</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;.ok_females.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;.ok_males.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;.ok_unknowns.txt&quot;</span><span class="p">,</span>
+                       <span class="s2">&quot;.problematic_females.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;.problematic_males.txt&quot;</span><span class="p">,</span>
+                       <span class="s2">&quot;.problematic_unknowns.txt&quot;</span><span class="p">}:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">summarized_intensities</span> <span class="o">+</span> <span class="n">suffix</span><span class="p">):</span>
-                <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;{}: no such file&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">summarized_intensities</span> <span class="o">+</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;{}: no such file&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">summarized_intensities</span> <span class="o">+</span>
                                                 <span class="n">suffix</span><span class="p">)</span>
                 <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
-    <span class="c"># Checking the sex problem file</span>
+    <span class="c1"># Checking the sex problem file</span>
     <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">sex_problems</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">sex_problems</span><span class="p">):</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;{}: no such file&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">sex_problems</span><span class="p">)</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;{}: no such file&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">sex_problems</span><span class="p">)</span>
             <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="bp">True</span>
+    <span class="k">return</span> <span class="bp">True</span></div>
 
-</div>
-<div class="viewcode-block" id="parseArgs"><a class="viewcode-back" href="../../../module_content/pyGenClean.SexCheck.html#pyGenClean.SexCheck.gender_plot.parseArgs">[docs]</a><span class="k">def</span> <span class="nf">parseArgs</span><span class="p">(</span><span class="n">argString</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>  <span class="c"># pragma: no cover</span>
+
+<div class="viewcode-block" id="parseArgs"><a class="viewcode-back" href="../../../module_content/pyGenClean.SexCheck.html#pyGenClean.SexCheck.gender_plot.parseArgs">[docs]</a><span class="k">def</span> <span class="nf">parseArgs</span><span class="p">(</span><span class="n">argString</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>  <span class="c1"># pragma: no cover</span>
     <span class="sd">&quot;&quot;&quot;Parses the command line options and arguments.</span>
 
 <span class="sd">    :param argString: the options.</span>
@@ -808,9 +808,9 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">(</span><span class="n">argString</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">args</span>
+    <span class="k">return</span> <span class="n">args</span></div>
 
-</div>
+
 <div class="viewcode-block" id="ProgramError"><a class="viewcode-back" href="../../../module_content/pyGenClean.SexCheck.html#pyGenClean.SexCheck.gender_plot.ProgramError">[docs]</a><span class="k">class</span> <span class="nc">ProgramError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;An :py:class:`Exception` raised in case of a problem.</span>
 
@@ -830,55 +830,55 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span></div>
 
-<span class="c"># The parser object</span></div>
-<span class="n">desc</span> <span class="o">=</span> <span class="s">&quot;Plots the gender using X and Y chromosomes&#39; intensities&quot;</span>
+<span class="c1"># The parser object</span>
+<span class="n">desc</span> <span class="o">=</span> <span class="s2">&quot;Plots the gender using X and Y chromosomes&#39; intensities&quot;</span>
 <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="n">desc</span><span class="p">)</span>
-<span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;-v&quot;</span><span class="p">,</span> <span class="s">&quot;--version&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s">&quot;version&quot;</span><span class="p">,</span>
-                    <span class="n">version</span><span class="o">=</span><span class="s">&quot;pyGenClean version {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">__version__</span><span class="p">))</span>
+<span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-v&quot;</span><span class="p">,</span> <span class="s2">&quot;--version&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;version&quot;</span><span class="p">,</span>
+                    <span class="n">version</span><span class="o">=</span><span class="s2">&quot;pyGenClean version {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">__version__</span><span class="p">))</span>
 
-<span class="c"># The INPUT files</span>
-<span class="n">group</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s">&quot;Input File&quot;</span><span class="p">)</span>
-<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;--bfile&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s">&quot;FILE&quot;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
-                   <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s">&quot;The plink binary file containing information &quot;</span>
-                         <span class="s">&quot;about markers and individuals. Must be specified &quot;</span>
-                         <span class="s">&quot;if &#39;--summarized-intensities&#39; is not.&quot;</span><span class="p">))</span>
-<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;--intensities&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s">&quot;FILE&quot;</span><span class="p">,</span>
-                   <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s">&quot;A file containing alleles intensities for each &quot;</span>
-                         <span class="s">&quot;of the markers located on the X and Y &quot;</span>
-                         <span class="s">&quot;chromosome. Must be specified if &quot;</span>
-                         <span class="s">&quot;&#39;--summarized-intensities&#39; is not.&quot;</span><span class="p">))</span>
-<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;--summarized-intensities&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s">&quot;FILE&quot;</span><span class="p">,</span>
-                   <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s">&quot;The prefix of six files (prefix.ok_females.txt, &quot;</span>
-                         <span class="s">&quot;prefix.ok_males.txt, prefix.ok_unknowns.txt, &quot;</span>
-                         <span class="s">&quot;problematic_females.txt, problematic_males.txt &quot;</span>
-                         <span class="s">&quot;and problematic_unknowns.txt) containing &quot;</span>
-                         <span class="s">&quot;summarized chr23 and chr24 intensities. Must be &quot;</span>
-                         <span class="s">&quot;specified if &#39;--bfile&#39; and &#39;--intensities&#39; are &quot;</span>
-                         <span class="s">&quot;not.&quot;</span><span class="p">))</span>
-<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;--sex-problems&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s">&quot;FILE&quot;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
-                   <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s">&quot;The file containing individuals with sex &quot;</span>
-                         <span class="s">&quot;problems. This file is not read if the option &quot;</span>
-                         <span class="s">&quot;&#39;summarized-intensities&#39; is used.&quot;</span><span class="p">))</span>
-<span class="c"># The options</span>
-<span class="n">group</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s">&quot;Options&quot;</span><span class="p">)</span>
-<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;--format&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s">&quot;FORMAT&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s">&quot;png&quot;</span><span class="p">,</span>
-                   <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;png&quot;</span><span class="p">,</span> <span class="s">&quot;ps&quot;</span><span class="p">,</span> <span class="s">&quot;pdf&quot;</span><span class="p">,</span> <span class="s">&quot;X11&quot;</span><span class="p">],</span>
-                   <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s">&quot;The output file format (png, ps, pdf, or X11 &quot;</span>
-                         <span class="s">&quot;formats are available). [default: </span><span class="si">%(default)s</span><span class="s">]&quot;</span><span class="p">))</span>
-<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;--xlabel&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s">&quot;STRING&quot;</span><span class="p">,</span>
-                   <span class="n">default</span><span class="o">=</span><span class="s">&quot;X intensity&quot;</span><span class="p">,</span>
-                   <span class="n">help</span><span class="o">=</span><span class="s">&quot;The label of the X axis. [default: </span><span class="si">%(default)s</span><span class="s">]&quot;</span><span class="p">)</span>
-<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;--ylabel&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s">&quot;STRING&quot;</span><span class="p">,</span>
-                   <span class="n">default</span><span class="o">=</span><span class="s">&quot;Y intensity&quot;</span><span class="p">,</span>
-                   <span class="n">help</span><span class="o">=</span><span class="s">&quot;The label of the Y axis. [default: </span><span class="si">%(default)s</span><span class="s">]&quot;</span><span class="p">)</span>
-<span class="c"># The OUTPUT files</span>
-<span class="n">group</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s">&quot;Output File&quot;</span><span class="p">)</span>
-<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;--out&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s">&quot;FILE&quot;</span><span class="p">,</span>
-                   <span class="n">default</span><span class="o">=</span><span class="s">&quot;sexcheck&quot;</span><span class="p">,</span>
-                   <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s">&quot;The prefix of the output files (which will be &quot;</span>
-                         <span class="s">&quot;a Plink binary file. [default: </span><span class="si">%(default)s</span><span class="s">]&quot;</span><span class="p">))</span>
+<span class="c1"># The INPUT files</span>
+<span class="n">group</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s2">&quot;Input File&quot;</span><span class="p">)</span>
+<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--bfile&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;FILE&quot;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+                   <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;The plink binary file containing information &quot;</span>
+                         <span class="s2">&quot;about markers and individuals. Must be specified &quot;</span>
+                         <span class="s2">&quot;if &#39;--summarized-intensities&#39; is not.&quot;</span><span class="p">))</span>
+<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--intensities&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;FILE&quot;</span><span class="p">,</span>
+                   <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;A file containing alleles intensities for each &quot;</span>
+                         <span class="s2">&quot;of the markers located on the X and Y &quot;</span>
+                         <span class="s2">&quot;chromosome. Must be specified if &quot;</span>
+                         <span class="s2">&quot;&#39;--summarized-intensities&#39; is not.&quot;</span><span class="p">))</span>
+<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--summarized-intensities&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;FILE&quot;</span><span class="p">,</span>
+                   <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;The prefix of six files (prefix.ok_females.txt, &quot;</span>
+                         <span class="s2">&quot;prefix.ok_males.txt, prefix.ok_unknowns.txt, &quot;</span>
+                         <span class="s2">&quot;problematic_females.txt, problematic_males.txt &quot;</span>
+                         <span class="s2">&quot;and problematic_unknowns.txt) containing &quot;</span>
+                         <span class="s2">&quot;summarized chr23 and chr24 intensities. Must be &quot;</span>
+                         <span class="s2">&quot;specified if &#39;--bfile&#39; and &#39;--intensities&#39; are &quot;</span>
+                         <span class="s2">&quot;not.&quot;</span><span class="p">))</span>
+<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--sex-problems&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;FILE&quot;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+                   <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;The file containing individuals with sex &quot;</span>
+                         <span class="s2">&quot;problems. This file is not read if the option &quot;</span>
+                         <span class="s2">&quot;&#39;summarized-intensities&#39; is used.&quot;</span><span class="p">))</span>
+<span class="c1"># The options</span>
+<span class="n">group</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s2">&quot;Options&quot;</span><span class="p">)</span>
+<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--format&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;FORMAT&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;png&quot;</span><span class="p">,</span>
+                   <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;png&quot;</span><span class="p">,</span> <span class="s2">&quot;ps&quot;</span><span class="p">,</span> <span class="s2">&quot;pdf&quot;</span><span class="p">,</span> <span class="s2">&quot;X11&quot;</span><span class="p">],</span>
+                   <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;The output file format (png, ps, pdf, or X11 &quot;</span>
+                         <span class="s2">&quot;formats are available). [default: </span><span class="si">%(default)s</span><span class="s2">]&quot;</span><span class="p">))</span>
+<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--xlabel&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;STRING&quot;</span><span class="p">,</span>
+                   <span class="n">default</span><span class="o">=</span><span class="s2">&quot;X intensity&quot;</span><span class="p">,</span>
+                   <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The label of the X axis. [default: </span><span class="si">%(default)s</span><span class="s2">]&quot;</span><span class="p">)</span>
+<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--ylabel&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;STRING&quot;</span><span class="p">,</span>
+                   <span class="n">default</span><span class="o">=</span><span class="s2">&quot;Y intensity&quot;</span><span class="p">,</span>
+                   <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The label of the Y axis. [default: </span><span class="si">%(default)s</span><span class="s2">]&quot;</span><span class="p">)</span>
+<span class="c1"># The OUTPUT files</span>
+<span class="n">group</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s2">&quot;Output File&quot;</span><span class="p">)</span>
+<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--out&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;FILE&quot;</span><span class="p">,</span>
+                   <span class="n">default</span><span class="o">=</span><span class="s2">&quot;sexcheck&quot;</span><span class="p">,</span>
+                   <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;The prefix of the output files (which will be &quot;</span>
+                         <span class="s2">&quot;a Plink binary file. [default: </span><span class="si">%(default)s</span><span class="s2">]&quot;</span><span class="p">))</span>
 
 
 <div class="viewcode-block" id="safe_main"><a class="viewcode-back" href="../../../module_content/pyGenClean.SexCheck.html#pyGenClean.SexCheck.gender_plot.safe_main">[docs]</a><span class="k">def</span> <span class="nf">safe_main</span><span class="p">():</span>
@@ -886,14 +886,14 @@
     <span class="k">try</span><span class="p">:</span>
         <span class="n">main</span><span class="p">()</span>
     <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Cancelled by user&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Cancelled by user&quot;</span><span class="p">)</span>
         <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
     <span class="k">except</span> <span class="n">ProgramError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">message</span><span class="p">)</span>
-        <span class="n">parser</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">message</span><span class="p">)</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">message</span><span class="p">)</span></div>
 
-</div>
-<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&quot;__main__&quot;</span><span class="p">:</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
     <span class="n">safe_main</span><span class="p">()</span>
 </pre></div>
 
@@ -911,14 +911,14 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">pyGenClean 1.7.1 documentation</a> &raquo;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">pyGenClean 1.8.0 documentation</a> &raquo;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &raquo;</li>
           <li class="nav-item nav-item-2"><a href="../../pyGenClean.html" >pyGenClean</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2012, Louis-Philippe Lemieux Perreault.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.5.
     </div>
   </body>
 </html>

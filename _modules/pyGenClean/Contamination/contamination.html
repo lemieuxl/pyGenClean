@@ -1,0 +1,655 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>pyGenClean.Contamination.contamination &mdash; pyGenClean 1.8.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '1.8.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="pyGenClean 1.8.0 documentation" href="../../../index.html" />
+    <link rel="up" title="pyGenClean" href="../../pyGenClean.html" /> 
+  </head>
+  <body role="document">
+
+<div style="background-color: white; text-align: left; padding: 10px 10px 15px 15px">
+<a href="../../../index.html"><img src="../../../_static/logo.png" border="0" alt="py4sci"/></a>
+</div>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">pyGenClean 1.8.0 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &raquo;</li>
+          <li class="nav-item nav-item-2"><a href="../../pyGenClean.html" accesskey="U">pyGenClean</a> &raquo;</li> 
+      </ul>
+    </div>
+
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for pyGenClean.Contamination.contamination</h1><div class="highlight"><pre>
+<span class="ch">#!/usr/bin/env python2.7</span>
+
+<span class="c1"># This file is part of pyGenClean.</span>
+<span class="c1">#</span>
+<span class="c1"># pyGenClean is free software: you can redistribute it and/or modify it under</span>
+<span class="c1"># the terms of the GNU General Public License as published by the Free Software</span>
+<span class="c1"># Foundation, either version 3 of the License, or (at your option) any later</span>
+<span class="c1"># version.</span>
+<span class="c1">#</span>
+<span class="c1"># pyGenClean is distributed in the hope that it will be useful, but WITHOUT ANY</span>
+<span class="c1"># WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR</span>
+<span class="c1"># A PARTICULAR PURPOSE.  See the GNU General Public License for more details.</span>
+<span class="c1">#</span>
+<span class="c1"># You should have received a copy of the GNU General Public License along with</span>
+<span class="c1"># pyGenClean.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
+
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">glob</span>
+<span class="kn">import</span> <span class="nn">pipes</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+
+<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">__version__</span>
+
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;contamination&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../../module_content/pyGenClean.Contamination.html#pyGenClean.Contamination.contamination.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">argString</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;The main function of the module.</span>
+
+<span class="sd">    :param argString: the options.</span>
+
+<span class="sd">    :type argString: list</span>
+
+<span class="sd">    These are the steps:</span>
+
+<span class="sd">    1. Prints the options.</span>
+<span class="sd">    2. Compute frequency using Plink.</span>
+<span class="sd">    3. Runs bafRegress.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Getting and checking the options</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">parseArgs</span><span class="p">(</span><span class="n">argString</span><span class="p">)</span>
+    <span class="n">checkArgs</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Options used:&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">vars</span><span class="p">(</span><span class="n">args</span><span class="p">)</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;  --{} {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">),</span> <span class="n">value</span><span class="p">))</span>
+
+    <span class="c1"># Checks the sample raw data</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Checking the raw data files&quot;</span><span class="p">)</span>
+    <span class="n">sample_files</span> <span class="o">=</span> <span class="n">check_sample_files</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">bfile</span> <span class="o">+</span> <span class="s2">&quot;.fam&quot;</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">raw_dir</span><span class="p">)</span>
+
+    <span class="c1"># Finds the markers to extract</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Creating extraction list (autosome only)&quot;</span><span class="p">)</span>
+    <span class="n">create_extraction_file</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">bfile</span> <span class="o">+</span> <span class="s2">&quot;.bim&quot;</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">out</span><span class="p">)</span>
+
+    <span class="c1"># Run plink</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Computing frequency using Plink&quot;</span><span class="p">)</span>
+    <span class="n">run_plink</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">bfile</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">out</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">out</span> <span class="o">+</span> <span class="s2">&quot;.to_extract&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Run bafRegress</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Running bafRegress&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">sge</span><span class="p">:</span>
+        <span class="n">run_bafRegress_sge</span><span class="p">(</span><span class="n">sample_files</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">out</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">out</span> <span class="o">+</span> <span class="s2">&quot;.to_extract&quot;</span><span class="p">,</span>
+                           <span class="n">args</span><span class="o">.</span><span class="n">out</span> <span class="o">+</span> <span class="s2">&quot;.frq&quot;</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">run_bafRegress</span><span class="p">(</span><span class="n">sample_files</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">out</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">out</span> <span class="o">+</span> <span class="s2">&quot;.to_extract&quot;</span><span class="p">,</span>
+                       <span class="n">args</span><span class="o">.</span><span class="n">out</span> <span class="o">+</span> <span class="s2">&quot;.frq&quot;</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="check_sample_files"><a class="viewcode-back" href="../../../module_content/pyGenClean.Contamination.html#pyGenClean.Contamination.contamination.check_sample_files">[docs]</a><span class="k">def</span> <span class="nf">check_sample_files</span><span class="p">(</span><span class="n">fam_filename</span><span class="p">,</span> <span class="n">raw_dirname</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Checks the raw sample files.</span>
+
+<span class="sd">    :param fam_filename: the name of the FAM file.</span>
+<span class="sd">    :param raw_dirname: the name of the directory containing the raw file.</span>
+
+<span class="sd">    :type fam_filename: str</span>
+<span class="sd">    :type raw_dirname: str</span>
+
+<span class="sd">    :returns: the set of all the sample files that are compatible with the FAM</span>
+<span class="sd">              file.</span>
+<span class="sd">    :rtype: set</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Reading the sample identification number from the FAM file</span>
+    <span class="n">fam_samples</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fam_filename</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">i_file</span><span class="p">:</span>
+        <span class="n">fam_samples</span> <span class="o">=</span> <span class="p">{</span><span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">i_file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()}</span>
+
+    <span class="c1"># Checking the files in the raw directory</span>
+    <span class="n">sample_files</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="n">all_samples</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">raw_dirname</span><span class="p">,</span> <span class="s2">&quot;*&quot;</span><span class="p">)):</span>
+        <span class="n">sample</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">filename</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">all_samples</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">sample</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">sample</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">fam_samples</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;{}: sample not in FAM file&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">sample</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">sample_files</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">sample</span> <span class="ow">in</span> <span class="n">fam_samples</span> <span class="o">-</span> <span class="n">all_samples</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;{}: sample not in raw directory&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">sample</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sample_files</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="s2">&quot;no sample left for analysis&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">sample_files</span></div>
+
+
+<div class="viewcode-block" id="create_extraction_file"><a class="viewcode-back" href="../../../module_content/pyGenClean.Contamination.html#pyGenClean.Contamination.contamination.create_extraction_file">[docs]</a><span class="k">def</span> <span class="nf">create_extraction_file</span><span class="p">(</span><span class="n">bim_filename</span><span class="p">,</span> <span class="n">out_prefix</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Creates an extraction file (keeping only markers on autosomes).</span>
+
+<span class="sd">    :param bim_filename: the name of the BIM file.</span>
+<span class="sd">    :param out_prefix: the prefix for the output file.</span>
+
+<span class="sd">    :type bim_filename: str</span>
+<span class="sd">    :type out_prefix: str</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">o_file</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">o_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">out_prefix</span> <span class="o">+</span> <span class="s2">&quot;.to_extract&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="s2">&quot;{}: cannot write file&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">out_prefix</span> <span class="o">+</span> <span class="s2">&quot;.to_extract&quot;</span>
+        <span class="p">))</span>
+
+    <span class="c1"># Reading the BIM file and extracts only the markers on autosome</span>
+    <span class="n">autosomes</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">23</span><span class="p">)))</span>
+    <span class="n">nb_markers</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">header</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">([</span><span class="s2">&quot;chrom&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;cm&quot;</span><span class="p">,</span> <span class="s2">&quot;pos&quot;</span><span class="p">,</span> <span class="s2">&quot;a1&quot;</span><span class="p">,</span> <span class="s2">&quot;a2&quot;</span><span class="p">],</span> <span class="nb">range</span><span class="p">(</span><span class="mi">6</span><span class="p">)))</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">bim_filename</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">i_file</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">i_file</span><span class="p">:</span>
+            <span class="n">row</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\r\n</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="n">header</span><span class="p">[</span><span class="s2">&quot;chrom&quot;</span><span class="p">]]</span> <span class="ow">in</span> <span class="n">autosomes</span><span class="p">:</span>
+                <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">o_file</span><span class="p">,</span> <span class="n">row</span><span class="p">[</span><span class="n">header</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]]</span>
+                <span class="n">nb_markers</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="c1"># Closing the file</span>
+    <span class="n">o_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;  - {:,d} markers will be used for contamination &quot;</span>
+                <span class="s2">&quot;estimation&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">nb_markers</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="run_bafRegress"><a class="viewcode-back" href="../../../module_content/pyGenClean.Contamination.html#pyGenClean.Contamination.contamination.run_bafRegress">[docs]</a><span class="k">def</span> <span class="nf">run_bafRegress</span><span class="p">(</span><span class="n">filenames</span><span class="p">,</span> <span class="n">out_prefix</span><span class="p">,</span> <span class="n">extract_filename</span><span class="p">,</span> <span class="n">freq_filename</span><span class="p">,</span>
+                   <span class="n">options</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Runs the bafRegress function.</span>
+
+<span class="sd">    :param filenames: the set of all sample files.</span>
+<span class="sd">    :param out_prefix: the output prefix.</span>
+<span class="sd">    :param extract_filename: the name of the markers to extract.</span>
+<span class="sd">    :param freq_filename: the name of the file containing the frequency.</span>
+<span class="sd">    :param options: the other options.</span>
+
+<span class="sd">    :type filenames: set</span>
+<span class="sd">    :type out_prefix: str</span>
+<span class="sd">    :type extract_filename: str</span>
+<span class="sd">    :type freq_filename: str</span>
+<span class="sd">    :type options: argparse.Namespace</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># The command</span>
+    <span class="n">command</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">&quot;bafRegress.py&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;estimate&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--freqfile&quot;</span><span class="p">,</span> <span class="n">freq_filename</span><span class="p">,</span>
+        <span class="s2">&quot;--freqcol&quot;</span><span class="p">,</span> <span class="s2">&quot;2,5&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--extract&quot;</span><span class="p">,</span> <span class="n">extract_filename</span><span class="p">,</span>
+        <span class="s2">&quot;--colsample&quot;</span><span class="p">,</span> <span class="n">options</span><span class="o">.</span><span class="n">colsample</span><span class="p">,</span>
+        <span class="s2">&quot;--colmarker&quot;</span><span class="p">,</span> <span class="n">options</span><span class="o">.</span><span class="n">colmarker</span><span class="p">,</span>
+        <span class="s2">&quot;--colbaf&quot;</span><span class="p">,</span> <span class="n">options</span><span class="o">.</span><span class="n">colbaf</span><span class="p">,</span>
+        <span class="s2">&quot;--colab1&quot;</span><span class="p">,</span> <span class="n">options</span><span class="o">.</span><span class="n">colab1</span><span class="p">,</span>
+        <span class="s2">&quot;--colab2&quot;</span><span class="p">,</span> <span class="n">options</span><span class="o">.</span><span class="n">colab2</span><span class="p">,</span>
+    <span class="p">]</span>
+    <span class="n">command</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">filenames</span><span class="p">)</span>
+
+    <span class="n">output</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">(</span><span class="n">command</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">STDOUT</span><span class="p">,</span>
+                                         <span class="n">shell</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="s2">&quot;bafRegress.py: couldn&#39;t run &quot;</span>
+                           <span class="s2">&quot;bafRegress.py</span><span class="se">\n</span><span class="s2">{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">exc</span><span class="o">.</span><span class="n">output</span><span class="p">))</span>
+
+    <span class="c1"># Saving the output</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">out_prefix</span> <span class="o">+</span> <span class="s2">&quot;.bafRegress&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">o_file</span><span class="p">:</span>
+            <span class="n">o_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="s2">&quot;{}: cannot write file&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">out_prefix</span> <span class="o">+</span> <span class="s2">&quot;.bafRegress&quot;</span><span class="p">,</span>
+        <span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="run_bafRegress_sge"><a class="viewcode-back" href="../../../module_content/pyGenClean.Contamination.html#pyGenClean.Contamination.contamination.run_bafRegress_sge">[docs]</a><span class="k">def</span> <span class="nf">run_bafRegress_sge</span><span class="p">(</span><span class="n">filenames</span><span class="p">,</span> <span class="n">out_prefix</span><span class="p">,</span> <span class="n">extract_filename</span><span class="p">,</span> <span class="n">freq_filename</span><span class="p">,</span>
+                       <span class="n">options</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Runs the bafRegress function using SGE.</span>
+
+<span class="sd">    :param filenames: the set of all sample files.</span>
+<span class="sd">    :param out_prefix: the output prefix.</span>
+<span class="sd">    :param extract_filename: the name of the markers to extract.</span>
+<span class="sd">    :param freq_filename: the name of the file containing the frequency.</span>
+<span class="sd">    :param options: the other options.</span>
+
+<span class="sd">    :type filenames: set</span>
+<span class="sd">    :type out_prefix: str</span>
+<span class="sd">    :type extract_filename: str</span>
+<span class="sd">    :type freq_filename: str</span>
+<span class="sd">    :type options: argparse.Namespace</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Checks the environment variable for DRMAA package</span>
+    <span class="k">if</span> <span class="s2">&quot;DRMAA_LIBRARY_PATH&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;could not load drmaa: set DRMAA_LIBRARY_PATH&quot;</span>
+        <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="c1"># Import the drmaa package</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">drmaa</span>
+    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="s2">&quot;drmaa is not install, install drmaa&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Initializing a session</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">drmaa</span><span class="o">.</span><span class="n">Session</span><span class="p">()</span>
+    <span class="n">s</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
+
+    <span class="c1"># The base command</span>
+    <span class="n">base_command</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">&quot;bafRegress.py&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;estimate&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--freqfile&quot;</span><span class="p">,</span> <span class="n">freq_filename</span><span class="p">,</span>
+        <span class="s2">&quot;--freqcol&quot;</span><span class="p">,</span> <span class="s2">&quot;2,5&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--extract&quot;</span><span class="p">,</span> <span class="n">extract_filename</span><span class="p">,</span>
+        <span class="s2">&quot;--colsample&quot;</span><span class="p">,</span> <span class="n">options</span><span class="o">.</span><span class="n">colsample</span><span class="p">,</span>
+        <span class="s2">&quot;--colmarker&quot;</span><span class="p">,</span> <span class="n">options</span><span class="o">.</span><span class="n">colmarker</span><span class="p">,</span>
+        <span class="s2">&quot;--colbaf&quot;</span><span class="p">,</span> <span class="n">options</span><span class="o">.</span><span class="n">colbaf</span><span class="p">,</span>
+        <span class="s2">&quot;--colab1&quot;</span><span class="p">,</span> <span class="n">options</span><span class="o">.</span><span class="n">colab1</span><span class="p">,</span>
+        <span class="s2">&quot;--colab2&quot;</span><span class="p">,</span> <span class="n">options</span><span class="o">.</span><span class="n">colab2</span><span class="p">,</span>
+    <span class="p">]</span>
+
+    <span class="c1"># Creating chunks</span>
+    <span class="n">chunks</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="nb">list</span><span class="p">(</span><span class="n">filenames</span><span class="p">)[</span><span class="n">i</span><span class="p">:</span> <span class="n">i</span><span class="o">+</span><span class="n">options</span><span class="o">.</span><span class="n">sample_per_run_for_sge</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">filenames</span><span class="p">),</span> <span class="n">options</span><span class="o">.</span><span class="n">sample_per_run_for_sge</span><span class="p">)</span>
+    <span class="p">]</span>
+
+    <span class="c1"># Run for each sub task...</span>
+    <span class="n">job_ids</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">job_templates</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">chunks</span><span class="p">):</span>
+        <span class="c1"># Creating the final command</span>
+        <span class="n">command</span> <span class="o">=</span> <span class="p">[</span><span class="n">pipes</span><span class="o">.</span><span class="n">quote</span><span class="p">(</span><span class="n">token</span><span class="p">)</span> <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">base_command</span> <span class="o">+</span> <span class="n">chunk</span><span class="p">]</span>
+        <span class="n">command</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="s2">&quot;&gt; {}.bafRegress_{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pipes</span><span class="o">.</span><span class="n">quote</span><span class="p">(</span><span class="n">out_prefix</span><span class="p">),</span> <span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">),</span>
+        <span class="p">)</span>
+        <span class="n">command</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">command</span><span class="p">)</span>
+
+        <span class="c1"># Creating the job template</span>
+        <span class="n">jt</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">createJobTemplate</span><span class="p">()</span>
+        <span class="n">jt</span><span class="o">.</span><span class="n">remoteCommand</span> <span class="o">=</span> <span class="s2">&quot;bash&quot;</span>
+        <span class="n">jt</span><span class="o">.</span><span class="n">workingDirectory</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
+        <span class="n">jt</span><span class="o">.</span><span class="n">jobEnvironment</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span>
+        <span class="n">jt</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;-c&quot;</span><span class="p">,</span> <span class="n">command</span><span class="p">]</span>
+        <span class="n">jt</span><span class="o">.</span><span class="n">jobName</span> <span class="o">=</span> <span class="s2">&quot;_bafRegress_{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="c1"># Cluster specifics</span>
+        <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">sge_walltime</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">jt</span><span class="o">.</span><span class="n">hardWallclockTimeLimit</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">sge_walltime</span>
+        <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">sge_nodes</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">native_spec</span> <span class="o">=</span> <span class="s2">&quot;-l nodes={}:ppn={}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">sge_nodes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                                                      <span class="n">options</span><span class="o">.</span><span class="n">sge_nodes</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">jt</span><span class="o">.</span><span class="n">nativeSpecification</span> <span class="o">=</span> <span class="n">native_spec</span>
+
+        <span class="n">job_ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">runJob</span><span class="p">(</span><span class="n">jt</span><span class="p">))</span>
+        <span class="n">job_templates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">jt</span><span class="p">)</span>
+
+    <span class="c1"># Waiting for the jobs to finish</span>
+    <span class="n">had_problems</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">job_id</span> <span class="ow">in</span> <span class="n">job_ids</span><span class="p">:</span>
+        <span class="n">ret_val</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="n">job_id</span><span class="p">,</span> <span class="n">drmaa</span><span class="o">.</span><span class="n">Session</span><span class="o">.</span><span class="n">TIMEOUT_WAIT_FOREVER</span><span class="p">)</span>
+        <span class="n">had_problems</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ret_val</span><span class="o">.</span><span class="n">exitStatus</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+
+    <span class="c1"># Deleting the jobs</span>
+    <span class="k">for</span> <span class="n">jt</span> <span class="ow">in</span> <span class="n">job_templates</span><span class="p">:</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">deleteJobTemplate</span><span class="p">(</span><span class="n">jt</span><span class="p">)</span>
+
+    <span class="c1"># Closing the session</span>
+    <span class="n">s</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+
+    <span class="c1"># Checking for problems</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">had_problems</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="s2">&quot;Some SGE jobs had errors...&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Merging the output files</span>
+    <span class="n">o_file</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">o_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">out_prefix</span> <span class="o">+</span> <span class="s2">&quot;.bafRegress&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;{}: cannot write file&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">out_prefix</span> <span class="o">+</span> <span class="s2">&quot;.bafRegress&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="n">to_remove</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">chunks</span><span class="p">)):</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">out_prefix</span> <span class="o">+</span> <span class="s2">&quot;.bafRegress_{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="s2">&quot;{}: no such file&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span>
+        <span class="n">to_remove</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">i_file</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="c1"># First file, we write everything</span>
+                <span class="n">o_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">i_file</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+                <span class="k">continue</span>
+
+            <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">i_file</span><span class="p">):</span>
+                <span class="c1"># Skipping first line</span>
+                <span class="k">if</span> <span class="n">j</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="n">o_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">to_remove</span><span class="p">:</span>
+        <span class="c1"># Deleting the chunk</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+
+    <span class="c1"># Closing</span>
+    <span class="n">o_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="run_plink"><a class="viewcode-back" href="../../../module_content/pyGenClean.Contamination.html#pyGenClean.Contamination.contamination.run_plink">[docs]</a><span class="k">def</span> <span class="nf">run_plink</span><span class="p">(</span><span class="n">in_prefix</span><span class="p">,</span> <span class="n">out_prefix</span><span class="p">,</span> <span class="n">extract_filename</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Runs Plink with the geno option.</span>
+
+<span class="sd">    :param in_prefix: the input prefix.</span>
+<span class="sd">    :param out_prefix: the output prefix.</span>
+<span class="sd">    :param extract_filename: the name of the file containing markers to</span>
+<span class="sd">                             extract.</span>
+
+<span class="sd">    :type in_prefix: str</span>
+<span class="sd">    :type out_prefix: str</span>
+<span class="sd">    :param extract_filename: str</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># The plink command</span>
+    <span class="n">plink_command</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">&quot;plink&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--noweb&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--bfile&quot;</span><span class="p">,</span> <span class="n">in_prefix</span><span class="p">,</span>
+        <span class="s2">&quot;--extract&quot;</span><span class="p">,</span> <span class="n">extract_filename</span><span class="p">,</span>
+        <span class="s2">&quot;--freq&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--out&quot;</span><span class="p">,</span> <span class="n">out_prefix</span><span class="p">,</span>
+    <span class="p">]</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">(</span><span class="n">plink_command</span><span class="p">,</span>
+                                         <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">STDOUT</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;plink: couldn&#39;t run plink</span><span class="se">\n</span><span class="s2">{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">exc</span><span class="o">.</span><span class="n">output</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="checkArgs"><a class="viewcode-back" href="../../../module_content/pyGenClean.Contamination.html#pyGenClean.Contamination.contamination.checkArgs">[docs]</a><span class="k">def</span> <span class="nf">checkArgs</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Checks the arguments and options.</span>
+
+<span class="sd">    :param args: an object containing the options of the program.</span>
+
+<span class="sd">    :type args: argparse.Namespace</span>
+
+<span class="sd">    :returns: ``True`` if everything was OK.</span>
+
+<span class="sd">    If there is a problem with an option, an exception is raised using the</span>
+<span class="sd">    :py:class:`ProgramError` class, a message is printed to the</span>
+<span class="sd">    :class:`sys.stderr` and the program exists with code 1.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Check if we have the tped and the tfam files</span>
+    <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="p">[</span><span class="n">args</span><span class="o">.</span><span class="n">bfile</span> <span class="o">+</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;.bed&quot;</span><span class="p">,</span> <span class="s2">&quot;.bim&quot;</span><span class="p">,</span> <span class="s2">&quot;.fam&quot;</span><span class="p">]]:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="s2">&quot;{}: no such file&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span>
+
+    <span class="c1"># Checking that the raw directory exists</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">raw_dir</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="s2">&quot;{}: no such directory&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">raw_dir</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="bp">True</span></div>
+
+
+<div class="viewcode-block" id="parseArgs"><a class="viewcode-back" href="../../../module_content/pyGenClean.Contamination.html#pyGenClean.Contamination.contamination.parseArgs">[docs]</a><span class="k">def</span> <span class="nf">parseArgs</span><span class="p">(</span><span class="n">argString</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>  <span class="c1"># pragma: no cover</span>
+    <span class="sd">&quot;&quot;&quot;Parses the command line options and arguments.</span>
+
+<span class="sd">    :param argString: the options.</span>
+
+<span class="sd">    :type argString: list</span>
+
+<span class="sd">    :returns: A :py:class:`argparse.Namespace` object created by the</span>
+<span class="sd">              :py:mod:`argparse` module. It contains the values of the</span>
+<span class="sd">              different options.</span>
+
+<span class="sd">    ============================ ====== =======================================</span>
+<span class="sd">               Options            Type                Description</span>
+<span class="sd">    ============================ ====== =======================================</span>
+<span class="sd">    ``--bfile``                  string The input file prefix (will find the</span>
+<span class="sd">                                        plink binary files by appending the</span>
+<span class="sd">                                        prefix to the .bim, .bed and .fam</span>
+<span class="sd">                                        files, respectively).</span>
+<span class="sd">    ``--raw-dir``                string Directory containing the raw data (one</span>
+<span class="sd">                                        file per sample, where the name of the</span>
+<span class="sd">                                        file (minus the extension) is the</span>
+<span class="sd">                                        sample identification number.</span>
+<span class="sd">    ``--colsample``              string The sample column.</span>
+<span class="sd">    ``--colmarker``              string The marker column.</span>
+<span class="sd">    ``--colbaf``                 string The B allele frequency column.</span>
+<span class="sd">    ``--colab1``                 string The AB Allele 1 column.</span>
+<span class="sd">    ``--colab2``                 string The AB Allele 2 column.</span>
+<span class="sd">    ``--out``                    string The prefix of the output files.</span>
+<span class="sd">    ``--sge``                    bool   Use SGE for parallelization.</span>
+<span class="sd">    ``--sge-walltime``           string The walltime for the job to run on the</span>
+<span class="sd">                                        cluster. Do not use if you are not</span>
+<span class="sd">                                        required to specify a walltime for your</span>
+<span class="sd">                                        jobs on your cluster (e.g. &#39;qsub</span>
+<span class="sd">                                        -lwalltime=1:0:0&#39; on the cluster).</span>
+<span class="sd">    ``--sge-nodes``              int    The number of nodes and the number of</span>
+<span class="sd">                                        processor per nodes to use (e.g. &#39;qsub</span>
+<span class="sd">                                        -lnodes=X:ppn=Y&#39; on the cluster, where</span>
+<span class="sd">                                        X is the number of nodes and Y is  the</span>
+<span class="sd">                                        number of processor to use. Do not use</span>
+<span class="sd">                                        if you are not required to specify the</span>
+<span class="sd">                                        number of nodes for your jobs on the</span>
+<span class="sd">                                        cluster.</span>
+<span class="sd">    ``--sample-per-run-for-sge`` int    The number of sample to run for a</span>
+<span class="sd">                                        single SGE job.</span>
+<span class="sd">    ============================ ====== =======================================</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">        No option check is done here (except for the one automatically done by</span>
+<span class="sd">        argparse). Those need to be done elsewhere (see :py:func:`checkArgs`).</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">if</span> <span class="n">argString</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">(</span><span class="n">argString</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">args</span></div>
+
+
+<div class="viewcode-block" id="ProgramError"><a class="viewcode-back" href="../../../module_content/pyGenClean.Contamination.html#pyGenClean.Contamination.contamination.ProgramError">[docs]</a><span class="k">class</span> <span class="nc">ProgramError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;An :py:class:`Exception` raised in case of a problem.</span>
+
+<span class="sd">    :param msg: the message to print to the user before exiting.</span>
+
+<span class="sd">    :type msg: str</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Construction of the :py:class:`ProgramError` class.</span>
+
+<span class="sd">        :param msg: the message to print to the user</span>
+
+<span class="sd">        :type msg: str</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span></div>
+
+
+<span class="c1"># The parser object</span>
+<span class="n">pretty_name</span> <span class="o">=</span> <span class="s2">&quot;Contamination&quot;</span>
+<span class="n">desc</span> <span class="o">=</span> <span class="s2">&quot;Check BAF and LogR ratio for data contamination.&quot;</span>
+<span class="n">long_desc</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;The script search for sample contamination using the &quot;</span>
+             <span class="s2">r&quot;\path{bafRegress.py} software.&quot;</span><span class="p">)</span>
+<span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="n">desc</span><span class="p">)</span>
+<span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-v&quot;</span><span class="p">,</span> <span class="s2">&quot;--version&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;version&quot;</span><span class="p">,</span>
+                    <span class="n">version</span><span class="o">=</span><span class="s2">&quot;pyGenClean version {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">__version__</span><span class="p">))</span>
+
+<span class="c1"># The INPUT files</span>
+<span class="n">group</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s2">&quot;Input File&quot;</span><span class="p">)</span>
+<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--bfile&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;FILE&quot;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+                   <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;The input file prefix (will find the plink binary &quot;</span>
+                         <span class="s2">&quot;files by appending the prefix to the .bim, .bed and &quot;</span>
+                         <span class="s2">&quot;.fam files, respectively).&quot;</span><span class="p">))</span>
+
+<span class="n">group</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s2">&quot;Raw Data&quot;</span><span class="p">)</span>
+<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--raw-dir&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;DIR&quot;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+                   <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;Directory containing the raw data (one file per &quot;</span>
+                         <span class="s2">&quot;sample, where the name of the file (minus the &quot;</span>
+                         <span class="s2">&quot;extension) is the sample identification number.&quot;</span><span class="p">))</span>
+
+<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--colsample&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;COL&quot;</span><span class="p">,</span>
+                   <span class="n">default</span><span class="o">=</span><span class="s2">&quot;Sample Name&quot;</span><span class="p">,</span>
+                   <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The sample column. [default: </span><span class="si">%(default)s</span><span class="s2">]&quot;</span><span class="p">)</span>
+<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--colmarker&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;COL&quot;</span><span class="p">,</span>
+                   <span class="n">default</span><span class="o">=</span><span class="s2">&quot;SNP Name&quot;</span><span class="p">,</span>
+                   <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The marker column. [default: </span><span class="si">%(default)s</span><span class="s2">]&quot;</span><span class="p">)</span>
+<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--colbaf&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;COL&quot;</span><span class="p">,</span>
+                   <span class="n">default</span><span class="o">=</span><span class="s2">&quot;B Allele Freq&quot;</span><span class="p">,</span>
+                   <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;The B allele frequency column. &quot;</span>
+                         <span class="s2">&quot;[default: </span><span class="si">%(default)s</span><span class="s2">]&quot;</span><span class="p">))</span>
+<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--colab1&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;COL&quot;</span><span class="p">,</span>
+                   <span class="n">default</span><span class="o">=</span><span class="s2">&quot;Allele1 - AB&quot;</span><span class="p">,</span>
+                   <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The AB Allele 1 column. [default: </span><span class="si">%(default)s</span><span class="s2">]&quot;</span><span class="p">)</span>
+<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--colab2&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;COL&quot;</span><span class="p">,</span>
+                   <span class="n">default</span><span class="o">=</span><span class="s2">&quot;Allele2 - AB&quot;</span><span class="p">,</span>
+                   <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The AB Allele 2 column. [default: </span><span class="si">%(default)s</span><span class="s2">]&quot;</span><span class="p">)</span>
+
+<span class="n">group</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s2">&quot;SGE Options&quot;</span><span class="p">)</span>
+<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--sge&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
+                   <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Use SGE for parallelization.&quot;</span><span class="p">)</span>
+<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--sge-walltime&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;TIME&quot;</span><span class="p">,</span>
+                   <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;The walltime for the job to run on the cluster. Do &quot;</span>
+                         <span class="s2">&quot;not use if you are not required to specify a &quot;</span>
+                         <span class="s2">&quot;walltime for your jobs on your cluster (e.g. &#39;qsub &quot;</span>
+                         <span class="s2">&quot;-lwalltime=1:0:0&#39; on the cluster).&quot;</span><span class="p">))</span>
+<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--sge-nodes&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;INT&quot;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+                   <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;The number of nodes and the number of processor per &quot;</span>
+                         <span class="s2">&quot;nodes to use (e.g. &#39;qsub -lnodes=X:ppn=Y&#39; on the &quot;</span>
+                         <span class="s2">&quot;cluster, where X is the number of nodes and Y is &quot;</span>
+                         <span class="s2">&quot; the number of processor to use. Do not use if you &quot;</span>
+                         <span class="s2">&quot;are not required to specify the number of nodes for &quot;</span>
+                         <span class="s2">&quot;your jobs on the cluster.&quot;</span><span class="p">))</span>
+<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--sample-per-run-for-sge&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;INT&quot;</span><span class="p">,</span>
+                   <span class="n">default</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+                   <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;The number of sample to run for a single SGE job. &quot;</span>
+                         <span class="s2">&quot;[default: </span><span class="si">%(default)d</span><span class="s2">]&quot;</span><span class="p">))</span>
+
+<span class="c1"># The OUTPUT files</span>
+<span class="n">group</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s2">&quot;Output File&quot;</span><span class="p">)</span>
+<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--out&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;FILE&quot;</span><span class="p">,</span>
+                   <span class="n">default</span><span class="o">=</span><span class="s2">&quot;contamination&quot;</span><span class="p">,</span>
+                   <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;The prefix of the output files. [default: &quot;</span>
+                         <span class="s2">&quot;</span><span class="si">%(default)s</span><span class="s2">]&quot;</span><span class="p">))</span>
+
+
+<div class="viewcode-block" id="safe_main"><a class="viewcode-back" href="../../../module_content/pyGenClean.Contamination.html#pyGenClean.Contamination.contamination.safe_main">[docs]</a><span class="k">def</span> <span class="nf">safe_main</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;A safe version of the main function (that catches ProgramError).&quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">main</span><span class="p">()</span>
+    <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Cancelled by user&quot;</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">ProgramError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">message</span><span class="p">)</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">message</span><span class="p">)</span></div>
+
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">safe_main</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">pyGenClean 1.8.0 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &raquo;</li>
+          <li class="nav-item nav-item-2"><a href="../../pyGenClean.html" >pyGenClean</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2012, Louis-Philippe Lemieux Perreault.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.5.
+    </div>
+  </body>
+</html>
