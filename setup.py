@@ -107,7 +107,8 @@ def setup_package():
                   "pyGenClean.FlagHW", "pyGenClean.RelatedSamples",
                   "pyGenClean.DupSNPs", "pyGenClean.Misc", "pyGenClean.LaTeX",
                   "pyGenClean.HeteroHap", "pyGenClean.SampleMissingness",
-                  "pyGenClean.NoCallHetero", "pyGenClean.PlinkUtils"],
+                  "pyGenClean.NoCallHetero", "pyGenClean.PlinkUtils",
+                  "pyGenClean.Contamination"],
         package_data={"pyGenClean.LaTeX": ["templates/*.tex"]},
         classifiers=[
             "Development Status :: 5 - Production/Stable",
