@@ -28,7 +28,7 @@ If you want to generate the gender and BAF and LRR plots, you will require to
 provide the intensities (``sex-chr-intensities``  and ``lrr-baf-raw-dir`` in the
 ``sex_check`` section (``[7]``) after uncommenting the required options).
 
-.. literalinclude:: _static/configuration_files/configuration_example_1_of_2.conf
+.. literalinclude:: _static/configuration_files/configuration_example_1_of_2.ini
     :linenos:
     :language: lighttpd
 
@@ -46,7 +46,7 @@ A file containing the samples and markers to be removed should be created using
 the output of the ``sex_check``, ``find_related_samples``, ``check_ethnicity``
 and ``plate_bias`` sections of the :ref:`first_conf_file`.
 
-.. literalinclude:: _static/configuration_files/configuration_example_2_of_2.conf
+.. literalinclude:: _static/configuration_files/configuration_example_2_of_2.ini
     :linenos:
     :language: lighttpd
 

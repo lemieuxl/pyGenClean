@@ -16,9 +16,11 @@
 
 
 import os
+import re
 import sys
 import logging
 import argparse
+from glob import glob
 
 import numpy as np
 
@@ -99,6 +101,126 @@ def main(argString=None):
             args.out + ".population_file_outliers",
         )
         raise ProgramError(msg)
+
+    # If there is a summary file in the working directory (for LaTeX), we want
+    # to modify it, because it means that this script is run after the pipeline
+    # (to modify the multiplier, for example).
+    if args.overwrite_tex:
+        summary_file = glob(os.path.join(os.getcwd(), "*.summary.tex"))
+        if len(summary_file) == 0:
+            logger.warning("No TeX summary file found")
+        if len(summary_file) > 1:
+            raise ProgramError("More than one TeX summary file found")
+        summary_file = summary_file[0]
+
+        # Overwriting
+        overwrite_tex(summary_file, len(outliers), args)
+
+
+def overwrite_tex(tex_fn, nb_outliers, script_options):
+    """Overwrites the TeX summary file with new values.
+
+    :param tex_fn: the name of the TeX summary file to overwrite.
+    :param nb_outliers: the number of outliers.
+    :param script_options: the script options.
+
+    :type tex_fn: str
+    :type nb_outliers: int
+    :type options: argparse.Namespace
+
+    """
+    # Getting the content of the TeX file
+    content = None
+    with open(tex_fn, "r") as i_file:
+        content = i_file.read()
+
+    # Is there a figure
+    has_figure = re.search("includegraphics", content) is not None
+
+    # Changing the first sentence
+    content, n = re.subn(
+        r"(Using\s[0-9,]+\smarkers?\sand\sa\smultiplier\sof\s)[0-9.]+"
+        r"(,\sthere\swas\sa\stotal\sof\s)[0-9,]+(\soutliers?\sof\sthe\s)"
+        r"\w+(\spopulation.)",
+        r"\g<1>{}\g<2>{:,d}\g<3>{}\g<4>".format(
+            script_options.multiplier,
+            nb_outliers,
+            script_options.outliers_of,
+        ),
+        content
+    )
+    if n != 1:
+        raise ProgramError("{}: invalid TeX summary file".format(tex_fn))
+
+    # Do we need to change the principal components in the text?
+    c1_c2 = {"C1", "C2"}
+    if has_figure and ({script_options.xaxis, script_options.yaxis} != c1_c2):
+        content, n = re.subn(
+            r"(shows\s)the\sfirst\stwo\sprincipal\scomponents(\sof\sthe\sMDS"
+            r"\sanalysis)",
+            r"\g<1>components {} versus {}\g<2>".format(
+                script_options.yaxis.replace("C", ""),
+                script_options.xaxis.replace("C", ""),
+            ),
+            content,
+        )
+        if n != 1:
+            raise ProgramError("{}: invalid TeX summary file".format(tex_fn))
+
+        content, n = re.subn(
+            r"(MDS\splots\sshowing\s)the\sfirst\stwo\sprincipal\scomponents"
+            r"(\sof\sthe\ssource\sdataset\swith\sthe\sreference\spanels.)",
+            r"\g<1>components {} versus {}\g<2>".format(
+                script_options.yaxis.replace("C", ""),
+                script_options.xaxis.replace("C", ""),
+            ),
+            content,
+        )
+        if n != 1:
+            raise ProgramError("{}: invalid TeX summary file".format(tex_fn))
+
+    if has_figure:
+        # Changing the population in the figure description
+        content, n = re.subn(
+            r"(where\soutliers\sof\sthe\s)\w+(\spopulation\sare\sshown\s"
+            r"in\sgrey.)",
+            r"\g<1>{}\g<2>".format(script_options.outliers_of),
+            content,
+        )
+        if n != 1:
+            raise ProgramError("{}: invalid TeX summary file".format(tex_fn))
+
+        content, n = re.subn(
+            r"(The\soutliers\sof\sthe\s)\w+(\spopulation\sare\sshown\sin\s"
+            r"grey,\swhile\ssamples\sof\sthe\ssource\sdataset\sthat\s"
+            r"resemble\sthe\s)\w+(\spopulation\sare\sshown\sin\sorange.\sA\s"
+            r"multiplier\sof\s)[0-9.]+(\swas\sused\sto\sfind\sthe\s)[0-9,]+(\s"
+            r"outliers?.)",
+            r"\g<1>{pop}\g<2>{pop}\g<3>{mult}\g<4>{nb:,d}\g<5>".format(
+                pop=script_options.outliers_of,
+                mult=script_options.multiplier,
+                nb=nb_outliers,
+            ),
+            content,
+        )
+        if n != 1:
+            raise ProgramError("{}: invalid TeX summary file".format(tex_fn))
+
+        # Changing the figure (path)
+        content, n = re.subn(
+            r"(\s\\includegraphics\[.+\]\{)\{ethnicity.outliers\}.png(\}\s)",
+            r"\g<1>{}\g<2>".format(
+                "{" + script_options.out + ".outliers}." +
+                script_options.format
+            ),
+            content,
+        )
+        if n != 1:
+            raise ProgramError("{}: invalid TeX summary file".format(tex_fn))
+
+    # Saving the new content
+    with open(tex_fn, "w") as o_file:
+        o_file.write(content)
 
 
 def find_outliers(mds, centers, center_info, ref_pop, options):
@@ -241,7 +363,7 @@ def find_outliers(mds, centers, center_info, ref_pop, options):
                                        len(distances) - 1))
         outliers = np.logical_and(
             (distances > options.multiplier * sigma).flatten(),
-            subset_mds != ref_pop_name[label],
+            subset_mds["pop"] != ref_pop_name[label],
         )
         logger.info("  - {} outliers for the {} cluster".format(
             np.sum(outliers),
@@ -643,6 +765,11 @@ group.add_argument("--format", type=str, metavar="FORMAT", default="png",
                    choices=["png", "ps", "pdf"],
                    help=("The output file format (png, ps, or pdf "
                          "formats are available). [default: %(default)s]"))
+group.add_argument("--overwrite-tex", action="store_true",
+                   help=("Using this option will overwrite any file that "
+                         "match '*.summary.tex' (if any). This file is "
+                         "automatically generated by the pyGenClean main "
+                         "pipeline."))
 # The OUTPUT files
 group = parser.add_argument_group("Output File")
 group.add_argument("--out", type=str, metavar="FILE",

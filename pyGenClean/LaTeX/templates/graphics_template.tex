@@ -1,5 +1,15 @@
 
 \begingroup
-\includegraphics[width=\VAR{ width }]{\VAR{ path }}
+\includegraphics[
+\BLOCK{- if width -}
+width=\VAR{ width }
+\BLOCK{- endif -}
+\BLOCK{- if width and height -}
+,
+\BLOCK{- endif -}
+\BLOCK{- if height -}
+height=\VAR{ height }
+\BLOCK{- endif -}
+]{\VAR{ path }}
 \endgroup
 

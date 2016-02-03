@@ -23,7 +23,6 @@ import shutil
 import logging
 import datetime
 import argparse
-import itertools
 import subprocess
 import ConfigParser
 from glob import glob
@@ -40,6 +39,7 @@ from .FlagMAF import flag_maf_zero
 from .DupSNPs import duplicated_snps
 from .Ethnicity import check_ethnicity
 from .Misc import compare_gold_standard
+from .Contamination import contamination
 from .DupSamples import duplicated_samples
 from .MarkerMissingness import snp_missingness
 from .RelatedSamples import find_related_samples
@@ -58,6 +58,14 @@ from .PlinkUtils import createRowFromPlinkSpacedOutput
 
 # Configuring logging
 logger = logging.getLogger("pyGenClean")
+
+
+# A namedtuple that will represent what each steps returns
+_StepResult = namedtuple(
+    "_StepResult",
+    ["next_file", "next_file_type", "latex_summary", "description",
+     "long_description", "graph_path"],
+)
 
 
 def main():
@@ -180,22 +188,25 @@ def main():
         logger.info("  - Results will be in [ {} ]".format(output_prefix))
 
         # Executing the function
-        r_values = function_to_use(
+        step_results = function_to_use(
             in_prefix=current_in,
             in_type=current_in_type,
             out_prefix=output_prefix,
             base_dir=dirname,
             options=options,
         )
-        current_in, current_in_type, summary, desc, l_desc, graphs = r_values
+
+        # Updating the input files and input file types
+        current_in = step_results.next_file
+        current_in_type = step_results.next_file_type
 
         # Saving what's necessary for the LaTeX report
-        latex_summaries.append(summary)
+        latex_summaries.append(step_results.latex_summary)
         steps.append(script_name)
-        descriptions.append(desc)
-        long_descriptions.append(l_desc)
-        if graphs is not None:
-            graphic_paths.update(graphs)
+        descriptions.append(step_results.description)
+        long_descriptions.append(step_results.long_description)
+        if step_results.graph_path is not None:
+            graphic_paths.update(step_results.graph_path)
 
     # Counting the final number of samples and markers
     logger.info("Counting final number of samples and markers")
@@ -472,8 +483,14 @@ def run_duplicated_samples(in_prefix, in_type, out_prefix, base_dir, options):
         print >>o_file, "---"
 
     # We know this step does produce a new data set (tfile), so we return it
-    return (os.path.join(out_prefix, "dup_samples.final"), "tfile", latex_file,
-            duplicated_samples.desc, duplicated_samples.long_desc, None)
+    return _StepResult(
+        next_file=os.path.join(out_prefix, "dup_samples.final"),
+        next_file_type="tfile",
+        latex_summary=latex_file,
+        description=duplicated_samples.desc,
+        long_description=duplicated_samples.long_desc,
+        graph_path=None,
+    )
 
 
 def run_duplicated_snps(in_prefix, in_type, out_prefix, base_dir, options):
@@ -704,8 +721,14 @@ def run_duplicated_snps(in_prefix, in_type, out_prefix, base_dir, options):
         raise ProgramError(msg)
 
     # We know this step does produce a new data set (tfile), so we return it
-    return (os.path.join(out_prefix, "dup_snps.final"), "tfile", latex_file,
-            duplicated_snps.desc, duplicated_snps.long_desc, None)
+    return _StepResult(
+        next_file=os.path.join(out_prefix, "dup_snps.final"),
+        next_file_type="tfile",
+        latex_summary=latex_file,
+        description=duplicated_snps.desc,
+        long_description=duplicated_snps.long_desc,
+        graph_path=None,
+    )
 
 
 def run_noCall_hetero_snps(in_prefix, in_type, out_prefix, base_dir, options):
@@ -816,9 +839,14 @@ def run_noCall_hetero_snps(in_prefix, in_type, out_prefix, base_dir, options):
 
     # We know this step does produce a new data set (tfile), so we return it
     # along with the report name
-    return (os.path.join(out_prefix, "clean_noCall_hetero"), "tfile",
-            latex_file, noCall_hetero_snps.desc, noCall_hetero_snps.long_desc,
-            None)
+    return _StepResult(
+        next_file=os.path.join(out_prefix, "clean_noCall_hetero"),
+        next_file_type="tfile",
+        latex_summary=latex_file,
+        description=noCall_hetero_snps.desc,
+        long_description=noCall_hetero_snps.long_desc,
+        graph_path=None,
+    )
 
 
 def run_sample_missingness(in_prefix, in_type, out_prefix, base_dir, options):
@@ -936,8 +964,14 @@ def run_sample_missingness(in_prefix, in_type, out_prefix, base_dir, options):
         print >>o_file, "---"
 
     # We know this step does produce a new data set (bfile), so we return it
-    return (os.path.join(out_prefix, "clean_mind"), "bfile", latex_file, desc,
-            long_description, None)
+    return _StepResult(
+        next_file=os.path.join(out_prefix, "clean_mind"),
+        next_file_type="bfile",
+        latex_summary=latex_file,
+        description=desc,
+        long_description=long_description,
+        graph_path=None,
+    )
 
 
 def run_snp_missingness(in_prefix, in_type, out_prefix, base_dir, options):
@@ -1052,8 +1086,184 @@ def run_snp_missingness(in_prefix, in_type, out_prefix, base_dir, options):
         print >>o_file, "---"
 
     # We know this step does produce a new data set (bfile), so we return it
-    return (os.path.join(out_prefix, "clean_geno"), "bfile", latex_file, desc,
-            long_description, None)
+    return _StepResult(
+        next_file=os.path.join(out_prefix, "clean_geno"),
+        next_file_type="bfile",
+        latex_summary=latex_file,
+        description=desc,
+        long_description=long_description,
+        graph_path=None,
+    )
+
+
+def run_contamination(in_prefix, in_type, out_prefix, base_dir, options):
+    """Runs the contamination check for samples.
+
+    :param in_prefix: the prefix of the input files.
+    :param in_type: the type of the input files.
+    :param out_prefix: the output prefix.
+    :param base_dir: the output directory.
+    :param options: the options needed.
+
+    :type in_prefix: str
+    :type in_type: str
+    :type out_prefix: str
+    :type base_dir: str
+    :type options: list
+
+    :returns: a tuple containing the prefix of the output files (the input
+              prefix for the next script) and the type of the output files
+              (``bfile``).
+
+    """
+    # Creating the output directory
+    os.mkdir(out_prefix)
+
+    # We know we need a bfile
+    required_type = "bfile"
+    check_input_files(in_prefix, in_type, required_type)
+
+    # We need to inject the name of the input file and the name of the output
+    # prefix
+    script_prefix = os.path.join(out_prefix, "contamination")
+    options += ["--{}".format(required_type), in_prefix,
+                "--out", script_prefix]
+
+    # We run the script
+    try:
+        contamination.main(options)
+    except contamination.ProgramError as e:
+        msg = "contamination: {}".format(e)
+        raise ProgramError(msg)
+
+    # Counting the number of markers used for contamination
+    nb_autosomal = 0
+    with open(script_prefix + ".to_extract", "r") as i_file:
+        nb_autosomal = len(i_file.read().splitlines())
+
+    # Reading the "contamination" file
+    nb_tested_samples = 0
+    contaminated_table = []
+    nb_contaminated_samples = 0
+    with open(script_prefix + ".bafRegress", "r") as i_file:
+        header = None
+        for i, line in enumerate(i_file):
+            row = line.rstrip("\r\n").split("\t")
+            if i == 0:
+                contaminated_table.append(("sample", "estimate$^1$",
+                                           "stderr$^1$", "tval", "pval",
+                                           "callrate", "Nhom$^2$"))
+                header = {name: i for i, name in enumerate(row)}
+
+                for name in ("sample", "estimate", "stderr", "tval", "pval",
+                             "callrate", "Nhom"):
+                    if name not in header:
+                        raise ProgramError("{}: missing column {}".format(
+                            script_prefix + ".bafRegress",
+                            name,
+                        ))
+                continue
+
+            # One more sample
+            nb_tested_samples += 1
+
+            # Reading the data
+            estimate = float(row[header["estimate"]])
+            if estimate > 0.01:
+                # This might be a contaminated samples
+                contaminated_table.append((
+                    latex_template.sanitize_tex(row[header["sample"]]),
+                    "{:.4f}".format(float(row[header["estimate"]])),
+                    "{:.4f}".format(float(row[header["stderr"]])),
+                    "{:.4f}".format(float(row[header["tval"]])),
+                    latex_template.format_numbers("{:.3e}".format(
+                        float(row[header["pval"]]),
+                    )),
+                    "{:.4f}".format(float(row[header["callrate"]])),
+                    "{:,d}".format(int(row[header["Nhom"]])),
+                ))
+                nb_contaminated_samples += 1
+
+    # We write a LaTeX summary
+    latex_file = os.path.join(script_prefix + ".summary.tex")
+    try:
+        with open(latex_file, "w") as o_file:
+            print >>o_file, latex_template.subsection(
+                contamination.pretty_name,
+            )
+            text = ("A total of {:,d} sample{} {} analyzed for contamination "
+                    r"using \textit{bafRegress}\cite{bafRegress}. The "
+                    "analysis was performed using {:,d} autosomal marker{}. "
+                    "Using a threshold of 0.01, {:,d} sample{} {} estimated "
+                    "to be contaminated.".format(
+                        nb_tested_samples,
+                        "s" if nb_tested_samples > 1 else "",
+                        "were" if nb_tested_samples > 1 else "was",
+                        nb_autosomal,
+                        "s" if nb_autosomal > 1 else "",
+                        nb_contaminated_samples,
+                        "s" if nb_contaminated_samples > 1 else "",
+                        "were" if nb_contaminated_samples > 1 else "was",
+                        bafRegress="{bafRegress}",
+                    ))
+            print >>o_file, latex_template.wrap_lines(text)
+
+            if nb_contaminated_samples > 0:
+                label = re.sub(r"[/\\]", "_", script_prefix)
+                text = (
+                    r"Table~\ref{" + label + "} list all the samples that "
+                    r"were estimated to be contaminated (\textit{i.e.} with "
+                    r"an estimate $>0.01$)."
+                )
+                print >>o_file, latex_template.wrap_lines(text)
+
+                # Getting the template
+                longtable_template = latex_template.jinja2_env.get_template(
+                    "longtable_template.tex",
+                )
+
+                # Rendering
+                print >>o_file, longtable_template.render(
+                    table_caption=r"List of all possible contaminated samples "
+                                  r"(\textit{i.e.} with an estimate computed "
+                                  r"by \textit{bafRegress} $>0.01$).",
+                    table_label=label,
+                    nb_col=len(contaminated_table[1]),
+                    col_alignments="lrrrrrr",
+                    text_size="scriptsize",
+                    header_data=zip(contaminated_table[0],
+                                    [1 for i in contaminated_table[0]]),
+                    tabular_data=sorted(
+                        contaminated_table[1:],
+                        key=lambda item: item[0],
+                    ),
+                    footnotes=[
+                        "$^1$Contamination estimate (with standard error)",
+                        "$^2$Number of homozygous genotypes used in the model",
+                    ],
+                )
+
+    except IOError:
+        msg = "{}: cannot write LaTeX summary".format(latex_file)
+        raise ProgramError(msg)
+
+    # Writing the summary results
+    with open(os.path.join(base_dir, "results_summary.txt"), "a") as o_file:
+        print >>o_file, "# {}".format(script_prefix)
+        print >>o_file, ("Number of possibly contaminated "
+                         "samples\t{:,d}".format(nb_contaminated_samples))
+        print >>o_file, "---"
+
+    # We know this step doesn't produce an new data set, so we return the old
+    # prefix and the old in_type
+    return _StepResult(
+        next_file=in_prefix,
+        next_file_type=required_type,
+        latex_summary=latex_file,
+        description=contamination.desc,
+        long_description=contamination.long_desc,
+        graph_path=None,
+    )
 
 
 def run_sex_check(in_prefix, in_type, out_prefix, base_dir, options):
@@ -1282,19 +1492,16 @@ def run_sex_check(in_prefix, in_type, out_prefix, base_dir, options):
                     col_alignments="llrrlrrrr",
                     text_size="scriptsize",
                     header_data=zip(table[0], [1 for i in table[0]]),
-                    tabular_data=sorted(
-                        sorted(table[1:], key=lambda item: item[1]),
-                        key=lambda item: (item[0], item[1]),
-                    ),
+                    tabular_data=sorted(table[1:], key=lambda item: item[1]),
                 )
+
+            # Getting the templates
+            graphic_template = latex_template.jinja2_env.get_template(
+                "graphics_template.tex",
+            )
 
             # If there is a figure, we add it here
             if os.path.isfile(script_prefix + ".png"):
-                # Getting the templates
-                graphic_template = latex_template.jinja2_env.get_template(
-                    "graphics_template.tex",
-                )
-
                 # Adding the figure
                 figure_label = re.sub(r"[/\\]", "_", script_prefix)
                 text = (
@@ -1419,8 +1626,14 @@ def run_sex_check(in_prefix, in_type, out_prefix, base_dir, options):
 
     # We know this step does not produce a new data set, so we return the
     # original one
-    return (in_prefix, required_type, latex_file, sex_check.desc,
-            sex_check.long_desc, graphics_paths)
+    return _StepResult(
+        next_file=in_prefix,
+        next_file_type=required_type,
+        latex_summary=latex_file,
+        description=sex_check.desc,
+        long_description=sex_check.long_desc,
+        graph_path=graphics_paths,
+    )
 
 
 def run_plate_bias(in_prefix, in_type, out_prefix, base_dir, options):
@@ -1580,8 +1793,14 @@ def run_plate_bias(in_prefix, in_type, out_prefix, base_dir, options):
 
     # We know this step doesn't produce an new data set, so we return the old
     # prefix and the old in_type
-    return (in_prefix, required_type, latex_file, plate_bias.desc,
-            plate_bias.long_desc, None)
+    return _StepResult(
+        next_file=in_prefix,
+        next_file_type=required_type,
+        latex_summary=latex_file,
+        description=plate_bias.desc,
+        long_description=plate_bias.long_desc,
+        graph_path=None,
+    )
 
 
 def run_remove_heterozygous_haploid(in_prefix, in_type, out_prefix, base_dir,
@@ -1669,9 +1888,14 @@ def run_remove_heterozygous_haploid(in_prefix, in_type, out_prefix, base_dir,
         print >>o_file, "---"
 
     # We know this step produces an new data set (bfile), so we return it
-    return (os.path.join(out_prefix, "without_hh_genotypes"), "bfile",
-            latex_file, remove_heterozygous_haploid.desc,
-            remove_heterozygous_haploid.long_desc, None)
+    return _StepResult(
+        next_file=os.path.join(out_prefix, "without_hh_genotypes"),
+        next_file_type="bfile",
+        latex_summary=latex_file,
+        description=remove_heterozygous_haploid.desc,
+        long_description=remove_heterozygous_haploid.long_desc,
+        graph_path=None,
+    )
 
 
 def run_find_related_samples(in_prefix, in_type, out_prefix, base_dir,
@@ -1917,8 +2141,14 @@ def run_find_related_samples(in_prefix, in_type, out_prefix, base_dir,
 
     # We know this step doesn't produce an new data set, so we return the old
     # prefix and the old in_type
-    return (in_prefix, required_type, latex_file, find_related_samples.desc,
-            long_description, graphics_paths)
+    return _StepResult(
+        next_file=in_prefix,
+        next_file_type=required_type,
+        latex_summary=latex_file,
+        description=find_related_samples.desc,
+        long_description=long_description,
+        graph_path=graphics_paths,
+    )
 
 
 def run_check_ethnicity(in_prefix, in_type, out_prefix, base_dir, options):
@@ -2002,6 +2232,7 @@ def run_check_ethnicity(in_prefix, in_type, out_prefix, base_dir, options):
     latex_file = os.path.join(script_prefix + ".summary.tex")
     graphics_paths = set()
     try:
+        # TODO: IF THIS CHANGE, code in find_outliers needs to change to...
         with open(latex_file, "w") as o_file:
             print >>o_file, latex_template.subsection(
                 check_ethnicity.pretty_name,
@@ -2061,7 +2292,7 @@ def run_check_ethnicity(in_prefix, in_type, out_prefix, base_dir, options):
                     "the source dataset with the reference panels. The "
                     "outliers of the {} population are shown in grey, while "
                     "samples of the source dataset that resemble the {} "
-                    "population is shown in orange. A multiplier of {} was "
+                    "population are shown in orange. A multiplier of {} was "
                     "used to find the {:,d} outlier{}.".format(
                         outliers_of,
                         outliers_of,
@@ -2073,7 +2304,7 @@ def run_check_ethnicity(in_prefix, in_type, out_prefix, base_dir, options):
                 print >>o_file, float_template.render(
                     float_type="figure",
                     float_placement="H",
-                    float_caption=caption,
+                    float_caption=latex_template.wrap_lines(caption),
                     float_label=label,
                     float_content=graphic_template.render(
                         width=r"0.8\textwidth",
@@ -2118,7 +2349,7 @@ def run_check_ethnicity(in_prefix, in_type, out_prefix, base_dir, options):
                     float_caption=caption,
                     float_label=label,
                     float_content=graphic_template.render(
-                        width=r"0.8\textwidth",
+                        height=r"0.95\textheight",
                         path=latex_template.sanitize_fig_name(path),
                     ),
                 )
@@ -2141,8 +2372,14 @@ def run_check_ethnicity(in_prefix, in_type, out_prefix, base_dir, options):
 
     # We know this step doesn't produce an new data set, so we return the old
     # prefix and the old in_type
-    return (in_prefix, required_type, latex_file, check_ethnicity.desc,
-            check_ethnicity.long_desc, graphics_paths)
+    return _StepResult(
+        next_file=in_prefix,
+        next_file_type=required_type,
+        latex_summary=latex_file,
+        description=check_ethnicity.desc,
+        long_description=check_ethnicity.long_desc,
+        graph_path=graphics_paths,
+    )
 
 
 def run_flag_maf_zero(in_prefix, in_type, out_prefix, base_dir, options):
@@ -2234,8 +2471,14 @@ def run_flag_maf_zero(in_prefix, in_type, out_prefix, base_dir, options):
 
     # We know this step doesn't produce an new data set, so we return the old
     # prefix and the old in_type
-    return (in_prefix, required_type, latex_file, flag_maf_zero.desc,
-            flag_maf_zero.long_desc, None)
+    return _StepResult(
+        next_file=in_prefix,
+        next_file_type=required_type,
+        latex_summary=latex_file,
+        description=flag_maf_zero.desc,
+        long_description=flag_maf_zero.long_desc,
+        graph_path=None,
+    )
 
 
 def run_flag_hw(in_prefix, in_type, out_prefix, base_dir, options):
@@ -2364,8 +2607,14 @@ def run_flag_hw(in_prefix, in_type, out_prefix, base_dir, options):
 
     # We know this step doesn't produce an new data set, so we return the old
     # prefix and the old in_type
-    return (in_prefix, required_type, latex_file, flag_hw.desc,
-            flag_hw.long_desc, None)
+    return _StepResult(
+        next_file=in_prefix,
+        next_file_type=required_type,
+        latex_summary=latex_file,
+        description=flag_hw.desc,
+        long_description=flag_hw.long_desc,
+        graph_path=None,
+    )
 
 
 def run_compare_gold_standard(in_prefix, in_type, out_prefix, base_dir,
@@ -2433,8 +2682,14 @@ def run_compare_gold_standard(in_prefix, in_type, out_prefix, base_dir,
 
     # We know this step doesn't produce an new data set, so we return the old
     # prefix and the old in_type
-    return (in_prefix, required_type, latex_file, compare_gold_standard.desc,
-            compare_gold_standard.long_desc, None)
+    return _StepResult(
+        next_file=in_prefix,
+        next_file_type=required_type,
+        latex_summary=latex_file,
+        description=compare_gold_standard.desc,
+        long_description=compare_gold_standard.long_desc,
+        graph_path=None,
+    )
 
 
 def run_subset_data(in_prefix, in_type, out_prefix, base_dir, options):
@@ -2499,6 +2754,38 @@ def run_subset_data(in_prefix, in_type, out_prefix, base_dir, options):
     # Checking the input file
     check_input_files(in_prefix, in_type, required_type)
 
+    # What is going to be done
+    is_extract = "--extract" in options
+    is_exclude = "--exclude" in options
+    is_keep = "--keep" in options
+    is_remove = "--remove" in options
+
+    # Checking if we have a reason for markers
+    m_subset_reason = None
+    if "--reason-marker" in options:
+        m_subset_reason = latex_template.sanitize_tex(
+            options.pop(options.index("--reason-marker")+1),
+        )
+        options.pop(options.index("--reason-marker"))
+
+        if (not is_extract) and (not is_exclude):
+            # There was a reason for marker exclusion, but no exclusion will be
+            # performed, so we skip in the report
+            m_subset_reason = None
+
+    # Checking if we have a reason for samples
+    s_subset_reason = None
+    if "--reason-sample" in options:
+        s_subset_reason = latex_template.sanitize_tex(
+            options.pop(options.index("--reason-sample")+1),
+        )
+        options.pop(options.index("--reason-sample"))
+
+        if (not is_keep) and (not is_remove):
+            # There was a reason for sample exclusion, but no exclusion will be
+            # performed, so we skip in the report
+            s_subset_reason = None
+
     # We need to inject the name of the input file and the name of the output
     # prefix
     options += ["--ifile", in_prefix,
@@ -2517,12 +2804,6 @@ def run_subset_data(in_prefix, in_type, out_prefix, base_dir, options):
     except subset_data.ProgramError as e:
         msg = "subset_data: {}".format(e)
         raise ProgramError(msg)
-
-    # What was done
-    is_extract = "--extract" in options
-    is_exclude = "--exclude" in options
-    is_keep = "--keep" in options
-    is_remove = "--remove" in options
 
     # The files before the subset
     samples_before_fn = in_prefix
@@ -2579,11 +2860,12 @@ def run_subset_data(in_prefix, in_type, out_prefix, base_dir, options):
                 createRowFromPlinkSpacedOutput(line)[1] for line in i_file
             }
 
+        reason = os.path.relpath(marker_subset_fn, base_dir)
+        if m_subset_reason is not None:
+            reason = m_subset_reason
         removed_markers = {
-            name: "subset {}".format(os.path.relpath(
-                marker_subset_fn,
-                base_dir,
-            )) for name in markers_before - markers_after
+            name: "subset {}".format(reason)
+            for name in markers_before - markers_after
         }
 
     # Samples were kept
@@ -2617,11 +2899,12 @@ def run_subset_data(in_prefix, in_type, out_prefix, base_dir, options):
                 for line in i_file
             }
 
+        reason = os.path.relpath(sample_subset_fn, base_dir)
+        if s_subset_reason is not None:
+            reason = s_subset_reason
         removed_samples = {
-            "\t".join(name): "subset {}".format(os.path.relpath(
-                sample_subset_fn,
-                base_dir,
-            )) for name in samples_before - samples_after
+            "\t".join(name): "subset {}".format(reason)
+            for name in samples_before - samples_after
         }
 
     # Reading the log file to gather what is left
@@ -2631,7 +2914,8 @@ def run_subset_data(in_prefix, in_type, out_prefix, base_dir, options):
 
     # Checking the number of markers at the beginning
     nb_marker_start = re.search(
-        r"(\d+) markers to be included from \[ {}".format(in_prefix),
+        r"(\d+) (\(of \d+\) )?markers to be included "
+        "from \[ {}".format(in_prefix),
         log_file,
     )
     if nb_marker_start:
@@ -2678,11 +2962,21 @@ def run_subset_data(in_prefix, in_type, out_prefix, base_dir, options):
         raise ProgramError("Something went wrong with Plink's subset (numbers "
                            "are different from data and log file)")
 
+    # Creating the reasons
+    reasons = []
+    if m_subset_reason is not None:
+        reasons.append(m_subset_reason)
+    if s_subset_reason is not None:
+        reasons.append(s_subset_reason)
+
     # We write a LaTeX summary
     latex_file = os.path.join(script_prefix + ".summary.tex")
     try:
         with open(latex_file, "w") as o_file:
-            print >>o_file, latex_template.subsection(subset_data.pretty_name)
+            section_name = subset_data.pretty_name
+            if len(reasons) > 0:
+                section_name += " ({})".format(", ".join(reasons))
+            print >>o_file, latex_template.subsection(section_name)
             text = ""
             if is_extract:
                 text += (
@@ -2758,23 +3052,42 @@ def run_subset_data(in_prefix, in_type, out_prefix, base_dir, options):
     with open(os.path.join(base_dir, "results_summary.txt"), "a") as o_file:
         print >>o_file, "# {}".format(script_prefix)
         if nb_marker_end != nb_marker_start:
+            reason = "_file_path:" + marker_subset_fn
+            if m_subset_reason is not None:
+                reason = m_subset_reason
+
             print >>o_file, "Number of markers excluded"
-            print >>o_file, ("  - {fn}\t{nb:,d}\t-{nb:,d}".format(
-                                fn=marker_subset_fn,
-                                nb=nb_marker_start - nb_marker_end,
-                            ))
+            print >>o_file, ("  - {reason}\t{nb:,d}\t-{nb:,d}".format(
+                reason=reason,
+                nb=nb_marker_start - nb_marker_end,
+            ))
             print >>o_file, "---"
         if nb_sample_end != nb_sample_start:
+            reason = "_file_path:" + sample_subset_fn
+            if s_subset_reason is not None:
+                reason = s_subset_reason
+
             print >>o_file, "Number of samples removed"
-            print >>o_file, ("  - {fn}\t{nb:,d}\t\t-{nb:,d}".format(
-                                fn=sample_subset_fn,
-                                nb=nb_sample_start - nb_sample_end,
-                            ))
+            print >>o_file, ("  - {reason}\t{nb:,d}\t\t-{nb:,d}".format(
+                reason=reason,
+                nb=nb_sample_start - nb_sample_end,
+            ))
             print >>o_file, "---"
 
+    # Modifying the description
+    description = subset_data.desc
+    if len(reasons) > 0:
+        description += " ({})".format(", ".join(reasons))
+
     # We know this step does produce a new data set (bfile), so we return it
-    return (os.path.join(out_prefix, "subset"), required_type, latex_file,
-            subset_data.desc, subset_data.long_desc, None)
+    return _StepResult(
+        next_file=os.path.join(out_prefix, "subset"),
+        next_file_type=required_type,
+        latex_summary=latex_file,
+        description=description,
+        long_description=subset_data.long_desc,
+        graph_path=None,
+    )
 
 
 def run_command(command):
@@ -3037,6 +3350,7 @@ def read_config_file(filename):
     * ``snp_missingness`` (:py:func:`run_snp_missingness`)
     * ``sex_check`` (:py:func:`run_sex_check`)
     * ``plate_bias`` (:py:func:`run_plate_bias`)
+    * ``contamination`` (:py:func:`run_contamination`)
     * ``remove_heterozygous_haploid``
       (:py:func:`run_remove_heterozygous_haploid`)
     * ``find_related_samples`` (:py:func:`run_find_related_samples`)
@@ -3075,12 +3389,17 @@ def read_config_file(filename):
         try:
             script_name = config.get(section, "script")
         except ConfigParser.NoOptionError:
-            msg = ("{}: section {}: no variable called "
-                   "'script'".format(filename, section))
+            msg = ("{}: section {}: no variable called 'script'".format(
+                filename,
+                section,
+            ))
             raise ProgramError(msg)
         if script_name not in available_modules:
-            msg = ("{}: section {}: script {}: invalid script "
-                   "name".format(filename, section, script_name))
+            msg = ("{}: section {}: script {}: invalid script name".format(
+                filename,
+                section,
+                script_name,
+            ))
             raise ProgramError(msg)
 
         # Getting the variables
@@ -3229,6 +3548,7 @@ available_modules = {
     "remove_heterozygous_haploid": remove_heterozygous_haploid,
     "find_related_samples": find_related_samples,
     "check_ethnicity": check_ethnicity,
+    "contamination": contamination,
     "flag_maf_zero": flag_maf_zero,
     "flag_hw": flag_hw,
     "subset": subset_data,
@@ -3245,6 +3565,7 @@ available_functions = {
     "remove_heterozygous_haploid": run_remove_heterozygous_haploid,
     "find_related_samples": run_find_related_samples,
     "check_ethnicity": run_check_ethnicity,
+    "contamination": run_contamination,
     "flag_maf_zero": run_flag_maf_zero,
     "flag_hw": run_flag_hw,
     "subset": run_subset_data,

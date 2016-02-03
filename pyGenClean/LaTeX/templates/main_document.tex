@@ -76,8 +76,11 @@
 % The plain fancy header
 \fancypagestyle{plain}{
     \fancyhf{} % clear all header and footer fields
+    \fancyfoot[RO,LE]{{\footnotesize \texttt{pyGenClean} version \VAR{ pygenclean_version }}}
+    \fancyfoot[LO,RE]{{\footnotesize\ProjectName}}
+    \fancyfoot[CO,CE]{{\footnotesize\thepage}}
     \renewcommand{\headrulewidth}{0pt}
-    \renewcommand{\footrulewidth}{0pt}
+    \renewcommand{\footrulewidth}{1pt}
 }
 
 % Table's numerotations are in Roman numbers
@@ -132,10 +135,10 @@
 
 
 \section{Methods}
-The automated script \texttt{pyGenClean} version
+The automated script \textit{pyGenClean} version
 \VAR{ pygenclean_version }~\cite{pyGenClean} was used to launch the analysis.
-Plink version \VAR{ plink_version }~\cite{plink} was used for the data cleanup
-procedure. The following files were used as input.
+\textit{Plink} version \VAR{ plink_version }~\cite{plink} was used for the data
+cleanup procedure. The following files were used as input.
 
 \begin{itemize}
 \BLOCK{ for fn in initial_files }

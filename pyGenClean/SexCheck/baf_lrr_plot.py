@@ -297,9 +297,10 @@ def plot_baf_lrr(file_names, options):
         if options.format == "X11":
             plt.show()
         else:
-            plt.savefig("{}_{}_lrr_baf.{}".format(options.out, sample,
-                                                  options.format),
-                        dpi=300)
+            plt.savefig(
+                "{}_{}_lrr_baf.{}".format(options.out, sample, options.format),
+                dpi=options.dpi,
+            )
 
         # Closing the figure
         plt.close(fig)
@@ -327,6 +328,11 @@ def checkArgs(args):
     # Checking the raw directory
     if not os.path.isdir(args.raw_dir):
         msg = "{}: no such directory".format(args.raw_dir)
+        raise ProgramError(msg)
+
+    # Checking the DPI value
+    if args.dpi < 10:
+        msg = "{}: DPI too low".format(args.dpi)
         raise ProgramError(msg)
 
     return True
@@ -423,6 +429,9 @@ group.add_argument("--format", type=str, metavar="FORMAT", default="png",
                    choices=["png", "ps", "pdf", "X11"],
                    help=("The output file format (png, ps, pdf, or X11 "
                          "formats are available). [default: %(default)s]"))
+group.add_argument("--dpi", type=int, metavar="DPI", default=300,
+                   help=("The pixel density of the figure(s) (DPI). "
+                         "[default: %(default)d]"))
 # The OUTPUT files
 group = parser.add_argument_group("Output File")
 group.add_argument("--out", type=str, metavar="FILE",

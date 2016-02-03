@@ -73,7 +73,7 @@ def create_report(outdirname, report_filename, **kwargs):
                     desc = desc[:-1]
                 step = step.replace("_", r"\_")
                 to_print = latex.item(desc)
-                to_print += " ({}).".format(latex.texttt(step))
+                to_print += " [{}].".format(latex.texttt(step))
                 if long_desc is not None:
                     to_print += " " + long_desc
                 print >>o_file, latex.wrap_lines(to_print) + "\n"
@@ -119,6 +119,17 @@ def create_report(outdirname, report_filename, **kwargs):
         volume="81",
         number="3",
         pages="559--575",
+    ) + "\n" * 2 + latex.bib_entry(
+        name="bafRegress",
+        authors=r"Goo J, Matthew F, Kurt NH, Jane MR, Kimberly FD, "
+                r"Gon{\c{c}}alo RA, Michael B, Hyun Min K",
+        title="Detecting and estimating contamination of human DNA samples in "
+              "sequencing and array-based genotype data",
+        journal="The American Journal of Human Genetics",
+        year="2012",
+        volume="91",
+        number="5",
+        pages="839--848",
     )
 
     # Getting the template
@@ -250,7 +261,8 @@ def _create_summary_table(fn, template, nb_samples, nb_markers):
             if line.startswith("  -"):
                 tmp = line[4:].rstrip("\r\n").split("\t")
                 if data["header"].endswith("/subset"):
-                    tmp[0] = r"\path{" + tmp[0] + "}"
+                    if tmp[0].startswith("_file_path:"):
+                        tmp[0] = r"\path{" + tmp[0][11:] + "}"
                 elif data["header"].endswith("/flag_hw"):
                     tmp[0] = latex.format_numbers(tmp[0], prefix="p < ")
                 else:
