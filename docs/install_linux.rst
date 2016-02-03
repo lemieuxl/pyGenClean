@@ -131,7 +131,8 @@ To update :py:mod:`pyGenClean`, perform the following command:
 Miniconda
 ---------
 
-Download miniconda (located at `http://conda.pydata.org/miniconda.html
+Download and install miniconda (located at
+`http://conda.pydata.org/miniconda.html
 <http://conda.pydata.org/miniconda.html>`_). By default, miniconda is installed
 in  ``~/miniconda``.
 

@@ -42,7 +42,8 @@ The easiest way to install Python on windows is by using
 Miniconda
 ---------
 
-Download miniconda (located at `http://conda.pydata.org/miniconda.html
+Download and install miniconda (located at
+`http://conda.pydata.org/miniconda.html
 <http://conda.pydata.org/miniconda.html>`_).
 
 To create a new virtual environment, perform the following command:
