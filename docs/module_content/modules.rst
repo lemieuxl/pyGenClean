@@ -11,7 +11,7 @@ Here is the usage of the main pipeline.
                           [--report-number NUMBER]
                           [--report-background BACKGROUND] --conf FILE
 
-    Runs the data clean up (pyGenClean version 1.8.0).
+    Runs the data clean up (pyGenClean version 1.8.2).
 
     optional arguments:
       -h, --help            show this help message and exit
