@@ -956,8 +956,8 @@ def run_sample_missingness(in_prefix, in_type, out_prefix, base_dir, options):
     # Writing the summary results
     with open(os.path.join(base_dir, "results_summary.txt"), "a") as o_file:
         print >>o_file, "# {}".format(script_prefix)
-        print >>o_file, ("Number of samples with missing rate less or equal "
-                         "to {t}\t{nb:,d}\t\t-{nb:,d}".format(
+        print >>o_file, ("Number of samples with missing rate higher "
+                         "than {t}\t{nb:,d}\t\t-{nb:,d}".format(
                             t=mind_value,
                             nb=nb_samples,
                          ))
@@ -1078,8 +1078,8 @@ def run_snp_missingness(in_prefix, in_type, out_prefix, base_dir, options):
     # Writing the summary results
     with open(os.path.join(base_dir, "results_summary.txt"), "a") as o_file:
         print >>o_file, "# {}".format(script_prefix)
-        print >>o_file, ("Number of markers with missing rate less or equal "
-                         "to {t}\t{nb:,d}\t-{nb:,d}".format(
+        print >>o_file, ("Number of markers with missing rate higher "
+                         "than {t}\t{nb:,d}\t-{nb:,d}".format(
                             t=geno_value,
                             nb=nb_markers,
                          ))
