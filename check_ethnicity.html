@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Ethnicity Module &mdash; pyGenClean 1.8.1 documentation</title>
+    <title>Ethnicity Module &mdash; pyGenClean 1.8.2 documentation</title>
     
     <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '1.8.1',
+        VERSION:     '1.8.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="pyGenClean 1.8.1 documentation" href="index.html" />
+    <link rel="top" title="pyGenClean 1.8.2 documentation" href="index.html" />
     <link rel="next" title="Minor Allele Frequency of Zero Module" href="flag_maf_zero.html" />
     <link rel="prev" title="Related Samples Module" href="find_related_samples.html" /> 
   </head>
@@ -49,7 +49,7 @@
         <li class="right" >
           <a href="find_related_samples.html" title="Related Samples Module"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">pyGenClean 1.8.1 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">pyGenClean 1.8.2 documentation</a> &raquo;</li> 
       </ul>
     </div>
 
@@ -108,7 +108,7 @@
   <div class="section" id="ethnicity-module">
 <span id="ethnicity-module-label"></span><h1>Ethnicity Module<a class="headerlink" href="#ethnicity-module" title="Permalink to this headline">¶</a></h1>
 <p>The usage of the standalone module is shown below:</p>
-<div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> pyGenClean_check_ethnicity --help
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> pyGenClean_check_ethnicity --help
 <span class="go">usage: pyGenClean_check_ethnicity [-h] [-v] --bfile FILE [--skip-ref-pops]</span>
 <span class="go">                                  [--ceu-bfile FILE] [--yri-bfile FILE]</span>
 <span class="go">                                  [--jpt-chb-bfile FILE] [--min-nb-snp INT]</span>
@@ -401,7 +401,7 @@ population. Gray represents the outliers of the selected reference population.</
 <p>If you want to manually modify the above figures, have a look at the
 <a class="reference internal" href="module_content/pyGenClean.PlinkUtils.html#module-pyGenClean.PlinkUtils.plot_MDS_standalone" title="pyGenClean.PlinkUtils.plot_MDS_standalone"><code class="xref py py-mod docutils literal"><span class="pre">pyGenClean.PlinkUtils.plot_MDS_standalone</span></code></a> module. Here is the usage
 of this script:</p>
-<div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> pyGenClean_plot_MDS --help
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> pyGenClean_plot_MDS --help
 <span class="go">usage: pyGenClean_plot_MDS [-h] [-v] --file FILE --population-file FORMAT</span>
 <span class="go">                           [--population-order STRING]</span>
 <span class="go">                           [--population-colors STRING]</span>
@@ -477,7 +477,7 @@ of this script:</p>
 <p>And here is an example of usage (for a MDS and a population file named
 <code class="docutils literal"><span class="pre">ethnicity.mds.mds</span></code> and <code class="docutils literal"><span class="pre">ethnicity.population_file_outliers</span></code>, respectively),
 producing the Figure <a class="reference internal" href="#ethnicity-outliers-modified-figure"><span>Ethnic outliers modified</span></a>.</p>
-<div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> pyGenClean_plot_MDS <span class="se">\</span>
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> pyGenClean_plot_MDS <span class="se">\</span>
 <span class="gp">&gt;</span>     --file ethnicity.mds.mds <span class="se">\</span>
 <span class="gp">&gt;</span>     --population-file ethnicity.population_file_outliers <span class="se">\</span>
 <span class="gp">&gt;</span>     --population-order SOURCE,CEU,YRI,JPT-CHB,OUTLIER <span class="se">\</span>
@@ -508,7 +508,7 @@ standalone script was created for this exact purpose, and it will find the
 outliers using the <code class="docutils literal"><span class="pre">MDS</span></code> and population file previously created. Just modify
 the <code class="docutils literal"><span class="pre">--multiplier</span></code> option and restart the analysis (which takes about a couple
 of seconds).</p>
-<div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> pyGenClean_find_outliers --help
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> pyGenClean_find_outliers --help
 <span class="go">usage: pyGenClean_find_outliers [-h] [-v] --mds FILE --population-file FILE</span>
 <span class="go">                                [--outliers-of POP] [--multiplier FLOAT]</span>
 <span class="go">                                [--xaxis COMPONENT] [--yaxis COMPONENT]</span>
@@ -574,7 +574,7 @@ following pages.</p>
         <li class="right" >
           <a href="find_related_samples.html" title="Related Samples Module"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">pyGenClean 1.8.1 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">pyGenClean 1.8.2 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">

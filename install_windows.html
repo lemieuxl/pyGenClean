@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Windows Installation &mdash; pyGenClean 1.8.1 documentation</title>
+    <title>Windows Installation &mdash; pyGenClean 1.8.2 documentation</title>
     
     <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '1.8.1',
+        VERSION:     '1.8.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="pyGenClean 1.8.1 documentation" href="index.html" />
+    <link rel="top" title="pyGenClean 1.8.2 documentation" href="index.html" />
     <link rel="next" title="List of Modules and their Options" href="list_of_options.html" />
     <link rel="prev" title="Linux Installation" href="install_linux.html" /> 
   </head>
@@ -49,7 +49,7 @@
         <li class="right" >
           <a href="install_linux.html" title="Linux Installation"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">pyGenClean 1.8.1 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">pyGenClean 1.8.2 documentation</a> &raquo;</li> 
       </ul>
     </div>
 
@@ -152,28 +152,28 @@ command line.</p>
 <p>Download and install miniconda (located at
 <a class="reference external" href="http://conda.pydata.org/miniconda.html">http://conda.pydata.org/miniconda.html</a>).</p>
 <p>To create a new virtual environment, perform the following command:</p>
-<div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> conda create -n Python-2.7_virtualenv <span class="nv">python</span><span class="o">=</span>2
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> conda create -n Python-2.7_virtualenv <span class="nv">python</span><span class="o">=</span>2
 </pre></div>
 </div>
 <div class="section" id="activating-the-conda-environment">
 <span id="activate-conda-virtual-environment-win-label"></span><h4>Activating the conda environment<a class="headerlink" href="#activating-the-conda-environment" title="Permalink to this headline">¶</a></h4>
 <p>To activate the Python virtual environment (miniconda), perform the following
 command:</p>
-<div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> activate Python-2.7_virtualenv
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> activate Python-2.7_virtualenv
 </pre></div>
 </div>
 </div>
 <div class="section" id="installing-pygenclean">
 <h4>Installing pyGenClean<a class="headerlink" href="#installing-pygenclean" title="Permalink to this headline">¶</a></h4>
 <p>To install <a class="reference internal" href="module_content/pyGenClean.html#module-pyGenClean" title="pyGenClean"><code class="xref py py-mod docutils literal"><span class="pre">pyGenClean</span></code></a>, only perform the following command:</p>
-<div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> conda install pyGenClean -c http://statgen.org/wp-content/uploads/Softwares/pyGenClean
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> conda install pyGenClean -c http://statgen.org/wp-content/uploads/Softwares/pyGenClean
 </pre></div>
 </div>
 </div>
 <div class="section" id="updating-pygenclean">
 <h4>Updating pyGenClean<a class="headerlink" href="#updating-pygenclean" title="Permalink to this headline">¶</a></h4>
 <p>To update <a class="reference internal" href="module_content/pyGenClean.html#module-pyGenClean" title="pyGenClean"><code class="xref py py-mod docutils literal"><span class="pre">pyGenClean</span></code></a>, perform the following command:</p>
-<div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> conda update pyGenClean -c http://statgen.org/wp-content/uploads/Softwares/pyGenClean
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> conda update pyGenClean -c http://statgen.org/wp-content/uploads/Softwares/pyGenClean
 </pre></div>
 </div>
 </div>
@@ -186,7 +186,7 @@ command:</p>
 populations (build 37). Create a directory on your Desktop named
 <code class="docutils literal"><span class="pre">pyGenClean_test</span></code>, and extract the two archive into it. You should have the
 following directory structure:</p>
-<div class="highlight-none"><div class="highlight"><pre>Desktop\
+<div class="highlight-none"><div class="highlight"><pre><span></span>Desktop\
     pyGenClean_test_data\
         1000G_EUR-MXL_Human610-Quad-v1_H.bed
         1000G_EUR-MXL_Human610-Quad-v1_H.bim
@@ -205,7 +205,7 @@ following directory structure:</p>
 </div>
 <p>Open the command prompt and navigate to the newly created directory, and
 created an new text file using <code class="docutils literal"><span class="pre">notepad</span></code>:</p>
-<div class="highlight-none"><div class="highlight"><pre>&gt; cd Desktop\pyGenClean_test
+<div class="highlight-none"><div class="highlight"><pre><span></span>&gt; cd Desktop\pyGenClean_test
 &gt; notepad conf.ini
 </pre></div>
 </div>
@@ -219,7 +219,7 @@ created an new text file using <code class="docutils literal"><span class="pre">
  7
  8
  9
-10</pre></div></td><td class="code"><div class="highlight"><pre><span class="p">[</span><span class="m">1</span><span class="p">]</span>
+10</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="p">[</span><span class="m">1</span><span class="p">]</span>
 <span class="k">script</span> <span class="o">=</span> <span class="k">check_ethnicity</span>
 <span class="k">ceu-bfile</span> <span class="o">=</span> <span class="k">check_ethnicity_HapMap_ref_pops_b</span><span class="m">37</span><span class="n">/hapmap_CEU_r23a_filtered_b37</span>
 <span class="k">yri-bfile</span> <span class="o">=</span> <span class="k">check_ethnicity_HapMap_ref_pops_b</span><span class="m">37</span><span class="n">/hapmap_YRI_r23a_filtered_b37</span>
@@ -232,7 +232,7 @@ created an new text file using <code class="docutils literal"><span class="pre">
 </pre></div>
 </td></tr></table></div>
 <p>Finally, run the following command:</p>
-<div class="highlight-none"><div class="highlight"><pre>&gt; run_pyGenClean ^
+<div class="highlight-none"><div class="highlight"><pre><span></span>&gt; run_pyGenClean ^
       --conf conf.ini ^
       --bfile pyGenClean_test_data\1000G_EUR-MXL_Human610-Quad-v1_H
 </pre></div>
@@ -320,7 +320,7 @@ files:</p>
 <h3>Automatic report<a class="headerlink" href="#automatic-report" title="Permalink to this headline">¶</a></h3>
 <p>If LaTeX is installed, you can perform the following commands to compile the
 automatic report into a PDF file.</p>
-<div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> pdflatex automatic_report.tex
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> pdflatex automatic_report.tex
 <span class="gp">$</span> pdflatex automatic_report.tex
 <span class="gp">$</span> pdflatex automatic_report.tex
 </pre></div>
@@ -352,7 +352,7 @@ will be generated.</p>
         <li class="right" >
           <a href="install_linux.html" title="Linux Installation"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">pyGenClean 1.8.1 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">pyGenClean 1.8.2 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">

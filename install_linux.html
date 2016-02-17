@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Linux Installation &mdash; pyGenClean 1.8.1 documentation</title>
+    <title>Linux Installation &mdash; pyGenClean 1.8.2 documentation</title>
     
     <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '1.8.1',
+        VERSION:     '1.8.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="pyGenClean 1.8.1 documentation" href="index.html" />
+    <link rel="top" title="pyGenClean 1.8.2 documentation" href="index.html" />
     <link rel="next" title="Windows Installation" href="install_windows.html" />
     <link rel="prev" title="Welcome to pyGenClean’s documentation!" href="index.html" /> 
   </head>
@@ -49,7 +49,7 @@
         <li class="right" >
           <a href="index.html" title="Welcome to pyGenClean’s documentation!"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">pyGenClean 1.8.1 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">pyGenClean 1.8.2 documentation</a> &raquo;</li> 
       </ul>
     </div>
 
@@ -165,14 +165,14 @@ If one is already present, you can just proceed to the
 documentation, the latest version was 13.1.2, and the file was named
 <code class="docutils literal"><span class="pre">virtualenv-13.1.2.tar.gz</span></code>. Locate the archive, which is usually in the
 <code class="docutils literal"><span class="pre">~/Downloads</span></code> directory.</p>
-<div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> <span class="nb">cd</span> ~/Downloads
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> <span class="nb">cd</span> ~/Downloads
 <span class="gp">$</span> tar -zxf virtualenv-13.1.2.tar.gz
 <span class="gp">$</span> <span class="nb">cd</span> virtualenv-13.1.2
 </pre></div>
 </div>
 <p>There is no need to install the module. Just create a directory  and create the
 Python virtual environment:</p>
-<div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> mkdir -p ~/softwares/Python-2.7_virtualenv
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> mkdir -p ~/softwares/Python-2.7_virtualenv
 <span class="gp">$</span> python ./virtualenv.py <span class="se">\</span>
 <span class="gp">&gt;</span>     --no-site-packages <span class="se">\</span>
 <span class="gp">&gt;</span>     ~/softwares/Python-2.7_virtualenv
@@ -181,12 +181,12 @@ Python virtual environment:</p>
 <div class="section" id="activating-the-environment">
 <span id="activate-virtual-environment-label"></span><h4>Activating the environment<a class="headerlink" href="#activating-the-environment" title="Permalink to this headline">¶</a></h4>
 <p>To activate the Python virtual environment, perform the following command:</p>
-<div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> <span class="nb">source</span> ~/softwares/Python-2.7_virtualenv/bin/activate
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> <span class="nb">source</span> ~/softwares/Python-2.7_virtualenv/bin/activate
 </pre></div>
 </div>
 <p>Finally, to deactivate the Python virtual environment, either close the
 terminal, or perform the following command:</p>
-<div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> deactivate
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> deactivate
 </pre></div>
 </div>
 <div class="admonition warning">
@@ -196,7 +196,7 @@ virtual environment is activated, or nothing will work as planned...</p>
 <p>The best way to know if the Python virtual environment is activated, is to
 see its name, in parenthesis, before the usual prompt in the terminal. For
 example:</p>
-<div class="last highlight-none"><div class="highlight"><pre>(Python-2.7_virtualenv)[username@localhost ~]$
+<div class="last highlight-none"><div class="highlight"><pre><span></span>(Python-2.7_virtualenv)[username@localhost ~]$
 </pre></div>
 </div>
 </div>
@@ -204,14 +204,14 @@ example:</p>
 <div class="section" id="installing-pygenclean">
 <h4>Installing pyGenClean<a class="headerlink" href="#installing-pygenclean" title="Permalink to this headline">¶</a></h4>
 <p>To install <a class="reference internal" href="module_content/pyGenClean.html#module-pyGenClean" title="pyGenClean"><code class="xref py py-mod docutils literal"><span class="pre">pyGenClean</span></code></a>, only perform the following command:</p>
-<div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> pip install pyGenClean
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> pip install pyGenClean
 </pre></div>
 </div>
 </div>
 <div class="section" id="updating-pygenclean">
 <h4>Updating pyGenClean<a class="headerlink" href="#updating-pygenclean" title="Permalink to this headline">¶</a></h4>
 <p>To update <a class="reference internal" href="module_content/pyGenClean.html#module-pyGenClean" title="pyGenClean"><code class="xref py py-mod docutils literal"><span class="pre">pyGenClean</span></code></a>, perform the following command:</p>
-<div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> pip install -U pyGenClean
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> pip install -U pyGenClean
 </pre></div>
 </div>
 </div>
@@ -222,19 +222,19 @@ example:</p>
 <a class="reference external" href="http://conda.pydata.org/miniconda.html">http://conda.pydata.org/miniconda.html</a>). By default, miniconda is installed
 in  <code class="docutils literal"><span class="pre">~/miniconda</span></code>.</p>
 <p>To create a new virtual environment, perform the following command:</p>
-<div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> conda create -n Python-2.7_virtualenv <span class="nv">python</span><span class="o">=</span>2
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> conda create -n Python-2.7_virtualenv <span class="nv">python</span><span class="o">=</span>2
 </pre></div>
 </div>
 <div class="section" id="activating-the-conda-environment">
 <span id="activate-conda-virtual-environment-label"></span><h4>Activating the conda environment<a class="headerlink" href="#activating-the-conda-environment" title="Permalink to this headline">¶</a></h4>
 <p>To activate the Python virtual environment (miniconda), perform the following
 command:</p>
-<div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> <span class="nb">source</span> ~/miniconda/bin/activate Python-2.7_virtualenv
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> <span class="nb">source</span> ~/miniconda/bin/activate Python-2.7_virtualenv
 </pre></div>
 </div>
 <p>Finally, to deactivate the Python virtual environment, either close the
 terminal, or perform the following command:</p>
-<div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> <span class="nb">source</span> deactivate
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> <span class="nb">source</span> deactivate
 </pre></div>
 </div>
 <div class="admonition warning">
@@ -244,7 +244,7 @@ virtual environment is activated, or nothing will work as planned...</p>
 <p>The best way to know if the Python virtual environment is activated, is to
 see its name, in parenthesis, before the usual prompt in the terminal. For
 example:</p>
-<div class="last highlight-none"><div class="highlight"><pre>(Python-2.7_virtualenv)[username@localhost ~]$
+<div class="last highlight-none"><div class="highlight"><pre><span></span>(Python-2.7_virtualenv)[username@localhost ~]$
 </pre></div>
 </div>
 </div>
@@ -252,14 +252,14 @@ example:</p>
 <div class="section" id="id1">
 <h4>Installing pyGenClean<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h4>
 <p>To install <a class="reference internal" href="module_content/pyGenClean.html#module-pyGenClean" title="pyGenClean"><code class="xref py py-mod docutils literal"><span class="pre">pyGenClean</span></code></a>, only perform the following command:</p>
-<div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> conda install pyGenClean -c http://statgen.org/wp-content/uploads/Softwares/pyGenClean
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> conda install pyGenClean -c http://statgen.org/wp-content/uploads/Softwares/pyGenClean
 </pre></div>
 </div>
 </div>
 <div class="section" id="id2">
 <h4>Updating pyGenClean<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h4>
 <p>To update <a class="reference internal" href="module_content/pyGenClean.html#module-pyGenClean" title="pyGenClean"><code class="xref py py-mod docutils literal"><span class="pre">pyGenClean</span></code></a>, perform the following command:</p>
-<div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> conda update pyGenClean -c http://statgen.org/wp-content/uploads/Softwares/pyGenClean
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> conda update pyGenClean -c http://statgen.org/wp-content/uploads/Softwares/pyGenClean
 </pre></div>
 </div>
 </div>
@@ -280,7 +280,7 @@ the proper environment is not activated, noting will work...</p>
 populations (build 37).</p>
 <p>Locate the downloaded archives (it should be in the <code class="docutils literal"><span class="pre">~/Downloads</span></code> directory).
 Perform the following commands:</p>
-<div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> <span class="nb">cd</span> ~/Downloads
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> <span class="nb">cd</span> ~/Downloads
 <span class="gp">$</span> mkdir -p ~/test_pyGenClean
 <span class="gp">$</span> tar -C ~/test_pyGenClean -jxf check_ethnicity_HapMap_reference_populations_b37.tar.bz2
 <span class="gp">$</span> tar -C ~/test_pyGenClean -jxf pyGenClean_test_data.tar.bz2
@@ -298,7 +298,7 @@ directory, containing the following text:</p>
  7
  8
  9
-10</pre></div></td><td class="code"><div class="highlight"><pre><span class="p">[</span><span class="m">1</span><span class="p">]</span>
+10</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="p">[</span><span class="m">1</span><span class="p">]</span>
 <span class="k">script</span> <span class="o">=</span> <span class="k">check_ethnicity</span>
 <span class="k">ceu-bfile</span> <span class="o">=</span> <span class="k">check_ethnicity_HapMap_ref_pops_b</span><span class="m">37</span><span class="n">/hapmap_CEU_r23a_filtered_b37</span>
 <span class="k">yri-bfile</span> <span class="o">=</span> <span class="k">check_ethnicity_HapMap_ref_pops_b</span><span class="m">37</span><span class="n">/hapmap_YRI_r23a_filtered_b37</span>
@@ -311,7 +311,7 @@ directory, containing the following text:</p>
 </pre></div>
 </td></tr></table></div>
 <p>Run the following command:</p>
-<div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> run_pyGenClean <span class="se">\</span>
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> run_pyGenClean <span class="se">\</span>
 <span class="gp">&gt;</span>     --conf conf.ini <span class="se">\</span>
 <span class="gp">&gt;</span>     --bfile pyGenClean_test_data/1000G_EUR-MXL_Human610-Quad-v1_H
 </pre></div>
@@ -399,7 +399,7 @@ files:</p>
 <h3>Automatic report<a class="headerlink" href="#automatic-report" title="Permalink to this headline">¶</a></h3>
 <p>If LaTeX is installed, you can perform the following commands to compile the
 automatic report into a PDF file.</p>
-<div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> pdflatex automatic_report.tex
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> pdflatex automatic_report.tex
 <span class="gp">$</span> pdflatex automatic_report.tex
 <span class="gp">$</span> pdflatex automatic_report.tex
 </pre></div>
@@ -431,7 +431,7 @@ will be generated.</p>
         <li class="right" >
           <a href="index.html" title="Welcome to pyGenClean’s documentation!"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">pyGenClean 1.8.1 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">pyGenClean 1.8.2 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">

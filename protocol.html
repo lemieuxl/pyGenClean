@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Proposed Protocol &mdash; pyGenClean 1.8.1 documentation</title>
+    <title>Proposed Protocol &mdash; pyGenClean 1.8.2 documentation</title>
     
     <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '1.8.1',
+        VERSION:     '1.8.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="pyGenClean 1.8.1 documentation" href="index.html" />
+    <link rel="top" title="pyGenClean 1.8.2 documentation" href="index.html" />
     <link rel="next" title="Configuration Files" href="configuration_files.html" />
     <link rel="prev" title="List of Modules and their Options" href="list_of_options.html" /> 
   </head>
@@ -49,7 +49,7 @@
         <li class="right" >
           <a href="list_of_options.html" title="List of Modules and their Options"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">pyGenClean 1.8.1 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">pyGenClean 1.8.2 documentation</a> &raquo;</li> 
       </ul>
     </div>
 
@@ -186,7 +186,7 @@ while running the script.</p>
 <li><p class="first">Examine <code class="docutils literal"><span class="pre">dup_samples.diff</span></code> to evaluate if some samples have many
 discordant genotypes (this could indicate a possible samples mix up). To
 identify discordant samples, use the following command line:</p>
-<div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> cut -f4 dup_samples.diff <span class="p">|</span> sort -k1,1 <span class="p">|</span> uniq -c
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> cut -f4 dup_samples.diff <span class="p">|</span> sort -k1,1 <span class="p">|</span> uniq -c
 <span class="gp">$</span> cut -f5 dup_samples.diff <span class="p">|</span> sort -k1,1 <span class="p">|</span> uniq -c
 </pre></div>
 </div>
@@ -227,7 +227,7 @@ removed from the data set with the subset module (see the
 <ol class="arabic">
 <li><p class="first">Extract the family (<code class="docutils literal"><span class="pre">FID</span></code>) and individual (<code class="docutils literal"><span class="pre">IID</span></code>) identification from
 <code class="docutils literal"><span class="pre">dup_samples.not_good_enough</span></code> with the following command line:</p>
-<div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> cut -f3,4 dup_samples.not_good_enough <span class="p">|</span> sed <span class="s2">&quot;1d&quot;</span> <span class="p">|</span> sort -k1,1 <span class="se">\</span>
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> cut -f3,4 dup_samples.not_good_enough <span class="p">|</span> sed <span class="s2">&quot;1d&quot;</span> <span class="p">|</span> sort -k1,1 <span class="se">\</span>
 <span class="gp">&gt;</span>     <span class="p">|</span> uniq &gt; samples_to_remove
 </pre></div>
 </div>
@@ -268,7 +268,7 @@ file <code class="docutils literal"><span class="pre">dup_snps.problems</span></
 </li>
 <li><p class="first">SNPs with concordance rate below the threshold are present in
 <code class="docutils literal"><span class="pre">dup_snps.not_good_enough</span></code>. To have the list of those SNPs:</p>
-<div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> grep -w concordance dup_snps.not_good_enough <span class="p">|</span> cut -f1 <span class="se">\</span>
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> grep -w concordance dup_snps.not_good_enough <span class="p">|</span> cut -f1 <span class="se">\</span>
 <span class="gp">&gt;</span>     &gt; SNP_with_low_concordance_rate
 </pre></div>
 </div>
@@ -291,7 +291,7 @@ concordance rate SNPs (see the <a class="reference internal" href="#second-subse
 <ul>
 <li><p class="first">Extract SNPs with concordance rate below the threshold set by the user with
 the command line</p>
-<div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> grep -w concordance dup_snps.not_good_enough <span class="p">|</span> cut -f1 <span class="se">\</span>
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> grep -w concordance dup_snps.not_good_enough <span class="p">|</span> cut -f1 <span class="se">\</span>
 <span class="gp">&gt;</span>     &gt; SNP_with_low_concordance_rate
 </pre></div>
 </div>
@@ -658,7 +658,7 @@ related samples (the <a class="reference internal" href="#related-samples"><span
 be removed from the data set.</p>
 <ul>
 <li><p class="first">To produces a file containing all the samples to remove from the dataset:</p>
-<div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> cat sexcheck.list_problem_sex_ids ibs.discarded_related_individuals <span class="se">\</span>
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> cat sexcheck.list_problem_sex_ids ibs.discarded_related_individuals <span class="se">\</span>
 <span class="gp">&gt;</span>     ethnicity.outliers &gt; samples_to_remove.txt
 </pre></div>
 </div>
@@ -807,7 +807,7 @@ while running the script.</li>
         <li class="right" >
           <a href="list_of_options.html" title="List of Modules and their Options"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">pyGenClean 1.8.1 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">pyGenClean 1.8.2 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
