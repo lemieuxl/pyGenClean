@@ -39,7 +39,7 @@ operating systems. Its usage is shown below:
                           [--report-number NUMBER]
                           [--report-background BACKGROUND] --conf FILE
 
-    Runs the data clean up (pyGenClean version 1.8.0).
+    Runs the data clean up (pyGenClean version 1.8.2).
 
     optional arguments:
       -h, --help            show this help message and exit
