@@ -1859,6 +1859,8 @@ def run_remove_heterozygous_haploid(in_prefix, in_type, out_prefix, base_dir,
         )
     if nb_hh_missing:
         nb_hh_missing = int(nb_hh_missing.group(1))
+    else:
+        nb_hh_missing = 0
 
     # We write a LaTeX summary
     latex_file = os.path.join(script_prefix + ".summary.tex")
@@ -1871,7 +1873,7 @@ def run_remove_heterozygous_haploid(in_prefix, in_type, out_prefix, base_dir,
                 "After Plink's heterozygous haploid analysis, a total of "
                 "{:,d} genotype{} were set to missing.".format(
                     nb_hh_missing,
-                    "s" if nb_hh_missing - 1 > 1 else "",
+                    "s" if nb_hh_missing > 1 else "",
                 )
             )
             print >>o_file, latex_template.wrap_lines(text)

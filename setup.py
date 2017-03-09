@@ -14,14 +14,12 @@
 
 import os
 import sys
-import glob
-import shutil
 from setuptools import setup
 
 
 MAJOR = 1
 MINOR = 8
-MICRO = 2
+MICRO = 3
 VERSION = "{0}.{1}.{2}".format(MAJOR, MINOR, MICRO)
 
 
@@ -125,6 +123,7 @@ def setup_package():
         keywords="bioinformatics quality control genetic",
     )
     return
+
 
 if __name__ == "__main__":
     setup_package()
