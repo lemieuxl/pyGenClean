@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Ethnicity Module &mdash; pyGenClean 1.8.2 documentation</title>
+    <title>Ethnicity Module &#8212; pyGenClean 1.8.3 documentation</title>
     
     <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,17 +14,19 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '1.8.2',
+        VERSION:     '1.8.3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="pyGenClean 1.8.2 documentation" href="index.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Minor Allele Frequency of Zero Module" href="flag_maf_zero.html" />
     <link rel="prev" title="Related Samples Module" href="find_related_samples.html" /> 
   </head>
@@ -49,7 +51,7 @@
         <li class="right" >
           <a href="find_related_samples.html" title="Related Samples Module"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">pyGenClean 1.8.2 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">pyGenClean 1.8.3 documentation</a> &#187;</li> 
       </ul>
     </div>
 
@@ -80,21 +82,18 @@
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="_sources/check_ethnicity.txt"
+      <li><a href="_sources/check_ethnicity.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -232,7 +231,7 @@ with the source panel.</li>
 panels.</li>
 <li>Flips the markers that need to be in the reference panel.</li>
 <li>Combines the reference and the source panels.</li>
-<li>Computes the IBS values (see Section <a class="reference internal" href="find_related_samples.html#related-samples-label"><span>Related Samples Module</span></a> for more
+<li>Computes the IBS values (see Section <a class="reference internal" href="find_related_samples.html#related-samples-label"><span class="std std-ref">Related Samples Module</span></a> for more
 information).</li>
 <li>Creates the MDS file from the combined data set and the IBS values.</li>
 <li>Creates a population file for plotting purposes.</li>
@@ -323,7 +322,7 @@ merged reference and source panels.</li>
 </li>
 <li>Multiple files are created after this step.<ul>
 <li><code class="docutils literal"><span class="pre">ethnicity.ibs</span></code> : for more information about those files, see Section
-<a class="reference internal" href="find_related_samples.html#related-samples-label"><span>Related Samples Module</span></a>.</li>
+<a class="reference internal" href="find_related_samples.html#related-samples-label"><span class="std std-ref">Related Samples Module</span></a>.</li>
 </ul>
 </li>
 <li>One set of PLINK&#8217;s result files is created:<ul>
@@ -337,18 +336,18 @@ value plotting.</li>
 </li>
 <li>One file is created:<ul>
 <li><code class="docutils literal"><span class="pre">ethnicity.mds.png</span></code>: the plot of the MDS values (see Figure
-<a class="reference internal" href="#mds-plot-figure"><span>Initial MDS plot</span></a>).</li>
+<a class="reference internal" href="#mds-plot-figure"><span class="std std-ref">Initial MDS plot</span></a>).</li>
 </ul>
 </li>
 <li>Four files are created:<ul>
 <li><code class="docutils literal"><span class="pre">ethnicity.before.png</span></code>: the MDS values before outliers detection (see
-Figure <a class="reference internal" href="#mds-plot-before-figure"><span>MDS plot before outlier detection</span></a>).</li>
+Figure <a class="reference internal" href="#mds-plot-before-figure"><span class="std std-ref">MDS plot before outlier detection</span></a>).</li>
 <li><code class="docutils literal"><span class="pre">ethnicity.after.png</span></code>: the MDS values after outliers detection for
 each of the three reference populations. The shaded points are the
-outliers (see Figure <a class="reference internal" href="#mds-plot-after-figure"><span>MDS plot after outlier detection</span></a>).</li>
+outliers (see Figure <a class="reference internal" href="#mds-plot-after-figure"><span class="std std-ref">MDS plot after outlier detection</span></a>).</li>
 <li><code class="docutils literal"><span class="pre">ethnicity.outliers.png</span></code>: the MDS values after outliers detection for
 the selected reference population (default is CEU) (see Figure
-<a class="reference internal" href="#ethnicity-outliers-figure"><span>Ethnic outliers</span></a>).</li>
+<a class="reference internal" href="#ethnicity-outliers-figure"><span class="std std-ref">Ethnic outliers</span></a>).</li>
 <li><code class="docutils literal"><span class="pre">ethnicity.outliers</span></code>: the list of outliers (excluding the reference
 populations).</li>
 <li><code class="docutils literal"><span class="pre">ethnicity.population_file_outliers</span></code>: a population file containing the
@@ -361,14 +360,14 @@ outliers (to help creating a new MDS plot using
 <div class="section" id="the-plots">
 <span id="ethnicity-plots-label"></span><h2>The Plots<a class="headerlink" href="#the-plots" title="Permalink to this headline">¶</a></h2>
 <p>Multiple plots are created by this module. The first one (Figure
-<a class="reference internal" href="#mds-plot-figure"><span>Initial MDS plot</span></a>) is the MDS values right after they are computed by
+<a class="reference internal" href="#mds-plot-figure"><span class="std std-ref">Initial MDS plot</span></a>) is the MDS values right after they are computed by
 Plink. There is one color per reference populations (CEU in blue, YRI in green
 and JPT-CHB in purple). The source population is represented as red crosses.</p>
 <div class="figure align-center" id="id1">
 <span id="mds-plot-figure"></span><a class="reference internal image-reference" href="_images/ethnicity_mds.png"><img alt="Initial MDS plot" src="_images/ethnicity_mds.png" style="width: 50%;" /></a>
 <p class="caption"><span class="caption-text">Initial MDS plot</span></p>
 </div>
-<p>The second one (Figure <a class="reference internal" href="#mds-plot-before-figure"><span>MDS plot before outlier detection</span></a>) is the MDS values before
+<p>The second one (Figure <a class="reference internal" href="#mds-plot-before-figure"><span class="std std-ref">MDS plot before outlier detection</span></a>) is the MDS values before
 outlier detection. Points in red, green and blue represent the individuals part
 of the CEU, YRI and JPT-CHB clusters, respectively. The yellow points represent
 the center of each of the cluster, when only considering the three reference
@@ -377,7 +376,7 @@ panels.</p>
 <span id="mds-plot-before-figure"></span><a class="reference internal image-reference" href="_images/ethnicity_before.png"><img alt="MDS plot before" src="_images/ethnicity_before.png" style="width: 50%;" /></a>
 <p class="caption"><span class="caption-text">MDS plot before outlier detection</span></p>
 </div>
-<p>The third plot (Figure <a class="reference internal" href="#mds-plot-after-figure"><span>MDS plot after outlier detection</span></a>) is the MDS values after
+<p>The third plot (Figure <a class="reference internal" href="#mds-plot-after-figure"><span class="std std-ref">MDS plot after outlier detection</span></a>) is the MDS values after
 outlier detection. Points in red, green and blue represent the individuals part
 of the CEU, YRI and JPT-CHB clusters, respectively. Outliers are found for each
 of the three reference populations and they are represented with the same, but
@@ -387,7 +386,7 @@ cluster, when only considering the three reference panels.</p>
 <span id="mds-plot-after-figure"></span><a class="reference internal image-reference" href="_images/ethnicity_after.png"><img alt="MDS plot after" src="_images/ethnicity_after.png" style="width: 50%;" /></a>
 <p class="caption"><span class="caption-text">MDS plot after outlier detection</span></p>
 </div>
-<p>The last plot (Figure <a class="reference internal" href="#ethnicity-outliers-figure"><span>Ethnic outliers</span></a>) shows the outliers of
+<p>The last plot (Figure <a class="reference internal" href="#ethnicity-outliers-figure"><span class="std std-ref">Ethnic outliers</span></a>) shows the outliers of
 the selected reference population (CEU by default). Red, green and blue
 represent the CEU, YRI and JPT-CHB samples, respectively. Orange represents the
 individuals from the source panel who are part of the selected reference
@@ -476,22 +475,22 @@ of this script:</p>
 </div>
 <p>And here is an example of usage (for a MDS and a population file named
 <code class="docutils literal"><span class="pre">ethnicity.mds.mds</span></code> and <code class="docutils literal"><span class="pre">ethnicity.population_file_outliers</span></code>, respectively),
-producing the Figure <a class="reference internal" href="#ethnicity-outliers-modified-figure"><span>Ethnic outliers modified</span></a>.</p>
+producing the Figure <a class="reference internal" href="#ethnicity-outliers-modified-figure"><span class="std std-ref">Ethnic outliers modified</span></a>.</p>
 <div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> pyGenClean_plot_MDS <span class="se">\</span>
-<span class="gp">&gt;</span>     --file ethnicity.mds.mds <span class="se">\</span>
-<span class="gp">&gt;</span>     --population-file ethnicity.population_file_outliers <span class="se">\</span>
-<span class="gp">&gt;</span>     --population-order SOURCE,CEU,YRI,JPT-CHB,OUTLIER <span class="se">\</span>
-<span class="gp">&gt;</span>     --population-colors e41a1c,377eb8,4daf4a,984ea3,000000 <span class="se">\</span>
-<span class="gp">&gt;</span>     --population-markers .,.,.,.,+ <span class="se">\</span>
-<span class="gp">&gt;</span>     --population-sizes 8,8,8,8,8 <span class="se">\</span>
-<span class="gp">&gt;</span>     --axis-fontsize <span class="m">18</span> <span class="se">\</span>
-<span class="gp">&gt;</span>     --label-fontsize <span class="m">18</span> <span class="se">\</span>
-<span class="gp">&gt;</span>     --title-fontsize <span class="m">24</span> <span class="se">\</span>
-<span class="gp">&gt;</span>     --adjust-bottom 0.11 <span class="se">\</span>
-<span class="gp">&gt;</span>     --adjust-left 0.15 <span class="se">\</span>
-<span class="gp">&gt;</span>     --adjust-right 0.96 <span class="se">\</span>
-<span class="gp">&gt;</span>     --legend-size <span class="m">14</span> <span class="se">\</span>
-<span class="gp">&gt;</span>     --legend-position lower-right
+&gt;     --file ethnicity.mds.mds <span class="se">\</span>
+&gt;     --population-file ethnicity.population_file_outliers <span class="se">\</span>
+&gt;     --population-order SOURCE,CEU,YRI,JPT-CHB,OUTLIER <span class="se">\</span>
+&gt;     --population-colors e41a1c,377eb8,4daf4a,984ea3,000000 <span class="se">\</span>
+&gt;     --population-markers .,.,.,.,+ <span class="se">\</span>
+&gt;     --population-sizes <span class="m">8</span>,8,8,8,8 <span class="se">\</span>
+&gt;     --axis-fontsize <span class="m">18</span> <span class="se">\</span>
+&gt;     --label-fontsize <span class="m">18</span> <span class="se">\</span>
+&gt;     --title-fontsize <span class="m">24</span> <span class="se">\</span>
+&gt;     --adjust-bottom <span class="m">0</span>.11 <span class="se">\</span>
+&gt;     --adjust-left <span class="m">0</span>.15 <span class="se">\</span>
+&gt;     --adjust-right <span class="m">0</span>.96 <span class="se">\</span>
+&gt;     --legend-size <span class="m">14</span> <span class="se">\</span>
+&gt;     --legend-position lower-right
 </pre></div>
 </div>
 <div class="figure align-center" id="id5">
@@ -574,12 +573,12 @@ following pages.</p>
         <li class="right" >
           <a href="find_related_samples.html" title="Related Samples Module"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">pyGenClean 1.8.2 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">pyGenClean 1.8.3 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2012, Louis-Philippe Lemieux Perreault.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.5.
+        &#169; Copyright 2012, Louis-Philippe Lemieux Perreault.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.3.
     </div>
   </body>
 </html>

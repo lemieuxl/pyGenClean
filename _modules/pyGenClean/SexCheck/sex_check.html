@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>pyGenClean.SexCheck.sex_check &mdash; pyGenClean 1.8.2 documentation</title>
+    <title>pyGenClean.SexCheck.sex_check &#8212; pyGenClean 1.8.3 documentation</title>
     
     <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -14,18 +14,19 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '1.8.2',
+        VERSION:     '1.8.3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="pyGenClean 1.8.2 documentation" href="../../../index.html" />
-    <link rel="up" title="pyGenClean" href="../../pyGenClean.html" /> 
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
   </head>
   <body role="document">
 
@@ -42,9 +43,9 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">pyGenClean 1.8.2 documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &raquo;</li>
-          <li class="nav-item nav-item-2"><a href="../../pyGenClean.html" accesskey="U">pyGenClean</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../../index.html">pyGenClean 1.8.3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../../pyGenClean.html" accesskey="U">pyGenClean</a> &#187;</li> 
       </ul>
     </div>
 
@@ -53,14 +54,11 @@
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="../../../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -95,19 +93,19 @@
 <span class="kn">import</span> <span class="nn">argparse</span>
 <span class="kn">import</span> <span class="nn">subprocess</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">.import</span> <span class="nn">gender_plot</span>
-<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">baf_lrr_plot</span>
+<span class="kn">from</span> <span class="nn">.import</span> <span class="n">gender_plot</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">baf_lrr_plot</span>
 
-<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">__version__</span>
-<span class="kn">from</span> <span class="nn">..PlinkUtils</span> <span class="kn">import</span> <span class="n">createRowFromPlinkSpacedOutput</span>
+<span class="kn">from</span> <span class="nn">..</span> <span class="k">import</span> <span class="n">__version__</span>
+<span class="kn">from</span> <span class="nn">..PlinkUtils</span> <span class="k">import</span> <span class="n">createRowFromPlinkSpacedOutput</span>
 
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;sex_check&quot;</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../../module_content/pyGenClean.SexCheck.html#pyGenClean.SexCheck.sex_check.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">argString</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../../module_content/pyGenClean.SexCheck.html#pyGenClean.SexCheck.sex_check.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">argString</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;The main function of the module.</span>
 
 <span class="sd">    :param argString: the options.</span>
@@ -140,11 +138,11 @@
 
     <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Options used:&quot;</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">vars</span><span class="p">(</span><span class="n">args</span><span class="p">)</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;  --{} {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">),</span> <span class="n">value</span><span class="p">))</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;  --</span><span class="si">{}</span><span class="s2"> </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">),</span> <span class="n">value</span><span class="p">))</span>
 
     <span class="c1"># Reads the bim file to see if chromosome 23 is there</span>
-    <span class="n">hasSexProblems</span> <span class="o">=</span> <span class="bp">None</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">checkBim</span><span class="p">(</span><span class="s2">&quot;{}.bim&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">bfile</span><span class="p">),</span> <span class="n">args</span><span class="o">.</span><span class="n">nbChr23</span><span class="p">,</span> <span class="s2">&quot;23&quot;</span><span class="p">):</span>
+    <span class="n">hasSexProblems</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">checkBim</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">.bim&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">bfile</span><span class="p">),</span> <span class="n">args</span><span class="o">.</span><span class="n">nbChr23</span><span class="p">,</span> <span class="s2">&quot;23&quot;</span><span class="p">):</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;There are not enough markers on chromosome 23: &quot;</span>
                     <span class="s2">&quot;STOPPING NOW!&quot;</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
@@ -159,7 +157,7 @@
                                           <span class="n">args</span><span class="o">.</span><span class="n">out</span> <span class="o">+</span> <span class="s2">&quot;.list_problem_sex_ids&quot;</span><span class="p">,</span>
                                           <span class="n">args</span><span class="o">.</span><span class="n">femaleF</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">maleF</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">hasSexProblems</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">hasSexProblems</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">hasSexProblems</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">hasSexProblems</span><span class="p">:</span>
         <span class="c1"># Run plink to recode chr 23 in a ped format</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Creating recoded file for chr23 using Plink&quot;</span><span class="p">)</span>
         <span class="n">createPedChr23UsingPlink</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
@@ -169,7 +167,7 @@
         <span class="n">computeHeteroPercentage</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">out</span> <span class="o">+</span> <span class="s2">&quot;.chr23_recodeA.raw&quot;</span><span class="p">)</span>
 
         <span class="c1"># Run plink to get chr 24</span>
-        <span class="k">if</span> <span class="n">checkBim</span><span class="p">(</span><span class="s2">&quot;{}.bim&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">bfile</span><span class="p">),</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;24&quot;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">checkBim</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">.bim&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">bfile</span><span class="p">),</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;24&quot;</span><span class="p">):</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Creating recoded file for chr24 using Plink&quot;</span><span class="p">)</span>
             <span class="n">createPedChr24UsingPlink</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
 
@@ -192,13 +190,13 @@
             <span class="n">createLrrBafPlot</span><span class="p">(</span>
                 <span class="n">raw_dir</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">lrr_baf_raw_dir</span><span class="p">,</span>
                 <span class="n">problematic_samples</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">out</span> <span class="o">+</span> <span class="s2">&quot;.list_problem_sex_ids&quot;</span><span class="p">,</span>
-                <span class="n">format</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">lrr_baf_format</span><span class="p">,</span>
+                <span class="nb">format</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">lrr_baf_format</span><span class="p">,</span>
                 <span class="n">dpi</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">lrr_baf_dpi</span><span class="p">,</span>
                 <span class="n">out_prefix</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">out</span><span class="p">,</span>
             <span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="createGenderPlot"><a class="viewcode-back" href="../../../module_content/pyGenClean.SexCheck.html#pyGenClean.SexCheck.sex_check.createGenderPlot">[docs]</a><span class="k">def</span> <span class="nf">createGenderPlot</span><span class="p">(</span><span class="n">bfile</span><span class="p">,</span> <span class="n">intensities</span><span class="p">,</span> <span class="n">problematic_samples</span><span class="p">,</span> <span class="n">format</span><span class="p">,</span>
+<div class="viewcode-block" id="createGenderPlot"><a class="viewcode-back" href="../../../module_content/pyGenClean.SexCheck.html#pyGenClean.SexCheck.sex_check.createGenderPlot">[docs]</a><span class="k">def</span> <span class="nf">createGenderPlot</span><span class="p">(</span><span class="n">bfile</span><span class="p">,</span> <span class="n">intensities</span><span class="p">,</span> <span class="n">problematic_samples</span><span class="p">,</span> <span class="nb">format</span><span class="p">,</span>
                      <span class="n">out_prefix</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Creates the gender plot.</span>
 
@@ -220,15 +218,15 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">gender_plot_options</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;--bfile&quot;</span><span class="p">,</span> <span class="n">bfile</span><span class="p">,</span> <span class="s2">&quot;--intensities&quot;</span><span class="p">,</span> <span class="n">intensities</span><span class="p">,</span>
                            <span class="s2">&quot;--sex-problems&quot;</span><span class="p">,</span> <span class="n">problematic_samples</span><span class="p">,</span> <span class="s2">&quot;--format&quot;</span><span class="p">,</span>
-                           <span class="n">format</span><span class="p">,</span> <span class="s2">&quot;--out&quot;</span><span class="p">,</span> <span class="n">out_prefix</span><span class="p">]</span>
+                           <span class="nb">format</span><span class="p">,</span> <span class="s2">&quot;--out&quot;</span><span class="p">,</span> <span class="n">out_prefix</span><span class="p">]</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">gender_plot</span><span class="o">.</span><span class="n">main</span><span class="p">(</span><span class="n">gender_plot_options</span><span class="p">)</span>
     <span class="k">except</span> <span class="n">gender_plot</span><span class="o">.</span><span class="n">ProgramError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;gender plot: {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;gender plot: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
         <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="createLrrBafPlot"><a class="viewcode-back" href="../../../module_content/pyGenClean.SexCheck.html#pyGenClean.SexCheck.sex_check.createLrrBafPlot">[docs]</a><span class="k">def</span> <span class="nf">createLrrBafPlot</span><span class="p">(</span><span class="n">raw_dir</span><span class="p">,</span> <span class="n">problematic_samples</span><span class="p">,</span> <span class="n">format</span><span class="p">,</span> <span class="n">dpi</span><span class="p">,</span> <span class="n">out_prefix</span><span class="p">):</span>
+<div class="viewcode-block" id="createLrrBafPlot"><a class="viewcode-back" href="../../../module_content/pyGenClean.SexCheck.html#pyGenClean.SexCheck.sex_check.createLrrBafPlot">[docs]</a><span class="k">def</span> <span class="nf">createLrrBafPlot</span><span class="p">(</span><span class="n">raw_dir</span><span class="p">,</span> <span class="n">problematic_samples</span><span class="p">,</span> <span class="nb">format</span><span class="p">,</span> <span class="n">dpi</span><span class="p">,</span> <span class="n">out_prefix</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Creates the LRR and BAF plot.</span>
 
 <span class="sd">    :param raw_dir: the directory containing the intensities.</span>
@@ -254,13 +252,13 @@
 
     <span class="c1"># The options</span>
     <span class="n">baf_lrr_plot_options</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;--problematic-samples&quot;</span><span class="p">,</span> <span class="n">problematic_samples</span><span class="p">,</span>
-                            <span class="s2">&quot;--raw-dir&quot;</span><span class="p">,</span> <span class="n">raw_dir</span><span class="p">,</span> <span class="s2">&quot;--format&quot;</span><span class="p">,</span> <span class="n">format</span><span class="p">,</span>
+                            <span class="s2">&quot;--raw-dir&quot;</span><span class="p">,</span> <span class="n">raw_dir</span><span class="p">,</span> <span class="s2">&quot;--format&quot;</span><span class="p">,</span> <span class="nb">format</span><span class="p">,</span>
                             <span class="s2">&quot;--dpi&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">dpi</span><span class="p">),</span>
                             <span class="s2">&quot;--out&quot;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dir_name</span><span class="p">,</span> <span class="s2">&quot;baf_lrr&quot;</span><span class="p">)]</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">baf_lrr_plot</span><span class="o">.</span><span class="n">main</span><span class="p">(</span><span class="n">baf_lrr_plot_options</span><span class="p">)</span>
     <span class="k">except</span> <span class="n">baf_lrr_plot</span><span class="o">.</span><span class="n">ProgramError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;BAF LRR plot: {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;BAF LRR plot: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
         <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span></div>
 
 
@@ -286,8 +284,8 @@
             <span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">chromosome</span><span class="p">:</span>
                 <span class="n">nbMarkers</span> <span class="o">+=</span> <span class="mi">1</span>
     <span class="k">if</span> <span class="n">nbMarkers</span> <span class="o">&lt;</span> <span class="n">minNumber</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">False</span>
-    <span class="k">return</span> <span class="bp">True</span></div>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">return</span> <span class="kc">True</span></div>
 
 
 <div class="viewcode-block" id="computeNoCall"><a class="viewcode-back" href="../../../module_content/pyGenClean.SexCheck.html#pyGenClean.SexCheck.sex_check.computeNoCall">[docs]</a><span class="k">def</span> <span class="nf">computeNoCall</span><span class="p">(</span><span class="n">fileName</span><span class="p">):</span>
@@ -301,13 +299,13 @@
 <span class="sd">    :py:func:`createPedChr24UsingPlink`) and computes the number and percentage</span>
 <span class="sd">    of no calls on the chromosome ``24``.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">outputFile</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">outputFile</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">outputFile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">fileName</span> <span class="o">+</span> <span class="s2">&quot;.noCall&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
         <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">: can&#39;t write file&quot;</span> <span class="o">%</span> <span class="n">fileName</span> <span class="o">+</span> <span class="s2">&quot;.noCall&quot;</span>
         <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-    <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">outputFile</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;PED&quot;</span><span class="p">,</span> <span class="s2">&quot;ID&quot;</span><span class="p">,</span> <span class="s2">&quot;SEX&quot;</span><span class="p">,</span> <span class="s2">&quot;nbGeno&quot;</span><span class="p">,</span> <span class="s2">&quot;nbNoCall&quot;</span><span class="p">])</span>
+    <span class="nb">print</span> <span class="o">&gt;&gt;</span><span class="n">outputFile</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;PED&quot;</span><span class="p">,</span> <span class="s2">&quot;ID&quot;</span><span class="p">,</span> <span class="s2">&quot;SEX&quot;</span><span class="p">,</span> <span class="s2">&quot;nbGeno&quot;</span><span class="p">,</span> <span class="s2">&quot;nbNoCall&quot;</span><span class="p">])</span>
 
     <span class="k">try</span><span class="p">:</span>
         <span class="n">toPrint</span> <span class="o">=</span> <span class="p">[]</span>
@@ -324,10 +322,10 @@
                     <span class="n">toPrint</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">row</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="nb">str</span><span class="p">(</span><span class="n">nbMarker</span><span class="p">),</span>
                                     <span class="nb">str</span><span class="p">(</span><span class="n">nbNA</span><span class="p">)))</span>
 
-        <span class="n">toPrint</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">values</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">values</span><span class="p">[</span><span class="mi">4</span><span class="p">]))</span>
+        <span class="n">toPrint</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">values</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">values</span><span class="p">[</span><span class="mi">4</span><span class="p">]))</span>
 
         <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">toPrint</span><span class="p">:</span>
-            <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">outputFile</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+            <span class="nb">print</span> <span class="o">&gt;&gt;</span><span class="n">outputFile</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
 
     <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
         <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%(fileName)s</span><span class="s2">: no such file&quot;</span> <span class="o">%</span> <span class="nb">locals</span><span class="p">()</span>
@@ -349,13 +347,13 @@
 <span class="sd">    percentage on the chromosome ``23``.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">outputFile</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">outputFile</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">outputFile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">fileName</span> <span class="o">+</span> <span class="s2">&quot;.hetero&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
         <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">: can&#39;t write file&quot;</span> <span class="o">%</span> <span class="n">fileName</span> <span class="o">+</span> <span class="s2">&quot;.hetero&quot;</span>
         <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-    <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">outputFile</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;PED&quot;</span><span class="p">,</span> <span class="s2">&quot;ID&quot;</span><span class="p">,</span> <span class="s2">&quot;SEX&quot;</span><span class="p">,</span> <span class="s2">&quot;HETERO&quot;</span><span class="p">])</span>
+    <span class="nb">print</span> <span class="o">&gt;&gt;</span><span class="n">outputFile</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;PED&quot;</span><span class="p">,</span> <span class="s2">&quot;ID&quot;</span><span class="p">,</span> <span class="s2">&quot;SEX&quot;</span><span class="p">,</span> <span class="s2">&quot;HETERO&quot;</span><span class="p">])</span>
 
     <span class="k">try</span><span class="p">:</span>
         <span class="n">toPrint</span> <span class="o">=</span> <span class="p">[]</span>
@@ -376,7 +374,7 @@
                     <span class="n">toPrint</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">row</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="n">percentHetero</span><span class="p">))</span>
 
         <span class="c1"># Sorting the data</span>
-        <span class="n">toPrint</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">values</span><span class="p">:</span> <span class="n">values</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+        <span class="n">toPrint</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">values</span><span class="p">:</span> <span class="n">values</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
 
         <span class="c1"># Printing the data</span>
         <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">toPrint</span><span class="p">:</span>
@@ -385,7 +383,7 @@
                 <span class="n">value</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;ALL_NA&quot;</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">value</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
-            <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">outputFile</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="nb">print</span> <span class="o">&gt;&gt;</span><span class="n">outputFile</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 
     <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
         <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%(fileName)s</span><span class="s2">: no such file&quot;</span> <span class="o">%</span> <span class="nb">locals</span><span class="p">()</span>
@@ -419,14 +417,14 @@
 <span class="sd">    extract the samples that have sex problems.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">allProblemsFile</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">allProblemsFile</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">allProblemsFile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">allProblemsFileName</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
         <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%(allProblemsFileName)s</span><span class="s2">: can&#39;t write file&quot;</span> <span class="o">%</span> <span class="nb">locals</span><span class="p">()</span>
         <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
-    <span class="n">idsFile</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">idsFile</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">idsFile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">idsFileName</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
@@ -435,7 +433,7 @@
 
     <span class="k">try</span><span class="p">:</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fileName</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">inputFile</span><span class="p">:</span>
-            <span class="n">headerIndex</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="n">headerIndex</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="n">nbProblems</span> <span class="o">=</span> <span class="mi">0</span>
             <span class="n">nbTotalProblems</span> <span class="o">=</span> <span class="mi">0</span>
             <span class="n">nbSexUnknown</span> <span class="o">=</span> <span class="mi">0</span>
@@ -444,10 +442,10 @@
             <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">inputFile</span><span class="p">:</span>
                 <span class="n">row</span> <span class="o">=</span> <span class="n">createRowFromPlinkSpacedOutput</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
 
-                <span class="k">if</span> <span class="n">headerIndex</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">headerIndex</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="c1"># This is the header</span>
                     <span class="n">headerIndex</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">([</span>
-                        <span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">row</span><span class="p">))</span>
+                        <span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">row</span><span class="p">))</span>
                     <span class="p">])</span>
                     <span class="k">for</span> <span class="n">columnName</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;STATUS&quot;</span><span class="p">,</span> <span class="s2">&quot;PEDSEX&quot;</span><span class="p">,</span> <span class="s2">&quot;SNPSEX&quot;</span><span class="p">,</span> <span class="s2">&quot;F&quot;</span><span class="p">,</span>
                                        <span class="s2">&quot;FID&quot;</span><span class="p">,</span> <span class="s2">&quot;IID&quot;</span><span class="p">]:</span>
@@ -455,7 +453,7 @@
                             <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%(fileName)s</span><span class="s2">: no column named &quot;</span> \
                                   <span class="s2">&quot;</span><span class="si">%(columnName)s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">locals</span><span class="p">()</span>
                             <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-                    <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">allProblemsFile</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+                    <span class="nb">print</span> <span class="o">&gt;&gt;</span><span class="n">allProblemsFile</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
                     <span class="k">continue</span>
 
                 <span class="c1"># We have data</span>
@@ -474,7 +472,7 @@
                     <span class="n">snpsex</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">headerIndex</span><span class="p">[</span><span class="s2">&quot;SNPSEX&quot;</span><span class="p">]]</span>
                     <span class="k">if</span> <span class="n">snpsex</span> <span class="o">==</span> <span class="s2">&quot;0&quot;</span><span class="p">:</span>
                         <span class="c1"># The new sex is unknown</span>
-                        <span class="n">f</span> <span class="o">=</span> <span class="bp">None</span>
+                        <span class="n">f</span> <span class="o">=</span> <span class="kc">None</span>
                         <span class="k">try</span><span class="p">:</span>
                             <span class="n">f</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">headerIndex</span><span class="p">[</span><span class="s2">&quot;F&quot;</span><span class="p">]])</span>
                         <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
@@ -493,21 +491,21 @@
                                 <span class="n">nbMaleThreshold</span> <span class="o">+=</span> <span class="mi">1</span>
                                 <span class="k">continue</span>
 
-                    <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">allProblemsFile</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+                    <span class="nb">print</span> <span class="o">&gt;&gt;</span><span class="n">allProblemsFile</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
 
                     <span class="n">famID</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">headerIndex</span><span class="p">[</span><span class="s2">&quot;FID&quot;</span><span class="p">]]</span>
                     <span class="n">indID</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">headerIndex</span><span class="p">[</span><span class="s2">&quot;IID&quot;</span><span class="p">]]</span>
-                    <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">idsFile</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">famID</span><span class="p">,</span> <span class="n">indID</span><span class="p">])</span>
+                    <span class="nb">print</span> <span class="o">&gt;&gt;</span><span class="n">idsFile</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">famID</span><span class="p">,</span> <span class="n">indID</span><span class="p">])</span>
 
                     <span class="n">nbProblems</span> <span class="o">+=</span> <span class="mi">1</span>
 
             <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Sex Check Summary&quot;</span><span class="p">)</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;  - {:,d} total problems&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">nbTotalProblems</span><span class="p">))</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;  - {:,d} pedsex unknown&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">nbSexUnknown</span><span class="p">))</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;  - {:,d} female F &lt; {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">nbFemaleThreshold</span><span class="p">,</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;  - </span><span class="si">{:,d}</span><span class="s2"> total problems&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">nbTotalProblems</span><span class="p">))</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;  - </span><span class="si">{:,d}</span><span class="s2"> pedsex unknown&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">nbSexUnknown</span><span class="p">))</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;  - </span><span class="si">{:,d}</span><span class="s2"> female F &lt; </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">nbFemaleThreshold</span><span class="p">,</span>
                                                          <span class="n">femaleF</span><span class="p">))</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;  - {:,d} male F &gt; {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">nbMaleThreshold</span><span class="p">,</span> <span class="n">maleF</span><span class="p">))</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;  - {:,d} problems kept&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">nbProblems</span><span class="p">))</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;  - </span><span class="si">{:,d}</span><span class="s2"> male F &gt; </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">nbMaleThreshold</span><span class="p">,</span> <span class="n">maleF</span><span class="p">))</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;  - </span><span class="si">{:,d}</span><span class="s2"> problems kept&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">nbProblems</span><span class="p">))</span>
 
     <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
         <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%(fileName)s</span><span class="s2">: no such file&quot;</span>
@@ -520,8 +518,8 @@
         <span class="c1"># There are no sex problems to investigate</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;There are no sex problem to investigate...&quot;</span><span class="p">)</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;  - Nothing else to do...&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">False</span>
-    <span class="k">return</span> <span class="bp">True</span></div>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">return</span> <span class="kc">True</span></div>
 
 
 <div class="viewcode-block" id="runPlinkSexCheck"><a class="viewcode-back" href="../../../module_content/pyGenClean.SexCheck.html#pyGenClean.SexCheck.sex_check.runPlinkSexCheck">[docs]</a><span class="k">def</span> <span class="nf">runPlinkSexCheck</span><span class="p">(</span><span class="n">options</span><span class="p">):</span>
@@ -592,10 +590,10 @@
 <span class="sd">        The variable command should be a list of strings (no other type).</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">output</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">output</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">(</span><span class="n">command</span><span class="p">,</span>
-                                         <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">STDOUT</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+                                         <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">STDOUT</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="k">except</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span><span class="p">:</span>
         <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;plink: couldn&#39;t run plink</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="n">msg</span> <span class="o">+=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">command</span><span class="p">)</span>
@@ -623,23 +621,23 @@
 
     <span class="c1"># Ceck the number of markers on chromosome 23</span>
     <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">nbChr23</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;{}: number of markers on chr 23 must be &quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">: number of markers on chr 23 must be &quot;</span>
                <span class="s2">&quot;positive&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">nbChr23</span><span class="p">))</span>
         <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="c1"># If we ask for LRR and BAF, we need a directory</span>
     <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">lrr_baf</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">lrr_baf_raw_dir</span><span class="p">):</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;{}: no such directory&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">lrr_baf_raw_dir</span><span class="p">)</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">: no such directory&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">lrr_baf_raw_dir</span><span class="p">)</span>
             <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">lrr_baf_dpi</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;{}: DPI too low&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">dpi</span><span class="p">)</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">: DPI too low&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">dpi</span><span class="p">)</span>
             <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="bp">True</span></div>
+    <span class="k">return</span> <span class="kc">True</span></div>
 
 
-<div class="viewcode-block" id="parseArgs"><a class="viewcode-back" href="../../../module_content/pyGenClean.SexCheck.html#pyGenClean.SexCheck.sex_check.parseArgs">[docs]</a><span class="k">def</span> <span class="nf">parseArgs</span><span class="p">(</span><span class="n">argString</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>  <span class="c1"># pragma: no cover</span>
+<div class="viewcode-block" id="parseArgs"><a class="viewcode-back" href="../../../module_content/pyGenClean.SexCheck.html#pyGenClean.SexCheck.sex_check.parseArgs">[docs]</a><span class="k">def</span> <span class="nf">parseArgs</span><span class="p">(</span><span class="n">argString</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>  <span class="c1"># pragma: no cover</span>
     <span class="sd">&quot;&quot;&quot;Parses the command line options and arguments.</span>
 
 <span class="sd">    :param argString: the options.</span>
@@ -678,8 +676,8 @@
 <span class="sd">        argparse). Those need to be done elsewhere (see :py:func:`checkArgs`).</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">args</span> <span class="o">=</span> <span class="bp">None</span>
-    <span class="k">if</span> <span class="n">argString</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">argString</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">(</span><span class="n">argString</span><span class="p">)</span>
@@ -717,11 +715,11 @@
              <span class="s2">&quot;are to be investigated.&quot;</span><span class="p">)</span>
 <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="n">desc</span><span class="p">)</span>
 <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-v&quot;</span><span class="p">,</span> <span class="s2">&quot;--version&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;version&quot;</span><span class="p">,</span>
-                    <span class="n">version</span><span class="o">=</span><span class="s2">&quot;pyGenClean version {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">__version__</span><span class="p">))</span>
+                    <span class="n">version</span><span class="o">=</span><span class="s2">&quot;pyGenClean version </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">__version__</span><span class="p">))</span>
 
 <span class="c1"># The INPUT files</span>
 <span class="n">group</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s2">&quot;Input File&quot;</span><span class="p">)</span>
-<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--bfile&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;FILE&quot;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--bfile&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;FILE&quot;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                    <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;The input file prefix (will find the Plink binary &quot;</span>
                          <span class="s2">&quot;files by appending the prefix to the .bed, .bim, &quot;</span>
                          <span class="s2">&quot;and .fam files, respectively.&quot;</span><span class="p">))</span>
@@ -783,7 +781,7 @@
         <span class="n">parser</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">message</span><span class="p">)</span></div>
 
 
-<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
     <span class="n">safe_main</span><span class="p">()</span>
 </pre></div>
 
@@ -801,14 +799,14 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">pyGenClean 1.8.2 documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &raquo;</li>
-          <li class="nav-item nav-item-2"><a href="../../pyGenClean.html" >pyGenClean</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../../index.html">pyGenClean 1.8.3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../../pyGenClean.html" >pyGenClean</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2012, Louis-Philippe Lemieux Perreault.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.5.
+        &#169; Copyright 2012, Louis-Philippe Lemieux Perreault.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.3.
     </div>
   </body>
 </html>

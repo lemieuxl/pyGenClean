@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>pyGenClean.DupSNPs.duplicated_snps &mdash; pyGenClean 1.8.2 documentation</title>
+    <title>pyGenClean.DupSNPs.duplicated_snps &#8212; pyGenClean 1.8.3 documentation</title>
     
     <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -14,18 +14,19 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '1.8.2',
+        VERSION:     '1.8.3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="pyGenClean 1.8.2 documentation" href="../../../index.html" />
-    <link rel="up" title="pyGenClean" href="../../pyGenClean.html" /> 
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
   </head>
   <body role="document">
 
@@ -42,9 +43,9 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">pyGenClean 1.8.2 documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &raquo;</li>
-          <li class="nav-item nav-item-2"><a href="../../pyGenClean.html" accesskey="U">pyGenClean</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../../index.html">pyGenClean 1.8.3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../../pyGenClean.html" accesskey="U">pyGenClean</a> &#187;</li> 
       </ul>
     </div>
 
@@ -53,14 +54,11 @@
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="../../../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -98,18 +96,18 @@
 <span class="kn">import</span> <span class="nn">StringIO</span>
 <span class="kn">import</span> <span class="nn">argparse</span>
 <span class="kn">import</span> <span class="nn">subprocess</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">defaultdict</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">__version__</span>
-<span class="kn">from</span> <span class="nn">..PlinkUtils</span> <span class="kn">import</span> <span class="n">createRowFromPlinkSpacedOutput</span>
+<span class="kn">from</span> <span class="nn">..</span> <span class="k">import</span> <span class="n">__version__</span>
+<span class="kn">from</span> <span class="nn">..PlinkUtils</span> <span class="k">import</span> <span class="n">createRowFromPlinkSpacedOutput</span>
 
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;duplicated_snps&quot;</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../../module_content/pyGenClean.DupSNPs.html#pyGenClean.DupSNPs.duplicated_snps.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">argString</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../../module_content/pyGenClean.DupSNPs.html#pyGenClean.DupSNPs.duplicated_snps.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">argString</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;The main function of the module..</span>
 
 <span class="sd">    Here are the steps for duplicated samples:</span>
@@ -155,7 +153,7 @@
 
     <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Options used:&quot;</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">vars</span><span class="p">(</span><span class="n">args</span><span class="p">)</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;  --{} {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">),</span> <span class="n">value</span><span class="p">))</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;  --</span><span class="si">{}</span><span class="s2"> </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">),</span> <span class="n">value</span><span class="p">))</span>
 
     <span class="c1"># Reading the map file</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Reading MAP file&quot;</span><span class="p">)</span>
@@ -290,7 +288,7 @@
         <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%(toReadPrefix)s</span><span class="s2">.tped: can&#39;t copy fil to &quot;</span> \
               <span class="s2">&quot;</span><span class="si">%(prefix)s</span><span class="s2">.final.tped&quot;</span> <span class="o">%</span> <span class="nb">locals</span><span class="p">()</span>
         <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-    <span class="n">tpedFile</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">tpedFile</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">tpedFile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">prefix</span> <span class="o">+</span> <span class="s2">&quot;.final.tped&quot;</span><span class="p">,</span> <span class="s2">&quot;a&quot;</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
@@ -298,7 +296,7 @@
         <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tped</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">i</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">snpToRemove</span><span class="p">:</span>
-            <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">tpedFile</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+            <span class="nb">print</span> <span class="o">&gt;&gt;</span><span class="n">tpedFile</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
     <span class="n">tpedFile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
 
@@ -359,23 +357,23 @@
 <span class="sd">    chosen marker.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">zeroedOutFile</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">zeroedOutFile</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">zeroedOutFile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">prefix</span> <span class="o">+</span> <span class="s2">&quot;.zeroed_out&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
         <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;%(prefix).zeroed_out: can&#39;t write file&quot;</span> <span class="o">%</span> <span class="nb">locals</span><span class="p">()</span>
         <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-    <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">zeroedOutFile</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;famID&quot;</span><span class="p">,</span> <span class="s2">&quot;indID&quot;</span><span class="p">,</span> <span class="s2">&quot;snpID&quot;</span><span class="p">])</span>
+    <span class="nb">print</span> <span class="o">&gt;&gt;</span><span class="n">zeroedOutFile</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;famID&quot;</span><span class="p">,</span> <span class="s2">&quot;indID&quot;</span><span class="p">,</span> <span class="s2">&quot;snpID&quot;</span><span class="p">])</span>
 
-    <span class="n">notGoodEnoughFile</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">notGoodEnoughFile</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">notGoodEnoughFile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">prefix</span> <span class="o">+</span> <span class="s2">&quot;.not_good_enough&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
         <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%(prefix)s</span><span class="s2">.not_good_enough: can&#39;t write file&quot;</span> <span class="o">%</span> <span class="nb">locals</span><span class="p">()</span>
         <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-    <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">notGoodEnoughFile</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;reason&quot;</span><span class="p">])</span>
+    <span class="nb">print</span> <span class="o">&gt;&gt;</span><span class="n">notGoodEnoughFile</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;reason&quot;</span><span class="p">])</span>
 
-    <span class="n">removedFile</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">removedFile</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">removedFile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">prefix</span> <span class="o">+</span> <span class="s2">&quot;.removed_duplicates&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
@@ -425,14 +423,14 @@
         <span class="n">chosenOne</span> <span class="o">=</span> <span class="n">chosenSNPs</span><span class="p">[</span><span class="n">snpID</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">chosenOne</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="n">indexesToKeep</span><span class="p">):</span>
             <span class="c1"># The chosen SNP is not a good SNP, so we go to next SNP</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;  - {} chosen but not good enough&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;  - </span><span class="si">{}</span><span class="s2"> chosen but not good enough&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                 <span class="n">snpInfo</span><span class="p">[</span><span class="n">chosenOne</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
             <span class="p">))</span>
             <span class="k">continue</span>
 
         <span class="c1"># Now cycling through the genotypes</span>
         <span class="n">nbSamples</span> <span class="o">=</span> <span class="n">genotypes</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-        <span class="k">for</span> <span class="n">sampleIndex</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">nbSamples</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">sampleIndex</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="n">nbSamples</span><span class="p">):</span>
             <span class="c1"># We need to remove the no call and keep the unique genotypes</span>
             <span class="n">curGenotypes</span> <span class="o">=</span> <span class="n">genotypes</span><span class="p">[</span><span class="n">indexesToKeep</span><span class="p">,</span> <span class="n">sampleIndex</span><span class="p">]</span>
             <span class="n">cleanedCurGenotypes</span> <span class="o">=</span> <span class="n">curGenotypes</span><span class="p">[</span>
@@ -441,7 +439,7 @@
             <span class="n">uniqueCleanedCurGenotypes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">cleanedCurGenotypes</span><span class="p">)</span>
 
             <span class="c1"># Checking the number of unique genotypes</span>
-            <span class="n">toComplete</span> <span class="o">=</span> <span class="bp">False</span>
+            <span class="n">toComplete</span> <span class="o">=</span> <span class="kc">False</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">uniqueCleanedCurGenotypes</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
                 <span class="c1"># There are more than one unique genotype (except 0 0)</span>
                 <span class="c1"># len = 0 means all were 0 0</span>
@@ -449,28 +447,28 @@
                 <span class="c1"># len &gt; 1 means discordance (might need to flip)</span>
                 <span class="c1"># Just need to check the order of the alleles</span>
                 <span class="n">possibleAlleles</span> <span class="o">=</span> <span class="p">[</span>
-                    <span class="nb">set</span><span class="p">()</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">uniqueCleanedCurGenotypes</span><span class="p">))</span>
+                    <span class="nb">set</span><span class="p">()</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">uniqueCleanedCurGenotypes</span><span class="p">))</span>
                 <span class="p">]</span>
                 <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">geno</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">uniqueCleanedCurGenotypes</span><span class="p">):</span>
                     <span class="n">possibleAlleles</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">|=</span> <span class="nb">set</span><span class="p">(</span><span class="n">geno</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">))</span>
-                <span class="n">allEqual</span> <span class="o">=</span> <span class="bp">True</span>
-                <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">possibleAlleles</span><span class="p">)):</span>
-                    <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">possibleAlleles</span><span class="p">)):</span>
+                <span class="n">allEqual</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">possibleAlleles</span><span class="p">)):</span>
+                    <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">possibleAlleles</span><span class="p">)):</span>
                         <span class="k">if</span> <span class="n">possibleAlleles</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">!=</span> <span class="n">possibleAlleles</span><span class="p">[</span><span class="n">l</span><span class="p">]:</span>
-                            <span class="n">allEqual</span> <span class="o">=</span> <span class="bp">False</span>
+                            <span class="n">allEqual</span> <span class="o">=</span> <span class="kc">False</span>
 
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">allEqual</span><span class="p">:</span>
                     <span class="c1"># The genotypes are not all equal, we set the chosen</span>
                     <span class="c1"># genotype to null (0 0)</span>
                     <span class="n">tped</span><span class="p">[</span><span class="n">chosenOne</span><span class="p">,</span> <span class="n">sampleIndex</span><span class="o">+</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;0 0&quot;</span>
-                    <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">zeroedOutFile</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">tfam</span><span class="p">[</span><span class="n">sampleIndex</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                    <span class="nb">print</span> <span class="o">&gt;&gt;</span><span class="n">zeroedOutFile</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">tfam</span><span class="p">[</span><span class="n">sampleIndex</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
                                                       <span class="n">tfam</span><span class="p">[</span><span class="n">sampleIndex</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
                                                       <span class="n">snpInfo</span><span class="p">[</span><span class="n">chosenOne</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])</span>
                 <span class="k">elif</span> <span class="n">genotypes</span><span class="p">[</span><span class="n">chosenOne</span><span class="p">,</span> <span class="n">sampleIndex</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;0 0&quot;</span><span class="p">:</span>
-                    <span class="n">toComplete</span> <span class="o">=</span> <span class="bp">True</span>
+                    <span class="n">toComplete</span> <span class="o">=</span> <span class="kc">True</span>
             <span class="k">elif</span> <span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">uniqueCleanedCurGenotypes</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">and</span>
                     <span class="p">(</span><span class="n">genotypes</span><span class="p">[</span><span class="n">chosenOne</span><span class="p">,</span> <span class="n">sampleIndex</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;0 0&quot;</span><span class="p">)):</span>
-                <span class="n">toComplete</span> <span class="o">=</span> <span class="bp">True</span>
+                <span class="n">toComplete</span> <span class="o">=</span> <span class="kc">True</span>
 
             <span class="k">if</span> <span class="n">toComplete</span><span class="p">:</span>
                 <span class="c1"># We complete the current individual</span>
@@ -480,11 +478,11 @@
         <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">indexes</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">index</span> <span class="o">!=</span> <span class="n">chosenOne</span><span class="p">:</span>
                 <span class="n">getRidOfIndex</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
-                <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">removedFile</span><span class="p">,</span> <span class="n">snpInfo</span><span class="p">[</span><span class="n">index</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+                <span class="nb">print</span> <span class="o">&gt;&gt;</span><span class="n">removedFile</span><span class="p">,</span> <span class="n">snpInfo</span><span class="p">[</span><span class="n">index</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
 
     <span class="c1"># Writing the not good enough file</span>
     <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">notGoodEnoughSnps</span><span class="p">:</span>
-        <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">notGoodEnoughFile</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+        <span class="nb">print</span> <span class="o">&gt;&gt;</span><span class="n">notGoodEnoughFile</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
 
     <span class="c1"># Closing the output files</span>
     <span class="n">zeroedOutFile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
@@ -497,7 +495,7 @@
         <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%(tfamFileName)s</span><span class="s2">: can&#39;t copy file to &quot;</span> \
               <span class="s2">&quot;</span><span class="si">%(prefix)s</span><span class="s2">.chosen_snps.tfam&quot;</span> <span class="o">%</span> <span class="nb">locals</span><span class="p">()</span>
         <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-    <span class="n">chosenFile</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">chosenFile</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">chosenFile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">prefix</span> <span class="o">+</span> <span class="s2">&quot;.chosen_snps.tped&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
@@ -506,7 +504,7 @@
     <span class="k">for</span> <span class="n">chosenOne</span> <span class="ow">in</span> <span class="n">chosenSNPs</span><span class="o">.</span><span class="n">itervalues</span><span class="p">():</span>
         <span class="n">snpID</span> <span class="o">=</span> <span class="p">(</span><span class="n">tped</span><span class="p">[</span><span class="n">chosenOne</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">tped</span><span class="p">[</span><span class="n">chosenOne</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
         <span class="k">if</span> <span class="n">snpID</span> <span class="ow">in</span> <span class="n">snpsToComplete</span><span class="p">:</span>
-            <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">chosenFile</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tped</span><span class="p">[</span><span class="n">chosenOne</span><span class="p">])</span>
+            <span class="nb">print</span> <span class="o">&gt;&gt;</span><span class="n">chosenFile</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tped</span><span class="p">[</span><span class="n">chosenOne</span><span class="p">])</span>
     <span class="n">chosenFile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
     <span class="k">return</span> <span class="n">tped</span><span class="p">,</span> <span class="n">getRidOfIndex</span></div>
@@ -545,14 +543,14 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># The output files</span>
-    <span class="n">chosenFile</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">chosenFile</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">chosenFile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">prefix</span> <span class="o">+</span> <span class="s2">&quot;.chosen_snps.info&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
         <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%(prefix)s</span><span class="s2">.chosen_snps.info: can&#39;t write file&quot;</span> <span class="o">%</span> <span class="nb">locals</span><span class="p">()</span>
         <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
-    <span class="n">excludedFile</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">excludedFile</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">excludedFile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">prefix</span> <span class="o">+</span> <span class="s2">&quot;.not_chosen_snps.info&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
@@ -576,8 +574,8 @@
         <span class="n">concordance</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">true_divide</span><span class="p">(</span><span class="n">trueConcordance</span><span class="p">[</span><span class="n">snp</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
                                      <span class="n">trueConcordance</span><span class="p">[</span><span class="n">snp</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
 
-        <span class="n">currConcordance</span> <span class="o">=</span> <span class="p">[[]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">indexes</span><span class="p">))]</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">indexes</span><span class="p">)):</span>
+        <span class="n">currConcordance</span> <span class="o">=</span> <span class="p">[[]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">indexes</span><span class="p">))]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">indexes</span><span class="p">)):</span>
             <span class="n">indexToKeep</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">indexes</span><span class="p">)))</span> <span class="o">-</span> <span class="nb">set</span><span class="p">([</span><span class="n">i</span><span class="p">]))</span>
             <span class="n">currConcordance</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">concordance</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">indexToKeep</span><span class="p">])</span>
         <span class="n">currConcordance</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">currConcordance</span><span class="p">)</span>
@@ -589,7 +587,7 @@
 
         <span class="c1"># Trying to find the best duplicate to keep</span>
         <span class="n">nbToCheck</span> <span class="o">=</span> <span class="mi">1</span>
-        <span class="n">chosenIndex</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="n">chosenIndex</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">while</span> <span class="n">nbToCheck</span> <span class="o">&lt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">indexes</span><span class="p">):</span>
             <span class="c1"># Getting the `nbToCheck` best value (higher to lower)</span>
             <span class="n">completionValue</span> <span class="o">=</span> <span class="n">currCompletion</span><span class="p">[</span>
@@ -614,17 +612,17 @@
                 <span class="k">break</span>
             <span class="n">nbToCheck</span> <span class="o">+=</span> <span class="mi">1</span>
 
-        <span class="k">if</span> <span class="n">chosenIndex</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">chosenIndex</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Could not choose the best snp ID&quot;</span>
             <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
         <span class="c1"># Printing the chosen SNPs</span>
-        <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">chosenFile</span><span class="p">,</span> <span class="n">tped</span><span class="p">[</span><span class="n">indexes</span><span class="p">[</span><span class="n">chosenIndex</span><span class="p">],</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="nb">print</span> <span class="o">&gt;&gt;</span><span class="n">chosenFile</span><span class="p">,</span> <span class="n">tped</span><span class="p">[</span><span class="n">indexes</span><span class="p">[</span><span class="n">chosenIndex</span><span class="p">],</span> <span class="mi">1</span><span class="p">]</span>
 
         <span class="c1"># Printing the excluded SNPs</span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">indexes</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">i</span> <span class="o">!=</span> <span class="n">chosenIndex</span><span class="p">:</span>
-                <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">excludedFile</span><span class="p">,</span> <span class="n">tped</span><span class="p">[</span><span class="n">index</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+                <span class="nb">print</span> <span class="o">&gt;&gt;</span><span class="n">excludedFile</span><span class="p">,</span> <span class="n">tped</span><span class="p">[</span><span class="n">index</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
 
         <span class="n">chosenIndexes</span><span class="p">[</span><span class="n">snp</span><span class="p">]</span> <span class="o">=</span> <span class="n">indexes</span><span class="p">[</span><span class="n">chosenIndex</span><span class="p">]</span>
 
@@ -659,13 +657,13 @@
     <span class="n">snpFreq</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">outPrefix</span> <span class="o">+</span> <span class="s2">&quot;.duplicated_snps.frq&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">inputFile</span><span class="p">:</span>
-            <span class="n">headerIndex</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="n">headerIndex</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">inputFile</span><span class="p">):</span>
                 <span class="n">row</span> <span class="o">=</span> <span class="n">createRowFromPlinkSpacedOutput</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                     <span class="c1"># This is the header</span>
                     <span class="n">headerIndex</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">([</span>
-                        <span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">j</span><span class="p">)</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">row</span><span class="p">))</span>
+                        <span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">j</span><span class="p">)</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">row</span><span class="p">))</span>
                     <span class="p">])</span>
 
                     <span class="c1"># Checking the column titles</span>
@@ -707,10 +705,10 @@
 <span class="sd">    Tries to run a command using :py:mod:`subprocess`.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">output</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">output</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">(</span><span class="n">command</span><span class="p">,</span>
-                                         <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">STDOUT</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+                                         <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">STDOUT</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="k">except</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span><span class="p">:</span>
         <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;plink: couldn&#39;t run plink</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="n">msg</span> <span class="o">+=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">command</span><span class="p">)</span>
@@ -742,7 +740,7 @@
         <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="c1"># Writing the tped</span>
-    <span class="n">tpedFile</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">tpedFile</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">tpedFile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">outPrefix</span> <span class="o">+</span> <span class="s2">&quot;.duplicated_snps.tped&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
@@ -750,7 +748,7 @@
               <span class="s2">&quot;file&quot;</span> <span class="o">%</span> <span class="nb">locals</span><span class="p">()</span>
         <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">tped</span><span class="p">:</span>
-        <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">tpedFile</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+        <span class="nb">print</span> <span class="o">&gt;&gt;</span><span class="n">tpedFile</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
     <span class="n">tpedFile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
 
@@ -775,7 +773,7 @@
 <span class="sd">    concordance.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">outFile</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">outFile</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">outFile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">prefix</span> <span class="o">+</span> <span class="s2">&quot;.concordance&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
@@ -783,7 +781,7 @@
         <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="k">for</span> <span class="n">snpID</span> <span class="ow">in</span> <span class="n">concordance</span><span class="o">.</span><span class="n">iterkeys</span><span class="p">():</span>
-        <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">outFile</span><span class="p">,</span> <span class="s2">&quot;#&quot;</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+        <span class="nb">print</span> <span class="o">&gt;&gt;</span><span class="n">outFile</span><span class="p">,</span> <span class="s2">&quot;#&quot;</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
             <span class="nb">list</span><span class="p">(</span><span class="n">snpID</span><span class="p">)</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">tped</span><span class="p">[</span><span class="n">snps</span><span class="p">[</span><span class="n">snpID</span><span class="p">],</span> <span class="mi">1</span><span class="p">])</span>
         <span class="p">)</span>
 
@@ -793,7 +791,7 @@
 
         <span class="n">output</span> <span class="o">=</span> <span class="n">StringIO</span><span class="o">.</span><span class="n">StringIO</span><span class="p">()</span>
         <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">true_concordance</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%.8f</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">outFile</span><span class="p">,</span> <span class="n">output</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\r\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span> <span class="o">&gt;&gt;</span><span class="n">outFile</span><span class="p">,</span> <span class="n">output</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\r\n</span><span class="s2">&quot;</span><span class="p">)</span>
 
     <span class="n">outFile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
@@ -856,7 +854,7 @@
 
     <span class="n">completionPercentage</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">true_divide</span><span class="p">(</span><span class="n">completion</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">completion</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
 
-    <span class="n">outSummary</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">outSummary</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">outSummary</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">prefix</span> <span class="o">+</span> <span class="s2">&quot;.summary&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
@@ -864,7 +862,7 @@
         <span class="k">raise</span> <span class="n">ProgramError</span>
 
     <span class="c1"># Prints the header of the summary file</span>
-    <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">outSummary</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;chr&quot;</span><span class="p">,</span> <span class="s2">&quot;pos&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;alleles&quot;</span><span class="p">,</span> <span class="s2">&quot;status&quot;</span><span class="p">,</span>
+    <span class="nb">print</span> <span class="o">&gt;&gt;</span><span class="n">outSummary</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;chr&quot;</span><span class="p">,</span> <span class="s2">&quot;pos&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;alleles&quot;</span><span class="p">,</span> <span class="s2">&quot;status&quot;</span><span class="p">,</span>
                                    <span class="s2">&quot;</span><span class="si">% c</span><span class="s2">ompletion&quot;</span><span class="p">,</span> <span class="s2">&quot;completion&quot;</span><span class="p">,</span>
                                    <span class="s2">&quot;mean concordance&quot;</span><span class="p">])</span>
 
@@ -893,7 +891,7 @@
                 <span class="n">alleles</span> <span class="o">|=</span> <span class="nb">set</span><span class="p">(</span><span class="n">genotype</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">))</span>
             <span class="k">if</span> <span class="s2">&quot;0&quot;</span> <span class="ow">in</span> <span class="n">alleles</span><span class="p">:</span>
                 <span class="n">alleles</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s2">&quot;0&quot;</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">indexes</span><span class="p">)):</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">indexes</span><span class="p">)):</span>
                 <span class="n">otherIndex</span> <span class="o">=</span> <span class="n">indexes</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
                 <span class="n">otherSnpName</span> <span class="o">=</span> <span class="n">tped</span><span class="p">[</span><span class="n">otherIndex</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
 
@@ -965,7 +963,7 @@
             <span class="p">)</span>
             <span class="n">currConcordance</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">currConcordance</span><span class="p">)</span>
             <span class="n">toPrint</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%.8f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">currConcordance</span><span class="p">)</span>
-            <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">outSummary</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">toPrint</span><span class="p">)</span>
+            <span class="nb">print</span> <span class="o">&gt;&gt;</span><span class="n">outSummary</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">toPrint</span><span class="p">)</span>
 
             <span class="c1"># Now updating the problems data structure</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">status</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">otherSnpNameWithProblem</span><span class="p">):</span>
@@ -983,7 +981,7 @@
 
     <span class="n">outSummary</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
-    <span class="n">outProblems</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">outProblems</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">outProblems</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">prefix</span> <span class="o">+</span> <span class="s2">&quot;.problems&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
@@ -991,12 +989,12 @@
         <span class="k">raise</span> <span class="n">ProgramError</span>
 
     <span class="c1"># Printing the header of the problem file...</span>
-    <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">outProblems</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;chr&quot;</span><span class="p">,</span> <span class="s2">&quot;pos&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;status&quot;</span><span class="p">])</span>
+    <span class="nb">print</span> <span class="o">&gt;&gt;</span><span class="n">outProblems</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;chr&quot;</span><span class="p">,</span> <span class="s2">&quot;pos&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;status&quot;</span><span class="p">])</span>
     <span class="k">for</span> <span class="n">snpID</span> <span class="ow">in</span> <span class="n">problems</span><span class="o">.</span><span class="n">iterkeys</span><span class="p">():</span>
         <span class="n">toPrint</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">snpID</span><span class="p">)</span>
         <span class="n">toPrint</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">problems</span><span class="p">[</span><span class="n">snpID</span><span class="p">][</span><span class="s2">&quot;snpNames&quot;</span><span class="p">])))</span>
         <span class="n">toPrint</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">problems</span><span class="p">[</span><span class="n">snpID</span><span class="p">][</span><span class="s2">&quot;problems&quot;</span><span class="p">])))</span>
-        <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">outProblems</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">toPrint</span><span class="p">)</span>
+        <span class="nb">print</span> <span class="o">&gt;&gt;</span><span class="n">outProblems</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">toPrint</span><span class="p">)</span>
 
     <span class="n">outProblems</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
@@ -1046,8 +1044,8 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># The completion data type</span>
-    <span class="n">completion</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">tped</span><span class="p">))],</span>
-                           <span class="p">[</span><span class="mi">0</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">tped</span><span class="p">))]])</span>
+    <span class="n">completion</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">tped</span><span class="p">))],</span>
+                           <span class="p">[</span><span class="mi">0</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">tped</span><span class="p">))]])</span>
 
     <span class="c1"># The concordance data type</span>
     <span class="n">concordance</span> <span class="o">=</span> <span class="p">{}</span>
@@ -1083,13 +1081,13 @@
 <span class="c1">#                                        np.hstack((noSexIndex, menToRemove)),</span>
 <span class="c1">#                                        1)</span>
 
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">nbDup</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="n">nbDup</span><span class="p">):</span>
             <span class="c1"># Compute completion here</span>
             <span class="n">completion</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">indexes</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span>
                 <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">currGenotypes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;0 0&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
             <span class="p">)</span>
             <span class="n">completion</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">indexes</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">currGenotypes</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
-            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">nbDup</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">nbDup</span><span class="p">):</span>
                 <span class="c1"># Compute concordance here</span>
                 <span class="c1"># Removing samples with at least one null genotype</span>
                 <span class="n">nullGenotypeIndexes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
@@ -1249,7 +1247,7 @@
 
     <span class="n">tped</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">updatedSNPs</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
-    <span class="n">outputFile</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">outputFile</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">outputFile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">prefix</span> <span class="o">+</span> <span class="s2">&quot;.unique_snps.tped&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
@@ -1268,7 +1266,7 @@
 
             <span class="k">if</span> <span class="p">(</span><span class="n">chromosome</span><span class="p">,</span> <span class="n">position</span><span class="p">)</span> <span class="ow">in</span> <span class="n">uniqueSNPs</span><span class="p">:</span>
                 <span class="c1"># Printing the new TPED file (unique SNPs only)</span>
-                <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">outputFile</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">snpInfo</span> <span class="o">+</span> <span class="n">genotype</span><span class="p">)</span>
+                <span class="nb">print</span> <span class="o">&gt;&gt;</span><span class="n">outputFile</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">snpInfo</span> <span class="o">+</span> <span class="n">genotype</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="c1"># Saving the TPED file (duplicated samples only)</span>
                 <span class="n">currPos</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">tped</span><span class="p">)</span>
@@ -1334,7 +1332,7 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Saving the TFAM file</span>
-    <span class="n">tfam</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">tfam</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fileName</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">inputFile</span><span class="p">:</span>
         <span class="n">tfam</span> <span class="o">=</span> <span class="p">[</span>
             <span class="nb">tuple</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\r\n</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">inputFile</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
@@ -1360,7 +1358,7 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Saving the MAP file</span>
-    <span class="n">mapF</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">mapF</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fileName</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">inputFile</span><span class="p">:</span>
         <span class="n">mapF</span> <span class="o">=</span> <span class="p">[</span>
             <span class="nb">tuple</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\r\n</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">inputFile</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
@@ -1370,8 +1368,8 @@
     <span class="n">marker_names</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">i</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">mapF</span><span class="p">])</span>
     <span class="n">nb_with_same_name</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">marker_names</span><span class="p">)</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">marker_names</span><span class="p">))</span>
     <span class="k">if</span> <span class="n">nb_with_same_name</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;  - {} markers with same name&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">nb_with_same_name</span><span class="p">))</span>
-        <span class="n">u</span><span class="p">,</span> <span class="n">indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">marker_names</span><span class="p">,</span> <span class="n">return_index</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;  - </span><span class="si">{}</span><span class="s2"> markers with same name&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">nb_with_same_name</span><span class="p">))</span>
+        <span class="n">u</span><span class="p">,</span> <span class="n">indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">marker_names</span><span class="p">,</span> <span class="n">return_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">duplicated_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">setdiff1d</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">marker_names</span><span class="p">)),</span>
                                           <span class="n">indices</span><span class="p">)</span>
         <span class="n">duplicated_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">in1d</span><span class="p">(</span><span class="n">marker_names</span><span class="p">,</span>
@@ -1384,10 +1382,10 @@
             <span class="n">duplicated_marker_names</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">prefix</span> <span class="o">+</span> <span class="s2">&quot;.duplicated_marker_names&quot;</span><span class="p">,</span>
                                            <span class="s2">&quot;w&quot;</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;{}.duplicated_marker_names: can&#39;t write file&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prefix</span><span class="p">)</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">.duplicated_marker_names: can&#39;t write file&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prefix</span><span class="p">)</span>
             <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">marker_names</span><span class="p">)):</span>
-            <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">duplicated_marker_names</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">marker_names</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">+</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">marker_names</span><span class="p">)):</span>
+            <span class="nb">print</span> <span class="o">&gt;&gt;</span><span class="n">duplicated_marker_names</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">marker_names</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">+</span>
                                                        <span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span>
                                                            <span class="n">marker_chr_pos</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
         <span class="n">duplicated_marker_names</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
@@ -1432,14 +1430,14 @@
 
     <span class="c1"># Checking the difference in frequency</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">frequency_difference</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">frequency_difference</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">):</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;{}: maximal frequency difference: value must be between 0 and &quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">: maximal frequency difference: value must be between 0 and &quot;</span>
                <span class="s2">&quot;1 (inclusively)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">())</span>
         <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="bp">True</span></div>
+    <span class="k">return</span> <span class="kc">True</span></div>
 
 
-<div class="viewcode-block" id="parseArgs"><a class="viewcode-back" href="../../../module_content/pyGenClean.DupSNPs.html#pyGenClean.DupSNPs.duplicated_snps.parseArgs">[docs]</a><span class="k">def</span> <span class="nf">parseArgs</span><span class="p">(</span><span class="n">argString</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>  <span class="c1"># pragma: no cover</span>
+<div class="viewcode-block" id="parseArgs"><a class="viewcode-back" href="../../../module_content/pyGenClean.DupSNPs.html#pyGenClean.DupSNPs.duplicated_snps.parseArgs">[docs]</a><span class="k">def</span> <span class="nf">parseArgs</span><span class="p">(</span><span class="n">argString</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>  <span class="c1"># pragma: no cover</span>
     <span class="sd">&quot;&quot;&quot;Parses the command line options and arguments.</span>
 
 <span class="sd">    :param argString: the options.</span>
@@ -1470,8 +1468,8 @@
 <span class="sd">        argparse). Those need to be done elsewhere (see :py:func:`checkArgs`).</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">args</span> <span class="o">=</span> <span class="bp">None</span>
-    <span class="k">if</span> <span class="n">argString</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">argString</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">(</span><span class="n">argString</span><span class="p">)</span>
@@ -1512,11 +1510,11 @@
              <span class="s2">&quot;genotypes.&quot;</span><span class="p">)</span>
 <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="n">desc</span><span class="p">)</span>
 <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-v&quot;</span><span class="p">,</span> <span class="s2">&quot;--version&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;version&quot;</span><span class="p">,</span>
-                    <span class="n">version</span><span class="o">=</span><span class="s2">&quot;pyGenClean version {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">__version__</span><span class="p">))</span>
+                    <span class="n">version</span><span class="o">=</span><span class="s2">&quot;pyGenClean version </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">__version__</span><span class="p">))</span>
 
 <span class="c1"># The INPUT files</span>
 <span class="n">group</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s2">&quot;Input File&quot;</span><span class="p">)</span>
-<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--tfile&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;FILE&quot;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--tfile&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;FILE&quot;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                    <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;The input file prefix (will find the tped and tfam &quot;</span>
                          <span class="s2">&quot;file by appending the prefix to .tped and .tfam, &quot;</span>
                          <span class="s2">&quot;respectively. A .map file is also required.&quot;</span><span class="p">))</span>
@@ -1555,7 +1553,7 @@
         <span class="n">parser</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">message</span><span class="p">)</span></div>
 
 
-<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
     <span class="n">safe_main</span><span class="p">()</span>
 </pre></div>
 
@@ -1573,14 +1571,14 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">pyGenClean 1.8.2 documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &raquo;</li>
-          <li class="nav-item nav-item-2"><a href="../../pyGenClean.html" >pyGenClean</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../../index.html">pyGenClean 1.8.3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../../pyGenClean.html" >pyGenClean</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2012, Louis-Philippe Lemieux Perreault.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.5.
+        &#169; Copyright 2012, Louis-Philippe Lemieux Perreault.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.3.
     </div>
   </body>
 </html>

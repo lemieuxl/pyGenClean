@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Proposed Protocol &mdash; pyGenClean 1.8.2 documentation</title>
+    <title>Proposed Protocol &#8212; pyGenClean 1.8.3 documentation</title>
     
     <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,17 +14,19 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '1.8.2',
+        VERSION:     '1.8.3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="pyGenClean 1.8.2 documentation" href="index.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Configuration Files" href="configuration_files.html" />
     <link rel="prev" title="List of Modules and their Options" href="list_of_options.html" /> 
   </head>
@@ -49,7 +51,7 @@
         <li class="right" >
           <a href="list_of_options.html" title="List of Modules and their Options"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">pyGenClean 1.8.2 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">pyGenClean 1.8.3 documentation</a> &#187;</li> 
       </ul>
     </div>
 
@@ -91,21 +93,18 @@
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="_sources/protocol.txt"
+      <li><a href="_sources/protocol.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -145,13 +144,13 @@ position of 0).</p>
 </li>
 <li><p class="first">Determine if there are duplicated samples. These samples must have exactly
 the same family (<code class="docutils literal"><span class="pre">FID</span></code>) and individual (<code class="docutils literal"><span class="pre">IID</span></code>) identification to be
-treated as duplicated samples by the <a class="reference internal" href="#dup-sample-module-label"><span>Duplicated Samples Module</span></a>. PLINK&#8217;s
+treated as duplicated samples by the <a class="reference internal" href="#dup-sample-module-label"><span class="std std-ref">Duplicated Samples Module</span></a>. PLINK&#8217;s
 option <code class="docutils literal"><span class="pre">--update-ids</span></code> could be used.</p>
 </li>
 <li><p class="first">If input is a transposed pedfile, be sure to use PLINK&#8217;s option <code class="docutils literal"><span class="pre">--tab</span></code> to
 produce the appropriate file format.</p>
 </li>
-<li><p class="first">For the <a class="reference internal" href="#plate-bias"><span>Plate Bias Module</span></a>, a text file explaining the plate distribution of
+<li><p class="first">For the <a class="reference internal" href="#plate-bias"><span class="std std-ref">Plate Bias Module</span></a>, a text file explaining the plate distribution of
 each sample must be provided using the option <code class="docutils literal"><span class="pre">--loop-assoc</span></code> in the
 configuration file. The following columns are required (in order, without a
 header):</p>
@@ -163,10 +162,10 @@ header):</p>
 </ul>
 </div></blockquote>
 </li>
-<li><p class="first">Produce parameter files (see the <a class="reference internal" href="configuration_files.html#config-files"><span>Configuration Files</span></a> for details about
+<li><p class="first">Produce parameter files (see the <a class="reference internal" href="configuration_files.html#config-files"><span class="std std-ref">Configuration Files</span></a> for details about
 parameter file).</p>
 </li>
-<li><p class="first">To launch the analysis consult the section <a class="reference internal" href="how_to_run.html#how-ro-run"><span>How to Run the Pipeline</span></a>.</p>
+<li><p class="first">To launch the analysis consult the section <a class="reference internal" href="how_to_run.html#how-ro-run"><span class="std std-ref">How to Run the Pipeline</span></a>.</p>
 </li>
 </ul>
 </div>
@@ -176,7 +175,7 @@ parameter file).</p>
 <p class="first admonition-title">Note</p>
 <p><strong>Input files:</strong></p>
 <ul class="last simple">
-<li>PLINK transposed pedfiles from the <a class="reference internal" href="#preprocessing-label"><span>Preprocessing Steps</span></a>.</li>
+<li>PLINK transposed pedfiles from the <a class="reference internal" href="#preprocessing-label"><span class="std std-ref">Preprocessing Steps</span></a>.</li>
 </ul>
 </div>
 <ol class="arabic">
@@ -210,15 +209,15 @@ sample module.</p>
 </ol>
 <p>If necessary, samples present in the <code class="docutils literal"><span class="pre">dup_samples.not_good_enough</span></code> file can be
 removed from the data set with the subset module (see the
-<a class="reference internal" href="#first-subset-label"><span>First Subset Module (optional)</span></a>). If not, proceed to the
-<a class="reference internal" href="#dup-marker-module-label"><span>Duplicated Markers Module</span></a>).</p>
+<a class="reference internal" href="#first-subset-label"><span class="std std-ref">First Subset Module (optional)</span></a>). If not, proceed to the
+<a class="reference internal" href="#dup-marker-module-label"><span class="std std-ref">Duplicated Markers Module</span></a>).</p>
 </div>
 <div class="section" id="first-subset-module-optional">
 <span id="first-subset-label"></span><h2>First Subset Module (optional)<a class="headerlink" href="#first-subset-module-optional" title="Permalink to this headline">¶</a></h2>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p><strong>Input files:</strong></p>
-<p>From the <a class="reference internal" href="#dup-sample-module-label"><span>Duplicated Samples Module</span></a>:</p>
+<p>From the <a class="reference internal" href="#dup-sample-module-label"><span class="std std-ref">Duplicated Samples Module</span></a>:</p>
 <ul class="last simple">
 <li><code class="docutils literal"><span class="pre">dup_samples.final.tfam</span></code></li>
 <li><code class="docutils literal"><span class="pre">dup_samples.final.tped</span></code></li>
@@ -228,7 +227,7 @@ removed from the data set with the subset module (see the
 <li><p class="first">Extract the family (<code class="docutils literal"><span class="pre">FID</span></code>) and individual (<code class="docutils literal"><span class="pre">IID</span></code>) identification from
 <code class="docutils literal"><span class="pre">dup_samples.not_good_enough</span></code> with the following command line:</p>
 <div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> cut -f3,4 dup_samples.not_good_enough <span class="p">|</span> sed <span class="s2">&quot;1d&quot;</span> <span class="p">|</span> sort -k1,1 <span class="se">\</span>
-<span class="gp">&gt;</span>     <span class="p">|</span> uniq &gt; samples_to_remove
+&gt;     <span class="p">|</span> uniq &gt; samples_to_remove
 </pre></div>
 </div>
 </li>
@@ -239,12 +238,12 @@ removed from the data set with the subset module (see the
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p><strong>Input files:</strong></p>
-<p>From the <a class="reference internal" href="#dup-sample-module-label"><span>Duplicated Samples Module</span></a>:</p>
+<p>From the <a class="reference internal" href="#dup-sample-module-label"><span class="std std-ref">Duplicated Samples Module</span></a>:</p>
 <ul class="simple">
 <li><code class="docutils literal"><span class="pre">dup_samples.final.tfam</span></code></li>
 <li><code class="docutils literal"><span class="pre">dup_samples.final.tped</span></code></li>
 </ul>
-<p>or from the <a class="reference internal" href="#first-subset-label"><span>First Subset Module (optional)</span></a>:</p>
+<p>or from the <a class="reference internal" href="#first-subset-label"><span class="std std-ref">First Subset Module (optional)</span></a>:</p>
 <ul class="last simple">
 <li><code class="docutils literal"><span class="pre">subset.bed</span></code></li>
 <li><code class="docutils literal"><span class="pre">subset.bim</span></code></li>
@@ -269,20 +268,20 @@ file <code class="docutils literal"><span class="pre">dup_snps.problems</span></
 <li><p class="first">SNPs with concordance rate below the threshold are present in
 <code class="docutils literal"><span class="pre">dup_snps.not_good_enough</span></code>. To have the list of those SNPs:</p>
 <div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> grep -w concordance dup_snps.not_good_enough <span class="p">|</span> cut -f1 <span class="se">\</span>
-<span class="gp">&gt;</span>     &gt; SNP_with_low_concordance_rate
+&gt;     &gt; SNP_with_low_concordance_rate
 </pre></div>
 </div>
 </li>
 </ol>
 <p>If necessary, use the subset option in the configuration file to remove the low
-concordance rate SNPs (see the <a class="reference internal" href="#second-subset-label"><span>Second Subset Module (optional)</span></a>).</p>
+concordance rate SNPs (see the <a class="reference internal" href="#second-subset-label"><span class="std std-ref">Second Subset Module (optional)</span></a>).</p>
 </div>
 <div class="section" id="second-subset-module-optional">
 <span id="second-subset-label"></span><h2>Second Subset Module (optional)<a class="headerlink" href="#second-subset-module-optional" title="Permalink to this headline">¶</a></h2>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p><strong>Input files:</strong></p>
-<p>From the <a class="reference internal" href="#dup-marker-module-label"><span>Duplicated Markers Module</span></a>:</p>
+<p>From the <a class="reference internal" href="#dup-marker-module-label"><span class="std std-ref">Duplicated Markers Module</span></a>:</p>
 <ul class="last simple">
 <li><code class="docutils literal"><span class="pre">dup_snps.final.tfam</span></code></li>
 <li><code class="docutils literal"><span class="pre">dup_snps.final.tped</span></code></li>
@@ -292,7 +291,7 @@ concordance rate SNPs (see the <a class="reference internal" href="#second-subse
 <li><p class="first">Extract SNPs with concordance rate below the threshold set by the user with
 the command line</p>
 <div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> grep -w concordance dup_snps.not_good_enough <span class="p">|</span> cut -f1 <span class="se">\</span>
-<span class="gp">&gt;</span>     &gt; SNP_with_low_concordance_rate
+&gt;     &gt; SNP_with_low_concordance_rate
 </pre></div>
 </div>
 </li>
@@ -303,12 +302,12 @@ the command line</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p><strong>Input files:</strong></p>
-<p>From the <a class="reference internal" href="#dup-marker-module-label"><span>Duplicated Markers Module</span></a>:</p>
+<p>From the <a class="reference internal" href="#dup-marker-module-label"><span class="std std-ref">Duplicated Markers Module</span></a>:</p>
 <ul class="simple">
 <li><code class="docutils literal"><span class="pre">dup_snps.final.tfam</span></code></li>
 <li><code class="docutils literal"><span class="pre">dup_snps.final.tped</span></code></li>
 </ul>
-<p>or from the <a class="reference internal" href="#second-subset-label"><span>Second Subset Module (optional)</span></a>:</p>
+<p>or from the <a class="reference internal" href="#second-subset-label"><span class="std std-ref">Second Subset Module (optional)</span></a>:</p>
 <ul class="last simple">
 <li><code class="docutils literal"><span class="pre">subset.bed</span></code></li>
 <li><code class="docutils literal"><span class="pre">subset.bim</span></code></li>
@@ -329,7 +328,7 @@ while running the script.</li>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p><strong>Input files:</strong></p>
-<p>From the <a class="reference internal" href="#clean-nocall-hetero"><span>Clean No Call and Only Heterozygous Markers Module</span></a>:</p>
+<p>From the <a class="reference internal" href="#clean-nocall-hetero"><span class="std std-ref">Clean No Call and Only Heterozygous Markers Module</span></a>:</p>
 <ul class="last simple">
 <li><code class="docutils literal"><span class="pre">clean_noCall_hetero.tfam</span></code></li>
 <li><code class="docutils literal"><span class="pre">clean_noCall_hetero.tped</span></code></li>
@@ -348,7 +347,7 @@ are listed in <code class="docutils literal"><span class="pre">clean_mind.irem</
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p><strong>Input files:</strong></p>
-<p>From the <a class="reference internal" href="#sample-missingness-01"><span>Sample Missingness Module  (mind 0.1)</span></a>:</p>
+<p>From the <a class="reference internal" href="#sample-missingness-01"><span class="std std-ref">Sample Missingness Module  (mind 0.1)</span></a>:</p>
 <ul class="last simple">
 <li><code class="docutils literal"><span class="pre">clean_mind.bed</span></code></li>
 <li><code class="docutils literal"><span class="pre">clean_mind.bim</span></code></li>
@@ -368,7 +367,7 @@ listed in <code class="docutils literal"><span class="pre">clean_geno.removed_sn
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p><strong>Input files:</strong></p>
-<p>From the <a class="reference internal" href="#marker-missingness"><span>Marker Missingness Module</span></a>:</p>
+<p>From the <a class="reference internal" href="#marker-missingness"><span class="std std-ref">Marker Missingness Module</span></a>:</p>
 <ul class="last simple">
 <li><code class="docutils literal"><span class="pre">clean_geno.bed</span></code></li>
 <li><code class="docutils literal"><span class="pre">clean_geno.bim</span></code></li>
@@ -388,7 +387,7 @@ are listed in <code class="docutils literal"><span class="pre">clean_mind.irem</
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p><strong>Input files:</strong></p>
-<p>From <a class="reference internal" href="#sample-missingness-02"><span>Sample Missingness Module (mind 0.02)</span></a>:</p>
+<p>From <a class="reference internal" href="#sample-missingness-02"><span class="std std-ref">Sample Missingness Module (mind 0.02)</span></a>:</p>
 <ul class="last simple">
 <li><code class="docutils literal"><span class="pre">clean_mind.bed</span></code></li>
 <li><code class="docutils literal"><span class="pre">clean_mind.bim</span></code></li>
@@ -421,7 +420,7 @@ has been created:</p>
 while running the script.</li>
 <li>Examine <code class="docutils literal"><span class="pre">sexcheck.png</span></code> to detect any individuals in the XXY or X0 regions,
 females in the male cluster and males in the female cluster (see the
-<a class="reference internal" href="sex_check.html#gender-plot-figure"><span>Gender plot</span></a> figure). Confirm if possible the gender problems
+<a class="reference internal" href="sex_check.html#gender-plot-figure"><span class="std std-ref">Gender plot</span></a> figure). Confirm if possible the gender problems
 identified with the previous sex check problem step.</li>
 </ol>
 <p>If intensities file for each sample are available and the BAF and LRR plot has
@@ -435,10 +434,10 @@ between -0.5 and -1. Females have three lines on BAF graphics: one at 1
 (homozygous for the B allele), one at 0.5 (heterozygous AB) and one at 0
 (homozygous for the A allele). Males have two lines: one at 1 (homozygous
 for the B allele) and one a at 0 (homozygous for the A allele). For more
-details, see the <a class="reference internal" href="sex_check.html#sex-check-plots"><span>The Plots</span></a> section of the
-<a class="reference internal" href="sex_check.html#sexcheck-module-lable"><span>Sex Check Module</span></a>.</li>
+details, see the <a class="reference internal" href="sex_check.html#sex-check-plots"><span class="std std-ref">The Plots</span></a> section of the
+<a class="reference internal" href="sex_check.html#sexcheck-module-lable"><span class="std std-ref">Sex Check Module</span></a>.</li>
 </ol>
-<p>Keep individuals identified with gender problem until the <a class="reference internal" href="#related-samples"><span>Related Samples Module</span></a>
+<p>Keep individuals identified with gender problem until the <a class="reference internal" href="#related-samples"><span class="std std-ref">Related Samples Module</span></a>
 (mix up of samples could be resolved at this step).</p>
 </div>
 <div class="section" id="plate-bias-module">
@@ -446,7 +445,7 @@ details, see the <a class="reference internal" href="sex_check.html#sex-check-pl
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p><strong>Input files:</strong></p>
-<p>From the <a class="reference internal" href="#sample-missingness-02"><span>Sample Missingness Module (mind 0.02)</span></a>:</p>
+<p>From the <a class="reference internal" href="#sample-missingness-02"><span class="std std-ref">Sample Missingness Module (mind 0.02)</span></a>:</p>
 <ul class="simple">
 <li><code class="docutils literal"><span class="pre">clean_mind.bed</span></code></li>
 <li><code class="docutils literal"><span class="pre">clean_mind.bim</span></code></li>
@@ -461,7 +460,7 @@ details, see the <a class="reference internal" href="sex_check.html#sex-check-pl
 </div>
 <ol class="arabic simple">
 <li>Verify if there is a <code class="docutils literal"><span class="pre">nof</span></code> file produce by PLINK when the input files for
-this step were produced (from the <a class="reference internal" href="#sample-missingness-02"><span>Sample Missingness Module (mind 0.02)</span></a>). The <code class="docutils literal"><span class="pre">nof</span></code>
+this step were produced (from the <a class="reference internal" href="#sample-missingness-02"><span class="std std-ref">Sample Missingness Module (mind 0.02)</span></a>). The <code class="docutils literal"><span class="pre">nof</span></code>
 contains SNPs with no founder genotypes observed. If so, remove the SNPs
 present in the <code class="docutils literal"><span class="pre">nof</span></code> file using the subset tool before launching the plate
 bias analysis.  Those SNPs, if they are not removed will produced an error
@@ -486,7 +485,7 @@ assign to the same plates and none of them on other plates.</li>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p><strong>Input files:</strong></p>
-<p>From the <a class="reference internal" href="#sample-missingness-02"><span>Sample Missingness Module (mind 0.02)</span></a>:</p>
+<p>From the <a class="reference internal" href="#sample-missingness-02"><span class="std std-ref">Sample Missingness Module (mind 0.02)</span></a>:</p>
 <ul class="last simple">
 <li><code class="docutils literal"><span class="pre">clean_mind.bed</span></code></li>
 <li><code class="docutils literal"><span class="pre">clean_mind.bim</span></code></li>
@@ -501,11 +500,11 @@ used for the IBS analysis</li>
 <li>Examine <code class="docutils literal"><span class="pre">ibs.related_individuals_z1.png</span></code> and
 <code class="docutils literal"><span class="pre">ibs.related_individuals_z2.png</span></code> to detect if there are samples in the
 parent-child, duplicated samples, first degree relative and second degree
-relative areas. (see <a class="reference internal" href="find_related_samples.html#ibs-z1-figure"><span>Z1 in function of IBS2 ratio</span></a> and <a class="reference internal" href="find_related_samples.html#ibs-z2-figure"><span>Z2 in function of IBS2 ratio</span></a> plots).</li>
+relative areas. (see <a class="reference internal" href="find_related_samples.html#ibs-z1-figure"><span class="std std-ref">Z1 in function of IBS2 ratio</span></a> and <a class="reference internal" href="find_related_samples.html#ibs-z2-figure"><span class="std std-ref">Z2 in function of IBS2 ratio</span></a> plots).</li>
 <li>File <code class="docutils literal"><span class="pre">ibs.related_individuals</span></code> lists pairs of related individuals. Index
 column indicates group of related samples. Status column indicated the
 probable link between pair of individuals based on <span class="math">\(Z_0\)</span>, <span class="math">\(Z_1\)</span>
-and <span class="math">\(Z_2\)</span> values (see the <a class="reference internal" href="#z-values-table"><span>IBD allele sharing values</span></a> table [for which
+and <span class="math">\(Z_2\)</span> values (see the <a class="reference internal" href="#z-values-table"><span class="std std-ref">IBD allele sharing values</span></a> table [for which
 <span class="math">\(Z\)</span> values are approximation] or
 <code class="xref py py-func docutils literal"><span class="pre">RelatedSamples.find_related_samples.extractRelatedIndividuals()</span></code>
 function for thresholds).</li>
@@ -607,7 +606,7 @@ cousins</td>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p><strong>Input files:</strong></p>
-<p>From the <a class="reference internal" href="#sample-missingness-02"><span>Sample Missingness Module (mind 0.02)</span></a>:</p>
+<p>From the <a class="reference internal" href="#sample-missingness-02"><span class="std std-ref">Sample Missingness Module (mind 0.02)</span></a>:</p>
 <ul class="last simple">
 <li><code class="docutils literal"><span class="pre">clean_mind.bed</span></code></li>
 <li><code class="docutils literal"><span class="pre">clean_mind.bim</span></code></li>
@@ -626,13 +625,13 @@ calculated by PLINK.</p>
 </li>
 <li><p class="first">Examine <code class="docutils literal"><span class="pre">ethnicity.mds.png</span></code>, <code class="docutils literal"><span class="pre">ethnicity.before.png</span></code>,
 <code class="docutils literal"><span class="pre">ethnicity.after.png</span></code> and <code class="docutils literal"><span class="pre">ethnicity.outliers.png</span></code> to detect samples
-outside the selected cluster (see <a class="reference internal" href="check_ethnicity.html#ethnicity-plots-label"><span>The Plots</span></a> generated
-from the <a class="reference internal" href="check_ethnicity.html#ethnicity-module-label"><span>Ethnicity Module</span></a> for more information).</p>
+outside the selected cluster (see <a class="reference internal" href="check_ethnicity.html#ethnicity-plots-label"><span class="std std-ref">The Plots</span></a> generated
+from the <a class="reference internal" href="check_ethnicity.html#ethnicity-module-label"><span class="std std-ref">Ethnicity Module</span></a> for more information).</p>
 <p>If there are too many outliers still present in the data set (<em>i.e.</em> radius
 is too large), analysis can be redone using the <code class="docutils literal"><span class="pre">pyGenClean_find_outliers</span></code>
 standalone script, using a different value for <code class="docutils literal"><span class="pre">--multiplier</span></code>. For more
-information, refer to the <a class="reference internal" href="check_ethnicity.html#ethnicity-find-outliers"><span>Finding Outliers</span></a> section of the
-<a class="reference internal" href="check_ethnicity.html#ethnicity-module-label"><span>Ethnicity Module</span></a>.</p>
+information, refer to the <a class="reference internal" href="check_ethnicity.html#ethnicity-find-outliers"><span class="std std-ref">Finding Outliers</span></a> section of the
+<a class="reference internal" href="check_ethnicity.html#ethnicity-module-label"><span class="std std-ref">Ethnicity Module</span></a>.</p>
 </li>
 <li><p class="first">Samples outside the selected cluster are listed in <code class="docutils literal"><span class="pre">ethnicity.outliers</span></code>.
 If necessary those samples could be removed at a later stage with the subset
@@ -645,7 +644,7 @@ option.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p><strong>Input files:</strong></p>
-<p>From the <a class="reference internal" href="#sample-missingness-02"><span>Sample Missingness Module (mind 0.02)</span></a>:</p>
+<p>From the <a class="reference internal" href="#sample-missingness-02"><span class="std std-ref">Sample Missingness Module (mind 0.02)</span></a>:</p>
 <ul class="last simple">
 <li><code class="docutils literal"><span class="pre">clean_mind.bed</span></code></li>
 <li><code class="docutils literal"><span class="pre">clean_mind.bim</span></code></li>
@@ -653,13 +652,13 @@ option.</p>
 </ul>
 </div>
 <p>Use the subset module to remove samples with gender problems (the
-<a class="reference internal" href="#sex-check"><span>Sex Check Module</span></a>), outliers from the ethnicity cluster (the <a class="reference internal" href="#ethnicity"><span>Ethnicity Module</span></a>),
-related samples (the <a class="reference internal" href="#related-samples"><span>Related Samples Module</span></a>) and any other samples that need to
+<a class="reference internal" href="#sex-check"><span class="std std-ref">Sex Check Module</span></a>), outliers from the ethnicity cluster (the <a class="reference internal" href="#ethnicity"><span class="std std-ref">Ethnicity Module</span></a>),
+related samples (the <a class="reference internal" href="#related-samples"><span class="std std-ref">Related Samples Module</span></a>) and any other samples that need to
 be removed from the data set.</p>
 <ul>
 <li><p class="first">To produces a file containing all the samples to remove from the dataset:</p>
 <div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> cat sexcheck.list_problem_sex_ids ibs.discarded_related_individuals <span class="se">\</span>
-<span class="gp">&gt;</span>     ethnicity.outliers &gt; samples_to_remove.txt
+&gt;     ethnicity.outliers &gt; samples_to_remove.txt
 </pre></div>
 </div>
 <p>One sample may be removed for more than one reason, hence be present more
@@ -673,7 +672,7 @@ issue for this step.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p><strong>Input files:</strong></p>
-<p>From the <a class="reference internal" href="#third-subset-label"><span>Third Subset Module</span></a>:</p>
+<p>From the <a class="reference internal" href="#third-subset-label"><span class="std std-ref">Third Subset Module</span></a>:</p>
 <ul class="last simple">
 <li><code class="docutils literal"><span class="pre">subset.bed</span></code></li>
 <li><code class="docutils literal"><span class="pre">subset.bim</span></code></li>
@@ -695,7 +694,7 @@ while running the script.</li>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p><strong>Input files:</strong></p>
-<p>From the <a class="reference internal" href="#heterozygote-haploid"><span>Heterozygote Haploid Module</span></a>:</p>
+<p>From the <a class="reference internal" href="#heterozygote-haploid"><span class="std std-ref">Heterozygote Haploid Module</span></a>:</p>
 <ul class="last simple">
 <li><code class="docutils literal"><span class="pre">without_hh_genotypes.bed</span></code></li>
 <li><code class="docutils literal"><span class="pre">without_hh_genotypes.bim</span></code></li>
@@ -710,14 +709,14 @@ while running the script.</li>
 frequency of 0.</li>
 </ol>
 <p>If necessary, use subset module to remove SNPs with minor allele frequency of 0,
-since they were only flagged using the <a class="reference internal" href="#fourth-subset-label"><span>Fourth Subset Module (optional)</span></a>.</p>
+since they were only flagged using the <a class="reference internal" href="#fourth-subset-label"><span class="std std-ref">Fourth Subset Module (optional)</span></a>.</p>
 </div>
 <div class="section" id="fourth-subset-module-optional">
 <span id="fourth-subset-label"></span><h2>Fourth Subset Module (optional)<a class="headerlink" href="#fourth-subset-module-optional" title="Permalink to this headline">¶</a></h2>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p><strong>Input files:</strong></p>
-<p>From the <a class="reference internal" href="#heterozygote-haploid"><span>Heterozygote Haploid Module</span></a>:</p>
+<p>From the <a class="reference internal" href="#heterozygote-haploid"><span class="std std-ref">Heterozygote Haploid Module</span></a>:</p>
 <ul class="last simple">
 <li><code class="docutils literal"><span class="pre">without_hh_genotypes.bed</span></code></li>
 <li><code class="docutils literal"><span class="pre">without_hh_genotypes.bim</span></code></li>
@@ -735,13 +734,13 @@ while running the script.</li>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p><strong>Input files:</strong></p>
-<p>From the <a class="reference internal" href="#heterozygote-haploid"><span>Heterozygote Haploid Module</span></a>:</p>
+<p>From the <a class="reference internal" href="#heterozygote-haploid"><span class="std std-ref">Heterozygote Haploid Module</span></a>:</p>
 <ul class="simple">
 <li><code class="docutils literal"><span class="pre">without_hh_genotypes.bed</span></code></li>
 <li><code class="docutils literal"><span class="pre">without_hh_genotypes.bim</span></code></li>
 <li><code class="docutils literal"><span class="pre">without_hh_genotypes.fam</span></code></li>
 </ul>
-<p>or from the <a class="reference internal" href="#fourth-subset-label"><span>Fourth Subset Module (optional)</span></a>:</p>
+<p>or from the <a class="reference internal" href="#fourth-subset-label"><span class="std std-ref">Fourth Subset Module (optional)</span></a>:</p>
 <ul class="last simple">
 <li><code class="docutils literal"><span class="pre">subset.bed</span></code></li>
 <li><code class="docutils literal"><span class="pre">subset.bim</span></code></li>
@@ -758,20 +757,20 @@ while running the script.</li>
 below Bonferroni and below <span class="math">\(1 \times 10^{-4}\)</span> threshold, respectively.</li>
 </ol>
 <p>The markers are only flagged using this module. If you want to remove those
-markers, have a look at the <a class="reference internal" href="#fifth-subset-label"><span>Fifth Subset Module (optional)</span></a>.</p>
+markers, have a look at the <a class="reference internal" href="#fifth-subset-label"><span class="std std-ref">Fifth Subset Module (optional)</span></a>.</p>
 </div>
 <div class="section" id="fifth-subset-module-optional">
 <span id="fifth-subset-label"></span><h2>Fifth Subset Module (optional)<a class="headerlink" href="#fifth-subset-module-optional" title="Permalink to this headline">¶</a></h2>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p><strong>Input files:</strong></p>
-<p>From the <a class="reference internal" href="#heterozygote-haploid"><span>Heterozygote Haploid Module</span></a>:</p>
+<p>From the <a class="reference internal" href="#heterozygote-haploid"><span class="std std-ref">Heterozygote Haploid Module</span></a>:</p>
 <ul class="simple">
 <li><code class="docutils literal"><span class="pre">without_hh_genotypes.bed</span></code></li>
 <li><code class="docutils literal"><span class="pre">without_hh_genotypes.bim</span></code></li>
 <li><code class="docutils literal"><span class="pre">without_hh_genotypes.fam</span></code></li>
 </ul>
-<p>or from the <a class="reference internal" href="#fourth-subset-label"><span>Fourth Subset Module (optional)</span></a>:</p>
+<p>or from the <a class="reference internal" href="#fourth-subset-label"><span class="std std-ref">Fourth Subset Module (optional)</span></a>:</p>
 <ul class="last simple">
 <li><code class="docutils literal"><span class="pre">subset.bed</span></code></li>
 <li><code class="docutils literal"><span class="pre">subset.bim</span></code></li>
@@ -807,12 +806,12 @@ while running the script.</li>
         <li class="right" >
           <a href="list_of_options.html" title="List of Modules and their Options"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">pyGenClean 1.8.2 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">pyGenClean 1.8.3 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2012, Louis-Philippe Lemieux Perreault.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.5.
+        &#169; Copyright 2012, Louis-Philippe Lemieux Perreault.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.3.
     </div>
   </body>
 </html>

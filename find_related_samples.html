@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Related Samples Module &mdash; pyGenClean 1.8.2 documentation</title>
+    <title>Related Samples Module &#8212; pyGenClean 1.8.3 documentation</title>
     
     <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,17 +14,19 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '1.8.2',
+        VERSION:     '1.8.3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="pyGenClean 1.8.2 documentation" href="index.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Ethnicity Module" href="check_ethnicity.html" />
     <link rel="prev" title="Heterozygous Haploid Module" href="remove_heterozygous_haploid.html" /> 
   </head>
@@ -49,7 +51,7 @@
         <li class="right" >
           <a href="remove_heterozygous_haploid.html" title="Heterozygous Haploid Module"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">pyGenClean 1.8.2 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">pyGenClean 1.8.3 documentation</a> &#187;</li> 
       </ul>
     </div>
 
@@ -77,21 +79,18 @@
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="_sources/find_related_samples.txt"
+      <li><a href="_sources/find_related_samples.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -178,84 +177,73 @@ for the source data set (the data of interest).</p>
 <h2>Output Files<a class="headerlink" href="#output-files" title="Permalink to this headline">¶</a></h2>
 <p>The output files of each of the steps described above are as follow (note that
 the output prefix shown is the one by default [<em>i.e.</em> <code class="docutils literal"><span class="pre">ibs</span></code>]):</p>
-<ol class="arabic">
-<li><p class="first">One set of PLINK&#8217;s result files:</p>
-<ul class="simple">
+<ol class="arabic simple">
+<li>One set of PLINK&#8217;s result files:<ul>
 <li><code class="docutils literal"><span class="pre">ibs.pruning_0.1</span></code>: the results of the pruning process of Plink. The
 value depends on the option of <code class="docutils literal"><span class="pre">--indep-pairwise</span></code>. The markers that
 are kept are in the file <code class="docutils literal"><span class="pre">ibs.pruning_0.1.prune.in</span></code>.</li>
 </ul>
 </li>
-<li><p class="first">No file created.</p>
-</li>
-<li><p class="first">One set of PLINK&#8217;s binary files:</p>
-<ul class="simple">
+<li>No file created.</li>
+<li>One set of PLINK&#8217;s binary files:<ul>
 <li><code class="docutils literal"><span class="pre">ibs.pruned_data</span></code>: the data sets containing only the marker from the
 first step (the list is in <code class="docutils literal"><span class="pre">ibs.pruning_0.1.prune.in</span></code>).</li>
 </ul>
 </li>
-<li><p class="first">One set of PLINK&#8217;s result files (two if <code class="docutils literal"><span class="pre">--sge</span></code> is used):</p>
-<ul class="simple">
+<li>One set of PLINK&#8217;s result files (two if <code class="docutils literal"><span class="pre">--sge</span></code> is used):<ul>
 <li><code class="docutils literal"><span class="pre">ibs.frequency</span></code>: PLINK&#8217;s result files when computing the frequency of
 each of the pruned markers. This data set will exist only if the option
 <code class="docutils literal"><span class="pre">--sge</span></code> is used.</li>
 <li><code class="docutils literal"><span class="pre">ibs.genome</span></code>: PLINK&#8217;s results including IBS values.</li>
 </ul>
 </li>
-<li><p class="first">One file provided by the <a class="reference internal" href="module_content/pyGenClean.RelatedSamples.html#module-pyGenClean.RelatedSamples.find_related_samples" title="pyGenClean.RelatedSamples.find_related_samples"><code class="xref py py-mod docutils literal"><span class="pre">pyGenClean.RelatedSamples.find_related_samples</span></code></a> and
-three files provided by <a class="reference internal" href="module_content/pyGenClean.RelatedSamples.html#module-pyGenClean.RelatedSamples.merge_related_samples" title="pyGenClean.RelatedSamples.merge_related_samples"><code class="xref py py-mod docutils literal"><span class="pre">pyGenClean.RelatedSamples.merge_related_samples</span></code></a>:</p>
-<ul>
+<li>One file provided by the <a class="reference internal" href="module_content/pyGenClean.RelatedSamples.html#module-pyGenClean.RelatedSamples.find_related_samples" title="pyGenClean.RelatedSamples.find_related_samples"><code class="xref py py-mod docutils literal"><span class="pre">pyGenClean.RelatedSamples.find_related_samples</span></code></a> and
+three files provided by <a class="reference internal" href="module_content/pyGenClean.RelatedSamples.html#module-pyGenClean.RelatedSamples.merge_related_samples" title="pyGenClean.RelatedSamples.merge_related_samples"><code class="xref py py-mod docutils literal"><span class="pre">pyGenClean.RelatedSamples.merge_related_samples</span></code></a>:<ul>
 <li><dl class="first docutils">
 <dt><code class="docutils literal"><span class="pre">ibs.related_individuals</span></code>: a subset of the <code class="docutils literal"><span class="pre">ibs.genome.genome</span></code> file</dt>
-<dd><p class="first last">containing only samples that are considered to be related. Three columns
+<dd>containing only samples that are considered to be related. Three columns
 are appended to the original <code class="docutils literal"><span class="pre">ibs.genome.genome</span></code> file: <code class="docutils literal"><span class="pre">IBS2_ratio</span></code>
 (the value that is considered to find related individuals), <code class="docutils literal"><span class="pre">status</span></code>
 (the type of relatedness [<em>e.g.</em> twins]) and <code class="docutils literal"><span class="pre">code</span></code> (a numerical code
 that represent the <code class="docutils literal"><span class="pre">status</span></code>). This file is provided by the
-<a class="reference internal" href="module_content/pyGenClean.RelatedSamples.html#module-pyGenClean.RelatedSamples.find_related_samples" title="pyGenClean.RelatedSamples.find_related_samples"><code class="xref py py-mod docutils literal"><span class="pre">pyGenClean.RelatedSamples.find_related_samples</span></code></a> module.</p>
-</dd>
+<a class="reference internal" href="module_content/pyGenClean.RelatedSamples.html#module-pyGenClean.RelatedSamples.find_related_samples" title="pyGenClean.RelatedSamples.find_related_samples"><code class="xref py py-mod docutils literal"><span class="pre">pyGenClean.RelatedSamples.find_related_samples</span></code></a> module.</dd>
 </dl>
 </li>
-<li><p class="first"><code class="docutils literal"><span class="pre">ibs.merged_related_individuals</span></code>: a file aggregating related samples
+<li><code class="docutils literal"><span class="pre">ibs.merged_related_individuals</span></code>: a file aggregating related samples
 in groups, containing the following columns: <code class="docutils literal"><span class="pre">index</span></code> (the group
 number), <code class="docutils literal"><span class="pre">FID1</span></code> (the family ID of the first sample), <code class="docutils literal"><span class="pre">IID1</span></code> (the
 individual ID of the first sample), <code class="docutils literal"><span class="pre">FID2</span></code> (the family ID of the
 second sample), <code class="docutils literal"><span class="pre">IID2</span></code> (the individual ID of the second sample) and
 <code class="docutils literal"><span class="pre">status</span></code> (the type of relatedness between the two samples). This file
-is provided by the <code class="xref py py-mod docutils literal"><span class="pre">merge_related_samples</span></code>.</p>
-</li>
-<li><p class="first"><code class="docutils literal"><span class="pre">ibs.chosen_related_individuals</span></code>: the related individuals that were
+is provided by the <code class="xref py py-mod docutils literal"><span class="pre">merge_related_samples</span></code>.</li>
+<li><code class="docutils literal"><span class="pre">ibs.chosen_related_individuals</span></code>: the related individuals that were
 randomly chosen from each group to be kept in the final data set. This
-file is provided by the <code class="xref py py-mod docutils literal"><span class="pre">merge_related_samples</span></code>.</p>
-</li>
-<li><p class="first"><code class="docutils literal"><span class="pre">ibs.discarded_related_individual</span></code>: the related individuals that needs
+file is provided by the <code class="xref py py-mod docutils literal"><span class="pre">merge_related_samples</span></code>.</li>
+<li><code class="docutils literal"><span class="pre">ibs.discarded_related_individual</span></code>: the related individuals that needs
 to be discarded, so that the final data set include only unrelated
 individuals. This file is provided by the
-<code class="xref py py-mod docutils literal"><span class="pre">merge_related_samples</span></code>.</p>
-</li>
+<code class="xref py py-mod docutils literal"><span class="pre">merge_related_samples</span></code>.</li>
 </ul>
 </li>
-<li><p class="first">One image file:</p>
-<ul class="simple">
+<li>One image file:<ul>
 <li><code class="docutils literal"><span class="pre">ibs.related_individuals_z1.png</span></code>: a plot showing the <span class="math">\(Z_1\)</span> value
 in function of the <span class="math">\(IBS2^*_{ratio}\)</span> for all samples above a
 certain <span class="math">\(IBS2^*_{ratio}\)</span> (the default threshold is 0.8). See
-Figure <a class="reference internal" href="#ibs-z1-figure"><span>Z1 in function of IBS2 ratio</span></a>.</li>
+Figure <a class="reference internal" href="#ibs-z1-figure"><span class="std std-ref">Z1 in function of IBS2 ratio</span></a>.</li>
 </ul>
 </li>
-<li><p class="first">One image file:</p>
-<ul class="simple">
+<li>One image file:<ul>
 <li><code class="docutils literal"><span class="pre">ibs.related_individuals_z2.png</span></code>: a plot showing the <span class="math">\(Z_2\)</span> value
 in function of the <span class="math">\(IBS2^*_{ratio}\)</span> for all samples above a
 certain <span class="math">\(IBS2^*_{ratio}\)</span> (the default threshold is 0.8). See
-Figure <a class="reference internal" href="#ibs-z2-figure"><span>Z2 in function of IBS2 ratio</span></a>.</li>
+Figure <a class="reference internal" href="#ibs-z2-figure"><span class="std std-ref">Z2 in function of IBS2 ratio</span></a>.</li>
 </ul>
 </li>
 </ol>
 </div>
 <div class="section" id="the-plots">
 <h2>The Plots<a class="headerlink" href="#the-plots" title="Permalink to this headline">¶</a></h2>
-<p>The first plot (<a class="reference internal" href="#ibs-z1-figure"><span>Z1 in function of IBS2 ratio</span></a> figure) that is created is <span class="math">\(Z_1\)</span> in
+<p>The first plot (<a class="reference internal" href="#ibs-z1-figure"><span class="std std-ref">Z1 in function of IBS2 ratio</span></a> figure) that is created is <span class="math">\(Z_1\)</span> in
 function of <span class="math">\(IBS2^*_{ratio}\)</span> (where each point represents a pair of
 related individuals. The color code comes from the different value of
 <span class="math">\(Z_0\)</span>, <span class="math">\(Z_1\)</span> and <span class="math">\(Z_2\)</span>, as described in the
@@ -269,7 +257,7 @@ related individuals.</p>
 <span id="ibs-z1-figure"></span><a class="reference internal image-reference" href="_images/ibs_related_individuals_z1.png"><img alt="Z1 in function of IBS2 ratio" src="_images/ibs_related_individuals_z1.png" style="width: 50%;" /></a>
 <p class="caption"><span class="caption-text">Z1 in function of IBS2 ratio</span></p>
 </div>
-<p>The second plot (<a class="reference internal" href="#ibs-z2-figure"><span>Z2 in function of IBS2 ratio</span></a> figure) that is created is <span class="math">\(Z_2\)</span> in
+<p>The second plot (<a class="reference internal" href="#ibs-z2-figure"><span class="std std-ref">Z2 in function of IBS2 ratio</span></a> figure) that is created is <span class="math">\(Z_2\)</span> in
 function of <span class="math">\(IBS2^*_{ratio}\)</span> (where each point represents a pair of
 related individuals. It&#8217;s just another representation of relatedness of sample
 pairs, where the location of the &#8220;clusters&#8221; is different.</p>
@@ -341,12 +329,12 @@ following page.</p>
         <li class="right" >
           <a href="remove_heterozygous_haploid.html" title="Heterozygous Haploid Module"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">pyGenClean 1.8.2 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">pyGenClean 1.8.3 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2012, Louis-Philippe Lemieux Perreault.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.5.
+        &#169; Copyright 2012, Louis-Philippe Lemieux Perreault.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.3.
     </div>
   </body>
 </html>

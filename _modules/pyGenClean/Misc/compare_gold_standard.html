@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>pyGenClean.Misc.compare_gold_standard &mdash; pyGenClean 1.8.2 documentation</title>
+    <title>pyGenClean.Misc.compare_gold_standard &#8212; pyGenClean 1.8.3 documentation</title>
     
     <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -14,18 +14,19 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '1.8.2',
+        VERSION:     '1.8.3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="pyGenClean 1.8.2 documentation" href="../../../index.html" />
-    <link rel="up" title="pyGenClean" href="../../pyGenClean.html" /> 
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
   </head>
   <body role="document">
 
@@ -42,9 +43,9 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">pyGenClean 1.8.2 documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &raquo;</li>
-          <li class="nav-item nav-item-2"><a href="../../pyGenClean.html" accesskey="U">pyGenClean</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../../index.html">pyGenClean 1.8.3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../../pyGenClean.html" accesskey="U">pyGenClean</a> &#187;</li> 
       </ul>
     </div>
 
@@ -53,14 +54,11 @@
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="../../../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -98,29 +96,29 @@
 <span class="kn">import</span> <span class="nn">argparse</span>
 <span class="kn">import</span> <span class="nn">subprocess</span>
 
-<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">__version__</span>
-<span class="kn">from</span> <span class="nn">..PlinkUtils</span> <span class="kn">import</span> <span class="n">createRowFromPlinkSpacedOutput</span>
-<span class="kn">from</span> <span class="nn">..DupSNPs.duplicated_snps</span> <span class="kn">import</span> <span class="n">flipGenotype</span>
+<span class="kn">from</span> <span class="nn">..</span> <span class="k">import</span> <span class="n">__version__</span>
+<span class="kn">from</span> <span class="nn">..PlinkUtils</span> <span class="k">import</span> <span class="n">createRowFromPlinkSpacedOutput</span>
+<span class="kn">from</span> <span class="nn">..DupSNPs.duplicated_snps</span> <span class="k">import</span> <span class="n">flipGenotype</span>
 
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;compare_gold_standard&quot;</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../../module_content/pyGenClean.Misc.html#pyGenClean.Misc.compare_gold_standard.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">argString</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../../module_content/pyGenClean.Misc.html#pyGenClean.Misc.compare_gold_standard.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">argString</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="c1"># Getting and checking the options</span>
     <span class="n">args</span> <span class="o">=</span> <span class="n">parseArgs</span><span class="p">(</span><span class="n">argString</span><span class="p">)</span>
     <span class="n">checkArgs</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
 
     <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Options used:&quot;</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">vars</span><span class="p">(</span><span class="n">args</span><span class="p">)</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;  --{} {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">),</span> <span class="n">value</span><span class="p">))</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;  --</span><span class="si">{}</span><span class="s2"> </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">),</span> <span class="n">value</span><span class="p">))</span>
 
     <span class="c1"># Reading the same sample file</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Reading the same samples file&quot;</span><span class="p">)</span>
     <span class="n">same_samples</span> <span class="o">=</span> <span class="n">read_same_samples_file</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">same_samples</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">out</span><span class="p">)</span>
     <span class="n">required_samples</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([</span><span class="n">i</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">same_samples</span><span class="p">]</span> <span class="o">+</span>
                            <span class="p">[</span><span class="n">i</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">same_samples</span><span class="p">])</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;  - Found a total of {} unique &quot;</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;  - Found a total of </span><span class="si">{}</span><span class="s2"> unique &quot;</span>
                 <span class="s2">&quot;samples&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">required_samples</span><span class="p">)))</span>
 
     <span class="c1"># Check the fam files</span>
@@ -159,8 +157,8 @@
         <span class="n">computeFrequency</span><span class="p">(</span><span class="n">gold_input_prefix</span><span class="p">,</span>
                          <span class="n">gold_input_prefix</span> <span class="o">+</span> <span class="s2">&quot;.frequency&quot;</span><span class="p">)</span>
 
-        <span class="n">source_alleles</span> <span class="o">=</span> <span class="bp">None</span>
-        <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">source_manifest</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">source_alleles</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">source_manifest</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Reading the source manifest&quot;</span><span class="p">)</span>
             <span class="n">source_alleles</span> <span class="o">=</span> <span class="n">read_source_manifest</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">source_manifest</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -228,7 +226,7 @@
         <span class="p">])</span>
         <span class="k">for</span> <span class="n">col_name</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;Name&quot;</span><span class="p">,</span> <span class="s2">&quot;SNP&quot;</span><span class="p">,</span> <span class="s2">&quot;IlmnStrand&quot;</span><span class="p">}:</span>
             <span class="k">if</span> <span class="n">col_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">header_index</span><span class="p">:</span>
-                <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;{}: no column named {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="n">col_name</span><span class="p">)</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">: no column named </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="n">col_name</span><span class="p">)</span>
                 <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">input_file</span><span class="p">:</span>
@@ -327,7 +325,7 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">out_dir</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;{}: file exists&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">out_dir</span><span class="p">)</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">: file exists&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">out_dir</span><span class="p">)</span>
             <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="c1"># The out prefix</span>
@@ -338,52 +336,52 @@
     <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="p">(</span><span class="n">gold_sample</span><span class="p">,</span> <span class="n">source_sample</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">same_samples</span><span class="p">):</span>
         <span class="c1"># Preparing the files</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">filename</span> <span class="o">=</span> <span class="n">out_prefix</span> <span class="o">+</span> <span class="s2">&quot;_{}_gold.samples&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+            <span class="n">filename</span> <span class="o">=</span> <span class="n">out_prefix</span> <span class="o">+</span> <span class="s2">&quot;_</span><span class="si">{}</span><span class="s2">_gold.samples&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
             <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">output_file</span><span class="p">:</span>
-                <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">output_file</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">gold_sample</span><span class="p">)</span>
+                <span class="nb">print</span> <span class="o">&gt;&gt;</span><span class="n">output_file</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">gold_sample</span><span class="p">)</span>
 
-            <span class="n">filename</span> <span class="o">=</span> <span class="n">out_prefix</span> <span class="o">+</span> <span class="s2">&quot;_{}_source.samples&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+            <span class="n">filename</span> <span class="o">=</span> <span class="n">out_prefix</span> <span class="o">+</span> <span class="s2">&quot;_</span><span class="si">{}</span><span class="s2">_source.samples&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
             <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">output_file</span><span class="p">:</span>
-                <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">output_file</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">source_sample</span><span class="p">)</span>
+                <span class="nb">print</span> <span class="o">&gt;&gt;</span><span class="n">output_file</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">source_sample</span><span class="p">)</span>
 
         <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;can&#39;t write in dir {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">out_dir</span><span class="p">)</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;can&#39;t write in dir </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">out_dir</span><span class="p">)</span>
             <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="c1"># Preparing the files</span>
     <span class="n">nb</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">same_samples</span><span class="p">)</span>
     <span class="n">keepSamples</span><span class="p">(</span>
         <span class="p">[</span><span class="n">gold_prefix</span><span class="p">]</span><span class="o">*</span><span class="n">nb</span> <span class="o">+</span> <span class="p">[</span><span class="n">source_prefix</span><span class="p">]</span><span class="o">*</span><span class="n">nb</span><span class="p">,</span>
-        <span class="p">[</span><span class="n">out_prefix</span> <span class="o">+</span> <span class="s2">&quot;_{}_gold.samples&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nb</span><span class="p">)]</span> <span class="o">+</span>
-        <span class="p">[</span><span class="n">out_prefix</span> <span class="o">+</span> <span class="s2">&quot;_{}_source.samples&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nb</span><span class="p">)],</span>
-        <span class="p">[</span><span class="n">out_prefix</span> <span class="o">+</span> <span class="s2">&quot;_{}_gold&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nb</span><span class="p">)]</span> <span class="o">+</span>
-        <span class="p">[</span><span class="n">out_prefix</span> <span class="o">+</span> <span class="s2">&quot;_{}_source&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nb</span><span class="p">)],</span>
+        <span class="p">[</span><span class="n">out_prefix</span> <span class="o">+</span> <span class="s2">&quot;_</span><span class="si">{}</span><span class="s2">_gold.samples&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nb</span><span class="p">)]</span> <span class="o">+</span>
+        <span class="p">[</span><span class="n">out_prefix</span> <span class="o">+</span> <span class="s2">&quot;_</span><span class="si">{}</span><span class="s2">_source.samples&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nb</span><span class="p">)],</span>
+        <span class="p">[</span><span class="n">out_prefix</span> <span class="o">+</span> <span class="s2">&quot;_</span><span class="si">{}</span><span class="s2">_gold&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nb</span><span class="p">)]</span> <span class="o">+</span>
+        <span class="p">[</span><span class="n">out_prefix</span> <span class="o">+</span> <span class="s2">&quot;_</span><span class="si">{}</span><span class="s2">_source&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nb</span><span class="p">)],</span>
         <span class="n">use_sge</span><span class="p">,</span>
-        <span class="n">transpose</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+        <span class="n">transpose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="p">)</span>
 
     <span class="c1"># Creating reports</span>
     <span class="c1"># The diff file</span>
-    <span class="n">diff_file</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">diff_file</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">diff_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">final_out_prefix</span> <span class="o">+</span> <span class="s2">&quot;.diff&quot;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;{}: can&#39;t write file&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">final_out_prefix</span> <span class="o">+</span> <span class="s2">&quot;.diff&quot;</span><span class="p">)</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">: can&#39;t write file&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">final_out_prefix</span> <span class="o">+</span> <span class="s2">&quot;.diff&quot;</span><span class="p">)</span>
         <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
     <span class="c1"># The diff file header</span>
-    <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">diff_file</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;famID_source&quot;</span><span class="p">,</span> <span class="s2">&quot;indID_source&quot;</span><span class="p">,</span>
+    <span class="nb">print</span> <span class="o">&gt;&gt;</span><span class="n">diff_file</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;famID_source&quot;</span><span class="p">,</span> <span class="s2">&quot;indID_source&quot;</span><span class="p">,</span>
                                   <span class="s2">&quot;famID_gold&quot;</span><span class="p">,</span> <span class="s2">&quot;indID_gold&quot;</span><span class="p">,</span> <span class="s2">&quot;geno_source&quot;</span><span class="p">,</span>
                                   <span class="s2">&quot;geno_gold&quot;</span><span class="p">])</span>
 
     <span class="c1"># The concordance file</span>
-    <span class="n">concordance_file</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">concordance_file</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">concordance_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">final_out_prefix</span> <span class="o">+</span> <span class="s2">&quot;.concordance&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;{}: can&#39;t write file&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">final_out_prefix</span> <span class="o">+</span> <span class="s2">&quot;.concordance&quot;</span><span class="p">)</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">: can&#39;t write file&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">final_out_prefix</span> <span class="o">+</span> <span class="s2">&quot;.concordance&quot;</span><span class="p">)</span>
         <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
     <span class="c1"># The concordance file header</span>
-    <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">concordance_file</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;famID_source&quot;</span><span class="p">,</span> <span class="s2">&quot;indID_source&quot;</span><span class="p">,</span>
+    <span class="nb">print</span> <span class="o">&gt;&gt;</span><span class="n">concordance_file</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;famID_source&quot;</span><span class="p">,</span> <span class="s2">&quot;indID_source&quot;</span><span class="p">,</span>
                                          <span class="s2">&quot;famID_gold&quot;</span><span class="p">,</span> <span class="s2">&quot;indID_gold&quot;</span><span class="p">,</span>
                                          <span class="s2">&quot;nb_geno&quot;</span><span class="p">,</span> <span class="s2">&quot;nb_diff&quot;</span><span class="p">,</span>
                                          <span class="s2">&quot;concordance&quot;</span><span class="p">])</span>
@@ -394,7 +392,7 @@
 
         <span class="c1"># Reading the source freq file</span>
         <span class="n">source_genotypes</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="n">filename</span> <span class="o">=</span> <span class="n">out_prefix</span> <span class="o">+</span> <span class="s2">&quot;_{}_source.tped&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">out_prefix</span> <span class="o">+</span> <span class="s2">&quot;_</span><span class="si">{}</span><span class="s2">_source.tped&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">input_file</span><span class="p">:</span>
                 <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">input_file</span><span class="p">:</span>
@@ -405,12 +403,12 @@
                         <span class="n">geno</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">geno</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">))</span>
                         <span class="n">source_genotypes</span><span class="p">[</span><span class="n">marker_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">geno</span>
         <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;{}: no such file&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">: no such file&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
             <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
         <span class="c1"># Reading the gold freq file</span>
         <span class="n">gold_genotypes</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="n">filename</span> <span class="o">=</span> <span class="n">out_prefix</span> <span class="o">+</span> <span class="s2">&quot;_{}_gold.tped&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">out_prefix</span> <span class="o">+</span> <span class="s2">&quot;_</span><span class="si">{}</span><span class="s2">_gold.tped&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">input_file</span><span class="p">:</span>
                 <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">input_file</span><span class="p">:</span>
@@ -421,7 +419,7 @@
                         <span class="n">geno</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">geno</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">))</span>
                         <span class="n">gold_genotypes</span><span class="p">[</span><span class="n">marker_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">geno</span>
         <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;{}: no such file&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">: no such file&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
             <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
         <span class="c1"># The genotyped markers in both, with their number</span>
@@ -449,7 +447,7 @@
                 <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">gold_geno_print</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
                     <span class="n">gold_geno_print</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">gold_geno_print</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
                 <span class="c1"># We print in the diff file</span>
-                <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">diff_file</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">marker_name</span><span class="p">,</span>
+                <span class="nb">print</span> <span class="o">&gt;&gt;</span><span class="n">diff_file</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">marker_name</span><span class="p">,</span>
                                               <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">source_sample</span><span class="p">),</span>
                                               <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">gold_sample</span><span class="p">),</span>
                                               <span class="s2">&quot;/&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">source_geno_print</span><span class="p">),</span>
@@ -459,7 +457,7 @@
         <span class="n">concordance</span> <span class="o">=</span> <span class="mf">0.0</span>
         <span class="k">if</span> <span class="n">nb_genotyped</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">concordance</span> <span class="o">=</span> <span class="p">(</span><span class="n">nb_genotyped</span> <span class="o">-</span> <span class="n">nb_diff</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">nb_genotyped</span><span class="p">)</span>
-        <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">concordance_file</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">source_sample</span><span class="p">),</span>
+        <span class="nb">print</span> <span class="o">&gt;&gt;</span><span class="n">concordance_file</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">source_sample</span><span class="p">),</span>
                                              <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">gold_sample</span><span class="p">),</span>
                                              <span class="nb">str</span><span class="p">(</span><span class="n">nb_genotyped</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">nb_diff</span><span class="p">),</span>
                                              <span class="nb">str</span><span class="p">(</span><span class="n">concordance</span><span class="p">)])</span>
@@ -472,7 +470,7 @@
     <span class="k">try</span><span class="p">:</span>
         <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">out_dir</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
-        <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">,</span> <span class="s2">&quot;   - Can&#39;t delete {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">out_dir</span><span class="p">)</span></div>
+        <span class="nb">print</span> <span class="o">&gt;&gt;</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">,</span> <span class="s2">&quot;   - Can&#39;t delete </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">out_dir</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="check_fam_for_samples"><a class="viewcode-back" href="../../../module_content/pyGenClean.Misc.html#pyGenClean.Misc.compare_gold_standard.check_fam_for_samples">[docs]</a><span class="k">def</span> <span class="nf">check_fam_for_samples</span><span class="p">(</span><span class="n">required_samples</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">gold</span><span class="p">):</span>
@@ -494,17 +492,17 @@
                 <span class="n">gold_samples</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">sample</span><span class="p">)</span>
 
     <span class="c1"># Checking if we got everything</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;  - Found {} samples in source panel&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;  - Found </span><span class="si">{}</span><span class="s2"> samples in source panel&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
         <span class="nb">len</span><span class="p">(</span><span class="n">source_samples</span><span class="p">),</span>
     <span class="p">))</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;  - Found {} samples in gold standard&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;  - Found </span><span class="si">{}</span><span class="s2"> samples in gold standard&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
         <span class="nb">len</span><span class="p">(</span><span class="n">gold_samples</span><span class="p">),</span>
     <span class="p">))</span>
 
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">required_samples</span> <span class="o">-</span> <span class="p">(</span><span class="n">source_samples</span> <span class="o">|</span> <span class="n">gold_samples</span><span class="p">))</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">False</span>
+        <span class="k">return</span> <span class="kc">False</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">True</span></div>
+        <span class="k">return</span> <span class="kc">True</span></div>
 
 
 <div class="viewcode-block" id="read_same_samples_file"><a class="viewcode-back" href="../../../module_content/pyGenClean.Misc.html#pyGenClean.Misc.compare_gold_standard.read_same_samples_file">[docs]</a><span class="k">def</span> <span class="nf">read_same_samples_file</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">out_prefix</span><span class="p">):</span>
@@ -513,18 +511,18 @@
     <span class="n">same_samples</span> <span class="o">=</span> <span class="p">[]</span>
 
     <span class="c1"># Creating the extraction files</span>
-    <span class="n">gold_file</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">gold_file</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">gold_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">out_prefix</span> <span class="o">+</span> <span class="s2">&quot;.gold_samples2keep&quot;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;{}: can&#39;t create file&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">out_prefix</span> <span class="o">+</span> <span class="s2">&quot;.gold_samples2keep&quot;</span><span class="p">)</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">: can&#39;t create file&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">out_prefix</span> <span class="o">+</span> <span class="s2">&quot;.gold_samples2keep&quot;</span><span class="p">)</span>
         <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
-    <span class="n">source_file</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">source_file</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">source_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">out_prefix</span> <span class="o">+</span> <span class="s2">&quot;.source_panel_samples2keep&quot;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;{}: can&#39;t create &quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">: can&#39;t create &quot;</span>
                <span class="s2">&quot;file&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">out_prefix</span> <span class="o">+</span> <span class="s2">&quot;.source_panel_samples2keep&quot;</span><span class="p">))</span>
         <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
@@ -538,8 +536,8 @@
             <span class="n">same_samples</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">gold_sample</span><span class="p">,</span> <span class="n">source_sample</span><span class="p">))</span>
 
             <span class="c1"># Printing files</span>
-            <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">gold_file</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">gold_sample</span><span class="p">)</span>
-            <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">source_file</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">source_sample</span><span class="p">)</span>
+            <span class="nb">print</span> <span class="o">&gt;&gt;</span><span class="n">gold_file</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">gold_sample</span><span class="p">)</span>
+            <span class="nb">print</span> <span class="o">&gt;&gt;</span><span class="n">source_file</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">source_sample</span><span class="p">)</span>
 
     <span class="c1"># Closing the files</span>
     <span class="n">gold_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
@@ -555,19 +553,19 @@
     <span class="n">runCommand</span><span class="p">(</span><span class="n">plinkCommand</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="exclude_SNPs_samples"><a class="viewcode-back" href="../../../module_content/pyGenClean.Misc.html#pyGenClean.Misc.compare_gold_standard.exclude_SNPs_samples">[docs]</a><span class="k">def</span> <span class="nf">exclude_SNPs_samples</span><span class="p">(</span><span class="n">inPrefix</span><span class="p">,</span> <span class="n">outPrefix</span><span class="p">,</span> <span class="n">exclusionSNP</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
-                         <span class="n">keepSample</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">transpose</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+<div class="viewcode-block" id="exclude_SNPs_samples"><a class="viewcode-back" href="../../../module_content/pyGenClean.Misc.html#pyGenClean.Misc.compare_gold_standard.exclude_SNPs_samples">[docs]</a><span class="k">def</span> <span class="nf">exclude_SNPs_samples</span><span class="p">(</span><span class="n">inPrefix</span><span class="p">,</span> <span class="n">outPrefix</span><span class="p">,</span> <span class="n">exclusionSNP</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                         <span class="n">keepSample</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">transpose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Exclude some SNPs and keep some samples using Plink.&quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="p">(</span><span class="n">exclusionSNP</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">keepSample</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">):</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">exclusionSNP</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">keepSample</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
         <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Something wront with development... work on that source code...&quot;</span>
         <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="n">plinkCommand</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;plink&quot;</span><span class="p">,</span> <span class="s2">&quot;--noweb&quot;</span><span class="p">,</span> <span class="s2">&quot;--bfile&quot;</span><span class="p">,</span> <span class="n">inPrefix</span><span class="p">,</span> <span class="s2">&quot;--out&quot;</span><span class="p">,</span>
                     <span class="n">outPrefix</span><span class="p">]</span>
-    <span class="k">if</span> <span class="n">exclusionSNP</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">exclusionSNP</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="c1"># We want to exclude SNP</span>
         <span class="n">plinkCommand</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s2">&quot;--exclude&quot;</span><span class="p">,</span> <span class="n">exclusionSNP</span><span class="p">])</span>
-    <span class="k">if</span> <span class="n">keepSample</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">keepSample</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="c1"># We want to keep samples</span>
         <span class="n">plinkCommand</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s2">&quot;--keep&quot;</span><span class="p">,</span> <span class="n">keepSample</span><span class="p">])</span>
     <span class="k">if</span> <span class="n">transpose</span><span class="p">:</span>
@@ -591,14 +589,14 @@
     <span class="sd">&quot;&quot;&quot;Find flipped SNPs and flip them in the data1.&quot;&quot;&quot;</span>
     <span class="n">goldAlleles</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">goldFrqFile1</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">inputFile</span><span class="p">:</span>
-        <span class="n">headerIndex</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="n">headerIndex</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">inputFile</span><span class="p">):</span>
             <span class="n">row</span> <span class="o">=</span> <span class="n">createRowFromPlinkSpacedOutput</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="c1"># This is the header</span>
                 <span class="n">headerIndex</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">([</span>
-                    <span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">j</span><span class="p">)</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">row</span><span class="p">))</span>
+                    <span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">j</span><span class="p">)</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">row</span><span class="p">))</span>
                 <span class="p">])</span>
 
                 <span class="c1"># Checking the columns</span>
@@ -619,7 +617,7 @@
                 <span class="n">goldAlleles</span><span class="p">[</span><span class="n">snpName</span><span class="p">]</span> <span class="o">=</span> <span class="n">alleles</span>
 
     <span class="c1"># Finding the SNPs to flip</span>
-    <span class="n">toFlipOutputFile</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">toFlipOutputFile</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">toFlipOutputFile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">outPrefix</span> <span class="o">+</span> <span class="s2">&quot;.snp_to_flip_in_reference&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
@@ -627,20 +625,20 @@
               <span class="s2">&quot;file&quot;</span> <span class="o">%</span> <span class="nb">locals</span><span class="p">()</span>
         <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
-    <span class="n">toRemoveOutputFile</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">toRemoveOutputFile</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">toRemoveOutputFile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">outPrefix</span> <span class="o">+</span> <span class="s2">&quot;.snp_to_remove&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
         <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%(outPrefix)s</span><span class="s2">.snp_to_remove: can&#39;t write file&quot;</span> <span class="o">%</span> <span class="nb">locals</span><span class="p">()</span>
         <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
-    <span class="n">toRemoveOutputFileExplanation</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">toRemoveOutputFileExplanation</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">toRemoveOutputFileExplanation</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span>
             <span class="n">outPrefix</span> <span class="o">+</span> <span class="s2">&quot;.snp_to_remove.explanation&quot;</span><span class="p">,</span>
             <span class="s2">&quot;w&quot;</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">toRemoveOutputFileExplanation</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;Name&quot;</span><span class="p">,</span> <span class="s2">&quot;Reason&quot;</span><span class="p">,</span>
+        <span class="nb">print</span> <span class="o">&gt;&gt;</span><span class="n">toRemoveOutputFileExplanation</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;Name&quot;</span><span class="p">,</span> <span class="s2">&quot;Reason&quot;</span><span class="p">,</span>
                                                           <span class="s2">&quot;Alleles 1&quot;</span><span class="p">,</span>
                                                           <span class="s2">&quot;Alleles 2&quot;</span><span class="p">])</span>
     <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
@@ -656,8 +654,8 @@
             <span class="k">if</span> <span class="p">(({</span><span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;T&quot;</span><span class="p">}</span> <span class="o">==</span> <span class="n">alleles1</span> <span class="ow">and</span> <span class="p">{</span><span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;T&quot;</span><span class="p">}</span> <span class="o">==</span> <span class="n">alleles2</span><span class="p">)</span> <span class="ow">or</span>
                     <span class="p">({</span><span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="s2">&quot;G&quot;</span><span class="p">}</span> <span class="o">==</span> <span class="n">alleles1</span> <span class="ow">and</span> <span class="p">{</span><span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="s2">&quot;G&quot;</span><span class="p">}</span> <span class="o">==</span> <span class="n">alleles2</span><span class="p">)):</span>
                 <span class="c1"># We can&#39;t flip those..., so we remove them</span>
-                <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">toRemoveOutputFile</span><span class="p">,</span> <span class="n">snpName</span>
-                <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">toRemoveOutputFileExplanation</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span>
+                <span class="nb">print</span> <span class="o">&gt;&gt;</span><span class="n">toRemoveOutputFile</span><span class="p">,</span> <span class="n">snpName</span>
+                <span class="nb">print</span> <span class="o">&gt;&gt;</span><span class="n">toRemoveOutputFileExplanation</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span>
                     <span class="n">snpName</span><span class="p">,</span>
                     <span class="s2">&quot;Undetermined&quot;</span><span class="p">,</span>
                     <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">alleles1</span><span class="p">),</span>
@@ -668,11 +666,11 @@
                     <span class="c1"># Let&#39;s try the flip one</span>
                     <span class="k">if</span> <span class="n">flipGenotype</span><span class="p">(</span><span class="n">alleles1</span><span class="p">)</span> <span class="o">==</span> <span class="n">alleles2</span><span class="p">:</span>
                         <span class="c1"># We need to flip it</span>
-                        <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">toFlipOutputFile</span><span class="p">,</span> <span class="n">snpName</span>
+                        <span class="nb">print</span> <span class="o">&gt;&gt;</span><span class="n">toFlipOutputFile</span><span class="p">,</span> <span class="n">snpName</span>
                     <span class="k">else</span><span class="p">:</span>
                         <span class="c1"># Those SNP are discordant...</span>
-                        <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">toRemoveOutputFile</span><span class="p">,</span> <span class="n">snpName</span>
-                        <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">toRemoveOutputFileExplanation</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span>
+                        <span class="nb">print</span> <span class="o">&gt;&gt;</span><span class="n">toRemoveOutputFile</span><span class="p">,</span> <span class="n">snpName</span>
+                        <span class="nb">print</span> <span class="o">&gt;&gt;</span><span class="n">toRemoveOutputFileExplanation</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span>
                             <span class="n">snpName</span><span class="p">,</span>
                             <span class="s2">&quot;Invalid&quot;</span><span class="p">,</span>
                             <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">alleles1</span><span class="p">),</span>
@@ -681,14 +679,14 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># We want to remove this SNP, because there is at least one</span>
             <span class="c1"># homozygous individual</span>
-            <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">toRemoveOutputFile</span><span class="p">,</span> <span class="n">snpName</span>
+            <span class="nb">print</span> <span class="o">&gt;&gt;</span><span class="n">toRemoveOutputFile</span><span class="p">,</span> <span class="n">snpName</span>
             <span class="n">tmp_allele1</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">alleles1</span><span class="p">)</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">alleles1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
                 <span class="n">tmp_allele1</span> <span class="o">+=</span> <span class="n">tmp_allele1</span>
             <span class="n">tmp_allele2</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">alleles1</span><span class="p">)</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">alleles1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
                 <span class="n">tmp_allele2</span> <span class="o">+=</span> <span class="n">tmp_allele2</span>
-            <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">toRemoveOutputFileExplanation</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">snpName</span><span class="p">,</span>
+            <span class="nb">print</span> <span class="o">&gt;&gt;</span><span class="n">toRemoveOutputFileExplanation</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">snpName</span><span class="p">,</span>
                                                               <span class="s2">&quot;Homozygous&quot;</span><span class="p">,</span>
                                                               <span class="n">tmp_allele1</span><span class="p">,</span>
                                                               <span class="n">tmp_allele2</span><span class="p">])</span>
@@ -707,7 +705,7 @@
 
 
 <div class="viewcode-block" id="findOverlappingSNPsWithGoldStandard"><a class="viewcode-back" href="../../../module_content/pyGenClean.Misc.html#pyGenClean.Misc.compare_gold_standard.findOverlappingSNPsWithGoldStandard">[docs]</a><span class="k">def</span> <span class="nf">findOverlappingSNPsWithGoldStandard</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span> <span class="n">gold_prefixe</span><span class="p">,</span> <span class="n">out_prefix</span><span class="p">,</span>
-                                        <span class="n">use_marker_names</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+                                        <span class="n">use_marker_names</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Find the overlapping SNPs in 4 different data sets.&quot;&quot;&quot;</span>
     <span class="c1"># Reading the main file</span>
     <span class="n">sourceSnpToExtract</span> <span class="o">=</span> <span class="p">{}</span>
@@ -736,8 +734,8 @@
 
     <span class="c1"># Removing duplicates from the list</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">use_marker_names</span><span class="p">:</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;  - There are {} duplicated markers &quot;</span>
-                    <span class="s2">&quot;in {};&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">duplicates</span><span class="p">),</span> <span class="n">prefix</span> <span class="o">+</span> <span class="s2">&quot;.bim&quot;</span><span class="p">))</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;  - There are </span><span class="si">{}</span><span class="s2"> duplicated markers &quot;</span>
+                    <span class="s2">&quot;in </span><span class="si">{}</span><span class="s2">;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">duplicates</span><span class="p">),</span> <span class="n">prefix</span> <span class="o">+</span> <span class="s2">&quot;.bim&quot;</span><span class="p">))</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;  - removing them for simplicity...&quot;</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">snpID</span> <span class="ow">in</span> <span class="n">duplicates</span><span class="p">:</span>
             <span class="k">del</span> <span class="n">sourceSnpToExtract</span><span class="p">[</span><span class="n">snpID</span><span class="p">]</span>
@@ -762,21 +760,21 @@
                     <span class="n">goldSnpToExtract</span><span class="p">[(</span><span class="n">chromosome</span><span class="p">,</span> <span class="n">position</span><span class="p">)]</span> <span class="o">=</span> <span class="n">snpName</span>
 
     <span class="c1"># Printing the names of the SNPs to extract</span>
-    <span class="n">goldOutputFile</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">goldOutputFile</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">goldOutputFile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">out_prefix</span> <span class="o">+</span> <span class="s2">&quot;.gold_snp_to_extract&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
         <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%(out_prefix)s</span><span class="s2">.goldSnpToExtract: can&#39;t write file&quot;</span> <span class="o">%</span> <span class="nb">locals</span><span class="p">()</span>
         <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
-    <span class="n">sourceOutputFile</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">sourceOutputFile</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">sourceOutputFile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">out_prefix</span> <span class="o">+</span> <span class="s2">&quot;.source_snp_to_extract&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
         <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%(out_prefix)s</span><span class="s2">.sourceSnpToExtract: can&#39;t write file&quot;</span> <span class="o">%</span> <span class="nb">locals</span><span class="p">()</span>
         <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
-    <span class="n">changeNameOutputFile</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">changeNameOutputFile</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">changeNameOutputFile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">out_prefix</span> <span class="o">+</span> <span class="s2">&quot;.update_names&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
@@ -786,13 +784,13 @@
     <span class="c1"># Writing the file</span>
     <span class="k">if</span> <span class="n">use_marker_names</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">snpName</span> <span class="ow">in</span> <span class="n">goldSnpToExtract</span><span class="p">:</span>
-            <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">sourceOutputFile</span><span class="p">,</span> <span class="n">snpName</span>
-            <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">goldOutputFile</span><span class="p">,</span> <span class="n">snpName</span>
+            <span class="nb">print</span> <span class="o">&gt;&gt;</span><span class="n">sourceOutputFile</span><span class="p">,</span> <span class="n">snpName</span>
+            <span class="nb">print</span> <span class="o">&gt;&gt;</span><span class="n">goldOutputFile</span><span class="p">,</span> <span class="n">snpName</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">snpID</span> <span class="ow">in</span> <span class="n">goldSnpToExtract</span><span class="o">.</span><span class="n">iterkeys</span><span class="p">():</span>
-            <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">sourceOutputFile</span><span class="p">,</span> <span class="n">sourceSnpToExtract</span><span class="p">[</span><span class="n">snpID</span><span class="p">]</span>
-            <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">goldOutputFile</span><span class="p">,</span> <span class="n">goldSnpToExtract</span><span class="p">[</span><span class="n">snpID</span><span class="p">]</span>
-            <span class="k">print</span> <span class="o">&gt;&gt;</span><span class="n">changeNameOutputFile</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span>
+            <span class="nb">print</span> <span class="o">&gt;&gt;</span><span class="n">sourceOutputFile</span><span class="p">,</span> <span class="n">sourceSnpToExtract</span><span class="p">[</span><span class="n">snpID</span><span class="p">]</span>
+            <span class="nb">print</span> <span class="o">&gt;&gt;</span><span class="n">goldOutputFile</span><span class="p">,</span> <span class="n">goldSnpToExtract</span><span class="p">[</span><span class="n">snpID</span><span class="p">]</span>
+            <span class="nb">print</span> <span class="o">&gt;&gt;</span><span class="n">changeNameOutputFile</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span>
                 <span class="n">goldSnpToExtract</span><span class="p">[</span><span class="n">snpID</span><span class="p">],</span>
                 <span class="n">sourceSnpToExtract</span><span class="p">[</span><span class="n">snpID</span><span class="p">],</span>
             <span class="p">])</span>
@@ -805,7 +803,7 @@
 
 <div class="viewcode-block" id="extractSNPs"><a class="viewcode-back" href="../../../module_content/pyGenClean.Misc.html#pyGenClean.Misc.compare_gold_standard.extractSNPs">[docs]</a><span class="k">def</span> <span class="nf">extractSNPs</span><span class="p">(</span><span class="n">prefixes</span><span class="p">,</span> <span class="n">snpToExtractFileNames</span><span class="p">,</span> <span class="n">outPrefixes</span><span class="p">,</span> <span class="n">runSGE</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Extract a list of SNPs using Plink.&quot;&quot;&quot;</span>
-    <span class="n">s</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">jobIDs</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">jobTemplates</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">if</span> <span class="n">runSGE</span><span class="p">:</span>
@@ -872,9 +870,9 @@
 
 
 <div class="viewcode-block" id="keepSamples"><a class="viewcode-back" href="../../../module_content/pyGenClean.Misc.html#pyGenClean.Misc.compare_gold_standard.keepSamples">[docs]</a><span class="k">def</span> <span class="nf">keepSamples</span><span class="p">(</span><span class="n">prefixes</span><span class="p">,</span> <span class="n">samplesToExtractFileNames</span><span class="p">,</span> <span class="n">outPrefixes</span><span class="p">,</span>
-                <span class="n">runSGE</span><span class="p">,</span> <span class="n">transpose</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+                <span class="n">runSGE</span><span class="p">,</span> <span class="n">transpose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Extract a list of SNPs using Plink.&quot;&quot;&quot;</span>
-    <span class="n">s</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">jobIDs</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">jobTemplates</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">if</span> <span class="n">runSGE</span><span class="p">:</span>
@@ -942,10 +940,10 @@
 
 <div class="viewcode-block" id="runCommand"><a class="viewcode-back" href="../../../module_content/pyGenClean.Misc.html#pyGenClean.Misc.compare_gold_standard.runCommand">[docs]</a><span class="k">def</span> <span class="nf">runCommand</span><span class="p">(</span><span class="n">command</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Run a command.&quot;&quot;&quot;</span>
-    <span class="n">output</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">output</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">(</span><span class="n">command</span><span class="p">,</span>
-                                         <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">STDOUT</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+                                         <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">STDOUT</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="k">except</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span><span class="p">:</span>
         <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;couldn&#39;t run command</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">command</span><span class="p">)</span>
         <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span></div>
@@ -967,43 +965,43 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Check if we have the binary files</span>
     <span class="k">for</span> <span class="n">prefix</span> <span class="ow">in</span> <span class="p">[</span><span class="n">args</span><span class="o">.</span><span class="n">bfile</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">gold_bfile</span><span class="p">]:</span>
-        <span class="k">if</span> <span class="n">prefix</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">prefix</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;no input file&quot;</span>
             <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">fileName</span> <span class="ow">in</span> <span class="p">[</span><span class="n">prefix</span> <span class="o">+</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;.bed&quot;</span><span class="p">,</span> <span class="s2">&quot;.bim&quot;</span><span class="p">,</span> <span class="s2">&quot;.fam&quot;</span><span class="p">]]:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">fileName</span><span class="p">):</span>
-                <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;{}: no such file&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">fileName</span><span class="p">)</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">: no such file&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">fileName</span><span class="p">)</span>
                 <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="c1"># Check for the same sample file</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">same_samples</span><span class="p">):</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;{}: no such file&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">same_samples</span><span class="p">)</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">: no such file&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">same_samples</span><span class="p">)</span>
         <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="c1"># Check we have either a manifest or a allele file</span>
-    <span class="k">if</span> <span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">source_manifest</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">source_alleles</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">):</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">source_manifest</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">source_alleles</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
         <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;need an allele file (either an Illumina manifest &quot;</span>
                <span class="s2">&quot;[--source-manifest] or a file containing alleles for each &quot;</span>
                <span class="s2">&quot;marker [--source-alleles]&quot;</span><span class="p">)</span>
         <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-    <span class="k">if</span> <span class="p">((</span><span class="n">args</span><span class="o">.</span><span class="n">source_manifest</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">)</span> <span class="ow">and</span>
-            <span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">source_alleles</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">)):</span>
+    <span class="k">if</span> <span class="p">((</span><span class="n">args</span><span class="o">.</span><span class="n">source_manifest</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span>
+            <span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">source_alleles</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)):</span>
         <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;use either --source-manifest or --source-alleles, not both&quot;</span><span class="p">)</span>
         <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
     <span class="c1"># Check for the manifests</span>
-    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">source_manifest</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">source_manifest</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">source_manifest</span><span class="p">):</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;{}: no such file&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">source_manifest</span><span class="p">)</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">: no such file&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">source_manifest</span><span class="p">)</span>
             <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">source_alleles</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">source_alleles</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">source_alleles</span><span class="p">):</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;{}: no such file&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">source_alleles</span><span class="p">)</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">: no such file&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">source_alleles</span><span class="p">)</span>
             <span class="k">raise</span> <span class="n">ProgramError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="bp">True</span></div>
+    <span class="k">return</span> <span class="kc">True</span></div>
 
 
-<div class="viewcode-block" id="parseArgs"><a class="viewcode-back" href="../../../module_content/pyGenClean.Misc.html#pyGenClean.Misc.compare_gold_standard.parseArgs">[docs]</a><span class="k">def</span> <span class="nf">parseArgs</span><span class="p">(</span><span class="n">argString</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>  <span class="c1"># pragma: no cover</span>
+<div class="viewcode-block" id="parseArgs"><a class="viewcode-back" href="../../../module_content/pyGenClean.Misc.html#pyGenClean.Misc.compare_gold_standard.parseArgs">[docs]</a><span class="k">def</span> <span class="nf">parseArgs</span><span class="p">(</span><span class="n">argString</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>  <span class="c1"># pragma: no cover</span>
     <span class="sd">&quot;&quot;&quot;Parses the command line options and arguments.</span>
 
 <span class="sd">    :returns: A :py:class:`numpy.Namespace` object created by</span>
@@ -1053,8 +1051,8 @@
 <span class="sd">        argparse). Those need to be done elsewhere (see :py:func:`checkArgs`).</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">args</span> <span class="o">=</span> <span class="bp">None</span>
-    <span class="k">if</span> <span class="n">argString</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">argString</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">(</span><span class="n">argString</span><span class="p">)</span>
@@ -1089,19 +1087,19 @@
              <span class="s2">&quot;standard) to find genotyping discordance.&quot;</span><span class="p">)</span>
 <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="n">desc</span><span class="p">)</span>
 <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-v&quot;</span><span class="p">,</span> <span class="s2">&quot;--version&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;version&quot;</span><span class="p">,</span>
-                    <span class="n">version</span><span class="o">=</span><span class="s2">&quot;pyGenClean version {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">__version__</span><span class="p">))</span>
+                    <span class="n">version</span><span class="o">=</span><span class="s2">&quot;pyGenClean version </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">__version__</span><span class="p">))</span>
 
 <span class="c1"># The INPUT files</span>
 <span class="n">group</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s2">&quot;Input File&quot;</span><span class="p">)</span>
-<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--bfile&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;FILE&quot;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--bfile&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;FILE&quot;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                    <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;The input file prefix (will find the plink binary &quot;</span>
                          <span class="s2">&quot;files by appending the prefix to the .bim, .bed and &quot;</span>
                          <span class="s2">&quot;.fam files, respectively).&quot;</span><span class="p">))</span>
-<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--gold-bfile&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;FILE&quot;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--gold-bfile&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;FILE&quot;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                    <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;The input file prefix (will find the plink binary &quot;</span>
                          <span class="s2">&quot;files by appending the prefix to the .bim, .bed and &quot;</span>
                          <span class="s2">&quot;.fam files, respectively) for the Gold Standard.&quot;</span><span class="p">))</span>
-<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--same-samples&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;FILE&quot;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+<span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--same-samples&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;FILE&quot;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                    <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;A file containing samples which are present in both &quot;</span>
                          <span class="s2">&quot;the gold standard and the source panel. One line by &quot;</span>
                          <span class="s2">&quot;identity and tab separated. For each row, first &quot;</span>
@@ -1150,7 +1148,7 @@
         <span class="n">parser</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">message</span><span class="p">)</span></div>
 
 
-<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
     <span class="n">safe_main</span><span class="p">()</span>
 </pre></div>
 
@@ -1168,14 +1166,14 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">pyGenClean 1.8.2 documentation</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &raquo;</li>
-          <li class="nav-item nav-item-2"><a href="../../pyGenClean.html" >pyGenClean</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../../index.html">pyGenClean 1.8.3 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../../pyGenClean.html" >pyGenClean</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2012, Louis-Philippe Lemieux Perreault.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.5.
+        &#169; Copyright 2012, Louis-Philippe Lemieux Perreault.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.3.
     </div>
   </body>
 </html>
