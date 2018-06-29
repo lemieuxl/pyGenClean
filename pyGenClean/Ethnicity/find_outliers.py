@@ -356,7 +356,9 @@ def find_outliers(mds, centers, center_info, ref_pop, options):
                         mec="#000000", mfc="#FFBB33", ms=6, clip_on=False)
 
         # Computing the distances
-        distances = euclidean_distances(subset_data, centers[label])
+        distances = euclidean_distances(
+            subset_data, centers[label,:].reshape(-1, 2),
+        )
 
         # Finding the outliers (that are not in the reference populations
         sigma = np.sqrt(np.true_divide(np.sum(distances ** 2),
