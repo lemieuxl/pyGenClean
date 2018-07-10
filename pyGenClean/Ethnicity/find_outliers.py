@@ -21,6 +21,7 @@ import sys
 import logging
 import argparse
 from glob import glob
+from collections import defaultdict
 
 import numpy as np
 
@@ -66,7 +67,10 @@ def main(argString=None):
 
     # Reads the MDS file
     logger.info("Reading MDS file")
-    mds = read_mds_file(args.mds, args.xaxis, args.yaxis, populations)
+    mds = read_mds_file(
+        file_name=args.mds, c1=args.xaxis, c2=args.yaxis, c3=args.zaxis,
+        pops=populations,
+    )
 
     # Finds the population centers
     logger.info("Finding reference population centers")
@@ -272,18 +276,21 @@ def find_outliers(mds, centers, center_info, ref_pop, options):
     """
     # Importing matplotlib for plotting purposes
     import matplotlib as mpl
-    if options.format != "X11" and mpl.get_backend() != "agg":
+    if mpl.get_backend() != "agg":
         mpl.use("Agg")
     import matplotlib.pyplot as plt
-    if options.format != "X11":
-        plt.ioff()
-    import matplotlib.mlab as mlab
+    plt.ioff()
 
     from sklearn.cluster import KMeans
     from sklearn.metrics.pairwise import euclidean_distances
 
+    # Getting the columns to compute the centers
+    columns = ["c1", "c2"]
+    if "c3" in mds.dtype.names:
+        columns.append("c3")
+
     # Formatting the data
-    data = np.array(zip(mds["c1"], mds["c2"]))
+    data = np.array(zip(*[mds[c] for c in columns]))
 
     # Configuring and running the KMeans
     k_means = KMeans(init=centers, n_clusters=3, n_init=1)
@@ -329,6 +336,11 @@ def find_outliers(mds, centers, center_info, ref_pop, options):
     # The population name
     ref_pop_name = ["CEU", "YRI", "JPT-CHB"]
 
+    # The data for the 3D plot, if required
+    reference_3d_data = defaultdict(dict)
+    outliers_3d_data = defaultdict(list)
+    source_3d_data = {}
+
     # The colors
     colors = ["#CC0000", "#669900", "#0099CC"]
     outlier_colors = ["#FFCACA", "#E2F0B6", "#C5EAF8"]
@@ -357,12 +369,13 @@ def find_outliers(mds, centers, center_info, ref_pop, options):
 
         # Computing the distances
         distances = euclidean_distances(
-            subset_data, centers[label,:].reshape(-1, 2),
+            subset_data, centers[label, :].reshape(-1, centers.shape[1]),
         )
 
         # Finding the outliers (that are not in the reference populations
-        sigma = np.sqrt(np.true_divide(np.sum(distances ** 2),
-                                       len(distances) - 1))
+        sigma = np.sqrt(
+            np.true_divide(np.sum(distances ** 2), len(distances) - 1)
+        )
         outliers = np.logical_and(
             (distances > options.multiplier * sigma).flatten(),
             subset_mds["pop"] != ref_pop_name[label],
@@ -384,12 +397,32 @@ def find_outliers(mds, centers, center_info, ref_pop, options):
             axe_outliers.plot(
                 subset_mds["c1"][subset_mds["pop"] != ref_pop_name[label]],
                 subset_mds["c2"][subset_mds["pop"] != ref_pop_name[label]],
-                "o",
-                mec="#555555",
-                mfc="#555555",
-                ms=2,
-                clip_on=False,
+                "o", mec="#555555", mfc="#555555", ms=2, clip_on=False,
             )
+
+            # Saving all samples that are not part of the reference
+            # populations
+            if options.zaxis is not None:
+                outliers_3d_data["x"].extend(list(
+                    subset_mds["c1"][subset_mds["pop"] != ref_pop_name[label]],
+                ))
+                outliers_3d_data["y"].extend(list(
+                    subset_mds["c2"][subset_mds["pop"] != ref_pop_name[label]],
+                ))
+                outliers_3d_data["z"].extend(list(
+                    subset_mds["c3"][subset_mds["pop"] != ref_pop_name[label]],
+                ))
+                outliers_3d_data["ids"].extend([
+                    "{} {}".format(fid, iid) for fid, iid in zip(
+                        subset_mds["fid"][
+                            subset_mds["pop"] != ref_pop_name[label]
+                        ],
+                        subset_mds["iid"][
+                            subset_mds["pop"] != ref_pop_name[label]
+                        ],
+                    )
+                ])
+
         else:
             # This is the population we want, hence only the real outliers are
             # outliers (we don't include the reference population)
@@ -399,38 +432,74 @@ def find_outliers(mds, centers, center_info, ref_pop, options):
             ]
 
             # Plotting the outliers
-            plot_outliers, = axe_outliers.plot(outlier_mds["c1"],
-                                               outlier_mds["c2"], "o",
-                                               mec="#555555", mfc="#555555",
-                                               ms=2, clip_on=False)
+            plot_outliers, = axe_outliers.plot(
+                outlier_mds["c1"], outlier_mds["c2"], "o", mec="#555555",
+                mfc="#555555", ms=2, clip_on=False,
+            )
+
+            # Saving the outliers
+            if options.zaxis is not None:
+                outliers_3d_data["x"].extend(list(outlier_mds["c1"]))
+                outliers_3d_data["y"].extend(list(outlier_mds["c2"]))
+                outliers_3d_data["z"].extend(list(outlier_mds["c3"]))
+                outliers_3d_data["ids"].extend([
+                    "{} {}".format(fid, iid) for fid, iid in zip(
+                        outlier_mds["fid"], outlier_mds["fid"],
+                    )
+                ])
 
             # Plotting the not outliers
             plot_not_outliers, = axe_outliers.plot(
                 subset_mds["c1"][np.logical_and(
-                        ~outliers,
-                        subset_mds["pop"] != ref_pop_name[label]
+                    ~outliers,
+                    subset_mds["pop"] != ref_pop_name[label]
                 )],
                 subset_mds["c2"][np.logical_and(
                     ~outliers,
                     subset_mds["pop"] != ref_pop_name[label]
                 )],
-                "o",
-                mec="#FFBB33",
-                mfc="#FFBB33",
-                ms=2,
-                clip_on=False,
+                "o", mec="#FFBB33", mfc="#FFBB33", ms=2, clip_on=False,
             )
             outliers_set |= set([(i["fid"], i["iid"]) for i in outlier_mds])
+
+            # Saving the not-outliers
+            if options.zaxis is not None:
+                source_3d_data["x"] = list(
+                    subset_mds["c1"][np.logical_and(
+                        ~outliers,
+                        subset_mds["pop"] != ref_pop_name[label]
+                    )]
+                )
+                source_3d_data["y"] = list(
+                    subset_mds["c2"][np.logical_and(
+                        ~outliers,
+                        subset_mds["pop"] != ref_pop_name[label]
+                    )]
+                )
+                source_3d_data["z"] = list(
+                    subset_mds["c3"][np.logical_and(
+                        ~outliers,
+                        subset_mds["pop"] != ref_pop_name[label]
+                    )]
+                )
+                source_3d_data["ids"] = [
+                    "{} {}".format(fid, iid) for fid, iid in zip(
+                        subset_mds["fid"][np.logical_and(
+                            ~outliers,
+                            subset_mds["pop"] != ref_pop_name[label]
+                        )],
+                        subset_mds["iid"][np.logical_and(
+                            ~outliers,
+                            subset_mds["pop"] != ref_pop_name[label]
+                        )],
+                    )
+                ]
 
         # Plotting the cluster (without outliers)
         p, = axe_after.plot(
             subset_mds[~outliers]["c1"],
             subset_mds[~outliers]["c2"],
-            "o",
-            mec=colors[label],
-            mfc=colors[label],
-            ms=2,
-            clip_on=False,
+            "o", mec=colors[label], mfc=colors[label], ms=2, clip_on=False,
         )
         plots_after.append(p)
 
@@ -443,13 +512,31 @@ def find_outliers(mds, centers, center_info, ref_pop, options):
         p, = axe_outliers.plot(
             subset_mds["c1"][subset_mds["pop"] == ref_pop_name[label]],
             subset_mds["c2"][subset_mds["pop"] == ref_pop_name[label]],
-            "o",
-            mec=colors[label],
-            mfc=colors[label],
-            ms=2,
-            clip_on=False,
+            "o", mec=colors[label], mfc=colors[label], ms=2, clip_on=False,
         )
         plots_outliers.append(p)
+
+        # Saving the points for the reference populations
+        if options.zaxis is not None:
+            reference_3d_data[ref_pop_name[label]]["x"] = list(
+                subset_mds["c1"][subset_mds["pop"] == ref_pop_name[label]]
+            )
+            reference_3d_data[ref_pop_name[label]]["y"] = list(
+                subset_mds["c2"][subset_mds["pop"] == ref_pop_name[label]]
+            )
+            reference_3d_data[ref_pop_name[label]]["z"] = list(
+                subset_mds["c3"][subset_mds["pop"] == ref_pop_name[label]]
+            )
+            reference_3d_data[ref_pop_name[label]]["ids"] = [
+                "{} {}".format(fid, iid) for fid, iid in zip(
+                    subset_mds["fid"][
+                        subset_mds["pop"] == ref_pop_name[label]
+                    ],
+                    subset_mds["iid"][
+                        subset_mds["pop"] == ref_pop_name[label]
+                    ],
+                )
+            ]
 
         # Plotting the cluster center (the real one)
         axe_after.plot(centers[label][0], centers[label][1], "o",
@@ -465,13 +552,40 @@ def find_outliers(mds, centers, center_info, ref_pop, options):
                         numpoints=1, fancybox=True,
                         fontsize=8).get_frame().set_alpha(0.5)
 
-    # Saving the figure
+    # Saving the figures
     fig_before.savefig("{}.before.{}".format(options.out, options.format),
-                       dpi=300)
+                       bbox_inches="tight", dpi=300)
     fig_after.savefig("{}.after.{}".format(options.out, options.format),
-                      dpi=300)
+                      bbox_inches="tight", dpi=300)
     fig_outliers.savefig("{}.outliers.{}".format(options.out, options.format),
-                         dpi=300)
+                         bbox_inches="tight", dpi=300)
+
+    # Creating the 3D plots in plotly
+    if options.zaxis is not None:
+        import jinja2
+
+        # Getting the template
+        jinja2_env = jinja2.Environment(
+            loader=jinja2.PackageLoader(__name__, "templates"),
+        )
+        scatter_3d = jinja2_env.get_template("scatter_3d.html")
+
+        # Saving the final HTML file
+        with open("{}.scatter_3d.html".format(options.out), "w") as f:
+            print >>f, scatter_3d.render(
+                ref_pop_data=reference_3d_data,
+                ref_pop_name=ref_pop_name,
+                ref_pop_color={
+                    name: color for name, color in zip(ref_pop_name, colors)
+                },
+                outliers_data=outliers_3d_data,
+                outliers_color="#555555",
+                source_data=source_3d_data,
+                source_color="#FFBB33",
+                xaxis=options.xaxis,
+                yaxis=options.yaxis,
+                zaxis=options.zaxis,
+            )
 
     return outliers_set
 
@@ -503,26 +617,35 @@ def find_ref_centers(mds):
     yri_mds = mds[mds["pop"] == "YRI"]
     asn_mds = mds[mds["pop"] == "JPT-CHB"]
 
+    # Getting the columns to compute the centers
+    columns = ["c1", "c2"]
+    if "c3" in mds.dtype.names:
+        columns.append("c3")
+
     # Computing the centers
-    centers = [[np.mean(ceu_mds["c1"]), np.mean(ceu_mds["c2"])],
-               [np.mean(yri_mds["c1"]), np.mean(yri_mds["c2"])],
-               [np.mean(asn_mds["c1"]), np.mean(asn_mds["c2"])]]
+    centers = [
+        [np.mean(ceu_mds[c]) for c in columns],
+        [np.mean(yri_mds[c]) for c in columns],
+        [np.mean(asn_mds[c]) for c in columns],
+    ]
 
     return np.array(centers), {"CEU": 0, "YRI": 1, "JPT-CHB": 2}
 
 
-def read_mds_file(file_name, c1, c2, pops):
+def read_mds_file(file_name, c1, c2, pops, c3=None):
     """Reads a MDS file.
 
     :param file_name: the name of the ``mds`` file.
     :param c1: the first component to read (x axis).
     :param c2: the second component to read (y axis).
     :param pops: the population of each sample.
+    :param c3: the third component to read, if any (z axis).
 
     :type file_name: str
     :type c1: str
     :type c2: str
     :type pops: dict
+    :type c3: str
 
     :returns: a :py:class:`numpy.recarray` (one sample per line) with the
               information about the family ID, the individual ID, the first
@@ -546,6 +669,9 @@ def read_mds_file(file_name, c1, c2, pops):
             if col_name not in header_index:
                 msg = "{}: no column named {}".format(file_name, col_name)
                 raise ProgramError(msg)
+        if c3 is not None and c3 not in header_index:
+            msg = "{}: no column named c3".format(file_name)
+            raise ProgramError(msg)
 
         for row in map(create_row, input_file):
             # Getting the sample ID
@@ -558,8 +684,13 @@ def read_mds_file(file_name, c1, c2, pops):
                 raise ProgramError(msg)
 
             # Saving the data
-            mds.append((sample_id[0], sample_id[1], row[header_index[c1]],
-                        row[header_index[c2]], pops[sample_id]))
+            if c3 is None:
+                mds.append((sample_id[0], sample_id[1], row[header_index[c1]],
+                            row[header_index[c2]], pops[sample_id]))
+            else:
+                mds.append((sample_id[0], sample_id[1], row[header_index[c1]],
+                            row[header_index[c2]], row[header_index[c3]],
+                            pops[sample_id]))
 
             # Cheking to find the max FID
             if len(sample_id[0]) > max_fid:
@@ -567,13 +698,26 @@ def read_mds_file(file_name, c1, c2, pops):
             if len(sample_id[1]) > max_iid:
                 max_iid = len(sample_id[1])
 
-    # Creating the numpy array
-    mds = np.array(mds, dtype=[("fid", "a{}".format(max_fid)),
-                               ("iid", "a{}".format(max_iid)),
-                               ("c1", float), ("c2", float),
-                               ("pop", "a7")])
+    # Creating the data types
+    if c3 is None:
+        dtypes = [
+            ("fid", "a{}".format(max_fid)),
+            ("iid", "a{}".format(max_iid)),
+            ("c1", float),
+            ("c2", float),
+            ("pop", "a7"),
+        ]
+    else:
+        dtypes = [
+            ("fid", "a{}".format(max_fid)),
+            ("iid", "a{}".format(max_iid)),
+            ("c1", float),
+            ("c2", float),
+            ("c3", float),
+            ("pop", "a7"),
+        ]
 
-    return mds
+    return np.array(mds, dtype=dtypes)
 
 
 def read_population_file(file_name):
@@ -643,9 +787,13 @@ def checkArgs(args):
         msg = "{}: no such file".format(args.population_file)
         raise ProgramError(msg)
 
-    # Checking the chosen components
-    if args.xaxis == args.yaxis:
+    # Checking the chosen components (X, Y and maybe Z)
+    axis = set([args.xaxis, args.yaxis])
+    if len(axis) != 2:
         msg = "xaxis must be different than yaxis"
+        raise ProgramError(msg)
+    if (args.zaxis is not None) and (args.zaxis in axis):
+        msg = "zaxis must be different than xaxis and yaxis"
         raise ProgramError(msg)
 
     return True
@@ -720,6 +868,10 @@ def add_custom_options(parser):
                         choices=["C{}".format(i) for i in xrange(1, 11)],
                         help=("The component to use for the Y axis. "
                               "[default: %(default)s]"))
+    parser.add_argument("--zaxis", type=str, metavar="COMPONENT",
+                        choices=["C{}".format(i) for i in xrange(1, 11)],
+                        help=("The component to use for the Z axis. "
+                              "Leave empty if not required."))
 
 
 class ProgramError(Exception):
@@ -742,6 +894,7 @@ class ProgramError(Exception):
 
     def __str__(self):
         return self.message
+
 
 # The parser object
 desc = "Finds outliers in SOURCE from CEU samples."

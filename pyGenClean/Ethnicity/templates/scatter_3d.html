@@ -1,0 +1,91 @@
+<!DOCTYPE html >
+<html >
+
+<head>
+  <title>3D Outliers</title>
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+
+<body>
+  <div id="3d_scatter" style="width:960px;height:800px;"></div>
+  <script>
+
+    // Fake point so that mouse over works...
+    var dummyData = {
+      x: [0],
+      y: [0],
+      z: [0],
+      name: 'DUMMY',
+      mode: 'markers',
+      opacity: 0,
+      marker: { color: '#000000', size: 0 },
+      type: 'scatter3d',
+      showlegend: false
+    };
+
+
+    // The reference data
+    {% for name in ref_pop_name %}
+    var refData{{ loop.index }} = {
+      x: {{ ref_pop_data[name]["x"] }},
+      y: {{ ref_pop_data[name]["y"] }},
+      z: {{ ref_pop_data[name]["z"] }},
+      text: {{ ref_pop_data[name]["ids"] }},
+      name: '{{ name }}',
+      mode: 'markers',
+      opacity: 1,
+      marker: { color: '{{ ref_pop_color[name] }}', size: 3 },
+      type: 'scatter3d'
+    };
+    {% endfor %}
+
+    // The outliers
+    var outlierData = {
+      x: {{ outliers_data["x"] }},
+      y: {{ outliers_data["y"] }},
+      z: {{ outliers_data["z"] }},
+      text: {{ outliers_data["ids"] }},
+      name: 'OUTLIERS',
+      mode: 'markers',
+      opacity: 1,
+      marker: { color: '{{ outliers_color }}', size: 3 },
+      type: 'scatter3d'
+    };
+
+    // The source data
+    var sourceData = {
+      x: {{ source_data["x"] }},
+      y: {{ source_data["y"] }},
+      z: {{ source_data["z"] }},
+      text: {{ source_data["ids"] }},
+      name: 'SOURCE',
+      mode: 'markers',
+      opacity: 1,
+      marker: { color: '{{ source_color }}', size: 3 },
+      type: 'scatter3d'
+    };
+
+    var dataPoints = [
+      dummyData,
+      {%- for name in ref_pop_name %}
+      refData{{ loop.index }},
+      {%- endfor %}
+      outlierData,
+      sourceData
+    ];
+
+    var layout = {
+      title: 'Outliers',
+      scene: {
+        xaxis: { title: '{{ xaxis }}' },
+        yaxis: { title: '{{ yaxis }}' },
+        zaxis: { title: '{{ zaxis }}' }
+      }
+    };
+
+    Plotly.newPlot('3d_scatter', dataPoints, layout);
+
+  </script>
+</body>
+
+</html>

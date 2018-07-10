@@ -19,7 +19,7 @@ from setuptools import setup
 
 MAJOR = 1
 MINOR = 8
-MICRO = 3
+MICRO = "4b1"
 VERSION = "{0}.{1}.{2}".format(MAJOR, MINOR, MICRO)
 
 
@@ -107,7 +107,8 @@ def setup_package():
                   "pyGenClean.HeteroHap", "pyGenClean.SampleMissingness",
                   "pyGenClean.NoCallHetero", "pyGenClean.PlinkUtils",
                   "pyGenClean.Contamination"],
-        package_data={"pyGenClean.LaTeX": ["templates/*.tex"]},
+        package_data={"pyGenClean.LaTeX": ["templates/*.tex"],
+                      "pyGenClean.Ethnicity": ["templates/*.html"]},
         classifiers=[
             "Development Status :: 5 - Production/Stable",
             "Intended Audience :: Science/Research",
