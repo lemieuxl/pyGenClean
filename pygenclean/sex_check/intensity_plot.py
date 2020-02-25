@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 
 from ..utils import decode_chrom
 from ..utils.plot import generate_html_scatter
-from ..utils.plink import get_markers_on_chrom, get_sample_sexes
+from ..utils.plink import get_markers_on_chrom, get_sample_sexes, check_files
 
 from ..error import ProgramError
 
@@ -36,14 +36,11 @@ def main(args=None, argv=None):
 
     1. If there are ``summarized_intensities`` provided, reads the file and
        skips to step 6.
-    2. Gets markers on the sexual chromosomes
-       (:py:func:`get_markers_on_chrom`).
-    3. Gets sex for each sample (:py:func:`get_sample_sexes`).
-    4. Reads the file containing samples with sex mismatches
-       (:py:func:`read_sex_mismatches`).
-    5. Reads the intensities and summarizes them (:py:func:`read_intensities`).
-    6. Plots the summarized intensities
-       (:py:func:`plot_summarized_intensities`).
+    2. Gets markers on the sexual chromosomes.
+    3. Gets sex for each sample.
+    4. Reads the file containing samples with sex mismatches.
+    5. Reads the intensities and summarizes them.
+    6. Plots the summarized intensities.
 
     Note:
         Since the intensity file only contain a single sample ID (instead of
@@ -369,10 +366,8 @@ def check_args(args):
             )
 
         # Checking the fam file bim
-        for suffix in (".bim", ".fam"):
-            filename = args.bfile + suffix
-            if not path.isfile(filename):
-                raise ProgramError(f"{filename}: no such file")
+        if not check_files(args.bfile):
+            raise ProgramError(f"{args.bfile}: missing plink files")
 
         # Checking the intensity file
         if not path.isfile(args.intensities):

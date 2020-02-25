@@ -11,6 +11,7 @@ from shlex import quote
 from .error import ProgramError
 from .version import pygenclean_version as __version__
 
+from .plate_bias import plate_bias
 from .sex_check import sex_check, intensity_plot, baf_lrr_plot
 
 
@@ -65,6 +66,7 @@ def parse_args():
 
     # The sex-check module
     add_sex_check_args(subparser)
+    add_plate_bias_args(subparser)
 
     return parser.parse_args()
 
@@ -83,7 +85,7 @@ def add_sex_check_args(main_subparser):
     subparsers = parser.add_subparsers(
         dest="subcommand", required=True,
         description="Below is a list of tools in the sex-check module. Note "
-                    "that 'main' execute the main sex-check pipeline.",
+                    "that 'run' execute the main sex-check pipeline.",
     )
 
     # Main sex-check
@@ -108,6 +110,31 @@ def add_sex_check_args(main_subparser):
     )
     baf_lrr_plot.add_args(subparser)
     subparser.set_defaults(func=baf_lrr_plot.main)
+
+
+def add_plate_bias_args(main_subparser):
+    """Parser for the plate_bias utility."""
+    parser = main_subparser.add_parser(
+        "plate-bias", description=plate_bias.DESCRIPTION,
+    )
+
+    parser.add_argument(
+        "-v", "--version", action="version",
+        version=f"pyGenClean plate-bias {__version__}",
+    )
+
+    subparsers = parser.add_subparsers(
+        dest="subcommand", required=True,
+        description="Below is a list of tools in the plate-bias module. Note "
+                    "that 'run' execute the main plate-bias pipeline.",
+    )
+
+    # Main plate-bias
+    subparser = subparsers.add_parser(
+        "run", description=plate_bias.DESCRIPTION, help=plate_bias.DESCRIPTION,
+    )
+    plate_bias.add_args(subparser)
+    subparser.set_defaults(func=plate_bias.main)
 
 
 def configure_logging():

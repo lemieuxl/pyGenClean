@@ -4,13 +4,12 @@
 import gzip
 import shlex
 import functools
-import subprocess
 
 from ..error import ProgramError
 
 
 __all__ = ["decode_chrom", "decode_sex", "is_gzip", "get_open_func",
-           "execute_external_command", "split_extra_args"]
+           "split_extra_args"]
 
 
 def decode_chrom(chrom):
@@ -108,32 +107,6 @@ def get_open_func(filename):
     if is_gzip(filename):
         return functools.partial(gzip.open, filename, mode="rt")
     return functools.partial(open, filename)
-
-
-def execute_external_command(*args):
-    """Executes an external command.
-
-    Args:
-        args (list): the list containing the command and arguments/options.
-
-    """
-
-    try:
-        proc = subprocess.Popen(
-            args, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-        )
-        outs, errs = proc.communicate()
-
-    except FileNotFoundError as exception:
-        raise ProgramError(exception.strerror)
-
-    if proc.returncode != 0:
-        # Something went wrong
-        command = " ".join(args)
-        errs = errs.decode()
-        raise ProgramError(f"Something went wrong:\n{errs}\n{command}")
-
-    return outs
 
 
 def split_extra_args(args):

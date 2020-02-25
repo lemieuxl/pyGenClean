@@ -1,26 +1,13 @@
 """Utility function related to Plink files."""
 
 
-from shlex import quote
+from os import path
 
 from . import decode_chrom, decode_sex
-from ..utils import execute_external_command
 
 
-__all__ = ["get_markers_on_chrom", "get_sample_sexes", "run_plink"]
-
-
-def run_plink(*args):
-    """Executes Plink with options.
-
-    Args:
-        args (list): the options for Plink.
-
-    """
-    command = ["plink", "--noweb"]
-    for option in args:
-        command.append(quote(option))
-    execute_external_command(*command)
+__all__ = ["check_files", "get_markers_on_chrom", "get_sample_sexes",
+           "parse_bim", "parse_fam"]
 
 
 def get_markers_on_chrom(bimfile, chromosomes):
@@ -35,7 +22,7 @@ def get_markers_on_chrom(bimfile, chromosomes):
 
     """
     return {
-        marker.name for marker in _parse_bim(bimfile)
+        marker.name for marker in parse_bim(bimfile)
         if marker.chrom in chromosomes
     }
 
@@ -51,14 +38,14 @@ def get_sample_sexes(famfile, only_iid=False):
 
     """
     sexes = {}
-    for row in _parse_fam(famfile):
+    for row in parse_fam(famfile):
         sample = row.iid if only_iid else (row.fid, row.iid)
         sexes[sample] = row.sex
 
     return sexes
 
 
-def _parse_bim(bimfile):
+def parse_bim(bimfile):
     """Parses a BIM file.
 
     Args:
@@ -89,7 +76,7 @@ def _parse_bim(bimfile):
             yield BimRow(*line.rstrip("\r\n").split())
 
 
-def _parse_fam(famfile):
+def parse_fam(famfile):
     """Parses a FAM file.
 
     Args:
@@ -114,6 +101,25 @@ def _parse_fam(famfile):
             self.sex = decode_sex(sex)
             self.status = status
 
+        def __repr__(self):
+            return f"<FamRow {self.fid}, {self.iid}>"
+
     with open(famfile) as f:
         for line in f:
             yield FamRow(*line.rstrip("\r\n").split())
+
+
+def check_files(prefix):
+    """Checks that all the files are present.
+
+    Args:
+        prefix (str): the prefix of the files.
+
+    Returns:
+        bool: ``True`` if all files are present, ``False`` otherwise.
+
+    """
+    for extension in ("bed", "bim", "fam"):
+        if not path.isfile(f"{prefix}.{extension}"):
+            return False
+    return True

@@ -15,6 +15,7 @@ from . import intensity_plot, baf_lrr_plot
 
 from ..utils import split_extra_args
 from ..utils import plink as plink_utils
+from ..utils.task import execute_external_command
 
 from ..error import ProgramError
 
@@ -37,22 +38,16 @@ def main(args=None, argv=None):
 
     These are the steps:
 
-    These are the following steps:
-
     1.  Checks if there are enough markers on the chromosome ``23``.
-    2.  Runs the sex check analysis using Plink (:py:func:`runPlinkSexCheck`).
-    3.  If there are no sex problems, then quits (:py:func:`readCheckSexFile`).
-    4.  Creates the recoded file for the chromosome ``23``
-        (:py:func:`createPedChr23UsingPlink`).
-    5.  Computes the heterozygosity percentage on the chromosome ``23``
-        (:py:func:`computeHeteroPercentage`).
+    2.  Runs the sex check analysis using Plink.
+    3.  If there are no sex problems, then quits.
+    4.  Creates the recoded file for the chromosome ``23``.
+    5.  Computes the heterozygosity percentage on the chromosome ``23``.
     6.  If there are enough markers on chromosome ``24`` (at least 1), creates
-        the recoded file for this chromosome
-        (:py:func:`createPedChr24UsingPlink`).
-    7.  Computes the number of no call on the chromosome ``24``
-        (:py:func:`computeNoCall`).
-    8.  If required, plots the gender plot (:py:func:`createGenderPlot`).
-    9. If required, plots the BAF and LRR plot (:py:func:`createLrrBafPlot`).
+        the recoded file for this chromosome.
+    7.  Computes the number of no call on the chromosome ``24``.
+    8.  If required, plots the gender plot.
+    9. If required, plots the BAF and LRR plot.
 
     """
     if args is None:
@@ -71,8 +66,9 @@ def main(args=None, argv=None):
 
     # Run Plink sex-check
     logger.info("Executing Plink' sex check algorithm")
-    plink_utils.run_plink(
-        "--bfile", args.bfile, "--check-sex", "--out", args.out,
+    execute_external_command(
+        command=["plink", "--noweb", "--bfile", args.bfile, "--check-sex",
+                 "--out", args.out],
     )
 
     mismatches = get_sex_mismatch(
@@ -265,9 +261,8 @@ def check_args(args):
 
     """
     # Check if we have the tped and the tfam files
-    for filename in [args.bfile + i for i in [".bed", ".bim", ".fam"]]:
-        if not path.isfile(filename):
-            raise ProgramError(f"{filename}: no such file")
+    if not plink_utils.check_files(args.bfile):
+        raise ProgramError(f"{args.bfile}: missing plink files")
 
     # Ceck the number of markers on chromosome 23
     if args.nb_chr_23 < 0:

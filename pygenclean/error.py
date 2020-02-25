@@ -8,7 +8,7 @@ class ProgramError(Exception):
         msg (str): the message to print to the user before exiting.
 
     """
-    def __init__(self, msg):
+    def __init__(self, msg=""):
         self.message = str(msg)
         super().__init__()
 

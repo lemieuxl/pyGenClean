@@ -4,6 +4,9 @@
 <head>
   <title>{{ page_title }}</title>
   <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
 </head>
 
 <body>
@@ -53,6 +56,13 @@
 
     Plotly.newPlot('scatter', dataPoints, layout, config);
   </script>
+
+  <p>Highlight Samples</p>
+  <select id="sample-select" style="width: 400px" class="sample-multi-select" name="states[]" multiple="multiple" onchange="updateData()">
+    <option value="BIO-02062221-10">BIO-02062221-10</option>
+    <option value="BIO-00786959-08">BIO-00786959-08</option>
+  </select>
+
 </body>
 
 </html>
