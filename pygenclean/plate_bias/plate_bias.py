@@ -1,14 +1,16 @@
 """Finds plate bias (if any)."""
 
 
+import re
 import logging
 import argparse
 from os import path
+from glob import glob
 
 from ..error import ProgramError
 
+from ..utils import task
 from ..utils import plink as plink_utils
-from ..utils.task import execute_external_commands
 
 from ..version import pygenclean_version as __version__
 
@@ -49,6 +51,137 @@ def main(args=None, argv=None):
     execute_plate_bias(args.bfile, set(sample_plates.values()), args.p_filter,
                        args.out, args.nb_threads)
 
+    # Extracting significant markers
+    assoc_results = extract_significant_markers(args.out)
+
+    # Computing the frequencies of the significant markers
+    maf = compute_frequency(args.bfile, args.out)
+
+    write_summary(assoc_results, maf, args.out)
+
+
+def write_summary(results, maf, out):
+    """Writes the results.
+
+    Args:
+        results (list): the plate bias results.
+        maf (dict): the MAF of each markers.
+        out (str): the output rpefix.
+
+    """
+    with open(out + ".significant_markers.summary.tsv", "w") as f:
+        print("chrom", "pos", "name", "maf", "p", "odds", "plate",
+              sep="\t", file=f)
+
+        for marker in results:
+            print(marker.chrom, marker.pos, marker.name, maf[marker.name],
+                  marker.p_value, marker.odds, marker.plate, sep="\t", file=f)
+
+
+def compute_frequency(bfile, out):
+    """Compute the frequency of specific markers.
+
+    Args:
+        bfile (str): the prefix of the input Plink file.
+        out (str): the prefix of the output files.
+
+    Returns:
+        dict: the MAF for each marker.
+
+    """
+    logger.info("Computing the frequencies of significant markers")
+
+    command = [
+        "plink",
+        "--noweb",
+        "--bfile", bfile,
+        "--extract", out + ".significant_markers.txt",
+        "--freq",
+        "--out", out + ".significant_markers"
+    ]
+    task.execute_external_command(command)
+
+    # Reading the MAF
+    frequencies = {}
+    with open(out + ".significant_markers.frq", "r") as f:
+        header = None
+        for line in f:
+            row = plink_utils.split_line(line)
+
+            if header is None:
+                header = {name: i for i, name in enumerate(row)}
+                continue
+
+            marker = row[header["SNP"]]
+            maf = row[header["MAF"]]
+
+            frequencies[marker] = maf
+
+    return frequencies
+
+
+def extract_significant_markers(prefix):
+    """Extract significant markers from the association files.
+
+    Args:
+        prefix (str): the prefix of the association files.
+
+    Returns:
+        list: the list of significant markers.
+
+    """
+    data = []
+
+    class SignificantMarker():
+        # pylint: disable=too-few-public-methods
+        # pylint: disable=missing-docstring
+        # pylint: disable=too-many-arguments
+        # pylint: disable=invalid-name
+
+        __slots__ = ["chrom", "pos", "name", "p_value", "odds", "plate"]
+
+        def __init__(self, chrom, pos, name, p_value, odds, plate):
+            self.chrom = chrom
+            self.pos = pos
+            self.name = name
+            self.p_value = p_value
+            self.odds = odds
+            self.plate = plate
+
+    assoc_files = glob(prefix + ".*.assoc.fisher")
+
+    for filename in assoc_files:
+        # Finding plate name
+        plate_name = re.search(r"plate_bias\.(\S+)\.assoc\.fisher$", filename)
+        if plate_name is None:
+            raise ProgramError(f"{filename}: impossible to find plate name")
+        plate_name = plate_name.group(1)
+
+        # Reading the file
+        with open(filename) as f:
+            header = None
+            for line in f:
+                row = plink_utils.split_line(line)
+
+                if header is None:
+                    header = {name: i for i, name in enumerate(row)}
+                    continue
+
+                data.append(SignificantMarker(
+                    chrom=row[header["CHR"]],
+                    pos=row[header["BP"]],
+                    name=row[header["SNP"]],
+                    p_value=row[header["P"]],
+                    odds=row[header["OR"]],
+                    plate=plate_name,
+                ))
+
+    # Creating the output file
+    with open(prefix + ".significant_markers.txt", "w") as f:
+        print(*{marker.name for marker in data}, sep="\n", file=f)
+
+    return data
+
 
 def execute_plate_bias(bfile, plates, p_filter, out, threads):
     """Execute plate bias on each plates.
@@ -63,7 +196,7 @@ def execute_plate_bias(bfile, plates, p_filter, out, threads):
         for plate in plates
     ]
     logger.info("Executing %d analysis", len(commands))
-    execute_external_commands(commands, threads=threads)
+    task.execute_external_commands(commands, threads=threads)
 
 
 def create_plate_files(sample_plates, fam, prefix):

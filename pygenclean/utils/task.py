@@ -2,6 +2,7 @@
 
 
 import shlex
+import logging
 import subprocess
 import multiprocessing
 
@@ -9,6 +10,9 @@ from ..error import ProgramError
 
 
 __all__ = ["execute_external_command", "execute_external_commands"]
+
+
+logger = logging.getLogger(__name__)
 
 
 def execute_external_command(command):
@@ -21,6 +25,7 @@ def execute_external_command(command):
 
     # Fail-proofing the command
     command = [shlex.quote(part) for part in command]
+    logger.debug("Executing %s", " ".join(command))
 
     try:
         proc = subprocess.Popen(

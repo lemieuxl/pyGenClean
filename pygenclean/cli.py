@@ -1,7 +1,6 @@
 """The main command line interface for pyGenClean."""
 
 
-import os
 import sys
 import logging
 import argparse
@@ -27,7 +26,7 @@ MODULE_MAIN = {
 def main():  # pylint: disable=missing-docstring
     args = parse_args()
 
-    configure_logging()
+    configure_logging(args)
     logger = logging.getLogger("pyGenClean")
 
     # Logging useful information
@@ -60,6 +59,10 @@ def parse_args():
     parser.add_argument(
         "-v", "--version", action="version",
         version=f"pyGenClean vesion {__version__}",
+    )
+
+    parser.add_argument(
+        "--debug", action="store_true", help="Enable debug logging.",
     )
 
     subparser = parser.add_subparsers(dest="command", required=True)
@@ -137,11 +140,11 @@ def add_plate_bias_args(main_subparser):
     subparser.set_defaults(func=plate_bias.main)
 
 
-def configure_logging():
+def configure_logging(args):
     """Configures the logging."""
     # We want INFO by default, unless specified otherwise
     logging_level = logging.INFO
-    if "PYGENCLEAN_DEBUG" in os.environ:
+    if args.debug:
         logging_level = logging.DEBUG
 
     # Configuring the logging

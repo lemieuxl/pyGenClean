@@ -1,13 +1,17 @@
 """Utility function related to Plink files."""
 
 
+import re
 from os import path
 
 from . import decode_chrom, decode_sex
 
 
 __all__ = ["check_files", "get_markers_on_chrom", "get_sample_sexes",
-           "parse_bim", "parse_fam"]
+           "parse_bim", "parse_fam", "split_line"]
+
+
+_SPACE_SPLITTER = re.compile(r"\s+")
 
 
 def get_markers_on_chrom(bimfile, chromosomes):
@@ -123,3 +127,16 @@ def check_files(prefix):
         if not path.isfile(f"{prefix}.{extension}"):
             return False
     return True
+
+
+def split_line(line):
+    """Split a Plink output line (spaces delimited).
+
+    Args:
+        line (str): the line to split.
+
+    Returns:
+        tuple: the split line.
+
+    """
+    return _SPACE_SPLITTER.split(line.strip())
