@@ -23,7 +23,7 @@ logger = logging.getLogger(__name__)
 
 
 def main(args=None, argv=None):
-    """Plots the BAF and LRR of samples with sex mismatch.
+    """Finds plate biases (if any).
 
     Args:
         args (argparse.Namespace): the arguments and options.
