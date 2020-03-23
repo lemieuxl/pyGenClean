@@ -49,7 +49,7 @@ def main(args=None, argv=None):
 
     # Executing Plink on each plate file
     execute_plate_bias(args.bfile, set(sample_plates.values()), args.p_filter,
-                       args.out, args.nb_threads)
+                       args.out, args.nb_tasks)
 
     # Extracting significant markers
     assoc_results = extract_significant_markers(args.out)
@@ -294,8 +294,8 @@ def add_args(parser):
              "[%(default).1e]",
     )
     group.add_argument(
-        "--nb-threads", type=int, metavar="N", default=1,
-        help="The number of threads for this analysis. [%(default)d]",
+        "--nb-tasks", type=int, metavar="N", default=1,
+        help="The number of tasks for this analysis. [%(default)d]",
     )
 
     # The OUTPUT files
