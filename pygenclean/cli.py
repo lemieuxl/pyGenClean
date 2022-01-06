@@ -11,7 +11,9 @@ from .error import ProgramError
 from .version import pygenclean_version as __version__
 
 from .plate_bias import plate_bias
+from .related_samples import related_samples
 from .sex_check import sex_check, intensity_plot, baf_lrr_plot
+from .flag_maf import flag_maf
 
 
 MODULE_MAIN = {
@@ -67,9 +69,11 @@ def parse_args():
 
     subparser = parser.add_subparsers(dest="command", required=True)
 
-    # The sex-check module
+    # The different modules
     add_sex_check_args(subparser)
     add_plate_bias_args(subparser)
+    add_related_samples_args(subparser)
+    add_flag_maf(subparser)
 
     return parser.parse_args()
 
@@ -77,18 +81,19 @@ def parse_args():
 def add_sex_check_args(main_subparser):
     """Parser for the sex_check utility."""
     parser = main_subparser.add_parser(
-        "sex-check", description=sex_check.DESCRIPTION,
+        sex_check.SCRIPT_NAME, description=sex_check.DESCRIPTION,
     )
 
     parser.add_argument(
         "-v", "--version", action="version",
-        version=f"pyGenClean sex-check {__version__}",
+        version=f"pyGenClean {sex_check.SCRIPT_NAME} {__version__}",
     )
 
     subparsers = parser.add_subparsers(
         dest="subcommand", required=True,
-        description="Below is a list of tools in the sex-check module. Note "
-                    "that 'run' execute the main sex-check pipeline.",
+        description=f"Below is a list of tools in the {sex_check.SCRIPT_NAME} "
+                    f"module. Note that 'run' executes the main "
+                    f"{sex_check.SCRIPT_NAME} pipeline.",
     )
 
     # Main sex-check
@@ -118,18 +123,19 @@ def add_sex_check_args(main_subparser):
 def add_plate_bias_args(main_subparser):
     """Parser for the plate_bias utility."""
     parser = main_subparser.add_parser(
-        "plate-bias", description=plate_bias.DESCRIPTION,
+        plate_bias.SCRIPT_NAME, description=plate_bias.DESCRIPTION,
     )
 
     parser.add_argument(
         "-v", "--version", action="version",
-        version=f"pyGenClean plate-bias {__version__}",
+        version=f"pyGenClean {plate_bias.SCRIPT_NAME} {__version__}",
     )
 
     subparsers = parser.add_subparsers(
         dest="subcommand", required=True,
-        description="Below is a list of tools in the plate-bias module. Note "
-                    "that 'run' execute the main plate-bias pipeline.",
+        description=f"Below is a list of tools in the "
+                    f"{plate_bias.SCRIPT_NAME} module. Note that 'run' "
+                    f"executes the main {plate_bias.SCRIPT_NAME} pipeline.",
     )
 
     # Main plate-bias
@@ -138,6 +144,60 @@ def add_plate_bias_args(main_subparser):
     )
     plate_bias.add_args(subparser)
     subparser.set_defaults(func=plate_bias.main)
+
+
+def add_related_samples_args(main_subparser):
+    """Parser for the related_samples utility."""
+    parser = main_subparser.add_parser(
+        related_samples.SCRIPT_NAME, description=related_samples.DESCRIPTION,
+    )
+
+    parser.add_argument(
+        "-v", "--version", action="version",
+        version=f"pyGenClean {related_samples.SCRIPT_NAME} {__version__}",
+    )
+
+    subparsers = parser.add_subparsers(
+        dest="subcommand", required=True,
+        description=f"Below is a list of tools in the "
+                    f"{related_samples.SCRIPT_NAME} module. Note that 'run' "
+                    f"executes the main {related_samples.SCRIPT_NAME} "
+                    f"pipeline.",
+    )
+
+    # Main plate-bias
+    subparser = subparsers.add_parser(
+        "run", description=related_samples.DESCRIPTION,
+        help=related_samples.DESCRIPTION,
+    )
+    related_samples.add_args(subparser)
+    subparser.set_defaults(func=related_samples.main)
+
+
+def add_flag_maf(main_subparser):
+    """Parser for the flag_maf utility."""
+    parser = main_subparser.add_parser(
+        flag_maf.SCRIPT_NAME, description=flag_maf.DESCRIPTION,
+    )
+
+    parser.add_argument(
+        "-v", "--version", action="version",
+        version=f"pyGenClean {flag_maf.SCRIPT_NAME} {__version__}",
+    )
+
+    subparsers = parser.add_subparsers(
+        dest="subcommand", required=True,
+        description=f"Below is a list of tools in the "
+                    f"{flag_maf.SCRIPT_NAME} module. Note that 'run' "
+                    f"executes the main {flag_maf.SCRIPT_NAME} pipeline.",
+    )
+
+    # Main flag-maf
+    subparser = subparsers.add_parser(
+        "run", description=flag_maf.DESCRIPTION, help=flag_maf.DESCRIPTION,
+    )
+    flag_maf.add_args(subparser)
+    subparser.set_defaults(func=flag_maf.main)
 
 
 def configure_logging(args):
