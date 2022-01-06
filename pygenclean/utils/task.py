@@ -34,7 +34,7 @@ def execute_external_command(command):
         outs, errs = proc.communicate()
 
     except FileNotFoundError as exception:
-        raise ProgramError(exception.strerror)
+        raise ProgramError(exception.strerror) from exception
 
     if proc.returncode != 0:
         # Something went wrong

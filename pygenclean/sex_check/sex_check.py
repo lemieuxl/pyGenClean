@@ -65,7 +65,7 @@ def main(args=None, argv=None):
         return
 
     # Run Plink sex-check
-    logger.info("Executing Plink' sex check algorithm")
+    logger.info("Executing Plink's sex check algorithm")
     execute_external_command(
         command=["plink", "--noweb", "--bfile", args.bfile, "--check-sex",
                  "--out", args.out],
@@ -203,6 +203,8 @@ def get_sex_mismatch(filename, female_f, male_f, prefix):
         set: the set of samples with sex mismatch (if any).
 
     """
+    # pylint: disable=no-member
+
     if not path.isfile(filename):
         raise ProgramError(f"{filename}: something went wrong with PLink")
 

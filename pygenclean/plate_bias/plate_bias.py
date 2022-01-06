@@ -190,10 +190,15 @@ def execute_plate_bias(bfile, plates, p_filter, out, threads):
 
     """
     commands = [
-        ["plink", "--noweb", "--bfile", bfile, "--fisher",
-         "--pheno", f"{out}.{plate}.pheno", "--pfilter", str(p_filter),
-         "--out", f"{out}.{plate}"]
-        for plate in plates
+        [
+            "plink",
+            "--noweb",
+            "--bfile", bfile,
+            "--fisher",
+            "--pheno", f"{out}.{plate}.pheno",
+            "--pfilter", str(p_filter),
+            "--out", f"{out}.{plate}",
+        ] for plate in plates
     ]
     logger.info("Executing %d analysis", len(commands))
     task.execute_external_commands(commands, threads=threads)
@@ -278,7 +283,7 @@ def add_args(parser):
         "--bfile", type=str, metavar="FILE", required=True,
         help="The input file prefix (will find the plink binary files by "
              "appending the prefix to the .bim, .bed and .fam files, "
-             "respectively.",
+             "respectively).",
     )
     group.add_argument(
         "--plates", type=str, metavar="FILE", required=True,

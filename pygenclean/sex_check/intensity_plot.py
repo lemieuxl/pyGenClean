@@ -391,10 +391,10 @@ def check_args(args):
     if args.intensity_nb_lines != "all":
         try:
             args.intensity_nb_lines = int(args.intensity_nb_lines)
-        except ValueError:
+        except ValueError as error:
             raise ProgramError(
                 f"{args.intensity_nb_lines}: invalid number of lines",
-            )
+            ) from error
 
 
 def parse_args(argv=None):

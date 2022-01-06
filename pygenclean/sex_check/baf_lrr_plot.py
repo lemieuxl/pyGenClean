@@ -72,6 +72,7 @@ def plot_baf_lrr(sample, filename, args):
         args (argparse.Namespace): the arguments and options.
 
     """
+    # pylint: disable=no-member
     # The columns
     cols = {
         "chrom": args.intensity_chrom_col,
