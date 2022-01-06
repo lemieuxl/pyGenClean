@@ -5,10 +5,11 @@ import re
 from os import path
 
 from . import decode_chrom, decode_sex
+from .task import execute_external_command
 
 
 __all__ = ["check_files", "get_markers_on_chrom", "get_sample_sexes",
-           "parse_bim", "parse_fam", "split_line"]
+           "parse_bim", "parse_fam", "split_line", "extract_markers"]
 
 
 _SPACE_SPLITTER = re.compile(r"\s+")
@@ -140,3 +141,22 @@ def split_line(line):
 
     """
     return _SPACE_SPLITTER.split(line.strip())
+
+
+def extract_markers(bfile, extract, out):
+    """Extracts markers from a Plink file.
+
+    Args:
+        bfile (str): the prefix of the Plink file.
+        extract (str): the name of the file containing the markers to extract.
+        out (str): the prefix of the output file.
+
+    """
+    command = [
+        "plink2",
+        "--bfile", bfile,
+        "--extract", extract,
+        "--make-bed",
+        "--out", out,
+    ]
+    execute_external_command(command)
