@@ -7,8 +7,6 @@ from os import path
 from . import decode_chrom, decode_sex
 from .task import execute_external_command
 
-from ..error import ProgramError
-
 
 __all__ = ["check_files", "get_markers_on_chrom", "get_sample_sexes",
            "parse_bim", "parse_fam", "split_line", "extract_markers",
@@ -174,8 +172,8 @@ def compare_bim(bim_a, bim_b):
 
     Returns:
         tuple: A tuple of three sets. The first one contains the markers only in
-        A. The second one contains the markers in both. The third one
-        contains the markers only in B.
+               A. The second one contains the markers in both. The third one
+               contains the markers only in B.
 
     """
     # Getting the set of markers in the the two BIM files
