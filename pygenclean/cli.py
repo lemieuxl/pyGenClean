@@ -15,6 +15,7 @@ from .related_samples import related_samples
 from .sex_check import sex_check, intensity_plot, baf_lrr_plot
 from .flag_maf import flag_maf
 from .sample_call_rate import sample_call_rate
+from .marker_call_rate import marker_call_rate
 
 
 MODULE_MAIN = {
@@ -76,6 +77,7 @@ def parse_args():
     add_related_samples_args(subparser)
     add_flag_maf(subparser)
     add_sample_call_rate(subparser)
+    add_marker_call_rate(subparser)
 
     return parser.parse_args()
 
@@ -229,6 +231,35 @@ def add_sample_call_rate(main_subparser):
     )
     sample_call_rate.add_args(subparser)
     subparser.set_defaults(func=sample_call_rate.main)
+
+
+def add_marker_call_rate(main_subparser):
+    """Parser for the marker-call-rate utility."""
+    parser = main_subparser.add_parser(
+        marker_call_rate.SCRIPT_NAME, description=marker_call_rate.DESCRIPTION,
+    )
+
+    parser.add_argument(
+        "-v", "--version", action="version",
+        version=f"pyGenClean {marker_call_rate.SCRIPT_NAME} {__version__}",
+    )
+
+    subparsers = parser.add_subparsers(
+        dest="subcommand", required=True,
+        description=f"Below is a list of tools in the "
+                    f"{marker_call_rate.SCRIPT_NAME} module. Note that 'run' "
+                    f"executes the main {marker_call_rate.SCRIPT_NAME} "
+                    f"pipeline.",
+    )
+
+    # Main flag-maf
+    subparser = subparsers.add_parser(
+        "run",
+        description=marker_call_rate.DESCRIPTION,
+        help=marker_call_rate.DESCRIPTION,
+    )
+    marker_call_rate.add_args(subparser)
+    subparser.set_defaults(func=marker_call_rate.main)
 
 
 def configure_logging(args):
