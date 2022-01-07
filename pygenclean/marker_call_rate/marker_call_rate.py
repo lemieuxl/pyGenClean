@@ -39,9 +39,9 @@ def main(args=None, argv=None):
         args = parse_args(argv)
     check_args(args)
 
-    # # Run plink
-    # logger.info("Running Plink")
-    # run_plink(args)
+    # Run plink
+    logger.info("Running Plink")
+    run_plink(args)
 
     # Comparing the bim
     logger.info("Comparing BIM files")
