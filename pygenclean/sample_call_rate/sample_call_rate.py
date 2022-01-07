@@ -85,7 +85,7 @@ def check_args(args):
 
 
 def parse_args(argv=None):
-    """Parses the arguments and function."""
+    """Parses the arguments and options."""
     parser = argparse.ArgumentParser(description=DESCRIPTION)
 
     parser.add_argument(
@@ -107,7 +107,7 @@ def add_args(parser):
         "--bfile", type=str, metavar="FILE", required=True,
         help="The input file prefix (will find the plink binary files by "
              "appending the prefix to the .bim, .bed and .fam files, "
-             "respectively.",
+             "respectively).",
     )
 
     # The options
