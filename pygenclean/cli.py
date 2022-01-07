@@ -14,6 +14,7 @@ from .plate_bias import plate_bias
 from .related_samples import related_samples
 from .sex_check import sex_check, intensity_plot, baf_lrr_plot
 from .flag_maf import flag_maf
+from .sample_call_rate import sample_call_rate
 
 
 MODULE_MAIN = {
@@ -74,6 +75,7 @@ def parse_args():
     add_plate_bias_args(subparser)
     add_related_samples_args(subparser)
     add_flag_maf(subparser)
+    add_sample_call_rate(subparser)
 
     return parser.parse_args()
 
@@ -198,6 +200,35 @@ def add_flag_maf(main_subparser):
     )
     flag_maf.add_args(subparser)
     subparser.set_defaults(func=flag_maf.main)
+
+
+def add_sample_call_rate(main_subparser):
+    """Parser for the sample-call-rate utility."""
+    parser = main_subparser.add_parser(
+        sample_call_rate.SCRIPT_NAME, description=sample_call_rate.DESCRIPTION,
+    )
+
+    parser.add_argument(
+        "-v", "--version", action="version",
+        version=f"pyGenClean {sample_call_rate.SCRIPT_NAME} {__version__}",
+    )
+
+    subparsers = parser.add_subparsers(
+        dest="subcommand", required=True,
+        description=f"Below is a list of tools in the "
+                    f"{sample_call_rate.SCRIPT_NAME} module. Note that 'run' "
+                    f"executes the main {sample_call_rate.SCRIPT_NAME} "
+                    f"pipeline.",
+    )
+
+    # Main flag-maf
+    subparser = subparsers.add_parser(
+        "run",
+        description=sample_call_rate.DESCRIPTION,
+        help=sample_call_rate.DESCRIPTION,
+    )
+    sample_call_rate.add_args(subparser)
+    subparser.set_defaults(func=sample_call_rate.main)
 
 
 def configure_logging(args):
