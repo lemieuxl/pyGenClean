@@ -139,8 +139,8 @@ def check_args(args):
     :class:`sys.stderr` and the program exists with code 1.
 
     """
-    # Check if we have the tped and the tfam files
-    for filename in [args.bfile + i for i in [".bed", ".bim", ".fam"]]:
+    # Check if we have the bed, bim and fam files
+    for filename in [args.bfile + i for i in (".bed", ".bim", ".fam")]:
         if not path.isfile(filename):
             raise ProgramError(f"{filename}: no such file")
 
@@ -157,8 +157,6 @@ def parse_args(argv=None):
     # Adding the arguments and options
     add_args(parser)
 
-    if argv is None:
-        return parser.parse_args()
     return parser.parse_args(argv)
 
 

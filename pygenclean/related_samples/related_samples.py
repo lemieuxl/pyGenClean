@@ -131,8 +131,6 @@ def parse_args(argv=None):
     # Adding the arguments
     add_args(parser)
 
-    if argv is None:
-        return parser.parse_args()
     return parser.parse_args(argv)
 
 
