@@ -7,9 +7,12 @@ from os import path
 from . import decode_chrom, decode_sex
 from .task import execute_external_command
 
+from ..error import ProgramError
+
 
 __all__ = ["check_files", "get_markers_on_chrom", "get_sample_sexes",
-           "parse_bim", "parse_fam", "split_line", "extract_markers"]
+           "parse_bim", "parse_fam", "split_line", "extract_markers",
+           "compare_bim"]
 
 
 _SPACE_SPLITTER = re.compile(r"\s+")
@@ -160,3 +163,30 @@ def extract_markers(bfile, extract, out):
         "--out", out,
     ]
     execute_external_command(command)
+
+
+def compare_bim(bim_a, bim_b):
+    """Compares two BIM files.
+
+    Args:
+        bim_a (str): the first BIM file.
+        bim_b (str): the second BIM file.
+
+    Returns:
+        tuple: A tuple of three sets. The first one contains the markers only in
+        A. The second one contains the markers in both. The third one
+        contains the markers only in B.
+
+    """
+    # Getting the set of markers in the the two BIM files
+    markers_a = {row.name for row in parse_bim(bim_a)}
+    markers_b = {row.name for row in parse_bim(bim_b)}
+
+    # Markers in both BIM files
+    in_both = markers_a & markers_b
+
+    return (
+        markers_a - in_both,
+        in_both,
+        markers_b - in_both,
+    )
