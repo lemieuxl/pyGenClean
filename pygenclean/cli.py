@@ -7,7 +7,7 @@ import argparse
 from os import path
 from shlex import quote
 
-from .tool import qc_modules, qc_sub_modules
+from .qc_module import qc_modules, qc_sub_modules
 from .error import ProgramError
 from .version import pygenclean_version as __version__
 
