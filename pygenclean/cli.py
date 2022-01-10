@@ -17,6 +17,7 @@ from .flag_maf import flag_maf
 from .sample_call_rate import sample_call_rate
 from .marker_call_rate import marker_call_rate
 from .flag_hw import flag_hw
+from .hetero_hap import hetero_hap
 
 
 MODULE_MAIN = {
@@ -80,6 +81,7 @@ def parse_args():
     add_sample_call_rate(subparser)
     add_marker_call_rate(subparser)
     add_flag_hw(subparser)
+    add_hetero_hap(subparser)
 
     return parser.parse_args()
 
@@ -291,6 +293,34 @@ def add_flag_hw(main_subparser):
     )
     flag_hw.add_args(subparser)
     subparser.set_defaults(func=flag_hw.main)
+
+
+def add_hetero_hap(main_subparser):
+    """Parser for the hetero-hap utility."""
+    parser = main_subparser.add_parser(
+        hetero_hap.SCRIPT_NAME, description=hetero_hap.DESCRIPTION,
+    )
+
+    parser.add_argument(
+        "-v", "--version", action="version",
+        version=f"pyGenClean {hetero_hap.SCRIPT_NAME} {__version__}",
+    )
+
+    subparsers = parser.add_subparsers(
+        dest="subcommand", required=True,
+        description=f"Below is a list of tools in the "
+                    f"{hetero_hap.SCRIPT_NAME} module. Note that 'run' "
+                    f"executes the main {hetero_hap.SCRIPT_NAME} pipeline.",
+    )
+
+    # Main hetero-hap
+    subparser = subparsers.add_parser(
+        "run",
+        description=hetero_hap.DESCRIPTION,
+        help=hetero_hap.DESCRIPTION,
+    )
+    hetero_hap.add_args(subparser)
+    subparser.set_defaults(func=hetero_hap.main)
 
 
 def configure_logging(args):
