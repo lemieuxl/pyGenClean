@@ -16,6 +16,7 @@ from .sex_check import sex_check, intensity_plot, baf_lrr_plot
 from .flag_maf import flag_maf
 from .sample_call_rate import sample_call_rate
 from .marker_call_rate import marker_call_rate
+from .flag_hw import flag_hw
 
 
 MODULE_MAIN = {
@@ -78,6 +79,7 @@ def parse_args():
     add_flag_maf(subparser)
     add_sample_call_rate(subparser)
     add_marker_call_rate(subparser)
+    add_flag_hw(subparser)
 
     return parser.parse_args()
 
@@ -169,7 +171,7 @@ def add_related_samples_args(main_subparser):
                     f"pipeline.",
     )
 
-    # Main plate-bias
+    # Main related-samples
     subparser = subparsers.add_parser(
         "run", description=related_samples.DESCRIPTION,
         help=related_samples.DESCRIPTION,
@@ -223,7 +225,7 @@ def add_sample_call_rate(main_subparser):
                     f"pipeline.",
     )
 
-    # Main flag-maf
+    # Main sample-call-rate
     subparser = subparsers.add_parser(
         "run",
         description=sample_call_rate.DESCRIPTION,
@@ -252,7 +254,7 @@ def add_marker_call_rate(main_subparser):
                     f"pipeline.",
     )
 
-    # Main flag-maf
+    # Main marker-call-rate
     subparser = subparsers.add_parser(
         "run",
         description=marker_call_rate.DESCRIPTION,
@@ -260,6 +262,35 @@ def add_marker_call_rate(main_subparser):
     )
     marker_call_rate.add_args(subparser)
     subparser.set_defaults(func=marker_call_rate.main)
+
+
+def add_flag_hw(main_subparser):
+    """Parser for the marker-call-rate utility."""
+    parser = main_subparser.add_parser(
+        flag_hw.SCRIPT_NAME, description=flag_hw.DESCRIPTION,
+    )
+
+    parser.add_argument(
+        "-v", "--version", action="version",
+        version=f"pyGenClean {flag_hw.SCRIPT_NAME} {__version__}",
+    )
+
+    subparsers = parser.add_subparsers(
+        dest="subcommand", required=True,
+        description=f"Below is a list of tools in the "
+                    f"{flag_hw.SCRIPT_NAME} module. Note that 'run' "
+                    f"executes the main {flag_hw.SCRIPT_NAME} "
+                    f"pipeline.",
+    )
+
+    # Main flag-hw
+    subparser = subparsers.add_parser(
+        "run",
+        description=flag_hw.DESCRIPTION,
+        help=flag_hw.DESCRIPTION,
+    )
+    flag_hw.add_args(subparser)
+    subparser.set_defaults(func=flag_hw.main)
 
 
 def configure_logging(args):
