@@ -171,8 +171,8 @@ def compare_bim(bim_a, bim_b):
         bim_b (str): the second BIM file.
 
     Returns:
-        tuple: A tuple of three sets. The first one contains the markers only in
-               A. The second one contains the markers in both. The third one
+        tuple: A tuple of three sets. The first one contains the markers only
+               in A. The second one contains the markers in both. The third one
                contains the markers only in B.
 
     """

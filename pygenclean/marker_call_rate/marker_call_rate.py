@@ -70,7 +70,7 @@ def compare_bim(args):
             f"in {args.out}.bim",
         )
 
-    # We want to save the the markers only in the first file
+    # We want to save the markers only in the first file
     with open(args.out + ".removed_snps", "w") as f:
         print(*in_before, sep="\n", file=f)
 
@@ -90,8 +90,7 @@ def run_plink(options):
             "--bfile", options.bfile,
             "--geno", str(options.geno),
             "--make-bed",
-            "--out",
-            options.out,
+            "--out", options.out,
         ]
     )
 
@@ -100,7 +99,7 @@ def check_args(args):
     """Checks the arguments and options.
 
     Args:
-        args (argparse.namespace): the arguments and options.
+        args (argparse.Namespace): the arguments and options.
 
     If there is a problem with an option, an exception is raised using the
     :py:class:`ProgramError` class, a message is printed to the
