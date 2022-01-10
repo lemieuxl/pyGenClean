@@ -9,13 +9,13 @@ import pandas as pd
 
 import matplotlib.pyplot as plt
 
-from ..utils import decode_chrom
-from ..utils.plot import generate_html_scatter
-from ..utils.plink import get_markers_on_chrom, get_sample_sexes, check_files
+from ...utils import decode_chrom
+from ...utils.plot import generate_html_scatter
+from ...utils.plink import get_markers_on_chrom, get_sample_sexes, check_files
 
-from ..error import ProgramError
+from ...error import ProgramError
 
-from ..version import pygenclean_version as __version__
+from ...version import pygenclean_version as __version__
 
 
 SCRIPT_NAME = "intensity-plot"

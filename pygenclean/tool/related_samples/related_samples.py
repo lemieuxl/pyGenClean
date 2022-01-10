@@ -4,12 +4,12 @@
 import logging
 import argparse
 
-from ..error import ProgramError
+from ...error import ProgramError
 
-from ..utils import task
-from ..utils import plink as plink_utils
+from ...utils import task
+from ...utils import plink as plink_utils
 
-from ..version import pygenclean_version as __version__
+from ...version import pygenclean_version as __version__
 
 
 SCRIPT_NAME = "related-samples"

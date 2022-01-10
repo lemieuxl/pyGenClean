@@ -13,13 +13,13 @@ from pyplink import PyPlink
 
 from . import intensity_plot, baf_lrr_plot
 
-from ..utils import split_extra_args
-from ..utils import plink as plink_utils
-from ..utils.task import execute_external_command
+from ...utils import split_extra_args
+from ...utils import plink as plink_utils
+from ...utils.task import execute_external_command
 
-from ..error import ProgramError
+from ...error import ProgramError
 
-from ..version import pygenclean_version as __version__
+from ...version import pygenclean_version as __version__
 
 
 SCRIPT_NAME = "sex-check"

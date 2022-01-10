@@ -10,12 +10,11 @@ import pandas as pd
 
 import matplotlib.pyplot as plt
 
-from ..utils import decode_chrom
-from ..utils import illumina
+from ...utils import decode_chrom, illumina
 
-from ..error import ProgramError
+from ...error import ProgramError
 
-from ..version import pygenclean_version as __version__
+from ...version import pygenclean_version as __version__
 
 
 SCRIPT_NAME = "baf-lrr-plot"

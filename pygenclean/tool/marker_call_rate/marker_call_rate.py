@@ -1,48 +1,82 @@
-"""Removes samples with poor call rate."""
+"""Removes markers with poor call rate."""
 
 
 import logging
 import argparse
 from os import path
 
-from ..utils.task import execute_external_command
+from ...utils.task import execute_external_command
+from ...utils import plink as plink_utils
 
-from ..error import ProgramError
+from ...error import ProgramError
 
-from ..version import pygenclean_version as __version__
+from ...version import pygenclean_version as __version__
 
 
-SCRIPT_NAME = "sample-call-rate"
-DESCRIPTION = "Remove samples with poor call rate."
+SCRIPT_NAME = "marker-call-rate"
+DESCRIPTION = "Remove markers with poor call rate."
 
 
 logger = logging.getLogger(__name__)
 
 
 def main(args=None, argv=None):
-    """Remove samples with poor call rate.
+    """Removes markers with poor call rate.
 
     Args:
-        args (argparse.Namespace): the arguments and options
-        argv (list): the argument as list.
+        args (arparse.Namespace): the arguments and options
+        argv (list): the argument as a list.
 
     These are the steps:
 
     1. Prints the options.
-    2. Runs Plink with the ``mind`` option (:py:func:`runPlink`).
+    2. Runs Plink with the ``geno`` option (:py:func:`runPlink`).
+    3. Compares the two ``bim`` files (before and after the Plink ``geno``
+       analysis) (:py:func:`compareBIM`).
 
     """
     if args is None:
         args = parse_args(argv)
     check_args(args)
 
-    # Running Plink
+    # Run plink
     logger.info("Running Plink")
     run_plink(args)
 
+    # Comparing the bim
+    logger.info("Comparing BIM files")
+    compare_bim(args)
+
+
+def compare_bim(args):
+    """Compare two BIM files.
+
+    Args:
+        args (argparse.Namespace): the arguments and options.
+
+    Compares two BIM files (before and after a change).
+
+    """
+    # Comparing the two BIM files
+    in_before, _, in_after = plink_utils.compare_bim(
+        bim_a=args.bfile + ".bim",
+        bim_b=args.out + ".bim",
+    )
+
+    # There should be no extra markers in only 'after'
+    if in_after:
+        raise ProgramError(
+            f"There should not be markers in {args.bfile}.bim which are not "
+            f"in {args.out}.bim",
+        )
+
+    # We want to save the markers only in the first file
+    with open(args.out + ".removed_snps", "w") as f:
+        print(*in_before, sep="\n", file=f)
+
 
 def run_plink(options):
-    """Run Plink with the ``mind`` option.
+    """Runs Plink with the ``geno`` option.
 
     Args:
         options (argparse.Namespace): the arguments and options.
@@ -54,7 +88,7 @@ def run_plink(options):
             "plink",
             "--noweb",
             "--bfile", options.bfile,
-            "--mind", str(options.mind),
+            "--geno", str(options.geno),
             "--make-bed",
             "--out", options.out,
         ]
@@ -72,15 +106,15 @@ def check_args(args):
     :class:`sys.stderr` and the program exists with code 1.
 
     """
-    # Check if we have the bed, bim and fam files
+    # Check if we have the tped and the tfam files
     for filename in [args.bfile + i for i in (".bed", ".bim", ".fam")]:
         if not path.isfile(filename):
             raise ProgramError(f"{filename}: no such file")
 
     # Check the mind option (between 0 and 1, inclusive)
-    if (args.mind < 0) or (args.mind > 1):
+    if (args.geno < 0) or (args.geno > 1):
         raise ProgramError(
-            f"mind={args.mind}: must be between 0 and 1 (inclusive)",
+            f"geno={args.geno}: must be between 0 and 1 (inclusive)",
         )
 
 
@@ -113,15 +147,14 @@ def add_args(parser):
     # The options
     group = parser.add_argument_group("Options")
     group.add_argument(
-        "--mind", type=float, metavar="FLOAT", default=0.1,
-        help="The call rate threshold (remove samples with more than x "
-             "percent missing genotypes). [Default: %(default)s]",
+        "--geno", type=float, metavar="FLOAT", default=0.02,
+        help="The missingness threshold (remove SNPs with more than x percent "
+             "missing genotypes). [Default: %(default)s]",
     )
 
     # The OUTPUT files
     group = parser.add_argument_group("Output File")
     group.add_argument(
-        "--out", type=str, metavar="FILE", default="clean_mind",
-        help="The prefix of the output files (wich will be a Plink binary "
-             "file).  [default: %(default)s]",
+        "--out", type=str, metavar="FILE", default="clean_geno",
+        help="The prefix of the output files. [default: %(default)s]",
     )
