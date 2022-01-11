@@ -9,7 +9,7 @@ from .task import execute_external_command
 
 
 __all__ = ["check_files", "get_markers_on_chrom", "get_sample_sexes",
-           "parse_bim", "parse_fam", "split_line", "extract_markers",
+           "parse_bim", "parse_fam", "split_line", "subset_markers",
            "compare_bim"]
 
 
@@ -144,19 +144,23 @@ def split_line(line):
     return _SPACE_SPLITTER.split(line.strip())
 
 
-def extract_markers(bfile, extract, out):
+def subset_markers(bfile, markers, out, subset_type):
     """Extracts markers from a Plink file.
 
     Args:
         bfile (str): the prefix of the Plink file.
-        extract (str): the name of the file containing the markers to extract.
+        markers (str): the name of the file containing the markers to subset.
         out (str): the prefix of the output file.
+        subset_type (str): either `extract` or `exclude`.
 
     """
+    if subset_type not in {"exclude", "extract"}:
+        raise ValueError(f"{subset_type}: invalid subset")
+
     command = [
         "plink2",
         "--bfile", bfile,
-        "--extract", extract,
+        f"--{subset_type}", markers,
         "--make-bed",
         "--out", out,
     ]
