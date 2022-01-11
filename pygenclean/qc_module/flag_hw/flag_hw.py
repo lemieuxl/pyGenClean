@@ -3,7 +3,6 @@
 
 import logging
 import argparse
-from os import path
 
 from ...utils.task import execute_external_command
 from ...utils import plink as plink_utils
@@ -182,9 +181,8 @@ def check_args(args):
 
     """
     # Check if we have the tped and the tfam files
-    for filename in [args.bfile + i for i in (".bed", ".bim", ".fam")]:
-        if not path.isfile(filename):
-            raise ProgramError(f"{filename}: no such file")
+    if not plink_utils.check_files(args.bfile):
+        raise ProgramError(f"{args.bfile}: no such binary files")
 
     # Check the HW pvalue
     hw_value = args.hwe

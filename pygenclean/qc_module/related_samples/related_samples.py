@@ -51,14 +51,17 @@ def main(args=None, argv=None):
     # Counting the number of markers
     with open(markers_to_extract) as f:
         nb_markers = len(f.read().splitlines())
+
     if nb_markers < args.min_nb_snp:
         logger.warning("Only %d markers on autosome, stopping", nb_markers)
         return
 
     # Extracting the markers
-    plink_utils.extract_markers(
-        bfile=args.bfile, extract=markers_to_extract,
+    plink_utils.subset_markers(
+        bfile=args.bfile,
+        markers=markers_to_extract,
         out=args.out + ".pruned_data",
+        subset_type="extract",
     )
 
 
@@ -116,7 +119,7 @@ def check_args(args):
 
     """
     if not plink_utils.check_files(args.bfile):
-        raise ProgramError(f"{args.bfile}: missing plink files")
+        raise ProgramError(f"{args.bfile}: no such binary files")
 
 
 def parse_args(argv=None):

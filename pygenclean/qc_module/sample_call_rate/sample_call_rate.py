@@ -3,9 +3,9 @@
 
 import logging
 import argparse
-from os import path
 
 from ...utils.task import execute_external_command
+from ...utils import plink as plink_utils
 
 from ...error import ProgramError
 
@@ -73,9 +73,8 @@ def check_args(args):
 
     """
     # Check if we have the bed, bim and fam files
-    for filename in [args.bfile + i for i in (".bed", ".bim", ".fam")]:
-        if not path.isfile(filename):
-            raise ProgramError(f"{filename}: no such file")
+    if not plink_utils.check_files(args.bfile):
+        raise ProgramError(f"{args.bfile}: no such binary files")
 
     # Check the mind option (between 0 and 1, inclusive)
     if (args.mind < 0) or (args.mind > 1):

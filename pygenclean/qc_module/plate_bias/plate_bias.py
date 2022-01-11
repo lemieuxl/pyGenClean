@@ -252,7 +252,7 @@ def check_args(args):
 
     """
     if not plink_utils.check_files(args.bfile):
-        raise ProgramError(f"{args.bfile}: missing plink files")
+        raise ProgramError(f"{args.bfile}: no such binary files")
 
     if not path.isfile(args.plates):
         raise ProgramError(f"{args.plates}: no such file")

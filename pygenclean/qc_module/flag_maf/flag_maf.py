@@ -140,9 +140,8 @@ def check_args(args):
 
     """
     # Check if we have the bed, bim and fam files
-    for filename in [args.bfile + i for i in (".bed", ".bim", ".fam")]:
-        if not path.isfile(filename):
-            raise ProgramError(f"{filename}: no such file")
+    if not plink_utils.check_files(args.bfile):
+        raise ProgramError(f"{args.bfile}: no such binary files")
 
 
 def parse_args(argv=None):

@@ -264,7 +264,7 @@ def check_args(args):
     """
     # Check if we have the tped and the tfam files
     if not plink_utils.check_files(args.bfile):
-        raise ProgramError(f"{args.bfile}: missing plink files")
+        raise ProgramError(f"{args.bfile}: no such binary files")
 
     # Ceck the number of markers on chromosome 23
     if args.nb_chr_23 < 0:

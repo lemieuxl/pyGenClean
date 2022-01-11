@@ -367,7 +367,7 @@ def check_args(args):
 
         # Checking the fam file bim
         if not check_files(args.bfile):
-            raise ProgramError(f"{args.bfile}: missing plink files")
+            raise ProgramError(f"{args.bfile}: no such binary files")
 
         # Checking the intensity file
         if not path.isfile(args.intensities):
