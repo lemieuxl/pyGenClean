@@ -94,7 +94,7 @@ def plot_baf_lrr(sample, filename, args):
     df["__chrom"] = df.loc[:, cols["chrom"]].map(decode_chrom)
 
     # Keeping only sexual chromosomes
-    df = df.loc[df.loc[:, "__chrom"].isin({23, 24}), :]
+    df = df.loc[df.loc[:, "__chrom"].isin({23, 24}), :]  # noqa: E231
 
     # Plotting
     figure, axes = plt.subplots(2, 2, figsize=(20, 8))
