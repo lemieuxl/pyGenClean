@@ -67,8 +67,13 @@ def main(args=None, argv=None):
     # Run Plink sex-check
     logger.info("Executing Plink's sex check algorithm")
     execute_external_command(
-        command=["plink", "--noweb", "--bfile", args.bfile, "--check-sex",
-                 "--out", args.out],
+        command=[
+            "plink1.9" if args.use_plink19 else "plink",
+            "--noweb",
+            "--bfile", args.bfile,
+            "--check-sex",
+            "--out", args.out,
+        ],
     )
 
     mismatches = get_sex_mismatch(
@@ -318,6 +323,11 @@ def add_args(parser):
         help="The input file prefix (will find the Plink binary files by "
              "appending the prefix to the .bed, .bim, and .fam files, "
              "respectively.",
+    )
+    group.add_argument(
+        "--use-plink19", action="store_true",
+        help="Use plink version 1.9 instead of the original plink binary. "
+             "'plink1.9' must be in the path.",
     )
 
     # The options
