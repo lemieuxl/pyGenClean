@@ -1,10 +1,12 @@
 """Creates an intensity plot for sexual chromosomes."""
 
 
+import uuid
 import logging
 import argparse
 from os import path
 
+import numpy as np
 import pandas as pd
 
 import matplotlib.pyplot as plt
@@ -128,55 +130,63 @@ def read_intensities(filename, required_markers, sample_sex, mismatches, args):
         "chrom": args.intensity_chrom_col,
         "x": args.intensity_x_col,
         "y": args.intensity_y_col,
+        "new_chrom": str(uuid.uuid4()),
     }
 
+    # The intensity file reader (using chunksize)
+    intensity_reader = pd.read_csv(
+        filename,
+        sep=args.intensity_delimiter,
+        dtype={cols["chrom"]: str, cols["sample"]: str},
+        usecols=[cols["snp"], cols["sample"], cols["x"], cols["y"],
+                 cols["chrom"]],
+        chunksize=args.intensity_nb_lines,
+    )
+
+    # The sexual chromosomes
+    sexual_chromosomes = (23, 24)
+
+    # The final data
     df = None
-    if args.intensity_nb_lines == "all":
-        df = pd.read_csv(
-            filename,
-            sep=args.intensity_delimiter,
-            dtype={cols["chrom"]: str, cols["sample"]: str},
-            usecols=[cols["snp"], cols["sample"], cols["x"], cols["y"],
-                     cols["chrom"]],
-        )
-        df = process_df(
-            df=df, snp_col=cols["snp"], sample_col=cols["sample"],
-            chrom_col=cols["chrom"], sample_sex=sample_sex,
+
+    # Parsing the intensity file one chunk at a time
+    for sub_df in intensity_reader:
+        sub_df = process_df(
+            df=sub_df,
+            snp_col=cols["snp"],
+            sample_col=cols["sample"],
+            chrom_col=cols["chrom"],
+            new_chrom_col=cols["new_chrom"],
+            sample_sex=sample_sex,
             required_markers=required_markers,
         )
 
-    else:
-        # Will read chunk by chunk using pandas in case we have a huge file
-        reader = pd.read_csv(
-            filename,
-            sep=args.intensity_delimiter,
-            dtype={cols["chrom"]: str, cols["sample"]: str},
-            usecols=[cols["snp"], cols["sample"], cols["x"], cols["y"],
-                     cols["chrom"]],
-            chunksize=args.intensity_nb_lines,
+        # Checking the unique chromosomes
+        unique_chromosomes = sub_df[cols["new_chrom"]].unique()
+        if not np.isin(unique_chromosomes, sexual_chromosomes).all():
+            raise ProgramError("There are markers not on sexual chromosomes")
+
+        # Summing the X and Y intensities per row
+        sub_df["intensity_sum"] = sub_df.loc[:, ["X", "Y"]].sum(axis=1)
+
+        # Summing and counting the intensity values for each sample for each
+        # chromosome
+        sub_df = sub_df.groupby([cols["sample"], cols["new_chrom"]]).agg(
+            {"intensity_sum": ["sum", "count"]},
         )
 
-        # Reading the chunks and concatenating the values
-        df = pd.concat(
-            [
-                process_df(
-                    df=sub_df, snp_col=cols["snp"], sample_col=cols["sample"],
-                    chrom_col=cols["chrom"], sample_sex=sample_sex,
-                    required_markers=required_markers,
-                ) for sub_df in reader
-            ],
-            ignore_index=True,
-        )
+        # Saving the data
+        if df is None:
+            df = sub_df
+        else:
+            df = df.add(sub_df, fill_value=0)
 
-    logger.info("Computing summarized intensities")
-    # Sum X and Y, group by sample and chromosomes and average the sum
-    df["sum_x_y"] = df.loc[:, [cols["x"], cols["y"]]].sum(axis=1)
-    df = df.groupby([cols["sample"], "__chrom"]).mean().reset_index().pivot(
-        index=cols["sample"], columns="__chrom", values="sum_x_y",
-    )
-
-    # Renaming the columns
-    df = df.reset_index().rename(
+    # Creating the final format
+    df = df.loc[:, "intensity_sum"]
+    df["mean"] = df["sum"] / df["count"]
+    df = df.reset_index().pivot_table(
+        values="mean", index=cols["sample"], columns=[cols["new_chrom"]],
+    ).reset_index().rename(
         columns={cols["sample"]: "sample_id", 23: "chr23", 24: "chr24"},
     )
 
@@ -189,7 +199,7 @@ def read_intensities(filename, required_markers, sample_sex, mismatches, args):
     return df.loc[:, ["sample_id", "chr23", "chr24", "sex", "status"]]
 
 
-def process_df(df, snp_col, sample_col, chrom_col, sample_sex,
+def process_df(df, snp_col, sample_col, chrom_col, new_chrom_col, sample_sex,
                required_markers):
     """Pre-process a data frame to keep only required information.
 
@@ -210,7 +220,7 @@ def process_df(df, snp_col, sample_col, chrom_col, sample_sex,
     df = df.loc[df.loc[:, sample_col].isin(sample_sex), :]
 
     # Decoding the chromosome
-    df["__chrom"] = df.loc[:, chrom_col].map(decode_chrom)
+    df[new_chrom_col] = df.loc[:, chrom_col].map(decode_chrom)
 
     return df.dropna()
 
@@ -365,7 +375,7 @@ def check_args(args):
                 "'--summarized-intensities'"
             )
 
-        # Checking the fam file bim
+        # Checking the plink files
         if not check_files(args.bfile):
             raise ProgramError(f"{args.bfile}: no such binary files")
 
@@ -387,14 +397,6 @@ def check_args(args):
     if args.sex_mismatches is not None:
         if not path.isfile(args.sex_mismatches):
             raise ProgramError(f"{args.sex_mismatches}: no such file")
-
-    if args.intensity_nb_lines != "all":
-        try:
-            args.intensity_nb_lines = int(args.intensity_nb_lines)
-        except ValueError as error:
-            raise ProgramError(
-                f"{args.intensity_nb_lines}: invalid number of lines",
-            ) from error
 
 
 def parse_args(argv=None):
@@ -492,9 +494,9 @@ def add_args(parser):
         help="The field separator. [tabulation]",
     )
     group.add_argument(
-        "--intensity-nb-lines", type=str, metavar="INT", default=10e6,
+        "--intensity-nb-lines", type=int, metavar="INT", default=10e6,
         help="The number of line to read from the intensity file at a time. "
-             "Use 'all' to read the file in one go (use at your own risk)."
+             "Use 'all' to read the file in one go (use at your own risk). "
              "[%(default)d]",
     )
 
