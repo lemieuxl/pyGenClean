@@ -1,6 +1,7 @@
 """Plots the BAF and LRR of samples with sex mismatch."""
 
 
+import uuid
 import logging
 import argparse
 from os import path
@@ -91,10 +92,11 @@ def plot_baf_lrr(sample, filename, args):
     )
 
     # Decoding the chromosomes
-    df["__chrom"] = df.loc[:, cols["chrom"]].map(decode_chrom)
+    new_chrom_col = str(uuid.uuid4())
+    df[new_chrom_col] = df.loc[:, cols["chrom"]].map(decode_chrom)
 
     # Keeping only sexual chromosomes
-    df = df.loc[df.loc[:, "__chrom"].isin({23, 24}), :]  # noqa: E231
+    df = df.loc[df.loc[:, new_chrom_col].isin({23, 24}), :]  # noqa: E231
 
     # Plotting
     figure, axes = plt.subplots(2, 2, figsize=(20, 8))
@@ -111,8 +113,8 @@ def plot_baf_lrr(sample, filename, args):
         axe.spines["left"].set_position(("outward", 9))
 
     # The chromosomes
-    chrx = df.loc[:, "__chrom"] == 23
-    chry = df.loc[:, "__chrom"] == 24
+    chrx = df.loc[:, new_chrom_col] == 23
+    chry = df.loc[:, new_chrom_col] == 24
 
     # LRR
     axe = axes[0, 0]
