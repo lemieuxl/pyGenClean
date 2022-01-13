@@ -144,7 +144,7 @@ def split_line(line):
     return _SPACE_SPLITTER.split(line.strip())
 
 
-def subset_markers(bfile, markers, out, subset_type):
+def subset_markers(bfile, markers, out, subset_type, use_original_plink=False):
     """Extracts markers from a Plink file.
 
     Args:
@@ -158,7 +158,7 @@ def subset_markers(bfile, markers, out, subset_type):
         raise ValueError(f"{subset_type}: invalid subset")
 
     command = [
-        "plink2",
+        "plink" if use_original_plink else "plink2",
         "--bfile", bfile,
         f"--{subset_type}", markers,
         "--make-bed",
