@@ -12,11 +12,9 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 from ...utils import decode_chrom
-from ...utils.plot import generate_html_scatter
 from ...utils.plink import get_markers_on_chrom, get_sample_sexes, check_files
 
 from ...error import ProgramError
-
 from ...version import pygenclean_version as __version__
 
 
@@ -25,6 +23,49 @@ DESCRIPTION = "Plots summarized X intensities versus summarized Y intensities."
 
 
 logger = logging.getLogger(__name__)
+
+
+PLOT_CONFIG = {
+    ("OK", "Male"): {
+        "color": "#0099CC", "edgecolor": "#0099CC", "marker": "o",
+        "size": 20, "plotly_size": 12, "plotly_symbol": "circle",
+        "highlighted_plotly_size": 18,
+        "highlighted_plotly_line": {"color": "black", "width": 4},
+    },
+    ("OK", "Female"): {
+        "color": "#CC0000", "edgecolor": "#CC0000", "marker": "o",
+        "size": 20, "plotly_size": 12, "plotly_symbol": "circle",
+        "highlighted_plotly_size": 18,
+        "highlighted_plotly_line": {"color": "black", "width": 4},
+    },
+    ("OK", "Unknown"): {
+        "color": "#555555", "edgecolor": "#555555", "marker": "o",
+        "size": 20, "plotly_size": 12, "plotly_symbol": "circle",
+        "highlighted_plotly_size": 18,
+        "highlighted_plotly_line": {"color": "black", "width": 4},
+    },
+    ("Mismatch", "Male"): {
+        "color": "#669900", "edgecolor": "#000000", "marker": "^",
+        "size": 30, "plotly_size": 12, "plotly_symbol": "triangle-up",
+        "highlighted_plotly_size": 24,
+        "plotly_line": {"color": "black", "width": 1},
+        "highlighted_plotly_line": {"color": "black", "width": 6},
+    },
+    ("Mismatch", "Female"): {
+        "color": "#9933CC", "edgecolor": "#000000", "marker": "v",
+        "size": 30, "plotly_size": 12, "plotly_symbol": "triangle-down",
+        "highlighted_plotly_size": 24,
+        "plotly_line": {"color": "black", "width": 1},
+        "highlighted_plotly_line": {"color": "black", "width": 6},
+    },
+    ("Mismatch", "Unknown"): {
+        "color": "#555555", "edgecolor": "#000000", "marker": ">",
+        "size": 30, "plotly_size": 12, "plotly_symbol": "triangle-right",
+        "highlighted_plotly_size": 24,
+        "plotly_line": {"color": "black", "width": 1},
+        "highlighted_plotly_line": {"color": "black", "width": 6},
+    },
+}
 
 
 def main(args=None, argv=None):
@@ -280,56 +321,13 @@ def plot_summarized_intensities(df, args):
     axe.set_xlabel(args.xlabel)
     axe.set_ylabel(args.ylabel)
 
-    # The colors
-    plot_config = {
-        ("OK", "Male"): {
-            "color": "#0099CC", "edgecolor": "#0099CC", "marker": "o",
-            "size": 20, "plotly_size": 12, "plotly_symbol": "circle",
-        },
-        ("OK", "Female"): {
-            "color": "#CC0000", "edgecolor": "#CC0000", "marker": "o",
-            "size": 20, "plotly_size": 12, "plotly_symbol": "circle",
-        },
-        ("OK", "Unknown"): {
-            "color": "#555555", "edgecolor": "#555555", "marker": "o",
-            "size": 20, "plotly_size": 12, "plotly_symbol": "circle",
-        },
-        ("Mismatch", "Male"): {
-            "color": "#669900", "edgecolor": "#000000", "marker": "^",
-            "size": 30, "plotly_size": 12, "plotly_symbol": "triangle-up",
-            "plotly_line": {"color": "black", "width": 1},
-        },
-        ("Mismatch", "Female"): {
-            "color": "#9933CC", "edgecolor": "#000000", "marker": "v",
-            "size": 30, "plotly_size": 12, "plotly_symbol": "triangle-down",
-            "plotly_line": {"color": "black", "width": 1},
-        },
-        ("Mismatch", "Unknown"): {
-            "color": "#555555", "edgecolor": "#000000", "marker": ">",
-            "size": 30, "plotly_size": 12, "plotly_symbol": "triangle-right",
-            "plotly_line": {"color": "black", "width": 1},
-        },
-    }
-
-    html_data = {
-        "page_title": "pyGenClean - sex-check - Summarized Intensities",
-        "scatter_title": "Summarized Intensities",
-        "xlabel": args.xlabel,
-        "ylabel": args.ylabel,
-        "labels": [],
-        "data": {},
-        "colors": {},
-        "sizes": {},
-        "symbols": {},
-        "lines": {},
-    }
     for status in ("OK", "Mismatch"):
         for sex in ("Male", "Female", "Unknown"):
             subset = (df.sex == sex) & (df.status == status)
             nb_subset = subset.sum()
             sub_df = df.loc[subset, :]
 
-            config = plot_config[(status, sex)]
+            config = PLOT_CONFIG[(status, sex)]
             label = f"{status} {sex} (n={nb_subset:,d})"
             axe.scatter(
                 sub_df.chr23, sub_df.chr24, s=config["size"],
@@ -337,27 +335,11 @@ def plot_summarized_intensities(df, args):
                 marker=config["marker"], label=label,
             )
 
-            # Saving the HTML data
-            html_data["labels"].append(label)
-            html_data["data"][label] = {
-                "x": sub_df.chr23.tolist(),
-                "y": sub_df.chr24.tolist(),
-                "ids": sub_df.sample_id.tolist(),
-            }
-            html_data["symbols"][label] = config["plotly_symbol"]
-            html_data["colors"][label] = config["color"]
-            html_data["sizes"][label] = config["plotly_size"]
-            if "plotly_line" in config:
-                html_data["lines"][label] = config["plotly_line"]
-
     axe.legend(loc=8, fancybox=True, ncol=2, borderaxespad=0,
                bbox_to_anchor=(0, 1.02, 1, 0.102))
 
     plt.savefig(f"{args.out}.{args.format}", bbox_inches="tight", dpi=args.dpi)
     plt.close(figure)
-
-    # Creating the HTML file
-    generate_html_scatter(f"{args.out}.html", **html_data)
 
 
 def check_args(args):
@@ -400,7 +382,7 @@ def check_args(args):
 
 
 def parse_args(argv=None):
-    """Parses the arguments and function."""
+    """Parses the arguments and options."""
     parser = argparse.ArgumentParser(description=DESCRIPTION)
 
     parser.add_argument(

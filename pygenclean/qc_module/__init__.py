@@ -3,7 +3,8 @@
 
 from .plate_bias import plate_bias
 from .related_samples import related_samples
-from .sex_check import sex_check, intensity_plot, baf_lrr_plot
+from .sex_check import (sex_check, intensity_plot, baf_lrr_plot,
+                        intensity_viewer)
 from .flag_maf import flag_maf
 from .sample_call_rate import sample_call_rate
 from .marker_call_rate import marker_call_rate
@@ -29,6 +30,7 @@ qc_sub_modules = {
     "sex_check": {
         "intensity_plot": intensity_plot,
         "baf_lrr_plot": baf_lrr_plot,
+        "intensity_viewer": intensity_viewer,
     },
     "nocall_hetero": {
         "heterozygosity_plot": heterozygosity_plot,
