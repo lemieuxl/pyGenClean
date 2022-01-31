@@ -55,18 +55,32 @@ def create_application() -> dash.Dash:
 
 def add_layout(application: dash.Dash, samples: List[str]):
     """Adds the layout to a Dash application."""
+    # Layout for the sample selector
     application.layout = dash.html.Div(
         className="page-content",
         children=[
-            dash.dcc.Graph(id="sex-check-graph"),
-            dash.dcc.Dropdown(
-                id="selected-samples",
-                options=[
-                    {"label": sample, "value": sample} for sample in samples
+            dash.html.H1(
+                "pyGenClean - Intensity viewer", className="page-title",
+            ),
+            dash.html.H2("Highlight samples", className="page-section"),
+            dash.html.Div(
+                className="sample-selector",
+                children=[
+                    dash.dcc.Dropdown(
+                        id="selected-samples",
+                        options=[
+                            {"label": sample, "value": sample}
+                            for sample in samples
+                        ],
+                        value=[],
+                        multi=True,
+                        className="sample-selector",
+                        placeholder="Select one or more samples to "
+                                    "highlight...",
+                    ),
                 ],
-                value=[],
-                multi=True,
-            )
+            ),
+            dash.dcc.Graph(id="sex-check-graph"),
         ],
     )
 
@@ -143,8 +157,19 @@ def create_sexcheck_figure(
         )
 
     # Adding the title
+    nb_samples = df.shape[0]
     figure.update_layout(
-        title="Summarized Intensities",
+        title=f"<b>Summarized Intensities</b><br />"
+              f"<sup><b>{nb_samples:,d} samples</b></sup>",
+        title_x=0.5,
+    )
+
+    # Adding the x and y labels
+    figure.update_xaxes(
+        title_text="chrX",
+    )
+    figure.update_yaxes(
+        title_text="chrY",
     )
 
     return figure

@@ -1,0 +1,13 @@
+.dash-graph {
+    height: 40vw;
+    width: 60vw;
+}
+
+.page-title, .page-section {
+    font-family: "Open Sans", verdana, arial, sans-serif;
+}
+
+.sample-selector {
+    padding-bottom: 10px;
+    width: 60vw;
+}
