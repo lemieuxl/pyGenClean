@@ -11,6 +11,7 @@ import numpy as np
 from geneparse.readers.plink import PlinkReader
 
 from ...utils import plink as plink_utils
+from ...utils import timer
 
 from ...error import ProgramError
 from ...version import pygenclean_version as __version__
@@ -23,6 +24,7 @@ DESCRIPTION = "Computes heterozygosity rate and plots it."
 logger = logging.getLogger(__name__)
 
 
+@timer(logger)
 def main(args: Optional[argparse.Namespace] = None,
          argv: Optional[List[str]] = None) -> None:
     """Computes heterozygosity rate and plots it.

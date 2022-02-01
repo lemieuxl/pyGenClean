@@ -13,6 +13,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 from ...utils import decode_chrom, illumina
+from ...utils import timer
 
 from ...error import ProgramError
 
@@ -26,6 +27,7 @@ DESCRIPTION = "Plots the BAF and LRR of samples with sex mismatch."
 logger = logging.getLogger(__name__)
 
 
+@timer(logger)
 def main(args: Optional[argparse.Namespace] = None,
          argv: Optional[List[str]] = None) -> None:
     """Plots the BAF and LRR of samples with sex mismatch.

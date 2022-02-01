@@ -9,6 +9,7 @@ from ...error import ProgramError
 
 from ...utils import task
 from ...utils import plink as plink_utils
+from ...utils import timer
 
 from ...version import pygenclean_version as __version__
 
@@ -22,6 +23,7 @@ _INDEP_PAIRWISE_R2_DEFAULT = "0.1"
 logger = logging.getLogger(__name__)
 
 
+@timer(logger)
 def main(args: Optional[argparse.Namespace] = None,
          argv: Optional[List[str]] = None) -> None:
     """Finds related samples according to IBS (if any).

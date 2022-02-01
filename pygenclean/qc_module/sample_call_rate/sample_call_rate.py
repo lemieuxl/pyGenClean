@@ -7,6 +7,7 @@ from typing import Optional, List
 
 from ...utils.task import execute_external_command
 from ...utils import plink as plink_utils
+from ...utils import timer
 
 from ...error import ProgramError
 
@@ -20,6 +21,7 @@ DESCRIPTION = "Remove samples with poor call rate."
 logger = logging.getLogger(__name__)
 
 
+@timer(logger)
 def main(args: Optional[argparse.Namespace] = None,
          argv: Optional[List[str]] = None) -> None:
     """Remove samples with poor call rate.

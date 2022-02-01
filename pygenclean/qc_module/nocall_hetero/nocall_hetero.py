@@ -11,6 +11,7 @@ import numpy as np
 from geneparse.readers.plink import PlinkReader
 
 from ...utils import plink as plink_utils
+from ...utils import timer
 
 from ...error import ProgramError
 
@@ -24,6 +25,7 @@ DESCRIPTION = "Clean markers with no call or heterozygous only."
 logger = logging.getLogger(__name__)
 
 
+@timer(logger)
 def main(args: Optional[argparse.Namespace] = None,
          argv: Optional[List[str]] = None) -> None:
     """Clean markers with no call or heterozygous only.

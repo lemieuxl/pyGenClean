@@ -17,6 +17,7 @@ from . import intensity_plot, baf_lrr_plot
 from ...utils import split_extra_args
 from ...utils import plink as plink_utils
 from ...utils.task import execute_external_command
+from ...utils import timer
 
 from ...error import ProgramError
 
@@ -30,6 +31,7 @@ DESCRIPTION = "Check sample's sex using Plink."
 logger = logging.getLogger(__name__)
 
 
+@timer(logger)
 def main(args: Optional[argparse.Namespace] = None,
          argv: Optional[List[str]] = None) -> None:
     """Plots the BAF and LRR of samples with sex mismatch.

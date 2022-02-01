@@ -14,6 +14,7 @@ import matplotlib.pyplot as plt
 
 from ...utils import decode_chrom
 from ...utils.plink import get_markers_on_chrom, get_sample_sexes, check_files
+from ...utils import timer
 
 from ...error import ProgramError
 from ...version import pygenclean_version as __version__
@@ -69,6 +70,7 @@ PLOT_CONFIG = {
 }
 
 
+@timer(logger)
 def main(args: Optional[argparse.Namespace] = None,
          argv: Optional[List[str]] = None) -> None:
     """Creates an intensity plot for sexual chromosomes.

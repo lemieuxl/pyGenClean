@@ -2,15 +2,17 @@
 
 
 import gzip
+import time
+import datetime
 import shlex
 import functools
-from typing import List
+from typing import List, Any, Callable
 
 from ..error import ProgramError
 
 
 __all__ = ["decode_chrom", "decode_sex", "is_gzip", "get_open_func",
-           "split_extra_args"]
+           "split_extra_args", "timer"]
 
 
 def decode_chrom(chrom: str) -> int:
@@ -123,3 +125,27 @@ def split_extra_args(args: str) -> List[str]:
     if args is None:
         return []
     return [shlex.quote(arg) for arg in shlex.split(args)]
+
+
+def timer(decorated_logger):
+    """A simple timer decorator which logs the time."""
+    def inner(function: Callable) -> Callable:
+        """A simple timer decorator."""
+        @functools.wraps(function)
+        def wrapper_timer(*args: list, **kwargs: dict) -> Any:
+            """The wrapper for the decorator."""
+            # Timing
+            start_time = time.perf_counter()
+            value = function(*args, **kwargs)
+            end_time = time.perf_counter()
+
+            # Logging
+            run_time = datetime.timedelta(seconds=end_time - start_time)
+            decorated_logger.info("Done in %s", run_time)
+
+            # Returning the original value
+            return value
+
+        return wrapper_timer
+
+    return inner
