@@ -11,7 +11,7 @@ from .task import execute_external_command
 
 __all__ = ["check_files", "get_markers_on_chrom", "get_sample_sexes",
            "parse_bim", "parse_fam", "split_line", "subset_markers",
-           "compare_bim"]
+           "compare_bim", "compute_freq"]
 
 
 _SPACE_SPLITTER = re.compile(r"\s+")
@@ -172,6 +172,19 @@ def subset_markers(bfile: str, markers: str, out: str, subset_type: str,
         "--bfile", bfile,
         f"--{subset_type}", markers,
         "--make-bed",
+        "--out", out,
+    ]
+    execute_external_command(command)
+
+
+def compute_freq(bfile: str, out: str,
+                 use_original_plink: bool = False) -> None:
+    """Computes the frequency."""
+    command = [
+        "plink" if use_original_plink else "plink1.9",
+        "--noweb",
+        "--bfile", bfile,
+        "--freq",
         "--out", out,
     ]
     execute_external_command(command)

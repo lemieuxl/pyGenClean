@@ -115,15 +115,8 @@ def compute_frequency(bfile: str, out: str,
     """
     logger.info("Computing the frequencies of significant markers")
 
-    command = [
-        "plink" if use_original_plink else "plink1.9",
-        "--noweb",
-        "--bfile", bfile,
-        "--extract", out + ".significant_markers.txt",
-        "--freq",
-        "--out", out + ".significant_markers"
-    ]
-    task.execute_external_command(command)
+    plink_utils.compute_freq(bfile=bfile, out=out + ".significant_markers",
+                             use_original_plink=use_original_plink)
 
     # Reading the MAF
     frequencies = {}

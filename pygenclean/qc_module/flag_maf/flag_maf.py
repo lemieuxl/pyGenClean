@@ -7,7 +7,6 @@ from os import path
 from typing import Optional, List
 
 from ...utils import plink as plink_utils
-from ...utils.task import execute_external_command
 from ...utils import timer
 
 from ...error import ProgramError
@@ -45,7 +44,8 @@ def main(args: Optional[argparse.Namespace] = None,
 
     # Compute frequency using plink
     logger.info("Computing the frequencies using Plink")
-    compute_freq(args)
+    plink_utils.compute_freq(bfile=args.bfile, out=args.out,
+                             use_original_plink=args.plink_107)
 
     # Read the freqency file
     logger.info("Flagging SNPs with MAF = 0")
@@ -111,25 +111,6 @@ def find_maf_0(freq_filename: str, prefix: str) -> None:
         with open(prefix + ".na_list", "w") as output_file:
             for marker_name in na_set:
                 print(marker_name,  file=output_file)
-
-
-def compute_freq(options: argparse.Namespace) -> None:
-    """Compute the frequency of the SNPs.
-
-    Args:
-        options (argparse.Namespace): the arguments and options.
-
-    """
-    # Executing the command
-    execute_external_command(
-        command=[
-            "plink" if options.plink_107 else "plink1.9",
-            "--noweb",
-            "--bfile", options.bfile,
-            "--freq",
-            "--out", options.out,
-        ]
-    )
 
 
 def check_args(args: argparse.Namespace) -> None:
