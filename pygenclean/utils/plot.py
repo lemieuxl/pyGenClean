@@ -7,7 +7,7 @@ import jinja2
 __all__ = ["generate_html_scatter"]
 
 
-def generate_html_scatter(filename, **kwargs):
+def generate_html_scatter(filename: str, **kwargs: dict) -> None:
     """Generates an HTML scatter plot using Plotly (with a template).
 
     Args:

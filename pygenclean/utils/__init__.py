@@ -4,6 +4,7 @@
 import gzip
 import shlex
 import functools
+from typing import List
 
 from ..error import ProgramError
 
@@ -12,7 +13,7 @@ __all__ = ["decode_chrom", "decode_sex", "is_gzip", "get_open_func",
            "split_extra_args"]
 
 
-def decode_chrom(chrom):
+def decode_chrom(chrom: str) -> int:
     """Decode chromosomes from string to integer.
 
     Args:
@@ -47,8 +48,8 @@ def decode_chrom(chrom):
 
     try:
         chrom = int(chrom)
-    except ValueError:
-        raise ProgramError(f"{chrom}: invalid chromosome")
+    except ValueError as exception:
+        raise ProgramError(f"{chrom}: invalid chromosome") from exception
 
     if chrom < 0 or chrom > 26:
         raise ProgramError(f"{chrom}: invalid chromosome")
@@ -56,7 +57,7 @@ def decode_chrom(chrom):
     return chrom
 
 
-def decode_sex(sex):
+def decode_sex(sex: str) -> str:
     """Decodes the sex of a sample.
 
     Args:
@@ -79,7 +80,7 @@ def decode_sex(sex):
     return "Unknown"
 
 
-def is_gzip(filename):
+def is_gzip(filename: str) -> bool:
     """Checks if a file is compressed using gzip.
 
     Args:
@@ -94,7 +95,7 @@ def is_gzip(filename):
     return first == b'\x1f\x8b'
 
 
-def get_open_func(filename):
+def get_open_func(filename: str) -> functools.partial:
     """Opens a file even if it's gzipped.
 
     Args:
@@ -109,7 +110,7 @@ def get_open_func(filename):
     return functools.partial(open, filename)
 
 
-def split_extra_args(args):
+def split_extra_args(args: str) -> List[str]:
     """Split extra arguments provided in a single string.
 
     Args:

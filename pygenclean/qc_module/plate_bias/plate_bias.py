@@ -6,6 +6,7 @@ import logging
 import argparse
 from os import path
 from glob import glob
+from typing import Optional, List, Dict, Tuple, Set
 
 from ...error import ProgramError
 
@@ -22,7 +23,26 @@ DESCRIPTION = "Check for plate bias."
 logger = logging.getLogger(__name__)
 
 
-def main(args=None, argv=None):
+class SignificantMarker():
+    # pylint: disable=too-few-public-methods
+    # pylint: disable=missing-docstring
+    # pylint: disable=too-many-arguments
+    # pylint: disable=invalid-name
+
+    __slots__ = ["chrom", "pos", "name", "p_value", "odds", "plate"]
+
+    def __init__(self, chrom: str, pos: str, name: str, p_value: str,
+                 odds: str, plate: str):
+        self.chrom = chrom
+        self.pos = pos
+        self.name = name
+        self.p_value = p_value
+        self.odds = odds
+        self.plate = plate
+
+
+def main(args: Optional[argparse.Namespace] = None,
+         argv: Optional[List[str]] = None) -> None:
     """Finds plate biases (if any).
 
     Args:
@@ -49,18 +69,19 @@ def main(args=None, argv=None):
 
     # Executing Plink on each plate file
     execute_plate_bias(args.bfile, set(sample_plates.values()), args.p_filter,
-                       args.out, args.nb_tasks)
+                       args.out, args.nb_tasks, args.plink_107)
 
     # Extracting significant markers
     assoc_results = extract_significant_markers(args.out)
 
     # Computing the frequencies of the significant markers
-    maf = compute_frequency(args.bfile, args.out)
+    maf = compute_frequency(args.bfile, args.out, args.plink_107)
 
     write_summary(assoc_results, maf, args.out)
 
 
-def write_summary(results, maf, out):
+def write_summary(results: List[SignificantMarker], maf: Dict[str, str],
+                  out: str) -> None:
     """Writes the results.
 
     Args:
@@ -78,7 +99,8 @@ def write_summary(results, maf, out):
                   marker.p_value, marker.odds, marker.plate, sep="\t", file=f)
 
 
-def compute_frequency(bfile, out):
+def compute_frequency(bfile: str, out: str,
+                      use_original_plink: bool = False) -> Dict[str, str]:
     """Compute the frequency of specific markers.
 
     Args:
@@ -92,7 +114,7 @@ def compute_frequency(bfile, out):
     logger.info("Computing the frequencies of significant markers")
 
     command = [
-        "plink",
+        "plink" if use_original_plink else "plink1.9",
         "--noweb",
         "--bfile", bfile,
         "--extract", out + ".significant_markers.txt",
@@ -120,7 +142,7 @@ def compute_frequency(bfile, out):
     return frequencies
 
 
-def extract_significant_markers(prefix):
+def extract_significant_markers(prefix: str) -> List[SignificantMarker]:
     """Extract significant markers from the association files.
 
     Args:
@@ -131,22 +153,6 @@ def extract_significant_markers(prefix):
 
     """
     data = []
-
-    class SignificantMarker():
-        # pylint: disable=too-few-public-methods
-        # pylint: disable=missing-docstring
-        # pylint: disable=too-many-arguments
-        # pylint: disable=invalid-name
-
-        __slots__ = ["chrom", "pos", "name", "p_value", "odds", "plate"]
-
-        def __init__(self, chrom, pos, name, p_value, odds, plate):
-            self.chrom = chrom
-            self.pos = pos
-            self.name = name
-            self.p_value = p_value
-            self.odds = odds
-            self.plate = plate
 
     assoc_files = glob(prefix + ".*.assoc.fisher")
 
@@ -183,15 +189,22 @@ def extract_significant_markers(prefix):
     return data
 
 
-def execute_plate_bias(bfile, plates, p_filter, out, threads):
+def execute_plate_bias(bfile: str, plates: Set[str], p_filter: float,
+                       out: str, threads: int,
+                       use_original_plink: bool = False) -> None:
     """Execute plate bias on each plates.
 
     Args:
+        bfile (str): the file prefix.
+        plates (set): the set of plates.
+        p_filter (float): the p-value filter.
+        out (str): the output prefix.
+        threads (int): the number of threads.
 
     """
     commands = [
         [
-            "plink",
+            "plink" if use_original_plink else "plink1.9",
             "--noweb",
             "--bfile", bfile,
             "--fisher",
@@ -204,7 +217,8 @@ def execute_plate_bias(bfile, plates, p_filter, out, threads):
     task.execute_external_commands(commands, threads=threads)
 
 
-def create_plate_files(sample_plates, fam, prefix):
+def create_plate_files(sample_plates: Dict[Tuple[str, str], str],
+                       fam: str, prefix: str) -> None:
     """Creates the files for the test (one file per plate.
 
     Args:
@@ -225,7 +239,7 @@ def create_plate_files(sample_plates, fam, prefix):
                 print(sample.fid, sample.iid, status, file=f)
 
 
-def get_plates(filename):
+def get_plates(filename: str) -> Dict[Tuple[str, str], str]:
     """Gets the plate for each samples.
 
     Args:
@@ -244,7 +258,7 @@ def get_plates(filename):
     return plates
 
 
-def check_args(args):
+def check_args(args: argparse.Namespace) -> None:
     """Checks the arguments and options.
 
     Args:
@@ -258,7 +272,7 @@ def check_args(args):
         raise ProgramError(f"{args.plates}: no such file")
 
 
-def parse_args(argv=None):
+def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
     """Parses the arguments and function."""
     parser = argparse.ArgumentParser(description=DESCRIPTION)
 
@@ -273,7 +287,7 @@ def parse_args(argv=None):
     return parser.parse_args(argv)
 
 
-def add_args(parser):
+def add_args(parser: argparse.ArgumentParser) -> None:
     """Adds argument to the parser."""
     # The INPUT files
     group = parser.add_argument_group("Input files")
@@ -299,6 +313,10 @@ def add_args(parser):
     group.add_argument(
         "--nb-tasks", type=int, metavar="N", default=1,
         help="The number of tasks for this analysis. [%(default)d]",
+    )
+    group.add_argument(
+        "--plink-1.07", dest="plink_107", action="store_true",
+        help="Use original Plink (version 1.07)",
     )
 
     # The OUTPUT files

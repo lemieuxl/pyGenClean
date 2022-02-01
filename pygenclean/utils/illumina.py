@@ -7,7 +7,7 @@ from ..utils import get_open_func
 __all__ = ["get_data_position"]
 
 
-def get_data_position(filename):
+def get_data_position(filename: str) -> int:
     """Finds the number of lines to skip before the [Data] tag.
 
     Args:

@@ -6,6 +6,7 @@ import logging
 import argparse
 from os import path
 from glob import glob
+from typing import Optional, List, Dict, Tuple, Set
 
 import pandas as pd
 
@@ -25,7 +26,8 @@ DESCRIPTION = "Plots the BAF and LRR of samples with sex mismatch."
 logger = logging.getLogger(__name__)
 
 
-def main(args=None, argv=None):
+def main(args: Optional[argparse.Namespace] = None,
+         argv: Optional[List[str]] = None) -> None:
     """Plots the BAF and LRR of samples with sex mismatch.
 
     Args:
@@ -63,7 +65,7 @@ def main(args=None, argv=None):
         plot_baf_lrr(sample, filename, args)
 
 
-def plot_baf_lrr(sample, filename, args):
+def plot_baf_lrr(sample: str, filename: str, args: argparse.Namespace) -> None:
     """Plots BAF and LRR values for multiple samples.
 
     Args:
@@ -158,7 +160,7 @@ def plot_baf_lrr(sample, filename, args):
     plt.close(figure)
 
 
-def read_samples(filename):
+def read_samples(filename: str) -> Set[Tuple[str, str]]:
     """Reads the samples from a file.
 
     Args:
@@ -179,7 +181,8 @@ def read_samples(filename):
     return samples
 
 
-def get_intensity_filenames(samples, intensity_dir, args):
+def get_intensity_filenames(samples: Set[Tuple[str, str]], intensity_dir: str,
+                            args: argparse.Namespace) -> Dict[str, str]:
     """Searches for intensity file for each sample.
 
     Args:
@@ -213,7 +216,7 @@ def get_intensity_filenames(samples, intensity_dir, args):
     return filenames
 
 
-def check_args(args):
+def check_args(args: argparse.Namespace) -> None:
     """Checks the arguments and options.
 
     Args:
@@ -232,7 +235,7 @@ def check_args(args):
         raise ProgramError(f"{args.dpi}: DPI too low")
 
 
-def parse_args(argv=None):
+def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
     """Parses the arguments and function."""
     parser = argparse.ArgumentParser(description=DESCRIPTION)
 
@@ -247,7 +250,7 @@ def parse_args(argv=None):
     return parser.parse_args(argv)
 
 
-def add_args(parser):
+def add_args(parser: argparse.ArgumentParser) -> None:
     """Adds argument to the parser."""
     # The INPUT files
     group = parser.add_argument_group("Input files")

@@ -4,6 +4,7 @@
 import logging
 import argparse
 from os import path
+from typing import Optional, List, Tuple
 
 import numpy as np
 
@@ -22,7 +23,8 @@ DESCRIPTION = "Computes heterozygosity rate and plots it."
 logger = logging.getLogger(__name__)
 
 
-def main(args=None, argv=None):
+def main(args: Optional[argparse.Namespace] = None,
+         argv: Optional[List[str]] = None) -> None:
     """Computes heterozygosity rate and plots it.
 
     Args:
@@ -56,7 +58,8 @@ def main(args=None, argv=None):
     plot_heterozygosity(heterozygosity, args)
 
 
-def save_heterozygosity(heterozygosity, samples, out_prefix):
+def save_heterozygosity(heterozygosity: np.ndarray, samples: np.ndarray,
+                        out_prefix: str) -> None:
     """Saves the heterozygosity data.
 
     Args:
@@ -70,7 +73,7 @@ def save_heterozygosity(heterozygosity, samples, out_prefix):
             print(fid, iid, het, sep="\t", file=f)
 
 
-def read_het_file(filename):
+def read_het_file(filename: str) -> np.ndarray:
     """Reads the heterozygosity file.
 
     Args:
@@ -89,7 +92,7 @@ def read_het_file(filename):
     return np.array(data)
 
 
-def compute_heterozygosity(prefix):
+def compute_heterozygosity(prefix: str) -> Tuple[np.ndarray, np.ndarray]:
     """Computes the heterozygosity ratio of samples."""
     logger.info("Computing heterozygosity from binary files")
     # The autosomes
@@ -118,7 +121,8 @@ def compute_heterozygosity(prefix):
     return np.true_divide(nb_hetero, nb_markers), samples
 
 
-def plot_heterozygosity(heterozygosity, options):
+def plot_heterozygosity(heterozygosity: np.ndarray,
+                        options: argparse.Namespace) -> None:
     """Plots the heterozygosity rate distribution.
 
     Args:
@@ -224,7 +228,7 @@ def plot_heterozygosity(heterozygosity, options):
         plt.savefig(file_name, dpi=300)
 
 
-def check_args(args):
+def check_args(args: argparse.Namespace) -> None:
     """Checks the arguments and options."""
     if args.het_file is None and args.bfile is None:
         raise ProgramError("Specify either '--het-file' or '--bfile'")
@@ -249,7 +253,7 @@ def check_args(args):
             raise ProgramError("invalid ymax (must be above 0)")
 
 
-def parse_args(argv=None):
+def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
     """Parses the command line options and arguments."""
     parser = argparse.ArgumentParser(description=DESCRIPTION)
 
@@ -264,7 +268,7 @@ def parse_args(argv=None):
     return parser.parse_args(argv)
 
 
-def add_args(parser):
+def add_args(parser: argparse.ArgumentParser) -> None:
     """Add arguments and options to the parser."""
     # The INPUT files
     group = parser.add_argument_group("Input File")

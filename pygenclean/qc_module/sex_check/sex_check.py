@@ -5,6 +5,7 @@ import os
 import logging
 import argparse
 from os import path
+from typing import Optional, List, Tuple, Set
 
 import numpy as np
 import pandas as pd
@@ -29,7 +30,8 @@ DESCRIPTION = "Check sample's sex using Plink."
 logger = logging.getLogger(__name__)
 
 
-def main(args=None, argv=None):
+def main(args: Optional[argparse.Namespace] = None,
+         argv: Optional[List[str]] = None) -> None:
     """Plots the BAF and LRR of samples with sex mismatch.
 
     Args:
@@ -68,7 +70,7 @@ def main(args=None, argv=None):
     logger.info("Executing Plink's sex check algorithm")
     execute_external_command(
         command=[
-            "plink1.9" if args.use_plink19 else "plink",
+            "plink" if args.plink_107 else "plink1.9",
             "--noweb",
             "--bfile", args.bfile,
             "--check-sex",
@@ -112,7 +114,8 @@ def main(args=None, argv=None):
         ] + args.baf_lrr_extra_args)
 
 
-def compute_statistics(bfile, samples, prefix):
+def compute_statistics(bfile: str, samples: Set[Tuple[str, str]],
+                       prefix: str) -> None:
     """Computes the heterozygosity percentage on chromosome 23.
 
     Args:
@@ -142,7 +145,8 @@ def compute_statistics(bfile, samples, prefix):
     write_no_call(prefix + ".chr24.no_call.tsv", samples, fam, chr24_genotypes)
 
 
-def write_heterozygosity(filename, samples, fam, genotypes):
+def write_heterozygosity(filename: str, samples: Set[Tuple[str, str]],
+                         fam: pd.DataFrame, genotypes: np.ndarray) -> None:
     """Writes heterozygosity rates in output file."""
     with open(filename, "w") as f:
         print("FID", "IID", "PEDSEX", "HETERO", sep="\t", file=f)
@@ -162,7 +166,8 @@ def write_heterozygosity(filename, samples, fam, genotypes):
             print(*sample.name, sample.gender, hetero, sep="\t", file=f)
 
 
-def write_no_call(filename, samples, fam, genotypes):
+def write_no_call(filename: str, samples: Set[Tuple[str, str]],
+                  fam: pd.DataFrame, genotypes: np.ndarray) -> None:
     """Writes the no call on chr24."""
     with open(filename, "w") as f:
         print("FID", "IID", "PEDSEX", "N_GENO", "N_MISS", "F_MISS", sep="\t",
@@ -181,7 +186,8 @@ def write_no_call(filename, samples, fam, genotypes):
                   pct_no_call, sep="\t", file=f)
 
 
-def get_genotypes(samples, markers, bed):
+def get_genotypes(samples: pd.Series, markers: List[str],
+                  bed: PyPlink) -> np.ndarray:
     """Retrieves the genotype matrix."""
     # The complete genotypes
     genotypes = np.zeros(
@@ -196,13 +202,15 @@ def get_genotypes(samples, markers, bed):
     return genotypes
 
 
-def get_sex_mismatch(filename, female_f, male_f, prefix):
+def get_sex_mismatch(filename: str, female_f: float, male_f: float,
+                     prefix: str) -> Set[Tuple[str, str]]:
     """Gets the sex mismatches.
 
     Args:
         filename (str): the name of Plink's sex check file.
         female_f (float): the F threshold for females.
         male_f (float): the F threshold for males.
+        prefix (str): the output prefix.
 
     Returns:
         set: the set of samples with sex mismatch (if any).
@@ -260,7 +268,7 @@ def get_sex_mismatch(filename, female_f, male_f, prefix):
     )
 
 
-def check_args(args):
+def check_args(args: argparse.Namespace) -> None:
     """Checks the arguments and options.
 
     Args:
@@ -299,7 +307,7 @@ def check_args(args):
         args.baf_lrr_extra_args = split_extra_args(args.baf_lrr_extra_args)
 
 
-def parse_args(argv=None):
+def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
     """Parses the arguments and function."""
     parser = argparse.ArgumentParser(description=DESCRIPTION)
 
@@ -314,7 +322,7 @@ def parse_args(argv=None):
     return parser.parse_args(argv)
 
 
-def add_args(parser):
+def add_args(parser: argparse.ArgumentParser) -> None:
     """Adds argument to the parser."""
     # The INPUT files
     group = parser.add_argument_group("Input files")
@@ -324,12 +332,6 @@ def add_args(parser):
              "appending the prefix to the .bed, .bim, and .fam files, "
              "respectively.",
     )
-    group.add_argument(
-        "--use-plink19", action="store_true",
-        help="Use plink version 1.9 instead of the original plink binary. "
-             "'plink1.9' must be in the path.",
-    )
-
     # The options
     group = parser.add_argument_group("Options")
     group.add_argument(
@@ -344,6 +346,10 @@ def add_args(parser):
         "--nb-chr-23", type=int, metavar="INT", default=50,
         help="The minimum number of markers on chromosome 23 before computing "
              "Plink's sex check [%(default)d]",
+    )
+    group.add_argument(
+        "--plink-1.07", dest="plink_107", action="store_true",
+        help="Use original Plink (version 1.07)",
     )
 
     group = parser.add_argument_group("Intensity plot")

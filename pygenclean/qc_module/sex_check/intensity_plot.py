@@ -5,6 +5,7 @@ import uuid
 import logging
 import argparse
 from os import path
+from typing import Optional, List, Set, Dict
 
 import numpy as np
 import pandas as pd
@@ -68,7 +69,8 @@ PLOT_CONFIG = {
 }
 
 
-def main(args=None, argv=None):
+def main(args: Optional[argparse.Namespace] = None,
+         argv: Optional[List[str]] = None) -> None:
     """Creates an intensity plot for sexual chromosomes.
 
     Args:
@@ -132,7 +134,9 @@ def main(args=None, argv=None):
     plot_summarized_intensities(data, args)
 
 
-def read_intensities(filename, required_markers, sample_sex, mismatches, args):
+def read_intensities(filename: str, required_markers: Set[str],
+                     sample_sex: Dict[str, str], mismatches: Set[str],
+                     args: argparse.Namespace) -> pd.DataFrame:
     """Reads the intensities from a file.
 
     Args:
@@ -240,8 +244,9 @@ def read_intensities(filename, required_markers, sample_sex, mismatches, args):
     return df.loc[:, ["sample_id", "chr23", "chr24", "sex", "status"]]
 
 
-def process_df(df, snp_col, sample_col, chrom_col, new_chrom_col, sample_sex,
-               required_markers):
+def process_df(df: pd.DataFrame, snp_col: str, sample_col: str, chrom_col: str,
+               new_chrom_col: str, sample_sex: Dict[str, str],
+               required_markers: Set[str]) -> pd.DataFrame:
     """Pre-process a data frame to keep only required information.
 
     Args:
@@ -266,7 +271,7 @@ def process_df(df, snp_col, sample_col, chrom_col, new_chrom_col, sample_sex,
     return df.dropna()
 
 
-def read_sex_mismatches(filename):
+def read_sex_mismatches(filename: str) -> Set[str]:
     """Reads the samples with sex mismatches.
 
     Args:
@@ -298,7 +303,8 @@ def read_sex_mismatches(filename):
     return mismatches
 
 
-def plot_summarized_intensities(df, args):
+def plot_summarized_intensities(df: pd.DataFrame,
+                                args: argparse.Namespace) -> None:
     """Plots the summarized intensities.
 
     Args:
@@ -342,7 +348,7 @@ def plot_summarized_intensities(df, args):
     plt.close(figure)
 
 
-def check_args(args):
+def check_args(args: argparse.Namespace) -> None:
     """Checks the arguments and options.
 
     Args:
@@ -381,7 +387,7 @@ def check_args(args):
             raise ProgramError(f"{args.sex_mismatches}: no such file")
 
 
-def parse_args(argv=None):
+def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
     """Parses the arguments and options."""
     parser = argparse.ArgumentParser(description=DESCRIPTION)
 
@@ -396,7 +402,7 @@ def parse_args(argv=None):
     return parser.parse_args(argv)
 
 
-def add_args(parser):
+def add_args(parser: argparse.ArgumentParser) -> None:
     """Adds argument to the parser."""
     # Input files
     group = parser.add_argument_group("Input files")

@@ -4,7 +4,7 @@
 import logging
 import argparse
 from os import path
-from typing import List
+from typing import Optional, List
 
 import dash
 import plotly.graph_objects as go
@@ -24,7 +24,8 @@ DESCRIPTION = "Small Dash application to view intensities"
 logger = logging.getLogger(__name__)
 
 
-def main(args: argparse.Namespace = None, argv: List[str] = None):
+def main(args: Optional[argparse.Namespace] = None,
+         argv: Optional[List[str]] = None) -> None:
     """Create an interactive intensity viewer."""
     if args is None:
         args = parse_args(argv)
@@ -53,7 +54,7 @@ def create_application() -> dash.Dash:
     return application
 
 
-def add_layout(application: dash.Dash, samples: List[str]):
+def add_layout(application: dash.Dash, samples: List[str]) -> None:
     """Adds the layout to a Dash application."""
     # Layout for the sample selector
     application.layout = dash.html.Div(
@@ -85,13 +86,13 @@ def add_layout(application: dash.Dash, samples: List[str]):
     )
 
 
-def add_callbacks(app: dash.Dash, df: pd.DataFrame):
+def add_callbacks(app: dash.Dash, df: pd.DataFrame) -> None:
     """Adds callbacks to the Dash application."""
     @app.callback(
         dash.Output("sex-check-graph", "figure"),
         dash.Input("selected-samples", "value"),
     )
-    def update_graph(selected_samples: List[str]):
+    def update_graph(selected_samples: List[str]) -> go.Figure:
         return create_sexcheck_figure(df, selected_samples)
 
 
@@ -175,7 +176,7 @@ def create_sexcheck_figure(
     return figure
 
 
-def check_args(args):
+def check_args(args: argparse.Namespace) -> None:
     """Checks the arguments and options.
 
     Args:
@@ -186,7 +187,7 @@ def check_args(args):
         raise ProgramError(f"{args.summarized_intensities}: no such file")
 
 
-def parse_args(argv: List[str] = None) -> argparse.Namespace:
+def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
     """Parses the arguments and options."""
     parser = argparse.ArgumentParser(description=DESCRIPTION)
 
@@ -201,7 +202,7 @@ def parse_args(argv: List[str] = None) -> argparse.Namespace:
     return parser.parse_args(argv)
 
 
-def add_args(parser: argparse.ArgumentParser):
+def add_args(parser: argparse.ArgumentParser) -> None:
     """Adds arguments to the parser."""
     group = parser.add_argument_group("Input files")
     group.add_argument(

@@ -3,6 +3,7 @@
 
 import logging
 import argparse
+from typing import List, Set, Optional
 
 from ...utils.task import execute_external_command
 from ...utils import plink as plink_utils
@@ -19,7 +20,8 @@ DESCRIPTION = "Flags markers failing Hardy Weinberg equilibrium."
 logger = logging.getLogger(__name__)
 
 
-def main(args=None, argv=None):
+def main(args: Optional[argparse.Namespace] = None,
+         argv: Optional[List[str]] = None) -> None:
     """Flags markers failing Hardy Weinberg equilibrium.
 
     Args:
@@ -60,11 +62,12 @@ def main(args=None, argv=None):
         # Run the plink command for the Bonferonni threshold
         logger.info("Computing the HW equilibrium for %s", hw_threshold)
         compute_hw(args.bfile, hw_threshold,
-                   args.out + ".threshold_" + hw_threshold)
+                   args.out + ".threshold_" + hw_threshold, args.plink_107)
 
         # Run the plink command for the default threshold
         logger.info("Computing the HW equilibrium for %s", args.hwe)
-        compute_hw(args.bfile, args.hwe, args.out + ".threshold_" + args.hwe)
+        compute_hw(args.bfile, args.hwe, args.out + ".threshold_" + args.hwe,
+                   args.plink_107)
 
         # Compare the BIM files
         logger.info("Creating the flagged SNP list for %s", hw_threshold)
@@ -96,7 +99,7 @@ def main(args=None, argv=None):
             raise ProgramError(f"{filename}: can't write file") from exception
 
 
-def compare_bim(before, after, output_filename):
+def compare_bim(before: str, after: str, output_filename: str) -> Set[str]:
     """Compare two BIM files for differences.
 
     Args:
@@ -128,7 +131,7 @@ def compare_bim(before, after, output_filename):
     return in_before
 
 
-def get_nb_markers(filename):
+def get_nb_markers(filename: str) -> int:
     """Count the number of markers (line) in a BIM file.
 
     Args:
@@ -145,13 +148,15 @@ def get_nb_markers(filename):
     return nb_line
 
 
-def compute_hw(prefix, threshold, out_prefix):
+def compute_hw(prefix: str, threshold: str, out_prefix: str,
+               use_original_plink: bool) -> None:
     """Compute the Hardy Weinberg test using Plink.
 
     Args:
         prefix (str): the prefix of all the files.
         threshold (str): the Hardy Weinberg threshold.
         out_prefix (str): the prefix of the output file.
+        use_original_plink (bool): use plink 1.07 instead of plink 1.9.
 
     Uses Plink to exclude markers that failed the Hardy-Weinberg test at a
     specified significance threshold.
@@ -159,7 +164,7 @@ def compute_hw(prefix, threshold, out_prefix):
     """
     execute_external_command(
         command=[
-            "plink",
+            "plink" if use_original_plink else "plink1.9",
             "--noweb",
             "--bfile", prefix,
             "--hwe", threshold,
@@ -169,7 +174,7 @@ def compute_hw(prefix, threshold, out_prefix):
     )
 
 
-def check_args(args):
+def check_args(args: argparse.Namespace) -> None:
     """Checks the arguments and options.
 
     Args:
@@ -195,7 +200,7 @@ def check_args(args):
         raise ProgramError(f"{hw_value}: not a valid HW value")
 
 
-def parse_args(argv=None):
+def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
     """Parses the command line options and arguments."""
     parser = argparse.ArgumentParser(description=DESCRIPTION)
 
@@ -210,7 +215,7 @@ def parse_args(argv=None):
     return parser.parse_args(argv)
 
 
-def add_args(parser):
+def add_args(parser: argparse.ArgumentParser) -> None:
     """Add arguments and options to the parser."""
     # The INPUT files
     group = parser.add_argument_group("Input File")
@@ -227,6 +232,10 @@ def add_args(parser):
         "--hwe", type=str, metavar="FLOAT", default="1e-4",
         help="The Hardy-Weinberg equilibrium threshold. "
              "[default: %(default)s]",
+    )
+    group.add_argument(
+        "--plink-1.07", dest="plink_107", action="store_true",
+        help="Use original Plink (version 1.07)",
     )
 
     # The OUTPUT files

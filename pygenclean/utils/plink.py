@@ -3,6 +3,7 @@
 
 import re
 from os import path
+from typing import Tuple, Set, List
 
 from . import decode_chrom, decode_sex
 from .task import execute_external_command
@@ -16,7 +17,7 @@ __all__ = ["check_files", "get_markers_on_chrom", "get_sample_sexes",
 _SPACE_SPLITTER = re.compile(r"\s+")
 
 
-def get_markers_on_chrom(bimfile, chromosomes):
+def get_markers_on_chrom(bimfile: str, chromosomes: Set[int]) -> Set[str]:
     """Get the markers located on required chromosome(s) from the BIM file.
 
     Args:
@@ -33,7 +34,7 @@ def get_markers_on_chrom(bimfile, chromosomes):
     }
 
 
-def get_sample_sexes(famfile, only_iid=False):
+def get_sample_sexes(famfile: str, only_iid: bool = False) -> dict:
     """Get sample's sex from the FAM file.
 
     Args:
@@ -51,7 +52,28 @@ def get_sample_sexes(famfile, only_iid=False):
     return sexes
 
 
-def parse_bim(bimfile):
+class BimRow():
+    # pylint: disable=too-few-public-methods
+    # pylint: disable=missing-docstring
+    # pylint: disable=too-many-arguments
+    # pylint: disable=invalid-name
+
+    __slots__ = ["chrom", "name", "cm", "pos", "a1", "a2"]
+
+    def __init__(self, chrom: str, name: str, cm: str, pos: str, a1: str,
+                 a2: str):
+        self.chrom = decode_chrom(chrom)
+        self.name = name
+        self.cm = float(cm)
+        self.pos = int(pos)
+        self.a1 = a1
+        self.a2 = a2
+
+    def __repr__(self) -> str:
+        return f"<BimRow {self.name}>"
+
+
+def parse_bim(bimfile: str) -> BimRow:
     """Parses a BIM file.
 
     Args:
@@ -61,28 +83,32 @@ def parse_bim(bimfile):
         namedtuple: the row for each markers.
 
     """
-    class BimRow():
-        # pylint: disable=too-few-public-methods
-        # pylint: disable=missing-docstring
-        # pylint: disable=too-many-arguments
-        # pylint: disable=invalid-name
-
-        __slots__ = ["chrom", "name", "cm", "pos", "a1", "a2"]
-
-        def __init__(self, chrom, name, cm, pos, a1, a2):
-            self.chrom = decode_chrom(chrom)
-            self.name = name
-            self.cm = float(cm)
-            self.pos = int(pos)
-            self.a1 = a1
-            self.a2 = a2
-
     with open(bimfile) as f:
         for line in f:
             yield BimRow(*line.rstrip("\r\n").split())
 
 
-def parse_fam(famfile):
+class FamRow():
+    # pylint: disable=too-few-public-methods
+    # pylint: disable=too-many-arguments
+    # pylint: disable=missing-docstring
+
+    __slots__ = ["fid", "iid", "father", "mother", "sex", "status"]
+
+    def __init__(self, fid: str, iid: str, father: str, mother: str, sex: str,
+                 status: str):
+        self.fid = fid
+        self.iid = iid
+        self.father = father
+        self.mother = mother
+        self.sex = decode_sex(sex)
+        self.status = status
+
+    def __repr__(self) -> str:
+        return f"<FamRow {self.fid}, {self.iid}>"
+
+
+def parse_fam(famfile: str) -> FamRow:
     """Parses a FAM file.
 
     Args:
@@ -92,30 +118,12 @@ def parse_fam(famfile):
         object: the row for each sample.
 
     """
-    class FamRow():
-        # pylint: disable=too-few-public-methods
-        # pylint: disable=too-many-arguments
-        # pylint: disable=missing-docstring
-
-        __slots__ = ["fid", "iid", "father", "mother", "sex", "status"]
-
-        def __init__(self, fid, iid, father, mother, sex, status):
-            self.fid = fid
-            self.iid = iid
-            self.father = father
-            self.mother = mother
-            self.sex = decode_sex(sex)
-            self.status = status
-
-        def __repr__(self):
-            return f"<FamRow {self.fid}, {self.iid}>"
-
     with open(famfile) as f:
         for line in f:
             yield FamRow(*line.rstrip("\r\n").split())
 
 
-def check_files(prefix):
+def check_files(prefix: str) -> bool:
     """Checks that all the files are present.
 
     Args:
@@ -131,20 +139,21 @@ def check_files(prefix):
     return True
 
 
-def split_line(line):
+def split_line(line: str) -> List[str]:
     """Split a Plink output line (spaces delimited).
 
     Args:
         line (str): the line to split.
 
     Returns:
-        tuple: the split line.
+        list: the split line.
 
     """
     return _SPACE_SPLITTER.split(line.strip())
 
 
-def subset_markers(bfile, markers, out, subset_type, use_original_plink=False):
+def subset_markers(bfile: str, markers: str, out: str, subset_type: str,
+                   use_original_plink: bool = False) -> None:
     """Extracts markers from a Plink file.
 
     Args:
@@ -158,7 +167,8 @@ def subset_markers(bfile, markers, out, subset_type, use_original_plink=False):
         raise ValueError(f"{subset_type}: invalid subset")
 
     command = [
-        "plink" if use_original_plink else "plink2",
+        "plink" if use_original_plink else "plink1.9",
+        "--noweb",
         "--bfile", bfile,
         f"--{subset_type}", markers,
         "--make-bed",
@@ -167,7 +177,7 @@ def subset_markers(bfile, markers, out, subset_type, use_original_plink=False):
     execute_external_command(command)
 
 
-def compare_bim(bim_a, bim_b):
+def compare_bim(bim_a: str, bim_b: str) -> Tuple[Set[str], Set[str], Set[str]]:
     """Compares two BIM files.
 
     Args:

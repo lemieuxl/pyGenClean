@@ -3,6 +3,7 @@
 
 import logging
 import argparse
+from typing import Optional, List
 
 from ...utils.task import execute_external_command
 from ...utils import plink as plink_utils
@@ -19,7 +20,8 @@ DESCRIPTION = "Remove samples with poor call rate."
 logger = logging.getLogger(__name__)
 
 
-def main(args=None, argv=None):
+def main(args: Optional[argparse.Namespace] = None,
+         argv: Optional[List[str]] = None) -> None:
     """Remove samples with poor call rate.
 
     Args:
@@ -41,7 +43,7 @@ def main(args=None, argv=None):
     run_plink(args)
 
 
-def run_plink(options):
+def run_plink(options: argparse.Namespace) -> None:
     """Run Plink with the ``mind`` option.
 
     Args:
@@ -51,7 +53,7 @@ def run_plink(options):
     # Executing the command
     execute_external_command(
         command=[
-            "plink",
+            "plink" if options.plink_107 else "plink1.9",
             "--noweb",
             "--bfile", options.bfile,
             "--mind", str(options.mind),
@@ -61,7 +63,7 @@ def run_plink(options):
     )
 
 
-def check_args(args):
+def check_args(args: argparse.Namespace) -> None:
     """Checks the arguments and options.
 
     Args:
@@ -83,7 +85,7 @@ def check_args(args):
         )
 
 
-def parse_args(argv=None):
+def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
     """Parses the arguments and options."""
     parser = argparse.ArgumentParser(description=DESCRIPTION)
 
@@ -98,7 +100,7 @@ def parse_args(argv=None):
     return parser.parse_args(argv)
 
 
-def add_args(parser):
+def add_args(parser: argparse.ArgumentParser) -> None:
     """Add arguments and options to the parser."""
     # The INPUT files
     group = parser.add_argument_group("Input File")
@@ -115,6 +117,10 @@ def add_args(parser):
         "--mind", type=float, metavar="FLOAT", default=0.1,
         help="The call rate threshold (remove samples with more than x "
              "percent missing genotypes). [Default: %(default)s]",
+    )
+    group.add_argument(
+        "--plink-1.07", dest="plink_107", action="store_true",
+        help="Use original Plink (version 1.07)",
     )
 
     # The OUTPUT files

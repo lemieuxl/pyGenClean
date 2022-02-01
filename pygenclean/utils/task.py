@@ -5,6 +5,7 @@ import shlex
 import logging
 import subprocess
 import multiprocessing
+from typing import List
 
 from ..error import ProgramError
 
@@ -15,7 +16,7 @@ __all__ = ["execute_external_command", "execute_external_commands"]
 logger = logging.getLogger(__name__)
 
 
-def execute_external_command(command):
+def execute_external_command(command: List[str]) -> str:
     """Executes an external command.
 
     Args:
@@ -45,7 +46,8 @@ def execute_external_command(command):
     return outs
 
 
-def execute_external_commands(commands, threads=2):
+def execute_external_commands(commands: List[List[str]],
+                              threads: int = 2) -> None:
     """Execute multiple commands using a worker pool.
 
     Args:

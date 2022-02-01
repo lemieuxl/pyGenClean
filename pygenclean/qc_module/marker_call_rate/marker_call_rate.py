@@ -3,6 +3,7 @@
 
 import logging
 import argparse
+from typing import Optional, List
 
 from ...utils.task import execute_external_command
 from ...utils import plink as plink_utils
@@ -19,7 +20,8 @@ DESCRIPTION = "Remove markers with poor call rate."
 logger = logging.getLogger(__name__)
 
 
-def main(args=None, argv=None):
+def main(args: Optional[argparse.Namespace] = None,
+         argv: Optional[List[str]] = None) -> None:
     """Removes markers with poor call rate.
 
     Args:
@@ -47,7 +49,7 @@ def main(args=None, argv=None):
     compare_bim(args)
 
 
-def compare_bim(args):
+def compare_bim(args: argparse.Namespace) -> None:
     """Compare two BIM files.
 
     Args:
@@ -74,7 +76,7 @@ def compare_bim(args):
         print(*in_before, sep="\n", file=f)
 
 
-def run_plink(options):
+def run_plink(options: argparse.Namespace) -> None:
     """Runs Plink with the ``geno`` option.
 
     Args:
@@ -84,7 +86,7 @@ def run_plink(options):
     # Executing the command
     execute_external_command(
         command=[
-            "plink",
+            "plink" if options.plink_107 else "plink1.9",
             "--noweb",
             "--bfile", options.bfile,
             "--geno", str(options.geno),
@@ -94,7 +96,7 @@ def run_plink(options):
     )
 
 
-def check_args(args):
+def check_args(args: argparse.Namespace) -> None:
     """Checks the arguments and options.
 
     Args:
@@ -116,7 +118,7 @@ def check_args(args):
         )
 
 
-def parse_args(argv=None):
+def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
     """Parses the arguments and options."""
     parser = argparse.ArgumentParser(description=DESCRIPTION)
 
@@ -131,7 +133,7 @@ def parse_args(argv=None):
     return parser.parse_args(argv)
 
 
-def add_args(parser):
+def add_args(parser: argparse.ArgumentParser) -> None:
     """Add arguments and options to the parser."""
     # The INPUT files
     group = parser.add_argument_group("Input File")
@@ -148,6 +150,10 @@ def add_args(parser):
         "--geno", type=float, metavar="FLOAT", default=0.02,
         help="The missingness threshold (remove SNPs with more than x percent "
              "missing genotypes). [Default: %(default)s]",
+    )
+    group.add_argument(
+        "--plink-1.07", dest="plink_107", action="store_true",
+        help="Use original Plink (version 1.07)",
     )
 
     # The OUTPUT files

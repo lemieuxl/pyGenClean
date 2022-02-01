@@ -3,6 +3,7 @@
 
 import logging
 import argparse
+from typing import Optional, List
 
 from ...utils.task import execute_external_command
 from ...utils import plink as plink_utils
@@ -19,7 +20,8 @@ DESCRIPTION = "Remove heterozygous haploid (males on chromosome X)."
 logger = logging.getLogger(__name__)
 
 
-def main(args=None, argv=None):
+def main(args: Optional[argparse.Namespace] = None,
+         argv: Optional[List[str]] = None) -> None:
     """The main function of this module.
 
     Args:
@@ -36,7 +38,7 @@ def main(args=None, argv=None):
     run_plink(args)
 
 
-def run_plink(options):
+def run_plink(options: argparse.Namespace) -> None:
     """Sets heterozygous haploid markers to missing Plink.
 
     Args:
@@ -45,7 +47,7 @@ def run_plink(options):
     """
     execute_external_command(
         command=[
-            "plink",
+            "plink" if options.plink_107 else "plink1.9",
             "--noweb",
             "--bfile", options.bfile,
             "--set-hh-missing",
@@ -55,7 +57,7 @@ def run_plink(options):
     )
 
 
-def check_args(args):
+def check_args(args: argparse.Namespace) -> None:
     """Checks the arguments and options.
 
     Args:
@@ -71,7 +73,7 @@ def check_args(args):
         raise ProgramError(f"{args.bfile}: no such binary files")
 
 
-def parse_args(argv=None):
+def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
     """Parses the command line options and arguments."""
     parser = argparse.ArgumentParser(description=DESCRIPTION)
 
@@ -86,7 +88,7 @@ def parse_args(argv=None):
     return parser.parse_args(argv)
 
 
-def add_args(parser):
+def add_args(parser: argparse.ArgumentParser) -> None:
     """Add arguments and options to the parser."""
     # The INPUT files
     group = parser.add_argument_group("Input File")
@@ -95,6 +97,13 @@ def add_args(parser):
         help="The input file prefix (will find the plink binary files by "
              "appending the prefix to the .bim, .bed and .fam files, "
              "respectively).",
+    )
+
+    # The options
+    group = parser.add_argument_group("Options")
+    group.add_argument(
+        "--plink-1.07", dest="plink_107", action="store_true",
+        help="Use original Plink (version 1.07)",
     )
 
     # The OUTPUT files

@@ -39,7 +39,7 @@ def main():  # pylint: disable=missing-docstring
         sys.exit(1)
 
 
-def parse_args():
+def parse_args() -> argparse.Namespace:
     """Parses the arguments and function."""
     parser = argparse.ArgumentParser(
         description="Runs pyGenClean.",
@@ -62,7 +62,7 @@ def parse_args():
     return parser.parse_args()
 
 
-def add_qc_module_parsers(main_subparser):
+def add_qc_module_parsers(main_subparser: argparse.ArgumentParser) -> None:
     """Automatically add all QC module's parsers."""
     for qc_module_name, qc_module in qc_modules.items():
         # The QC module parser
@@ -104,7 +104,7 @@ def add_qc_module_parsers(main_subparser):
                 subparser.set_defaults(func=qc_sub_module.main)
 
 
-def configure_logging(args):
+def configure_logging(args: argparse.Namespace) -> None:
     """Configures the logging."""
     # We want INFO by default, unless specified otherwise
     logging_level = logging.INFO

@@ -4,6 +4,7 @@
 import logging
 import argparse
 from os import path
+from typing import Optional, List
 
 from ...utils import plink as plink_utils
 from ...utils.task import execute_external_command
@@ -20,7 +21,8 @@ DESCRIPTION = "Flag markers with MAF of 0 (monomorphic)."
 logger = logging.getLogger(__name__)
 
 
-def main(args=None, argv=None):
+def main(args: Optional[argparse.Namespace] = None,
+         argv: Optional[List[str]] = None) -> None:
     """Flag monomorphic markers (i.e. MAF of 0).
 
     Args:
@@ -48,7 +50,7 @@ def main(args=None, argv=None):
     find_maf_0(args.out + ".frq", args.out)
 
 
-def find_maf_0(freq_filename, prefix):
+def find_maf_0(freq_filename: str, prefix: str) -> None:
     """Finds SNPs with MAF of 0 and put them in a file.
 
     Args:
@@ -109,7 +111,7 @@ def find_maf_0(freq_filename, prefix):
                 print(marker_name,  file=output_file)
 
 
-def compute_freq(options):
+def compute_freq(options: argparse.Namespace) -> None:
     """Compute the frequency of the SNPs.
 
     Args:
@@ -119,7 +121,7 @@ def compute_freq(options):
     # Executing the command
     execute_external_command(
         command=[
-            "plink",
+            "plink" if options.plink_107 else "plink1.9",
             "--noweb",
             "--bfile", options.bfile,
             "--freq",
@@ -128,7 +130,7 @@ def compute_freq(options):
     )
 
 
-def check_args(args):
+def check_args(args: argparse.Namespace) -> None:
     """Checks the arguments and options.
 
     Args:
@@ -144,7 +146,7 @@ def check_args(args):
         raise ProgramError(f"{args.bfile}: no such binary files")
 
 
-def parse_args(argv=None):
+def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
     """Parses the arguments and function."""
     parser = argparse.ArgumentParser(description=DESCRIPTION)
 
@@ -159,7 +161,7 @@ def parse_args(argv=None):
     return parser.parse_args(argv)
 
 
-def add_args(parser):
+def add_args(parser: argparse.ArgumentParser) -> None:
     """Add arguments and options to the parser."""
     # The INPUT files
     group = parser.add_argument_group("Input File")
@@ -168,6 +170,13 @@ def add_args(parser):
         help="The input file prefix (will find the plink binary files by "
              "appending the prefix to the .bim, .bed and .fam files, "
              "respectively.",
+    )
+
+    # The options
+    group = parser.add_argument_group("Options")
+    group.add_argument(
+        "--plink-1.07", dest="plink_107", action="store_true",
+        help="Use original Plink (version 1.07)",
     )
 
     # The OUTPUT files

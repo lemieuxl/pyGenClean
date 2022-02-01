@@ -4,6 +4,7 @@
 import logging
 import argparse
 import shutil
+from typing import Optional, List
 
 import numpy as np
 
@@ -23,7 +24,8 @@ DESCRIPTION = "Clean markers with no call or heterozygous only."
 logger = logging.getLogger(__name__)
 
 
-def main(args=None, argv=None):
+def main(args: Optional[argparse.Namespace] = None,
+         argv: Optional[List[str]] = None) -> None:
     """Clean markers with no call or heterozygous only.
 
     Args:
@@ -43,10 +45,11 @@ def main(args=None, argv=None):
 
     # Process the files
     logger.info("Processing the binary Plink file")
-    process_file(args.bfile, args.out)
+    process_file(args.bfile, args.out, args.plink_107)
 
 
-def process_file(prefix, out_prefix):
+def process_file(prefix: str, out_prefix: str,
+                 use_original_plink: bool) -> None:
     """Process the TPED and TFAM files.
 
     Args:
@@ -108,7 +111,13 @@ def process_file(prefix, out_prefix):
             print(*exclude, sep="\n", file=f)
 
         # Excluding the markers
-        plink_utils.subset_markers(prefix, filename, out_prefix, "exclude")
+        plink_utils.subset_markers(
+            bfile=prefix,
+            markers=filename,
+            out=out_prefix,
+            subset_type="exclude",
+            use_original_plink=use_original_plink,
+        )
 
     else:
         logger.info("Copying original files (no markers to exclude)")
@@ -116,7 +125,7 @@ def process_file(prefix, out_prefix):
             shutil.copy(prefix + extension, out_prefix + extension)
 
 
-def check_args(args):
+def check_args(args: argparse.Namespace) -> None:
     """Checks the arguments and options.
 
     Args:
@@ -132,7 +141,7 @@ def check_args(args):
         raise ProgramError(f"{args.bfile}: no such binary files")
 
 
-def parse_args(argv=None):
+def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
     """Parses the command line options and arguments."""
     parser = argparse.ArgumentParser(description=DESCRIPTION)
 
@@ -147,7 +156,7 @@ def parse_args(argv=None):
     return parser.parse_args(argv)
 
 
-def add_args(parser):
+def add_args(parser: argparse.ArgumentParser) -> None:
     """Add arguments and options to the parser."""
     # The INPUT files
     group = parser.add_argument_group("Input File")
@@ -155,6 +164,13 @@ def add_args(parser):
         "--bfile", type=str, metavar="FILE", required=True,
         help="The input file prefix (will find the binary files by "
              "appending the prefix to .bed, .bim and .fam, respectively).",
+    )
+
+    # The options
+    group = parser.add_argument_group("Options")
+    group.add_argument(
+        "--plink-1.07", dest="plink_107", action="store_true",
+        help="Use original Plink (version 1.07)",
     )
 
     # The OUTPUT files

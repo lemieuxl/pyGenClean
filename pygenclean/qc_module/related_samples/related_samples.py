@@ -3,6 +3,7 @@
 
 import logging
 import argparse
+from typing import Optional, List
 
 from ...error import ProgramError
 
@@ -21,7 +22,8 @@ _INDEP_PAIRWISE_R2_DEFAULT = "0.1"
 logger = logging.getLogger(__name__)
 
 
-def main(args=None, argv=None):
+def main(args: Optional[argparse.Namespace] = None,
+         argv: Optional[List[str]] = None) -> None:
     """Finds related samples according to IBS (if any).
 
     Args:
@@ -45,7 +47,7 @@ def main(args=None, argv=None):
     check_args(args)
 
     markers_to_extract = select_markers_by_ld(
-        args.bfile, args.maf, args.indep_pairwise, args.out,
+        args.bfile, args.maf, args.indep_pairwise, args.out, args.plink_107,
     )
 
     # Counting the number of markers
@@ -62,10 +64,12 @@ def main(args=None, argv=None):
         markers=markers_to_extract,
         out=args.out + ".pruned_data",
         subset_type="extract",
+        use_original_plink=args.plink_107,
     )
 
 
-def select_markers_by_ld(bfile, maf_threshold, indep_pairwise, out):
+def select_markers_by_ld(bfile: str, maf_threshold: str, indep_pairwise: str,
+                         out: str, use_original_plink: bool = False) -> str:
     """Selects markers according to LD.
 
     Args:
@@ -86,7 +90,7 @@ def select_markers_by_ld(bfile, maf_threshold, indep_pairwise, out):
     out_prefix = out + ".pruning_" + indep_pairwise[2]
 
     command = [
-        "plink2",
+        "plink" if use_original_plink else "plink1.9",
         "--bfile", bfile,
         "--maf", maf_threshold,
         "--out", out_prefix,
@@ -111,7 +115,7 @@ def select_markers_by_ld(bfile, maf_threshold, indep_pairwise, out):
     return out_prefix + ".prune.in.autosomal"
 
 
-def check_args(args):
+def check_args(args: argparse.Namespace) -> None:
     """Checks the arguments and options.
 
     Args:
@@ -122,7 +126,7 @@ def check_args(args):
         raise ProgramError(f"{args.bfile}: no such binary files")
 
 
-def parse_args(argv=None):
+def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
     """Parses the arguments and function."""
     parser = argparse.ArgumentParser(description=DESCRIPTION)
 
@@ -137,7 +141,7 @@ def parse_args(argv=None):
     return parser.parse_args(argv)
 
 
-def add_args(parser):
+def add_args(parser: argparse.ArgumentParser) -> None:
     """Adds argument to the parser."""
     # The INPUT files
     group = parser.add_argument_group("Input files")
@@ -182,6 +186,10 @@ def add_args(parser):
     group.add_argument(
         "--lines-per-task", type=int, metavar="INT", default=100,
         help="The number of lines per task. [%(default)d]",
+    )
+    group.add_argument(
+        "--plink-1.07", dest="plink_107", action="store_true",
+        help="Use original Plink (version 1.07)",
     )
 
     # The OUTPUT files
