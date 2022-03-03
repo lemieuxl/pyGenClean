@@ -49,14 +49,14 @@ def decode_chrom(chrom: str) -> int:
         return 26
 
     try:
-        chrom = int(chrom)
+        num_chrom = int(chrom)
     except ValueError as exception:
         raise ProgramError(f"{chrom}: invalid chromosome") from exception
 
-    if chrom < 0 or chrom > 26:
+    if num_chrom < 0 or num_chrom > 26:
         raise ProgramError(f"{chrom}: invalid chromosome")
 
-    return chrom
+    return num_chrom
 
 
 def decode_sex(sex: str) -> str:
