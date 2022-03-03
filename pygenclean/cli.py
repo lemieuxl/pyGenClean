@@ -62,7 +62,7 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def add_qc_module_parsers(main_subparser: argparse.ArgumentParser) -> None:
+def add_qc_module_parsers(main_subparser: argparse._SubParsersAction) -> None:
     """Automatically add all QC module's parsers."""
     for qc_module_name, qc_module in qc_modules.items():
         # The QC module parser
