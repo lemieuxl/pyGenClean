@@ -228,6 +228,10 @@ def read_intensities(filename: str, required_markers: Set[str],
         else:
             df = df.add(sub_df, fill_value=0)
 
+    # Asserting that we have intensities
+    if df is None:
+        raise ProgramError("There are no intensities for sexual chromosomes")
+
     # Creating the final format
     df = df.loc[:, "intensity_sum"]
     df["mean"] = df["sum"] / df["count"]
@@ -286,7 +290,7 @@ def read_sex_mismatches(filename: str) -> Set[str]:
         If ``filename`` is ``None``, an empty set is returned.
 
     """
-    mismatches = set()
+    mismatches: Set[str] = set()
 
     if filename is None:
         return mismatches
