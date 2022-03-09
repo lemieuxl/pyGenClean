@@ -2,7 +2,7 @@
 
 
 from .plate_bias import plate_bias
-from .related_samples import related_samples
+from .related_samples import related_samples, merge_related_samples
 from .sex_check import (sex_check, intensity_plot, baf_lrr_plot,
                         intensity_viewer)
 from .flag_maf import flag_maf
@@ -35,4 +35,7 @@ qc_sub_modules = {
     "nocall_hetero": {
         "heterozygosity_plot": heterozygosity_plot,
     },
+    "related_samples": {
+        "merge_related_samples": merge_related_samples,
+    }
 }
