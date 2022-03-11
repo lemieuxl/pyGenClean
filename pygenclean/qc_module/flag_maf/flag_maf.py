@@ -4,7 +4,7 @@
 import logging
 import argparse
 from os import path
-from typing import Optional, List
+from typing import Optional, List, Set
 
 from ...utils import plink as plink_utils
 from ...utils import timer
@@ -66,8 +66,8 @@ def find_maf_0(freq_filename: str, prefix: str) -> None:
     if not path.isfile(freq_filename):
         raise ProgramError(f"{freq_filename}: no such file")
 
-    maf_0_set = set()
-    na_set = set()
+    maf_0_set: Set[str] = set()
+    na_set: Set[str] = set()
 
     with open(freq_filename, "r") as f:
         header = None

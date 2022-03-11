@@ -187,7 +187,7 @@ def check_args(args: argparse.Namespace) -> None:
     :py:class:`sys.stderr` and the program exists with code 1.
 
     """
-    # Check if we have the tped and the tfam files
+    # Check if we have the required files
     if not plink_utils.check_files(args.bfile):
         raise ProgramError(f"{args.bfile}: no such binary files")
 
