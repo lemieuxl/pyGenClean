@@ -1,9 +1,12 @@
 """Utility function related to Plink files."""
 
 
+from datetime import datetime
+import logging
 import re
 from os import path
-from typing import Tuple, Set, List
+import shutil
+from typing import Tuple, Set, List, Iterator
 
 from . import decode_chrom, decode_sex
 from .task import execute_external_command
@@ -11,7 +14,10 @@ from .task import execute_external_command
 
 __all__ = ["check_files", "get_markers_on_chrom", "get_sample_sexes",
            "parse_bim", "parse_fam", "split_line", "subset_markers",
-           "compare_bim", "compute_freq"]
+           "compare_bim", "compute_freq", "rename_markers"]
+
+
+logger = logging.getLogger(__name__)
 
 
 _SPACE_SPLITTER = re.compile(r"\s+")
@@ -73,7 +79,7 @@ class BimRow():
         return f"<BimRow {self.name}>"
 
 
-def parse_bim(bimfile: str) -> BimRow:
+def parse_bim(bimfile: str) -> Iterator[BimRow]:
     """Parses a BIM file.
 
     Args:
@@ -108,7 +114,7 @@ class FamRow():
         return f"<FamRow {self.fid}, {self.iid}>"
 
 
-def parse_fam(famfile: str) -> FamRow:
+def parse_fam(famfile: str) -> Iterator[FamRow]:
     """Parses a FAM file.
 
     Args:
@@ -175,6 +181,28 @@ def subset_markers(bfile: str, markers: str, out: str, subset_type: str,
         "--out", out,
     ]
     execute_external_command(command)
+
+
+def rename_markers(bfile: str, rename: str) -> None:
+    """Rename markers (creating a copy of the original BIM file)."""
+    logger.info("Renaming markers in %s", bfile + ".bim")
+
+    # Copying the file
+    ori_bim = bfile + ".bim." + datetime.now().strftime("%Y-%m-%d_%H.%M.%S")
+    shutil.copyfile(bfile + ".bim", ori_bim)
+    logger.info("  - Copied BIM to %s", ori_bim)
+
+    # Reading the rename file
+    new_names = {}
+    with open(rename) as f:
+        new_names = dict(tuple(line.split() for line in f.read().splitlines()))
+    logger.info("  - %d markers to be renamed", len(new_names))
+
+    logger.info("  - Renaming markers in %s", bfile + ".bim")
+    with open(bfile + ".bim", "w") as f:
+        for row in parse_bim(ori_bim):
+            print(row.chrom, new_names.get(row.name, row.name), row.cm,
+                  row.pos, row.a1, row.a2, sep="\t", file=f)
 
 
 def compute_freq(bfile: str, out: str,
