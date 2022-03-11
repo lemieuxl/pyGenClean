@@ -71,13 +71,13 @@ def main(args: Optional[argparse.Namespace] = None,
     plink_utils.subset_markers(
         bfile=args.bfile,
         markers=markers_to_extract,
-        out=args.out + ".pruned_data",
+        out=get_prefix_for_genome(args.out),
         subset_type="extract",
         use_original_plink=args.plink_107,
     )
 
     # Creating the genome file
-    create_genome(bfile=args.out + ".pruned_data", args=args)
+    create_genome(bfile=get_prefix_for_genome(args.out), args=args)
 
     # We only need the genome file to be created
     if args.genome_only:
@@ -101,6 +101,11 @@ def main(args: Optional[argparse.Namespace] = None,
 
     # Plotting the related samples (z1 and z2)
     plot_related_samples(related, args.out, args)
+
+
+def get_prefix_for_genome(prefix: str) -> str:
+    """Generate the prefix for the creation of the genome file"""
+    return prefix + ".pruned_data"
 
 
 def create_genome(bfile: str, args: argparse.Namespace) -> None:
