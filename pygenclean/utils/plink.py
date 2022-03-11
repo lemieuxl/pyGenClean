@@ -14,7 +14,8 @@ from .task import execute_external_command
 
 __all__ = ["check_files", "get_markers_on_chrom", "get_sample_sexes",
            "parse_bim", "parse_fam", "split_line", "subset_markers",
-           "compare_bim", "compute_freq", "rename_markers"]
+           "compare_bim", "compute_freq", "rename_markers", "merge_files",
+           "flip_markers"]
 
 
 logger = logging.getLogger(__name__)
@@ -243,3 +244,53 @@ def compare_bim(bim_a: str, bim_b: str) -> Tuple[Set[str], Set[str], Set[str]]:
         in_both,
         markers_b - in_both,
     )
+
+
+def merge_files(prefixes: List[str], out: str,
+                use_original_plink: bool = False) -> None:
+    """Merge binary plink files.
+
+    Args:
+        prefixes (list): list of tall the prefixes to merge.
+        out (str): the output prefix.
+
+    """
+    # The first file is the bfile, the others are the ones to merge
+    with open(out + ".files_to_merge", "w") as f:
+        for prefix in prefixes[1:]:
+            print(*[prefix + ext for ext in (".bed", ".bim", ".fam")], file=f)
+
+    # Runing plink
+    command = [
+        "plink" if use_original_plink else "plink1.9",
+        "--noweb",
+        "--bfile", prefixes[0],
+        "--merge-list", out + ".files_to_merge",
+        "--make-bed",
+        "--out", out,
+    ]
+    execute_external_command(command)
+
+
+def flip_markers(prefix: str, out: str, markers: str,
+                 use_original_plink: bool = False) -> None:
+    """Flip SNPs using Plink.
+
+    Args:
+        prefix (str): the prefix of the input file.
+        out (str): the prefix of the output file.
+        markers (str): the name of the file containing the markers to flip.
+
+    Using Plink, flip a set of markers in ``inPrefix``, and saves the results
+    in ``outPrefix``. The list of markers to be flipped is in ``flipFileName``.
+
+    """
+    command = [
+        "plink" if use_original_plink else "plink1.9",
+        "--noweb",
+        "--bfile", prefix,
+        "--flip", markers,
+        "--make-bed",
+        "--out", out,
+    ]
+    execute_external_command(command)
