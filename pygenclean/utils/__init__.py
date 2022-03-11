@@ -6,13 +6,13 @@ import time
 import datetime
 import shlex
 import functools
-from typing import List, Any, Callable
+from typing import Iterable, List, Any, Callable, Set
 
 from ..error import ProgramError
 
 
 __all__ = ["decode_chrom", "decode_sex", "is_gzip", "get_open_func",
-           "split_extra_args", "timer"]
+           "split_extra_args", "timer", "flip_alleles"]
 
 
 def decode_chrom(chrom: str) -> int:
@@ -149,3 +149,21 @@ def timer(decorated_logger):
         return wrapper_timer
 
     return inner
+
+
+_COMPLEMENT_ALLELE = {
+    "A": "T",
+    "T": "A",
+    "C": "G",
+    "G": "C",
+    "0": "0",
+}
+
+
+def flip_alleles(alleles: Iterable[str]) -> Set[str]:
+    """Flip alleles in a set."""
+    try:
+        return {_COMPLEMENT_ALLELE[allele] for allele in alleles}
+
+    except KeyError as error:
+        raise ProgramError(f"{alleles}: unknown alleles") from error
