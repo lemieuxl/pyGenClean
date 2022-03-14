@@ -240,7 +240,7 @@ def main(args: Optional[argparse.Namespace] = None,
                 "--format", args.plot_mds_format,
                 "--xaxis", args.plot_mds_xaxis,
                 "--yaxis", args.plot_mds_yaxis,
-                "--title", args.title,
+                "--title", args.plot_mds_title,
                 "--out", args.out + ".mds",
             ]
         )
