@@ -34,16 +34,16 @@ def execute_external_command(command: List[str]) -> str:
         )
         outs, errs = proc.communicate()
 
-    except FileNotFoundError as exception:
-        raise ProgramError(exception.strerror) from exception
+    except FileNotFoundError as error:
+        raise ProgramError(f"{command[0]}: {error.strerror}") from error
 
     if proc.returncode != 0:
         # Something went wrong
-        command = " ".join(command)
-        errs = errs.decode()
-        raise ProgramError(f"Something went wrong:\n{errs}\n{command}")
+        command_str = " ".join(command)
+        errs_str = errs.decode()
+        raise ProgramError(f"Something went wrong:\n{errs_str}\n{command_str}")
 
-    return outs
+    return outs.decode()
 
 
 def execute_external_commands(commands: List[List[str]],
