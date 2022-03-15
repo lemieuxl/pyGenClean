@@ -20,7 +20,7 @@ describing the tool:
 
 
 
-## Documentation##
+## Documentation
 
 Documentation is available from
 [http://lemieuxl.github.io/pyGenClean/](http://lemieuxl.github.io/pyGenClean/).
@@ -53,4 +53,3 @@ problems.
 
 For a step by step installation on both Linux and Windows operation systems, see
 `pyGenClean` documentation, located [here](http://lemieuxl.github.io/pyGenClean/#installation).
-
