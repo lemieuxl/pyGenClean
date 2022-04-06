@@ -1,12 +1,12 @@
 """Utility function related to Plink files."""
 
 
-from datetime import datetime
 import logging
 import re
-from os import path
 import shutil
-from typing import Tuple, Set, List, Iterator
+from datetime import datetime
+from os import path
+from typing import Iterator, List, Set, Tuple
 
 from . import decode_chrom, decode_sex
 from .task import execute_external_command
@@ -14,8 +14,8 @@ from .task import execute_external_command
 
 __all__ = ["check_files", "get_markers_on_chrom", "get_sample_sexes",
            "parse_bim", "parse_fam", "split_line", "subset_markers",
-           "compare_bim", "compute_freq", "rename_markers", "merge_files",
-           "flip_markers"]
+           "subset_samples", "compare_bim", "compute_freq", "rename_markers",
+           "merge_files", "flip_markers", "check_unique_iid"]
 
 
 logger = logging.getLogger(__name__)
@@ -146,6 +146,18 @@ def check_files(prefix: str) -> bool:
     return True
 
 
+def check_unique_iid(prefix: str) -> bool:
+    """Checks IID's (second column) of FAM files are unique."""
+    nb_samples = 0
+    samples = set()
+
+    for sample in parse_fam(prefix + ".fam"):
+        nb_samples += 1
+        samples.add(sample.iid)
+
+    return nb_samples == len(samples)
+
+
 def split_line(line: str) -> List[str]:
     """Split a Plink output line (spaces delimited).
 
@@ -178,6 +190,31 @@ def subset_markers(bfile: str, markers: str, out: str, subset_type: str,
         "--noweb",
         "--bfile", bfile,
         f"--{subset_type}", markers,
+        "--make-bed",
+        "--out", out,
+    ]
+    execute_external_command(command)
+
+
+def subset_samples(bfile: str, samples: str, out: str, subset_type: str,
+                   use_original_plink: bool = False) -> None:
+    """Extracts samples from a Plink file.
+
+    Args:
+        bfile (str): the prefix of the Plink file.
+        samples (str): the name of the file containing the samples to subset.
+        out (str): the prefix of the output file.
+        subset_type (str): either `extract` or `exclude`.
+
+    """
+    if subset_type not in {"keep", "remove"}:
+        raise ValueError(f"{subset_type}: invalid subset")
+
+    command = [
+        "plink" if use_original_plink else "plink1.9",
+        "--noweb",
+        "--bfile", bfile,
+        f"--{subset_type}", samples,
         "--make-bed",
         "--out", out,
     ]
