@@ -1,4 +1,4 @@
-"""Extracts and merges duplicated samples."""
+"""Verify completion and concordance of duplicated samples."""
 
 
 import argparse
@@ -17,7 +17,7 @@ from ...utils import timer
 from ...version import pygenclean_version as __version__
 
 SCRIPT_NAME = "duplicated-samples"
-DESCRIPTION = "Extracts and merges duplicated samples."
+DESCRIPTION = "Verify completion and concordance of duplicated samples."
 
 
 logger = logging.getLogger("duplicated_samples")
