@@ -16,11 +16,12 @@ from ...utils import plink as plink_utils
 from ...utils import timer
 from ...version import pygenclean_version as __version__
 
+
 SCRIPT_NAME = "duplicated-samples"
 DESCRIPTION = "Verify completion and concordance of duplicated samples."
 
 
-logger = logging.getLogger("duplicated_samples")
+logger = logging.getLogger(__name__)
 
 
 @timer(logger)
