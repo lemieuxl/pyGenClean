@@ -487,18 +487,16 @@ def add_args(parser: argparse.ArgumentParser) -> None:
     group = parser.add_argument_group("Input File")
     group.add_argument(
         "--bfile", type=str, metavar="FILE", required=True,
-        help="The input file prefix (will find the tped and tfam file by "
-             "appending the prefix to .tped and .tfam, respectively.) The "
-             "duplicated samples should have the same identification numbers "
-             "(both family and individual ids.)",
+        help="The input file prefix (will find the plink binary files by "
+             "appending the prefix to the .bim, .bed and .fam files, "
+             "respectively).",
     )
     group.add_argument(
         "--duplicated-samples", type=str, metavar="FILE", required=True,
         help="The file describing the duplicated samples. This file has no "
-             "header and has two columns (sperated by a tabulation). The "
-             "first column is the sample ID (e.g. NA12878). The second column "
-             "is the IDs in the FAM file, separated by a comma (e.g. "
-             "NA12878_1,NA12878_2).",
+             "header and has three columns (sperated by a whitespace). The "
+             "first column is the sample ID (e.g. NA12878). The second and "
+             "third columns are the FID and IID (e.g. NA12878_1 NA12878_2).",
     )
 
     # The options
