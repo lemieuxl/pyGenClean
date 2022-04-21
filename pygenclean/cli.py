@@ -68,6 +68,7 @@ def add_qc_module_parsers(main_subparser: argparse._SubParsersAction) -> None:
         # The QC module parser
         parser = main_subparser.add_parser(
             qc_module.SCRIPT_NAME, description=qc_module.DESCRIPTION,
+            help=qc_module.DESCRIPTION,
         )
 
         # Version information
