@@ -58,7 +58,7 @@ def main(args: Optional[argparse.Namespace] = None,
     # Returns a dictionary of usable files (for next step, if any)
     return {
         "bfile": args.bfile,
-        "exclude": args.out + ".list",
+        "flagged": args.out + ".list",
     }
 
 

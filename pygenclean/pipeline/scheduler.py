@@ -48,8 +48,11 @@ def main(args: Optional[argparse.Namespace] = None,
 
     # Executing the pipeline
     usable_files = {
-        "bfile": args.bfile,
+        0: {
+            "bfile": args.bfile,
+        },
     }
+    previous_step = 0
     for step, step_info in sorted(conf["steps"].items(),
                                   key=lambda x: int(x[0])):
         logger.info("Executing step %s: %s", step, step_info["module"])
@@ -63,29 +66,31 @@ def main(args: Optional[argparse.Namespace] = None,
 
         # The bfile and out file
         argv = [
-            ["--bfile", usable_files["bfile"]],
+            ["--bfile", usable_files[previous_step]["bfile"]],
             ["--out", str(sub_dir / qc_module.DEFAULT_OUT)],
         ]
 
         # Adding special cases
-        if "from_previous" in step_info:
-            argv += [
-                [f"--{key}", usable_files[key]]
-                for key in step_info["from_previous"]
-            ]
+        if "from_step" in step_info:
+            for from_step, from_step_info in step_info["from_step"].items():
+                for key, value in from_step_info.items():
+                    argv.append([f"--{key}", usable_files[from_step][value]])
 
         # Building the argument list from the configuration (excluding special
         # cases)
         argv += [
             [f"--{key}", str(value)]
             for key, value in step_info.items()
-            if key not in ("module", "from_previous")
+            if key not in ("module", "from_step")
         ]
 
         # Executing the QC module
-        usable_files = qc_module.main(
+        usable_files[step] = qc_module.main(
             argv=[item for subitems in argv for item in subitems],
         )
+
+        # The previous step
+        previous_step = step
 
 
 def create_qc_dir() -> Path:
@@ -105,9 +110,13 @@ def create_qc_dir() -> Path:
 
 def read_configuration(fn: str) -> None:
     """Reads the configuration file."""
+    # Reading the configuration
     conf = None
     with open(fn, "rb") as f:
         conf = tomllib.load(f)
+
+    # Verifying the configuration
+    # TODO: make sure that minimal step is 1 and unique numbers
     return conf
 
 
