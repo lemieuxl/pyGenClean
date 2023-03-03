@@ -7,12 +7,15 @@ import argparse
 from os import path
 from shlex import quote
 
+import argcomplete
+
 from .qc_module import qc_modules, qc_sub_modules
 from .error import ProgramError
 from .version import pygenclean_version as __version__
 
 
-def main():  # pylint: disable=missing-docstring
+def main():
+    """The main command line interface for pyGenClean."""
     args = parse_args()
 
     configure_logging(args)
@@ -58,6 +61,9 @@ def parse_args() -> argparse.Namespace:
 
     # Adding the different parsers for all the QC modules
     add_qc_module_parsers(subparser)
+
+    # Argument completion
+    argcomplete.autocomplete(parser)
 
     return parser.parse_args()
 
