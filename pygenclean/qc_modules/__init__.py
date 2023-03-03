@@ -1,6 +1,7 @@
 """List of tools available for pyGenClean"""
 
 
+from .dup_markers import duplicated_markers
 from .dup_samples import duplicated_samples
 from .ethnicity import ethnicity, find_outliers, plot_eigenvalues, plot_mds
 from .flag_hw import flag_hw
@@ -26,6 +27,7 @@ qc_modules = {
     "nocall_hetero": nocall_hetero,
     "ethnicity": ethnicity,
     "duplicated-samples": duplicated_samples,
+    "duplicated-markers": duplicated_markers,
 }
 
 

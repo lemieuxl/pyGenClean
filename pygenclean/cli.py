@@ -9,7 +9,7 @@ from shlex import quote
 
 import argcomplete
 
-from .qc_module import qc_modules, qc_sub_modules
+from .qc_modules import qc_modules, qc_sub_modules
 from .error import ProgramError
 from .version import pygenclean_version as __version__
 
