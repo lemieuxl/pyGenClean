@@ -1,21 +1,20 @@
 """Removes markers with poor call rate."""
 
 
-import logging
 import argparse
-from typing import Optional, List
-
-from ...utils.task import execute_external_command
-from ...utils import plink as plink_utils
-from ...utils import timer
+import logging
+from typing import Dict, List, Optional
 
 from ...error import ProgramError
-
+from ...utils import plink as plink_utils
+from ...utils import timer
+from ...utils.task import execute_external_command
 from ...version import pygenclean_version as __version__
 
 
 SCRIPT_NAME = "marker-call-rate"
 DESCRIPTION = "Remove markers with poor call rate."
+DEFAULT_OUT = "clean_geno"
 
 
 logger = logging.getLogger(__name__)
@@ -23,7 +22,7 @@ logger = logging.getLogger(__name__)
 
 @timer(logger)
 def main(args: Optional[argparse.Namespace] = None,
-         argv: Optional[List[str]] = None) -> None:
+         argv: Optional[List[str]] = None) -> Dict[str, str]:
     """Removes markers with poor call rate.
 
     Args:
@@ -42,13 +41,21 @@ def main(args: Optional[argparse.Namespace] = None,
         args = parse_args(argv)
     check_args(args)
 
-    # Run plink
-    logger.info("Running Plink")
+    logger.info("Removing markers with poor call rate")
+    logger.info("  --bfile '%s'", args.bfile)
+    logger.info("  --geno %s", args.geno)
+    logger.info("  --out '%s'", args.out)
+
     run_plink(args)
 
     # Comparing the bim
     logger.info("Comparing BIM files")
     compare_bim(args)
+
+    # Returns a dictionary of usable files (for next step, if any)
+    return {
+        "bfile": args.out,
+    }
 
 
 def compare_bim(args: argparse.Namespace) -> None:
@@ -161,6 +168,6 @@ def add_args(parser: argparse.ArgumentParser) -> None:
     # The OUTPUT files
     group = parser.add_argument_group("Output File")
     group.add_argument(
-        "--out", type=str, metavar="FILE", default="clean_geno",
+        "--out", type=str, metavar="FILE", default=DEFAULT_OUT,
         help="The prefix of the output files. [default: %(default)s]",
     )

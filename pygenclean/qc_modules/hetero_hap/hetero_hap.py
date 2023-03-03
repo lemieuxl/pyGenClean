@@ -1,21 +1,20 @@
 """Remove heterozygous haploid (males on chromosome X)."""
 
 
-import logging
 import argparse
-from typing import Optional, List
-
-from ...utils.task import execute_external_command
-from ...utils import plink as plink_utils
-from ...utils import timer
+import logging
+from typing import Dict, List, Optional
 
 from ...error import ProgramError
-
+from ...utils import plink as plink_utils
+from ...utils import timer
+from ...utils.task import execute_external_command
 from ...version import pygenclean_version as __version__
 
 
 SCRIPT_NAME = "hetero-hap"
 DESCRIPTION = "Remove heterozygous haploid (males on chromosome X)."
+DEFAULT_OUT = "without_hh_genotypes"
 
 
 logger = logging.getLogger(__name__)
@@ -23,7 +22,7 @@ logger = logging.getLogger(__name__)
 
 @timer(logger)
 def main(args: Optional[argparse.Namespace] = None,
-         argv: Optional[List[str]] = None) -> None:
+         argv: Optional[List[str]] = None) -> Dict[str, str]:
     """The main function of this module.
 
     Args:
@@ -35,9 +34,17 @@ def main(args: Optional[argparse.Namespace] = None,
         args = parse_args(argv)
     check_args(args)
 
-    # Run plink
+    # Logging
     logger.info("Running Plink to set heterozygous haploid as missing")
+    logger.info("  --bfile '%s'", args.bfile)
+    logger.info("  --out '%s'", args.out)
+
     run_plink(args)
+
+    # Returns a dictionary of usable files (for next step, if any)
+    return {
+        "bfile": args.out,
+    }
 
 
 def run_plink(options: argparse.Namespace) -> None:
@@ -111,6 +118,6 @@ def add_args(parser: argparse.ArgumentParser) -> None:
     # The OUTPUT files
     group = parser.add_argument_group("Output File")
     group.add_argument(
-        "--out", type=str, metavar="FILE", default="without_hh_genotypes",
+        "--out", type=str, metavar="FILE", default=DEFAULT_OUT,
         help="The prefix of the output files. [default: %(default)s]",
     )

@@ -14,6 +14,7 @@ from ...version import pygenclean_version as __version__
 
 SCRIPT_NAME = "subset"
 DESCRIPTION = "Subset Plink datasets (samples or markers)."
+DEFAULT_OUT = "subset"
 
 
 logger = logging.getLogger(__name__)
@@ -21,7 +22,7 @@ logger = logging.getLogger(__name__)
 
 @timer(logger)
 def main(args: Optional[argparse.Namespace] = None,
-         argv: Optional[List[str]] = None) -> None:
+         argv: Optional[List[str]] = None) -> Dict[str, str]:
     """Subset a Plink dataset (samples or markers).
 
     Args:
@@ -33,13 +34,17 @@ def main(args: Optional[argparse.Namespace] = None,
         args = parse_args(argv)
     check_args(args)
 
+    # Logging
+    logger.info("Subsetting data using Plink")
+    logger.info("  --bfile '%s'", args.bfile)
+    logger.info("  --out '%s'", args.out)
+
     # The subset arguments
     samples, sample_subset_type = get_subset_arg(vars(args), "keep", "remove")
     markers, marker_subset_type = get_subset_arg(vars(args), "extract",
                                                  "exclude")
 
     # Executing
-    logger.info("Subsetting data using Plink")
     plink_utils.subset(
         bfile=args.bfile,
         out=args.out,
@@ -50,6 +55,11 @@ def main(args: Optional[argparse.Namespace] = None,
         use_original_plink=args.plink_107,
     )
 
+    # Returns a dictionary of usable files
+    return {
+        "bfile": args.out,
+    }
+
 
 def get_subset_arg(
     kwargs: Dict[str, Optional[str]],
@@ -59,6 +69,7 @@ def get_subset_arg(
     """Get the subset type."""
     for key in first, second:
         if kwargs[key]:
+            logger.info("  --%s: %s", key, kwargs[key])
             return kwargs[key], key
     return None, None
 
@@ -150,6 +161,6 @@ def add_args(parser: argparse.ArgumentParser) -> None:
     # The OUTPUT files
     group = parser.add_argument_group("Output files")
     group.add_argument(
-        "--out", type=str, metavar="FILE", default="subset",
+        "--out", type=str, metavar="FILE", default=DEFAULT_OUT,
         help="The prefix of the output files. [%(default)s]",
     )

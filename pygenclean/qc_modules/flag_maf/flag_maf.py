@@ -16,6 +16,7 @@ from ...version import pygenclean_version as __version__
 
 SCRIPT_NAME = "flag-maf"
 DESCRIPTION = "Flag markers with MAF of 0 (monomorphic)."
+DEFAULT_OUT = "flag_maf_0"
 
 
 logger = logging.getLogger(__name__)
@@ -33,7 +34,7 @@ def main(args: Optional[argparse.Namespace] = None,
     These are the steps:
 
     1. Prints the options.
-    2. Computes the frequencies using Plinl (:py:func:`computeFrequency`).
+    2. Computes the frequencies using Plink (:py:func:`computeFrequency`).
     3. Finds markers with MAF of 0, and saves them in a file
        (:py:func:`findSnpWithMaf0`).
 
@@ -44,12 +45,21 @@ def main(args: Optional[argparse.Namespace] = None,
 
     # Compute frequency using plink
     logger.info("Computing the frequencies using Plink")
+    logger.info("  --bfile '%s'", args.bfile)
+    logger.info("  --out '%s'", args.out)
     plink_utils.compute_freq(bfile=args.bfile, out=args.out,
                              use_original_plink=args.plink_107)
 
     # Read the freqency file
     logger.info("Flagging SNPs with MAF = 0")
+    logger.info("  - list in '%s'", args.out + ".list")
     find_maf_0(args.out + ".frq", args.out)
+
+    # Returns a dictionary of usable files (for next step, if any)
+    return {
+        "bfile": args.bfile,
+        "exclude": args.out + ".list",
+    }
 
 
 def find_maf_0(freq_filename: str, prefix: str) -> None:
@@ -165,6 +175,6 @@ def add_args(parser: argparse.ArgumentParser) -> None:
     # The OUTPUT files
     group = parser.add_argument_group("Output File")
     group.add_argument(
-        "--out", type=str, metavar="FILE", default="flag_maf_0",
+        "--out", type=str, metavar="FILE", default=DEFAULT_OUT,
         help="The prefix of the output files. [default: %(default)s]",
     )
