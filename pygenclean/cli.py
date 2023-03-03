@@ -1,16 +1,17 @@
 """The main command line interface for pyGenClean."""
 
 
-import sys
-import logging
 import argparse
+import logging
+import sys
 from os import path
 from shlex import quote
 
 import argcomplete
 
-from .qc_modules import qc_modules, qc_sub_modules
 from .error import ProgramError
+from .pipeline import scheduler as main_pipeline
+from .qc_modules import qc_modules, qc_sub_modules
 from .version import pygenclean_version as __version__
 
 
@@ -35,7 +36,7 @@ def main():
 
     except KeyboardInterrupt:
         logger.info("Cancelled by user")
-        sys.exit(0)
+        sys.exit(1)
 
     except ProgramError as error:
         logger.error(error.message)
@@ -59,13 +60,31 @@ def parse_args() -> argparse.Namespace:
 
     subparser = parser.add_subparsers(dest="command", required=True)
 
-    # Adding the different parsers for all the QC modules
+    # Adding the different parsers for the pipeline and all the QC modules
+    add_pipeline_parser(subparser)
     add_qc_module_parsers(subparser)
 
     # Argument completion
     argcomplete.autocomplete(parser)
 
     return parser.parse_args()
+
+
+def add_pipeline_parser(main_subparser: argparse._SubParsersAction) -> None:
+    """Automatically add the pipeline's parser."""
+    parser = main_subparser.add_parser(
+        "pipeline", description=main_pipeline.DESCRIPTION,
+        help=main_pipeline.DESCRIPTION,
+    )
+
+    # Version information
+    parser.add_argument(
+        "-v", "--version", action="version",
+        version=f"pyGenClean pipeline {__version__}",
+    )
+
+    main_pipeline.add_args(parser)
+    parser.set_defaults(func=main_pipeline.main)
 
 
 def add_qc_module_parsers(main_subparser: argparse._SubParsersAction) -> None:
