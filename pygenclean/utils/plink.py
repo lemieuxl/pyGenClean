@@ -6,7 +6,7 @@ import re
 import shutil
 from datetime import datetime
 from os import path
-from typing import Iterator, List, Set, Tuple
+from typing import Dict, Iterator, List, Set, Tuple
 
 from . import decode_chrom, decode_sex
 from .task import execute_external_command
@@ -15,7 +15,8 @@ from .task import execute_external_command
 __all__ = ["check_files", "get_markers_on_chrom", "get_sample_sexes",
            "parse_bim", "parse_fam", "split_line", "subset_markers",
            "subset_samples", "compare_bim", "compute_freq", "rename_markers",
-           "merge_files", "flip_markers", "check_unique_iid"]
+           "merge_files", "flip_markers", "check_unique_iid",
+           "get_acgt_geno_map"]
 
 
 logger = logging.getLogger(__name__)
@@ -331,3 +332,18 @@ def flip_markers(prefix: str, out: str, markers: str,
         "--out", out,
     ]
     execute_external_command(command)
+
+
+def get_acgt_geno_map(a1: str, a2: str) -> Dict[int, str]:
+    """Decode the numerical genotypes {0, 1, 2} to ACGT genotypes.
+
+    Note that for plink, 0 is homozugous a2, 1 is heterozygous and 2 is
+    homozugous a1 in the BIM file.
+
+    """
+    return {
+        0: f"{a2} {a2}",
+        1: f"{a1} {a2}",
+        2: f"{a1} {a1}",
+        -1: "0 0",
+    }

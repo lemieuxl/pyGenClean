@@ -369,7 +369,7 @@ def compute_statistics(
                 # Is there more than one unique genotype (i.e. difference)
                 if unique_genotypes.shape[0] > 1:
                     # Getting the ACGT genotype map
-                    acgt_geno_map = get_acgt_geno_map(
+                    acgt_geno_map = plink_utils.get_acgt_geno_map(
                         *bim.loc[marker, ["a1", "a2"]],
                     )
 
@@ -397,21 +397,6 @@ def compute_statistics(
     print_concordance(concordance, out)
 
     return completion, concordance, sample_order
-
-
-def get_acgt_geno_map(a1: str, a2: str) -> Dict[int, str]:
-    """Decode the numerical genotypes {0, 1, 2} to ACGT genotypes.
-
-    Note that for plink, 0 is homozugous a2, 1 is heterozygous and 2 is
-    homozugous a1 in the BIM file.
-
-    """
-    return {
-        0: f"{a2} {a2}",
-        1: f"{a1} {a2}",
-        2: f"{a1} {a1}",
-        -1: "0 0",
-    }
 
 
 def read_duplicates(filename: str) -> Dict[str, Set[Tuple[str, str]]]:
