@@ -14,6 +14,8 @@ from .related_samples import merge_related_samples, related_samples
 from .sample_call_rate import sample_call_rate
 from .sex_check import (baf_lrr_plot, intensity_plot, intensity_viewer,
                         sex_check)
+from .subset import subset
+
 
 qc_modules = {
     "plate_bias": plate_bias,
@@ -28,6 +30,7 @@ qc_modules = {
     "ethnicity": ethnicity,
     "duplicated-samples": duplicated_samples,
     "duplicated-markers": duplicated_markers,
+    "subset": subset,
 }
 
 
