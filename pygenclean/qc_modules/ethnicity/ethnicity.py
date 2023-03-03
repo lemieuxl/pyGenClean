@@ -90,21 +90,21 @@ def main(args: Optional[argparse.Namespace] = None,
         logger.info("Extracting overlapping SNPs from the reference panels")
         for ref_name, ref_pop_prefix in zip(ref_pop_names, ref_pop_prefixes):
             logger.info("  - %s (%s)", ref_name, ref_pop_prefix)
-            plink_utils.subset_markers(
+            plink_utils.subset(
                 bfile=ref_pop_prefix,
-                markers=args.out + f".{ref_name}_snp_to_extract",
                 out=args.out + f".reference_panel.{ref_name}",
-                subset_type="extract",
+                markers=args.out + f".{ref_name}_snp_to_extract",
+                marker_subset_type="extract",
                 use_original_plink=args.plink_107,
             )
 
         # Extract the required SNPs using Plink (source panel)
         logger.info("Extracting overlapping SNPs from the source panel")
-        plink_utils.subset_markers(
+        plink_utils.subset(
             bfile=args.bfile,
-            markers=args.out + ".source_snp_to_extract",
             out=args.out + ".source_panel",
-            subset_type="extract",
+            markers=args.out + ".source_snp_to_extract",
+            marker_subset_type="extract",
             use_original_plink=args.plink_107,
         )
 
@@ -152,21 +152,21 @@ def main(args: Optional[argparse.Namespace] = None,
 
         # Excluding SNPs (reference panel)
         logger.info("Excluding SNPs from reference panel")
-        plink_utils.subset_markers(
+        plink_utils.subset(
             bfile=args.out + ".reference_panel.ALL",
             out=args.out + ".reference_panel.ALL.cleaned",
             markers=args.out + ".snp_to_remove",
-            subset_type="exclude",
+            marker_subset_type="exclude",
             use_original_plink=args.plink_107,
         )
 
         # Excluding SNPs (source panel)
         logger.info("Excluding SNPs from source panel")
-        plink_utils.subset_markers(
+        plink_utils.subset(
             bfile=args.out + ".source_panel",
             out=args.out + ".source_panel.cleaned",
             markers=args.out + ".snp_to_remove",
-            subset_type="exclude",
+            marker_subset_type="exclude",
             use_original_plink=args.plink_107,
         )
 

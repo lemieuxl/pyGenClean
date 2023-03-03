@@ -50,21 +50,21 @@ def main(args: Optional[argparse.Namespace] = None,
 
     # Generating the files with the unique samples
     logger.info("Generating the plink files with unique samples")
-    plink_utils.subset_samples(
+    plink_utils.subset(
         bfile=args.bfile,
-        samples=args.out + ".duplicated_samples",
         out=args.out + ".unique_samples",
-        subset_type="remove",
+        samples=args.out + ".duplicated_samples",
+        sample_subset_type="remove",
         use_original_plink=args.plink_107,
     )
 
     # Generating the files with the duplicated samples
     logger.info("Generating the plink files with duplicated samples")
-    plink_utils.subset_samples(
+    plink_utils.subset(
         bfile=args.bfile,
-        samples=args.out + ".duplicated_samples",
         out=args.out + ".duplicated_samples",
-        subset_type="keep",
+        samples=args.out + ".duplicated_samples",
+        sample_subset_type="keep",
         use_original_plink=args.plink_107,
     )
 
@@ -87,11 +87,11 @@ def main(args: Optional[argparse.Namespace] = None,
 
     # Generating the files with the chosen samples
     logger.info("Generating the plink files with only the chosen samples")
-    plink_utils.subset_samples(
+    plink_utils.subset(
         bfile=args.out + ".duplicated_samples",
-        samples=args.out + ".chosen_samples.info",
         out=args.out + ".chosen_samples",
-        subset_type="keep",
+        samples=args.out + ".chosen_samples.info",
+        sample_subset_type="keep",
         use_original_plink=args.plink_107,
     )
 

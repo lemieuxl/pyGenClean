@@ -13,10 +13,9 @@ from .task import execute_external_command
 
 
 __all__ = ["check_files", "get_markers_on_chrom", "get_sample_sexes",
-           "parse_bim", "parse_fam", "split_line", "subset_markers",
-           "subset_samples", "compare_bim", "compute_freq", "rename_markers",
-           "merge_files", "flip_markers", "check_unique_iid",
-           "get_acgt_geno_map"]
+           "parse_bim", "parse_fam", "split_line", "subset", "compare_bim",
+           "compute_freq", "rename_markers", "merge_files", "flip_markers",
+           "check_unique_iid", "get_acgt_geno_map"]
 
 
 logger = logging.getLogger(__name__)
@@ -172,53 +171,55 @@ def split_line(line: str) -> List[str]:
     return _SPACE_SPLITTER.split(line.strip())
 
 
-def subset_markers(bfile: str, markers: str, out: str, subset_type: str,
-                   use_original_plink: bool = False) -> None:
-    """Extracts markers from a Plink file.
-
-    Args:
-        bfile (str): the prefix of the Plink file.
-        markers (str): the name of the file containing the markers to subset.
-        out (str): the prefix of the output file.
-        subset_type (str): either `extract` or `exclude`.
-
-    """
-    if subset_type not in {"exclude", "extract"}:
-        raise ValueError(f"{subset_type}: invalid subset")
-
-    command = [
-        "plink" if use_original_plink else "plink1.9",
-        "--noweb",
-        "--bfile", bfile,
-        f"--{subset_type}", markers,
-        "--make-bed",
-        "--out", out,
-    ]
-    execute_external_command(command)
-
-
-def subset_samples(bfile: str, samples: str, out: str, subset_type: str,
-                   use_original_plink: bool = False) -> None:
+def subset(
+    bfile: str,
+    out: str,
+    markers: str = None,
+    marker_subset_type: str = None,
+    samples: str = None,
+    sample_subset_type: str = None,
+    use_original_plink: bool = False,
+) -> None:
     """Extracts samples from a Plink file.
 
     Args:
         bfile (str): the prefix of the Plink file.
-        samples (str): the name of the file containing the samples to subset.
         out (str): the prefix of the output file.
-        subset_type (str): either `extract` or `exclude`.
+        markers (str): the name of the file containing the markers to subset.
+        marker_subset_type (str): either `extract` or `exclude`.
+        samples (str): the name of the file containing the samples to subset.
+        sample_subset_type (str): either `extract` or `exclude`.
+        use_original_plink (bool): use original Plink (1.07).
 
     """
-    if subset_type not in {"keep", "remove"}:
-        raise ValueError(f"{subset_type}: invalid subset")
-
+    # The base command
     command = [
         "plink" if use_original_plink else "plink1.9",
         "--noweb",
         "--bfile", bfile,
-        f"--{subset_type}", samples,
         "--make-bed",
         "--out", out,
     ]
+
+    has_one = False
+
+    # Sample subset
+    if samples and sample_subset_type:
+        if sample_subset_type not in {"keep", "remove"}:
+            raise ValueError(f"{sample_subset_type}: invalid sample subset")
+        command.extend([f"--{sample_subset_type}", samples])
+        has_one = True
+
+    # Marker subset
+    if markers and marker_subset_type:
+        if marker_subset_type not in {"exclude", "extract"}:
+            raise ValueError(f"{marker_subset_type}: invalid marker subset")
+        command.extend([f"--{marker_subset_type}", markers])
+        has_one = True
+
+    if not has_one:
+        raise ValueError("no subset was selected")
+
     execute_external_command(command)
 
 

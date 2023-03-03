@@ -68,11 +68,11 @@ def main(args: Optional[argparse.Namespace] = None,
         return
 
     # Extracting the markers
-    plink_utils.subset_markers(
+    plink_utils.subset(
         bfile=args.bfile,
-        markers=markers_to_extract,
         out=get_prefix_for_genome(args.out),
-        subset_type="extract",
+        markers=markers_to_extract,
+        marker_subset_type="extract",
         use_original_plink=args.plink_107,
     )
 

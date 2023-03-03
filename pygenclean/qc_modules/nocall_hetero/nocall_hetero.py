@@ -113,11 +113,11 @@ def process_file(prefix: str, out_prefix: str,
             print(*exclude, sep="\n", file=f)
 
         # Excluding the markers
-        plink_utils.subset_markers(
+        plink_utils.subset(
             bfile=prefix,
-            markers=filename,
             out=out_prefix,
-            subset_type="exclude",
+            markers=filename,
+            marker_subset_type="exclude",
             use_original_plink=use_original_plink,
         )
 
