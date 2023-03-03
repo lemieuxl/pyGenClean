@@ -2,20 +2,16 @@
 
 
 import argparse
-from collections import defaultdict
 import logging
-from typing import Dict, List, Optional, Tuple, KeysView, Set
-
-from . import find_outliers, plot_mds, plot_eigenvalues
-from ..related_samples import related_samples
-
-from ...utils import timer, flip_alleles
-from ...utils import plink as plink_utils
-from ...utils.task import execute_external_command
+from collections import defaultdict
+from typing import Dict, KeysView, List, Optional, Set, Tuple
 
 from ...error import ProgramError
-
+from ...utils import flip_alleles, timer, plink as plink_utils
+from ...utils.task import execute_external_command
 from ...version import pygenclean_version as __version__
+from ..related_samples import related_samples
+from . import find_outliers, plot_eigenvalues, plot_mds
 
 
 SCRIPT_NAME = "ethnicity"
