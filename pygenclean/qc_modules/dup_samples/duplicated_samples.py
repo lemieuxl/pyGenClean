@@ -19,6 +19,7 @@ from ...version import pygenclean_version as __version__
 
 SCRIPT_NAME = "duplicated-samples"
 DESCRIPTION = "Verify completion and concordance of duplicated samples."
+DEFAULT_OUT = "dup_samples"
 
 
 logger = logging.getLogger(__name__)
@@ -37,6 +38,8 @@ def main(args: Optional[argparse.Namespace] = None,
     if args is None:
         args = parse_args(argv)
     check_args(args)
+
+    logger.info("%s", DESCRIPTION)
 
     # Find duplicated samples
     logger.info("Reading the duplicated samples")
@@ -101,6 +104,10 @@ def main(args: Optional[argparse.Namespace] = None,
         out=args.out + ".final",
         use_original_plink=args.plink_107
     )
+
+    return {
+        "usable_bfile": args.out,
+    }
 
 
 def choose_best_duplicates(
@@ -508,6 +515,6 @@ def add_args(parser: argparse.ArgumentParser) -> None:
     # The OUTPUT files
     group = parser.add_argument_group("Output File")
     group.add_argument(
-        "--out", type=str, metavar="FILE", default="dup_samples",
+        "--out", type=str, metavar="FILE", default=DEFAULT_OUT,
         help="The prefix of the output files. [default: %(default)s]",
     )

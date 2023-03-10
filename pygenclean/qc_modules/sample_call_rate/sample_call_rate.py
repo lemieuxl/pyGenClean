@@ -1,21 +1,20 @@
 """Removes samples with poor call rate."""
 
 
-import logging
 import argparse
-from typing import Optional, List
-
-from ...utils.task import execute_external_command
-from ...utils import plink as plink_utils
-from ...utils import timer
+import logging
+from typing import List, Optional
 
 from ...error import ProgramError
-
+from ...utils import plink as plink_utils
+from ...utils import timer
+from ...utils.task import execute_external_command
 from ...version import pygenclean_version as __version__
 
 
 SCRIPT_NAME = "sample-call-rate"
 DESCRIPTION = "Remove samples with poor call rate."
+DEFAULT_OUT = "clean_mind"
 
 
 logger = logging.getLogger(__name__)
@@ -40,9 +39,14 @@ def main(args: Optional[argparse.Namespace] = None,
         args = parse_args(argv)
     check_args(args)
 
+    logger.info("%s", DESCRIPTION)
+
     # Running Plink
-    logger.info("Running Plink")
     run_plink(args)
+
+    return {
+        "usable_bfile": args.out,
+    }
 
 
 def run_plink(options: argparse.Namespace) -> None:
@@ -128,7 +132,7 @@ def add_args(parser: argparse.ArgumentParser) -> None:
     # The OUTPUT files
     group = parser.add_argument_group("Output File")
     group.add_argument(
-        "--out", type=str, metavar="FILE", default="clean_mind",
+        "--out", type=str, metavar="FILE", default=DEFAULT_OUT,
         help="The prefix of the output files (wich will be a Plink binary "
              "file).  [default: %(default)s]",
     )

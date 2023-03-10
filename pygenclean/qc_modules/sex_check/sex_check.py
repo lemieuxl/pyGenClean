@@ -1,31 +1,27 @@
 """Check sample's sex using Plink."""
 
 
-import os
-import logging
 import argparse
+import logging
+import os
 from os import path
-from typing import Optional, List, Tuple, Set
+from typing import List, Optional, Set, Tuple
 
 import numpy as np
 import pandas as pd
-
 from pyplink import PyPlink
 
-from . import intensity_plot, baf_lrr_plot
-
-from ...utils import split_extra_args
-from ...utils import plink as plink_utils
-from ...utils.task import execute_external_command
-from ...utils import timer
-
 from ...error import ProgramError
-
+from ...utils import plink as plink_utils
+from ...utils import split_extra_args, timer
+from ...utils.task import execute_external_command
 from ...version import pygenclean_version as __version__
+from . import baf_lrr_plot, intensity_plot
 
 
 SCRIPT_NAME = "sex-check"
 DESCRIPTION = "Check sample's sex using Plink."
+DEFAULT_OUT = "sexcheck"
 
 
 logger = logging.getLogger(__name__)
@@ -58,6 +54,8 @@ def main(args: Optional[argparse.Namespace] = None,
         args = parse_args(argv)
     check_args(args)
 
+    logger.info("%s", DESCRIPTION)
+
     # Getting the list of markers on chromosome 23
     nb_markers = len(
         plink_utils.get_markers_on_chrom(args.bfile + ".bim", {23})
@@ -66,7 +64,9 @@ def main(args: Optional[argparse.Namespace] = None,
         logger.warning(
             "There are not enough markers on chromosome 23: STOPPING NOW!",
         )
-        return
+        return {
+            "usable_bfile": args.bfile,
+        }
 
     # Run Plink sex-check
     logger.info("Executing Plink's sex check algorithm")
@@ -114,6 +114,10 @@ def main(args: Optional[argparse.Namespace] = None,
             "--problematic-samples", args.out + ".list_problem_sex_ids",
             "--out", path.join(dirname, "sample"),
         ] + args.baf_lrr_extra_args)
+
+    return {
+        "usable_bfile": args.bfile,
+    }
 
 
 def compute_statistics(bfile: str, samples: Set[Tuple[str, str]],
@@ -403,7 +407,7 @@ def add_args(parser: argparse.ArgumentParser) -> None:
     # The OUTPUT files
     group = parser.add_argument_group("Output files")
     group.add_argument(
-        "--out", type=str, metavar="FILE", default="sexcheck",
+        "--out", type=str, metavar="FILE", default=DEFAULT_OUT,
         help="The prefix of the output files (which will be a Plink binary "
              "file. [%(default)s]",
     )

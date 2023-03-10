@@ -41,10 +41,7 @@ def main(args: Optional[argparse.Namespace] = None,
         args = parse_args(argv)
     check_args(args)
 
-    logger.info("Removing markers with poor call rate")
-    logger.info("  --bfile '%s'", args.bfile)
-    logger.info("  --geno %s", args.geno)
-    logger.info("  --out '%s'", args.out)
+    logger.info("%s", DESCRIPTION)
 
     run_plink(args)
 
@@ -54,7 +51,7 @@ def main(args: Optional[argparse.Namespace] = None,
 
     # Returns a dictionary of usable files (for next step, if any)
     return {
-        "bfile": args.out,
+        "usable_bfile": args.out,
     }
 
 

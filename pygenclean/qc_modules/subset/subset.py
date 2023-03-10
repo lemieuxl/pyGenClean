@@ -34,10 +34,7 @@ def main(args: Optional[argparse.Namespace] = None,
         args = parse_args(argv)
     check_args(args)
 
-    # Logging
-    logger.info("Subsetting data using Plink")
-    logger.info("  --bfile '%s'", args.bfile)
-    logger.info("  --out '%s'", args.out)
+    logger.info("%s", DESCRIPTION)
 
     # The subset arguments
     samples, sample_subset_type = get_subset_arg(vars(args), "keep", "remove")
@@ -57,7 +54,7 @@ def main(args: Optional[argparse.Namespace] = None,
 
     # Returns a dictionary of usable files
     return {
-        "bfile": args.out,
+        "usable_bfile": args.out,
     }
 
 
@@ -69,7 +66,6 @@ def get_subset_arg(
     """Get the subset type."""
     for key in first, second:
         if kwargs[key]:
-            logger.info("  --%s: %s", key, kwargs[key])
             return kwargs[key], key
     return None, None
 

@@ -2,13 +2,14 @@
 
 
 import argparse
+import json
 import logging
-from pprint import pprint
+import shlex
 import time
 from datetime import datetime
 from os import path
 from pathlib import Path
-from typing import List, Optional
+from typing import Any, Dict, List, Optional
 
 import tomllib
 
@@ -40,33 +41,34 @@ def main(args: Optional[argparse.Namespace] = None,
     check_args(args)
 
     # Creating the QC directory
-    qc_dir = create_qc_dir()
+    qc_dir = create_qc_dir(args.qc_dir)
 
     # Reading the configuration file
     conf = read_configuration(args.conf)
-    pprint(conf)
+    logger.debug("Configuration:\n%s", json.dumps(conf, indent=2))
 
     # Executing the pipeline
     usable_files = {
         0: {
-            "bfile": args.bfile,
+            "usable_bfile": args.bfile,
         },
     }
     previous_step = 0
     for step, step_info in sorted(conf["steps"].items(),
                                   key=lambda x: int(x[0])):
-        logger.info("Executing step %s: %s", step, step_info["module"])
+        # The "pretty" name
+        qc_module_name = step_info["module"].replace("-", "_")
 
         # The sub directory
-        sub_dir = qc_dir / f"{step}_{step_info['module']}"
+        sub_dir = qc_dir / f"{step}_{qc_module_name}"
         sub_dir.mkdir()
 
         # The QC module
-        qc_module = qc_modules[step_info["module"]]
+        qc_module = qc_modules[qc_module_name]
 
         # The bfile and out file
         argv = [
-            ["--bfile", usable_files[previous_step]["bfile"]],
+            ["--bfile", usable_files[previous_step]["usable_bfile"]],
             ["--out", str(sub_dir / qc_module.DEFAULT_OUT)],
         ]
 
@@ -78,11 +80,17 @@ def main(args: Optional[argparse.Namespace] = None,
 
         # Building the argument list from the configuration (excluding special
         # cases)
-        argv += [
-            [f"--{key}", str(value)]
-            for key, value in step_info.items()
-            if key not in ("module", "from_step")
-        ]
+        argv += list(generate_options(step_info))
+
+        # Logging the options used
+        logger.info(
+            "Executing step %s: %s (%s)",
+            step,
+            qc_module_name,
+            qc_module.DESCRIPTION.rstrip("."),
+        )
+        for argument in argv:
+            logger.info("  %s", " ".join(map(shlex.quote, argument)))
 
         # Executing the QC module
         usable_files[step] = qc_module.main(
@@ -93,18 +101,38 @@ def main(args: Optional[argparse.Namespace] = None,
         previous_step = step
 
 
-def create_qc_dir() -> Path:
+def generate_options(step_info: Dict[str, Any]):
+    """Generate the options for ARGV."""
+    for key, value in step_info.items():
+        if key in ("module", "from_step"):
+            continue
+        if isinstance(value, bool) and value:
+            yield [f"--{key}"]
+        else:
+            yield [f"--{key}", str(value)]
+
+
+def create_qc_dir(qc_dir: Optional[str]) -> Path:
     """Create the QC directory."""
-    qc_dir = Path(
-        "data_clean_up." + datetime.today().strftime("%Y-%m-%d_%H.%M.%S"),
-    )
-    while qc_dir.is_dir():
-        time.sleep(1)
+    if not qc_dir:
         qc_dir = Path(
             "data_clean_up." + datetime.today().strftime("%Y-%m-%d_%H.%M.%S"),
         )
-    qc_dir.mkdir()
+        while qc_dir.is_dir():
+            time.sleep(1)
+            qc_dir = Path(
+                "data_clean_up."
+                + datetime.today().strftime("%Y-%m-%d_%H.%M.%S"),
+            )
+        qc_dir.mkdir()
 
+    else:
+        qc_dir = Path(qc_dir)
+        if qc_dir.is_dir():
+            raise ValueError(f"{qc_dir}: directory already exists")
+        qc_dir.mkdir()
+
+    logger.info("QC will be in '%s'", qc_dir)
     return qc_dir
 
 
@@ -116,7 +144,7 @@ def read_configuration(fn: str) -> None:
         conf = tomllib.load(f)
 
     # Verifying the configuration
-    # TODO: make sure that minimal step is 1 and unique numbers
+    # TODO: make sure that minimal step is 1 and unique sequential numbers
     return conf
 
 
@@ -168,6 +196,14 @@ def add_args(parser: argparse.ArgumentParser) -> None:
     group.add_argument(
         "--conf", type=str, metavar="TOML", required=True,
         help="The configuration for the data clean up (TOML format).",
+    )
+
+    # The OUTPUT directory
+    group = parser.add_argument_group("Output Options")
+    group.add_argument(
+        "--qc-dir", metavar="DIR", type=str,
+        help="The output directory. If not is specified, the directory name "
+             "will automatically be generated.",
     )
 
 

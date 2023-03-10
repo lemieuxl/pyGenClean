@@ -43,7 +43,7 @@ def main(args: Optional[argparse.Namespace] = None,
 
     # Returns a dictionary of usable files (for next step, if any)
     return {
-        "bfile": args.out,
+        "usable_bfile": args.out,
     }
 
 

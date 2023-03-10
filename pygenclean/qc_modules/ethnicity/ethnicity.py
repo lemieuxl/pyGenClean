@@ -7,7 +7,9 @@ from collections import defaultdict
 from typing import Dict, KeysView, List, Optional, Set, Tuple
 
 from ...error import ProgramError
-from ...utils import flip_alleles, timer, plink as plink_utils
+from ...utils import flip_alleles
+from ...utils import plink as plink_utils
+from ...utils import timer
 from ...utils.task import execute_external_command
 from ...version import pygenclean_version as __version__
 from ..related_samples import related_samples
@@ -16,6 +18,7 @@ from . import find_outliers, plot_eigenvalues, plot_mds
 
 SCRIPT_NAME = "ethnicity"
 DESCRIPTION = "Checks sample's ethnicity using reference populations."
+DEFAULT_OUT = "ethnicity"
 
 
 logger = logging.getLogger(__name__)
@@ -68,6 +71,8 @@ def main(args: Optional[argparse.Namespace] = None,
     if args is None:
         args = parse_args(argv)
     check_args(args)
+
+    logger.info("%s", DESCRIPTION)
 
     ref_pop_names = ("CEU", "YRI", "JPT-CHB")
 
@@ -274,6 +279,10 @@ def main(args: Optional[argparse.Namespace] = None,
                 "--title", args.plot_eigen_title,
             ],
         )
+
+    return {
+        "usable_bfile": args.bfile,
+    }
 
 
 def compute_eigenvalues(prefix: str, out: str, nb_components: int) -> None:
@@ -718,6 +727,6 @@ def add_args(parser: argparse.ArgumentParser) -> None:
     # The OUTPUT files
     group = parser.add_argument_group("Output File")
     group.add_argument(
-        "--out", type=str, metavar="FILE", default="ethnicity",
+        "--out", type=str, metavar="FILE", default=DEFAULT_OUT,
         help="The prefix of the output files. [default: %(default)s]",
     )

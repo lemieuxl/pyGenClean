@@ -1,16 +1,14 @@
 """Flag markers with MAF of 0 (monomorphic)."""
 
 
-import logging
 import argparse
+import logging
 from os import path
-from typing import Optional, List, Set
-
-from ...utils import plink as plink_utils
-from ...utils import timer
+from typing import List, Optional, Set
 
 from ...error import ProgramError
-
+from ...utils import plink as plink_utils
+from ...utils import timer
 from ...version import pygenclean_version as __version__
 
 
@@ -43,10 +41,9 @@ def main(args: Optional[argparse.Namespace] = None,
         args = parse_args(argv)
     check_args(args)
 
+    logger.info("%s", DESCRIPTION)
+
     # Compute frequency using plink
-    logger.info("Computing the frequencies using Plink")
-    logger.info("  --bfile '%s'", args.bfile)
-    logger.info("  --out '%s'", args.out)
     plink_utils.compute_freq(bfile=args.bfile, out=args.out,
                              use_original_plink=args.plink_107)
 
@@ -57,7 +54,7 @@ def main(args: Optional[argparse.Namespace] = None,
 
     # Returns a dictionary of usable files (for next step, if any)
     return {
-        "bfile": args.bfile,
+        "usable_bfile": args.bfile,
         "flagged": args.out + ".list",
     }
 

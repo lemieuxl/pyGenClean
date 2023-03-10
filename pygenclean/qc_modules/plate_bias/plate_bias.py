@@ -1,24 +1,22 @@
 """Finds plate bias (if any)."""
 
 
-import re
-import logging
 import argparse
-from os import path
+import logging
+import re
 from glob import glob
-from typing import Optional, List, Dict, Tuple, Set
+from os import path
+from typing import Dict, List, Optional, Set, Tuple
 
 from ...error import ProgramError
-
-from ...utils import task
 from ...utils import plink as plink_utils
-from ...utils import timer
-
+from ...utils import task, timer
 from ...version import pygenclean_version as __version__
 
 
 SCRIPT_NAME = "plate-bias"
 DESCRIPTION = "Check for plate bias."
+DEFAULT_OUT = "plate_bias"
 
 
 logger = logging.getLogger(__name__)
@@ -63,6 +61,8 @@ def main(args: Optional[argparse.Namespace] = None,
         args = parse_args(argv)
     check_args(args)
 
+    logger.info("%s", DESCRIPTION)
+
     # Reading the plates
     sample_plates = get_plates(args.plates)
 
@@ -80,6 +80,11 @@ def main(args: Optional[argparse.Namespace] = None,
     maf = compute_frequency(args.bfile, args.out, args.plink_107)
 
     write_summary(assoc_results, maf, args.out)
+
+    return {
+        "usable_bfile": args.bfile,
+        "flagged": args.out + ".significant_markers.txt",
+    }
 
 
 def write_summary(results: List[SignificantMarker], maf: Dict[str, str],
@@ -317,6 +322,6 @@ def add_args(parser: argparse.ArgumentParser) -> None:
     # The OUTPUT files
     group = parser.add_argument_group("Output files")
     group.add_argument(
-        "--out", type=str, metavar="FILE", default="plate_bias",
+        "--out", type=str, metavar="FILE", default=DEFAULT_OUT,
         help="The prefix of the output files. [%(default)s]",
     )

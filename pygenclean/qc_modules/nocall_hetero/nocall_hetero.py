@@ -1,25 +1,23 @@
 """Clean markers with no call or heterozygous only."""
 
 
-import logging
 import argparse
+import logging
 import shutil
-from typing import Optional, List
+from typing import List, Optional
 
 import numpy as np
-
 from geneparse.readers.plink import PlinkReader
 
+from ...error import ProgramError
 from ...utils import plink as plink_utils
 from ...utils import timer
-
-from ...error import ProgramError
-
 from ...version import pygenclean_version as __version__
 
 
 SCRIPT_NAME = "nocall-hetero"
 DESCRIPTION = "Clean markers with no call or heterozygous only."
+DEFAULT_OUT = "clean_noCall_hetero"
 
 
 logger = logging.getLogger(__name__)
@@ -45,9 +43,14 @@ def main(args: Optional[argparse.Namespace] = None,
         args = parse_args(argv)
     check_args(args)
 
+    logger.info("%s", DESCRIPTION)
+
     # Process the files
-    logger.info("Processing the binary Plink file")
     process_file(args.bfile, args.out, args.plink_107)
+
+    return {
+        "usable_bfile": args.out,
+    }
 
 
 def process_file(prefix: str, out_prefix: str,
@@ -61,9 +64,9 @@ def process_file(prefix: str, out_prefix: str,
     Reads the input files and keeps in memory two sets containing the markers
     which are all failed or which contains only heterozygous genotypes.
 
-    It creates two output files, ``prefix.allFailed`` and ``prefix.allHetero``,
-    containing the markers that are all failed and are all heterozygous,
-    respectively.
+    It creates two output files, ``prefix.all_failed`` and
+    ``prefix.all_hetero``, containing the markers that are all failed and are
+    all heterozygous, respectively.
 
     .. note::
         All heterozygous markers located on the mitochondrial chromosome are
@@ -93,12 +96,12 @@ def process_file(prefix: str, out_prefix: str,
                     continue
 
     # Printing the SNPs with no calls
-    with open(out_prefix + ".allFailed", 'w') as f:
+    with open(out_prefix + ".all_failed", 'w') as f:
         if len(all_failed) > 0:
             print(*all_failed, sep="\n", file=f)
 
     # Printing the SNPs with only hetero calls
-    with open(out_prefix + ".allHetero", 'w') as f:
+    with open(out_prefix + ".all_hetero", 'w') as f:
         if len(all_hetero) > 0:
             print(*all_hetero, sep="\n", file=f)
 
@@ -178,6 +181,6 @@ def add_args(parser: argparse.ArgumentParser) -> None:
     # The OUTPUT files
     group = parser.add_argument_group("Output File")
     group.add_argument(
-        "--out", type=str, metavar="FILE", default="clean_noCall_hetero",
+        "--out", type=str, metavar="FILE", default=DEFAULT_OUT,
         help="The prefix of the output files. [default: %(default)s]",
     )

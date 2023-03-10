@@ -26,7 +26,7 @@ def execute_external_command(command: List[str]) -> str:
 
     # Fail-proofing the command
     command = [shlex.quote(part) for part in command]
-    logger.debug("Executing %s", " ".join(command))
+    logger.debug("Executing %s", " ".join(map(shlex.quote, command)))
 
     try:
         proc = subprocess.Popen(

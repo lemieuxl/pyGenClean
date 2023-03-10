@@ -4,6 +4,8 @@
 import argparse
 import logging
 import sys
+import time
+from datetime import datetime
 from os import path
 from shlex import quote
 
@@ -19,7 +21,7 @@ def main():
     """The main command line interface for pyGenClean."""
     args = parse_args()
 
-    configure_logging(args)
+    timestamp = configure_logging(args)
     logger = logging.getLogger("pyGenClean")
 
     # Logging useful information
@@ -27,8 +29,13 @@ def main():
     logger.info(
         "Command used: %s %s",
         path.basename(sys.argv[0]),
-        " ".join(quote(value) for value in sys.argv[1:]),
+        " ".join(map(quote, sys.argv[1:])),
     )
+
+    # If we run the pipeline, we need to pass the timestamp (for the QC
+    # directory creation)
+    if args.command == "pipeline":
+        args.qc_dir = "data_clean_up." + timestamp
 
     # Dispatching to the correct function
     try:
@@ -130,7 +137,7 @@ def add_qc_module_parsers(main_subparser: argparse._SubParsersAction) -> None:
                 subparser.set_defaults(func=qc_sub_module.main)
 
 
-def configure_logging(args: argparse.Namespace) -> None:
+def configure_logging(args: argparse.Namespace) -> str:
     """Configures the logging."""
     # We want INFO by default, unless specified otherwise
     logging_level = logging.INFO
@@ -144,12 +151,23 @@ def configure_logging(args: argparse.Namespace) -> None:
         datefmt="%Y-%m-%d %H:%M:%S",
     )
 
-    file_handler = logging.FileHandler("pyGenClean.log", mode="w")
+    # Finding the name of the log file
+    timestamp = datetime.today().strftime("%Y-%m-%d_%H.%M.%S")
+    filename = f"pyGenClean.{timestamp}.log"
+    while path.isfile(filename):
+        time.sleep(1)
+        timestamp = datetime.today().strftime("%Y-%m-%d_%H.%M.%S")
+        filename = f"pyGenClean.{timestamp}.log"
+
+    # Adding the file handler
+    file_handler = logging.FileHandler(filename, mode="w")
     file_handler.setFormatter(logging.Formatter(
         fmt="[%(asctime)s %(name)s %(levelname)s] %(message)s",
         datefmt="%Y-%m-%d %H:%M:%S",
     ))
     logging.root.addHandler(file_handler)
+
+    return timestamp
 
 
 if __name__ == "__main__":

@@ -1,31 +1,29 @@
 """Finds related samples according to IBS (if any)."""
 
 
-import logging
 import argparse
-from typing import Optional, List
+import logging
+from typing import List, Optional
 
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-import matplotlib.pyplot as plt
-
-from . import merge_related_samples
-
 from ...error import ProgramError
-
-from ...utils import task
 from ...utils import plink as plink_utils
-from ...utils import timer
-
+from ...utils import task, timer
 from ...version import pygenclean_version as __version__
+from . import merge_related_samples
 
 
 SCRIPT_NAME = "related-samples"
 DESCRIPTION = "Finds related samples according to IBS values."
+DEFAULT_OUT = "ibs"
+
 
 _IBS2_RATIO_DEFAULT = 0.8
 _INDEP_PAIRWISE_R2_DEFAULT = "0.1"
+
 
 logger = logging.getLogger(__name__)
 
@@ -55,6 +53,8 @@ def main(args: Optional[argparse.Namespace] = None,
         args = parse_args(argv)
     check_args(args)
 
+    logger.info("%s", DESCRIPTION)
+
     markers_to_extract = select_markers_by_ld(
         args.bfile, args.maf, args.indep_pairwise, args.out, args.plink_107,
     )
@@ -65,7 +65,9 @@ def main(args: Optional[argparse.Namespace] = None,
 
     if nb_markers < args.min_nb_snp:
         logger.warning("Only %d markers on autosome, stopping", nb_markers)
-        return
+        return {
+            "usable_bfile": args.bfile,
+        }
 
     # Extracting the markers
     plink_utils.subset(
@@ -81,7 +83,9 @@ def main(args: Optional[argparse.Namespace] = None,
 
     # We only need the genome file to be created
     if args.genome_only:
-        return
+        return {
+            "usable_bfile": args.bfile,
+        }
 
     # Getting the related samples
     related = get_related_samples(args.out + ".genome.genome.gz", args.out,
@@ -89,7 +93,9 @@ def main(args: Optional[argparse.Namespace] = None,
 
     if related is None:
         logger.info("There are no related samples in the dataset")
-        return
+        return {
+            "usable_bfile": args.bfile,
+        }
 
     # Merge related samples
     merge_related_samples.main(
@@ -101,6 +107,11 @@ def main(args: Optional[argparse.Namespace] = None,
 
     # Plotting the related samples (z1 and z2)
     plot_related_samples(related, args.out, args)
+
+    return {
+        "usable_bfile": args.bfile,
+        "flagged": args.out + ".discarded_related_individuals",
+    }
 
 
 def get_prefix_for_genome(prefix: str) -> str:
@@ -450,6 +461,6 @@ def add_args(parser: argparse.ArgumentParser) -> None:
     # The OUTPUT files
     group = parser.add_argument_group("Output files")
     group.add_argument(
-        "--out", type=str, metavar="FILE", default="ibs",
+        "--out", type=str, metavar="FILE", default=DEFAULT_OUT,
         help="The prefix of the output files. [%(default)s]",
     )
