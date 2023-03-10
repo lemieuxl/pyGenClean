@@ -107,6 +107,7 @@ def main(args: Optional[argparse.Namespace] = None,
 
     return {
         "usable_bfile": args.out,
+        "flagged": args.out + ".excluded_samples.info",
     }
 
 
