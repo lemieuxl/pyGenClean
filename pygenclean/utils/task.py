@@ -22,17 +22,19 @@ def execute_external_command(command: List[str]) -> str:
     Args:
         command (list): the list containing the command and arguments/options.
 
+    Returns:
+        str: The standard output of the command.
+
     """
 
     # Fail-proofing the command
-    command = [shlex.quote(part) for part in command]
     logger.debug("Executing %s", " ".join(map(shlex.quote, command)))
 
     try:
-        proc = subprocess.Popen(
+        with subprocess.Popen(
             command, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-        )
-        outs, errs = proc.communicate()
+        ) as proc:
+            outs, errs = proc.communicate()
 
     except FileNotFoundError as error:
         raise ProgramError(f"{command[0]}: {error.strerror}") from error
@@ -47,12 +49,15 @@ def execute_external_command(command: List[str]) -> str:
 
 
 def execute_external_commands(commands: List[List[str]],
-                              threads: int = 2) -> None:
+                              threads: int = 2) -> List[str]:
     """Execute multiple commands using a worker pool.
 
     Args:
         commands (list): the list of command to execute.
         threads (int): the number of threads.
+
+    Returns:
+        list: A list containing the standard output of all the commands.
 
     """
     with multiprocessing.Pool(processes=threads) as pool:
@@ -60,10 +65,8 @@ def execute_external_commands(commands: List[List[str]],
 
         # Fail-proofing the command
         for command in commands:
-            command = [shlex.quote(part) for part in command]
             results.append(pool.apply_async(
                 execute_external_command, (command, ),
             ))
 
-        for res in results:
-            res.get()
+        return [res.get() for res in results]
