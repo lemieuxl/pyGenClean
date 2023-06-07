@@ -6,7 +6,7 @@ import re
 import shutil
 from datetime import datetime
 from os import path
-from typing import Dict, Iterator, List, Set, Tuple
+from typing import Dict, Iterator, List, Optional, Set, Tuple
 
 from . import decode_chrom, decode_sex
 from .task import execute_external_command
@@ -246,7 +246,8 @@ def rename_markers(bfile: str, rename: str) -> None:
 
 
 def compute_freq(bfile: str, out: str,
-                 use_original_plink: bool = False) -> None:
+                 use_original_plink: bool = False,
+                 extract: Optional[str] = None) -> None:
     """Computes the frequency."""
     command = [
         "plink" if use_original_plink else "plink1.9",
@@ -255,6 +256,11 @@ def compute_freq(bfile: str, out: str,
         "--freq",
         "--out", out,
     ]
+
+    # Extraction before frequency?
+    if extract is not None:
+        command.extend(["--extract", extract])
+
     execute_external_command(command)
 
 
