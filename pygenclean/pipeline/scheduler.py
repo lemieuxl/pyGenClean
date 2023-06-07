@@ -47,6 +47,9 @@ def main(args: Optional[argparse.Namespace] = None,
     conf = read_configuration(args.conf)
     logger.debug("Configuration:\n%s", json.dumps(conf, indent=2))
 
+    # Finding the "longest" step (number of characters)
+    max_nb_char = max(map(len, conf["steps"].keys()))
+
     # Executing the pipeline
     usable_files = {
         0: {
@@ -59,8 +62,11 @@ def main(args: Optional[argparse.Namespace] = None,
         # The "pretty" name
         qc_module_name = step_info["module"].replace("-", "_")
 
+        # The step for the name of the directory
+        step_dir = step.rjust(max_nb_char, "0")
+
         # The sub directory
-        sub_dir = qc_dir / f"{step}_{qc_module_name}"
+        sub_dir = qc_dir / f"{step_dir}_{qc_module_name}"
         sub_dir.mkdir()
 
         # The QC module
