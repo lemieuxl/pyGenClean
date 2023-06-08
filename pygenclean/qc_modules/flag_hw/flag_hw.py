@@ -1,21 +1,20 @@
 """Flags markers failing Hardy Weinberg equilibrium."""
 
 
-import logging
 import argparse
-from typing import List, Set, Optional
-
-from ...utils.task import execute_external_command
-from ...utils import plink as plink_utils
-from ...utils import timer
+import logging
+from typing import List, Optional, Set
 
 from ...error import ProgramError
-
+from ...utils import plink as plink_utils
+from ...utils import timer
+from ...utils.task import execute_external_command
 from ...version import pygenclean_version as __version__
 
 
 SCRIPT_NAME = "flag-hw"
 DESCRIPTION = "Flags markers failing Hardy Weinberg equilibrium."
+DEFAULT_OUT = "flag_hw"
 
 
 logger = logging.getLogger(__name__)
@@ -49,56 +48,65 @@ def main(args: Optional[argparse.Namespace] = None,
         args = parse_args(argv)
     check_args(args)
 
+    logger.info("%s", DESCRIPTION)
+
     # Compute the number of markers
     logger.info("Counting the number of markers")
     nb_markers = get_nb_markers(args.bfile + ".bim")
 
     if nb_markers <= 0:
         logger.info("  - There are no markers: STOPPING NOW!")
+        return {
+            "usable_bfile": args.bfile,
+        }
 
-    else:
-        logger.info("  - There are %d markers", nb_markers)
+    logger.info("  - There are %d markers", nb_markers)
 
-        hw_threshold = str(0.05 / nb_markers)
+    hw_threshold = str(0.05 / nb_markers)
 
-        # Run the plink command for the Bonferonni threshold
-        logger.info("Computing the HW equilibrium for %s", hw_threshold)
-        compute_hw(args.bfile, hw_threshold,
-                   args.out + ".threshold_" + hw_threshold, args.plink_107)
+    # Run the plink command for the Bonferonni threshold
+    logger.info("Computing the HW equilibrium for %s", hw_threshold)
+    compute_hw(args.bfile, hw_threshold,
+               args.out + ".threshold_" + hw_threshold, args.plink_107)
 
-        # Run the plink command for the default threshold
-        logger.info("Computing the HW equilibrium for %s", args.hwe)
-        compute_hw(args.bfile, args.hwe, args.out + ".threshold_" + args.hwe,
-                   args.plink_107)
+    # Run the plink command for the default threshold
+    logger.info("Computing the HW equilibrium for %s", args.hwe)
+    compute_hw(args.bfile, args.hwe, args.out + ".threshold_" + args.hwe,
+               args.plink_107)
 
-        # Compare the BIM files
-        logger.info("Creating the flagged SNP list for %s", hw_threshold)
-        custom_snps = compare_bim(
-            args.bfile + ".bim",
-            args.out + ".threshold_" + hw_threshold + ".bim",
-            args.out + ".snp_flag_threshold_" + hw_threshold,
-        )
+    # Compare the BIM files
+    logger.info("Creating the flagged SNP list for %s", hw_threshold)
+    custom_snps = compare_bim(
+        args.bfile + ".bim",
+        args.out + ".threshold_" + hw_threshold + ".bim",
+        args.out + ".snp_flag_threshold_" + hw_threshold,
+    )
 
-        logger.info("Creating the flagged SNP list for %s", args.hwe)
-        hwe_snps = compare_bim(
-            args.bfile + ".bim",
-            args.out + ".threshold_" + args.hwe + ".bim",
-            args.out + ".snp_flag_threshold_" + args.hwe,
-        )
+    logger.info("Creating the flagged SNP list for %s", args.hwe)
+    hwe_snps = compare_bim(
+        args.bfile + ".bim",
+        args.out + ".threshold_" + args.hwe + ".bim",
+        args.out + ".snp_flag_threshold_" + args.hwe,
+    )
 
-        logger.info("Creating the in between SNP list ([%s, %s[)",
-                    args.hwe, hw_threshold)
-        filename = (
-            f"{args.out}.snp_flag_threshold_between_{args.hwe}-{hw_threshold}"
-        )
-        try:
-            with open(filename, 'w') as f:
-                differences = hwe_snps - custom_snps
-                if len(differences) > 0:
-                    print(*differences, sep="\n", file=f)
+    logger.info("Creating the in between SNP list ([%s, %s[)",
+                args.hwe, hw_threshold)
+    filename = (
+        f"{args.out}.snp_flag_threshold_between_{args.hwe}-{hw_threshold}"
+    )
+    try:
+        with open(filename, 'w') as f:
+            differences = hwe_snps - custom_snps
+            if len(differences) > 0:
+                print(*differences, sep="\n", file=f)
 
-        except IOError as exception:
-            raise ProgramError(f"{filename}: can't write file") from exception
+    except IOError as exception:
+        raise ProgramError(f"{filename}: can't write file") from exception
+
+    return {
+        "usable_bfile": args.bfile,
+        "flagged": None,
+    }
 
 
 def compare_bim(before: str, after: str, output_filename: str) -> Set[str]:
@@ -243,6 +251,6 @@ def add_args(parser: argparse.ArgumentParser) -> None:
     # The OUTPUT files
     group = parser.add_argument_group("Output File")
     group.add_argument(
-        "--out", type=str, metavar="FILE", default="flag_hw",
+        "--out", type=str, metavar="FILE", default=DEFAULT_OUT,
         help="The prefix of the output files. [default: %(default)s]",
     )
