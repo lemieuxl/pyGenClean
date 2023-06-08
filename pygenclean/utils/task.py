@@ -1,10 +1,10 @@
 """Utility functions to execute tasks."""
 
 
-import shlex
 import logging
-import subprocess
 import multiprocessing
+import shlex
+import subprocess
 from typing import List
 
 from ..error import ProgramError
