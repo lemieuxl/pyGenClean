@@ -1,17 +1,15 @@
 """Merges related samples according to IBS."""
 
 
-import logging
 import argparse
-from os import path
-from itertools import combinations
+import logging
 import random
-from typing import List, Optional, Iterable, Dict, Tuple, Set
+from itertools import combinations
+from os import path
+from typing import Dict, Iterable, List, Optional, Set, Tuple
 
 from ...error import ProgramError
-
 from ...utils import timer
-
 from ...version import pygenclean_version as __version__
 
 

@@ -1,19 +1,17 @@
 """Computes heterozygosity rate and plots it."""
 
 
-import logging
 import argparse
+import logging
 from os import path
-from typing import Optional, List, Tuple
+from typing import List, Optional, Tuple
 
 import numpy as np
-
 from geneparse.readers.plink import PlinkReader
 
+from ...error import ProgramError
 from ...utils import plink as plink_utils
 from ...utils import timer
-
-from ...error import ProgramError
 from ...version import pygenclean_version as __version__
 
 

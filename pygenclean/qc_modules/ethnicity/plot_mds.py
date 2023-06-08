@@ -1,19 +1,16 @@
 """Create an MDS plot."""
 
 
-from os import path
-import logging
 import argparse
+import logging
+from os import path
 from typing import List, Optional
 
+import matplotlib.pyplot as plt
 import pandas as pd
 
-import matplotlib.pyplot as plt
-
-from ...utils import timer
-
 from ...error import ProgramError
-
+from ...utils import timer
 from ...version import pygenclean_version as __version__
 
 

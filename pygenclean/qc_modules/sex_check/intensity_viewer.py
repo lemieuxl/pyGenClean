@@ -1,20 +1,18 @@
 """Small Dash application to view intensities."""
 
 
-import logging
 import argparse
+import logging
 from os import path
-from typing import Optional, List
+from typing import List, Optional
 
 import dash
-import plotly.graph_objects as go
-
 import pandas as pd
-
-from .intensity_plot import PLOT_CONFIG
+import plotly.graph_objects as go
 
 from ...error import ProgramError
 from ...version import pygenclean_version as __version__
+from .intensity_plot import PLOT_CONFIG
 
 
 SCRIPT_NAME = "intensity-viewer"

@@ -1,27 +1,22 @@
 """Finds outliers in SOURCE from CEU samples."""
 
 
-from os import path
-import logging
 import argparse
+import logging
 import re
+from os import path
 from typing import Dict, List, Optional, Set, Tuple
 
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-
-import matplotlib.pyplot as plt
-
 from sklearn.cluster import KMeans
 from sklearn.metrics.pairwise import euclidean_distances
 
-from .plot_mds import read_populations, read_mds
-
-from ...utils import timer
-
 from ...error import ProgramError
-
+from ...utils import timer
 from ...version import pygenclean_version as __version__
+from .plot_mds import read_mds, read_populations
 
 
 SCRIPT_NAME = "find-outliers"

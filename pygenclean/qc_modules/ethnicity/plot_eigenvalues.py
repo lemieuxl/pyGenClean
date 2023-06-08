@@ -1,20 +1,17 @@
 """Plot eigenvalues (scree plot)."""
 
 
-from os import path
-import logging
 import argparse
+import logging
 import re
+from os import path
 from typing import List, Optional
 
+import matplotlib.pyplot as plt
 import numpy as np
 
-import matplotlib.pyplot as plt
-
-from ...utils import timer
-
 from ...error import ProgramError
-
+from ...utils import timer
 from ...version import pygenclean_version as __version__
 
 

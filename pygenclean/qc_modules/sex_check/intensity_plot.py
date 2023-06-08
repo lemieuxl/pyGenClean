@@ -1,22 +1,19 @@
 """Creates an intensity plot for sexual chromosomes."""
 
 
-import uuid
-import logging
 import argparse
+import logging
+import uuid
 from os import path
-from typing import Optional, List, Set, Dict
+from typing import Dict, List, Optional, Set
 
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-import matplotlib.pyplot as plt
-
-from ...utils import decode_chrom
-from ...utils.plink import get_markers_on_chrom, get_sample_sexes, check_files
-from ...utils import timer
-
 from ...error import ProgramError
+from ...utils import decode_chrom, timer
+from ...utils.plink import check_files, get_markers_on_chrom, get_sample_sexes
 from ...version import pygenclean_version as __version__
 
 
