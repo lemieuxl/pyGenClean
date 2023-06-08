@@ -1,18 +1,19 @@
 """Utility function which might be used throughout the pipeline."""
 
 
-import gzip
-import time
 import datetime
-import shlex
 import functools
-from typing import Iterable, List, Any, Callable, Set
+import gzip
+import shlex
+import time
+from typing import Any, Callable, Iterable, List, Optional, Set
 
 from ..error import ProgramError
 
 
 __all__ = ["decode_chrom", "decode_sex", "is_gzip", "get_open_func",
-           "split_extra_args", "timer", "flip_alleles"]
+           "split_extra_args", "timer", "flip_alleles", "compatible_alleles",
+           "check_allele_status"]
 
 
 def decode_chrom(chrom: str) -> int:
@@ -124,7 +125,7 @@ def split_extra_args(args: str) -> List[str]:
     """
     if args is None:
         return []
-    return [shlex.quote(arg) for arg in shlex.split(args)]
+    return list(map(shlex.quote, shlex.split(args)))
 
 
 def timer(decorated_logger):
@@ -167,3 +168,49 @@ def flip_alleles(alleles: Iterable[str]) -> Set[str]:
 
     except KeyError as error:
         raise ProgramError(f"{alleles}: unknown alleles") from error
+
+
+def compatible_alleles(alleles_1: Set[str], alleles_2: Set[str]) -> bool:
+    """Check if two sets of alelels are compatible."""
+    as_is = len((alleles_1 | alleles_2) - {"0"}) <= 2
+    as_comp = len((alleles_1 | flip_alleles(alleles_2)) - {"0"}) <= 2
+    return as_is or as_comp
+
+
+def check_allele_status(alleles_1: Set[str],
+                        alleles_2: Set[str]) -> Optional[str]:
+    """Check the status between two sets of alleles."""
+    # Removing the missing allele (i.e. "0")
+    alleles_1 -= {"0"}
+    alleles_2 -= {"0"}
+
+    # The final status
+    status = None
+
+    # Different alleles
+    if alleles_1 != alleles_2:
+        # Same number of alleles, trying to flip one set
+        if len(alleles_1) == len(alleles_2):
+            alleles_2 = flip_alleles(alleles_2)
+            if alleles_1 == alleles_2:
+                if len(alleles_1) == 1:
+                    status = "homo_flip"
+                else:
+                    status = "flip"
+            else:
+                status = "problem"
+
+        # Different number of alleles
+        else:
+            # One allele in common
+            if len(alleles_1 & alleles_2) == 1:
+                status = "homo_hetero"
+            else:
+                # Trying to flip one set
+                alleles_2 = flip_alleles(alleles_2)
+                if len(alleles_1 & alleles_2) == 1:
+                    status = "homo_hetero_flip"
+                else:
+                    status = "problem"
+
+    return status

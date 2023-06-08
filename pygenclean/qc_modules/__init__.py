@@ -1,6 +1,7 @@
 """List of tools available for pyGenClean"""
 
 
+from .contamination import contamination
 from .dup_markers import duplicated_markers
 from .dup_samples import duplicated_samples
 from .ethnicity import ethnicity, find_outliers, plot_eigenvalues, plot_mds
@@ -28,9 +29,10 @@ qc_modules = {
     "hetero_hap": hetero_hap,
     "nocall_hetero": nocall_hetero,
     "ethnicity": ethnicity,
-    "duplicated-samples": duplicated_samples,
-    "duplicated-markers": duplicated_markers,
+    "duplicated_samples": duplicated_samples,
+    "duplicated_markers": duplicated_markers,
     "subset": subset,
+    "contamination": contamination,
 }
 
 
