@@ -6,7 +6,7 @@ import logging
 import math
 from os import path
 from pathlib import Path
-from typing import List, Optional, Set
+from typing import Dict, List, Optional, Set
 
 from ...error import ProgramError
 from ...utils import plink as plink_utils
@@ -25,7 +25,7 @@ logger = logging.getLogger(__name__)
 
 @timer(logger)
 def main(args: Optional[argparse.Namespace] = None,
-         argv: Optional[List[str]] = None) -> None:
+         argv: Optional[List[str]] = None) -> Dict[str, Optional[str]]:
     """Check for sample contamination using BAFRegress.
 
     Args:
@@ -69,6 +69,10 @@ def main(args: Optional[argparse.Namespace] = None,
         freq=args.out + ".frq",
         args=args,
     )
+
+    return {
+        "usable_bfile": args.bfile,
+    }
 
 
 def check_sample_files(fam: str, raw_dirname: str) -> Set[str]:
