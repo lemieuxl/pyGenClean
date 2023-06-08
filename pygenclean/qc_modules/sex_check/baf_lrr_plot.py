@@ -1,22 +1,18 @@
 """Plots the BAF and LRR of samples with sex mismatch."""
 
 
-import uuid
-import logging
 import argparse
-from os import path
+import logging
+import uuid
 from glob import glob
-from typing import Optional, List, Dict, Tuple, Set
-
-import pandas as pd
+from os import path
+from typing import Dict, List, Optional, Set, Tuple
 
 import matplotlib.pyplot as plt
-
-from ...utils import decode_chrom, illumina
-from ...utils import timer
+import pandas as pd
 
 from ...error import ProgramError
-
+from ...utils import decode_chrom, illumina, timer
 from ...version import pygenclean_version as __version__
 
 
