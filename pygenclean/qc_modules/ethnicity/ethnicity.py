@@ -26,7 +26,7 @@ logger = logging.getLogger(__name__)
 
 @timer(logger)
 def main(args: Optional[argparse.Namespace] = None,
-         argv: Optional[List[str]] = None) -> None:
+         argv: Optional[List[str]] = None) -> Dict[str, str]:
     """Checks sample's ethnicity using reference populations.
 
     Args:

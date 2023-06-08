@@ -25,7 +25,7 @@ logger = logging.getLogger(__name__)
 
 @timer(logger)
 def main(args: Optional[argparse.Namespace] = None,
-         argv: Optional[List[str]] = None) -> Dict[str, Optional[str]]:
+         argv: Optional[List[str]] = None) -> Dict[str, str]:
     """Check for sample contamination using BAFRegress.
 
     Args:

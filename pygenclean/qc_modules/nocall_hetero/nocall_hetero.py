@@ -4,7 +4,7 @@
 import argparse
 import logging
 import shutil
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 import numpy as np
 from geneparse.readers.plink import PlinkReader
@@ -25,7 +25,7 @@ logger = logging.getLogger(__name__)
 
 @timer(logger)
 def main(args: Optional[argparse.Namespace] = None,
-         argv: Optional[List[str]] = None) -> None:
+         argv: Optional[List[str]] = None) -> Dict[str, str]:
     """Clean markers with no call or heterozygous only.
 
     Args:

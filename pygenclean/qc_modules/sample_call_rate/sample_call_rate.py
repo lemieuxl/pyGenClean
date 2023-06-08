@@ -3,7 +3,7 @@
 
 import argparse
 import logging
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 from ...error import ProgramError
 from ...utils import plink as plink_utils
@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 
 @timer(logger)
 def main(args: Optional[argparse.Namespace] = None,
-         argv: Optional[List[str]] = None) -> None:
+         argv: Optional[List[str]] = None) -> Dict[str, str]:
     """Remove samples with poor call rate.
 
     Args:

@@ -4,7 +4,7 @@
 import argparse
 import logging
 from os import path
-from typing import List, Optional, Set
+from typing import Dict, List, Optional, Set
 
 from ...error import ProgramError
 from ...utils import plink as plink_utils
@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 
 @timer(logger)
 def main(args: Optional[argparse.Namespace] = None,
-         argv: Optional[List[str]] = None) -> None:
+         argv: Optional[List[str]] = None) -> Dict[str, str]:
     """Flag monomorphic markers (i.e. MAF of 0).
 
     Args:

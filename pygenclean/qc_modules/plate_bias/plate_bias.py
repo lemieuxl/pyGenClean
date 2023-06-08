@@ -42,7 +42,7 @@ class SignificantMarker():
 
 @timer(logger)
 def main(args: Optional[argparse.Namespace] = None,
-         argv: Optional[List[str]] = None) -> None:
+         argv: Optional[List[str]] = None) -> Dict[str, str]:
     """Finds plate biases (if any).
 
     Args:
