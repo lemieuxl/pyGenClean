@@ -159,17 +159,23 @@ def run_bafRegress(filenames: Set[str], out: str, extract: str, freq: str,
         "--colab2", args.colab2,
     ]
 
-    # Creating equally numbered chunks
-    nb_samples_per_chunk = math.ceil(len(filenames) / args.nb_cpu)
-    chunks = [
-        list(filenames)[i:i + nb_samples_per_chunk]
-        for i in range(0, len(filenames), nb_samples_per_chunk)
-    ]
+    filenames = list(filenames)
 
-    # Creating and executing the commands
-    results = task_utils.execute_external_commands(
-        [base_command + chunk for chunk in chunks], args.nb_cpu,
-    )
+    # Creating equally numbered chunks (whith maximum number of samples)
+    results = []
+    for j in range(0, len(filenames), args.max_samples_per_job * args.nb_cpu):
+        sample_chunk = filenames[j: j + args.max_samples_per_job * args.nb_cpu]
+
+        nb_samples_per_chunk = math.ceil(len(sample_chunk) / args.nb_cpu)
+        chunks = [
+            sample_chunk[i:i + nb_samples_per_chunk]
+            for i in range(0, len(sample_chunk), nb_samples_per_chunk)
+        ]
+
+        # Creating and executing the commands
+        results += task_utils.execute_external_commands(
+            [base_command + chunk for chunk in chunks], args.nb_cpu,
+        )
 
     # Saving the output
     header = None
@@ -260,6 +266,10 @@ def add_args(parser: argparse.ArgumentParser) -> None:
     group.add_argument(
         "--nb-cpu", type=int, metavar="NB", default=1,
         help="The number of CPU to use. [default: %(default)s]",
+    )
+    group.add_argument(
+        "--max-samples-per-job", type=int, metavar="NB", default=100,
+        help="The maximum number of samples per task. [%(default)d]",
     )
     group.add_argument(
         "--plink-1.07", dest="plink_107", action="store_true",
