@@ -12,6 +12,7 @@ import pandas as pd
 from pyplink import PyPlink
 
 from ...error import ProgramError
+from ...report.summaries import SexCheckSummary
 from ...utils import plink as plink_utils
 from ...utils import split_extra_args, timer
 from ...utils.task import execute_external_command
@@ -114,6 +115,10 @@ def main(args: Optional[argparse.Namespace] = None,
             "--problematic-samples", args.out + ".list_problem_sex_ids",
             "--out", path.join(dirname, "sample"),
         ] + args.baf_lrr_extra_args)
+
+    # Generating the summary
+    with open(args.out + ".summary.qmd", "w") as f:
+        print(SexCheckSummary(args).generate_summary(), file=f)
 
     return {
         "usable_bfile": args.bfile,
