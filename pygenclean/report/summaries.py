@@ -258,11 +258,11 @@ samples were heterozygous (excluding the mitochondrial chromosome)
 
 class SampleCallRateSummary(Summary):
     """Sample call rate summary."""
-    summary = r"""
+    summary = """
 ### Sample call rate
 
-Using a mind threshold of {{ mind }} ( i.e.  keeping only samples with a
-missing rate $\geq {{ mind }} $), {{ nb_samples }}
+Using a `mind` threshold of {{ mind }} (_i.e._ keeping only samples with a
+missing rate $\\leq {{ mind }}$), {{ nb_samples }}
 sample{{ "s" if nb_samples > 1 }} {{ "was" if nb_samples == 1 else "were" }}
 excluded from the dataset.
 """
@@ -278,4 +278,29 @@ excluded from the dataset.
         return {
             "mind": self.args.mind,
             "nb_samples": nb_before - nb_after,
+        }
+
+
+class MarkerCallRateSummary(Summary):
+    """Marker call rate summary."""
+    summary = """
+### Marker call rate
+
+Using a `geno` threshold of {{ geno }} (_i.e._ keeping only markers with a
+missing rate $\\leq {{ geno }}$), {{ nb_markers }}
+marker{{ "s" if nb_markers > 1 }} {{ "was" if nb_markers == 1 else "were" }}
+excluded from the dataset.
+"""
+
+    def get_summary_information(self) -> Dict[str, Optional[Union[str, int]]]:
+        """Get the summary information"""
+        with open(self.args.bfile + ".bim") as f:
+            nb_before = len(f.read().splitlines())
+
+        with open(self.args.out + ".bim") as f:
+            nb_after = len(f.read().splitlines())
+
+        return {
+            "geno": self.args.geno,
+            "nb_markers": nb_before - nb_after,
         }

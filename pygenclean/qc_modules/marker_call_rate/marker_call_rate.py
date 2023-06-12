@@ -6,6 +6,7 @@ import logging
 from typing import Dict, List, Optional
 
 from ...error import ProgramError
+from ...report.summaries import MarkerCallRateSummary
 from ...utils import plink as plink_utils
 from ...utils import timer
 from ...utils.task import execute_external_command
@@ -48,6 +49,10 @@ def main(args: Optional[argparse.Namespace] = None,
     # Comparing the bim
     logger.info("Comparing BIM files")
     compare_bim(args)
+
+    # Generating the summary
+    with open(args.out + ".summary.qmd", "w") as f:
+        print(MarkerCallRateSummary(args).generate_summary(), file=f)
 
     # Returns a dictionary of usable files (for next step, if any)
     return {
