@@ -20,6 +20,9 @@ format:
     docx:
         toc: true
         number-sections: true
+        {% if docx_template -%}
+        reference-doc: {{ docx_template }}
+        {%- endif %}
 ---
 
 ## Background
@@ -74,6 +77,7 @@ def generate_report(**kwargs: Dict[str, Optional[Union[str, int]]]) -> str:
             print("{{< include " + str(file_name) + " >}}\n", file=f)
 
     return TEMPLATE.render(
+        docx_template=kwargs["report_template"],
         title=kwargs["report_title"],
         subtitle=kwargs["report_number"],
         authors=", ".join(kwargs["report_authors"]),

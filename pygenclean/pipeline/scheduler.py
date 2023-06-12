@@ -256,6 +256,10 @@ def add_args(parser: argparse.ArgumentParser) -> None:
         "--report-number", type=str, metavar="STRING",
         default="Simple Project", help="The project's number. [%(default)s]",
     )
+    group.add_argument(
+        "--report-template", type=str, metavar="DOCX",
+        help="A template for the DOCX document.",
+    )
 
 
 if __name__ == "__main__":
