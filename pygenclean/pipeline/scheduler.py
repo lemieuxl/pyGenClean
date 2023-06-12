@@ -15,6 +15,7 @@ import tomllib
 
 from ..error import ProgramError
 from ..qc_modules import qc_modules
+from ..report.main import generate_report
 from ..utils import plink as plink_utils
 from ..utils import timer
 from ..version import pygenclean_version as __version__
@@ -50,10 +51,15 @@ def main(args: Optional[argparse.Namespace] = None,
     # Finding the "longest" step (number of characters)
     max_nb_char = max(map(len, conf["steps"].keys()))
 
+    # Steps methods and results
+    step_qc_modules = []
+    step_methods = []
+    step_results = []
+
     # Executing the pipeline
     usable_files = {
         0: {
-            "usable_bfile": args.bfile,
+            "bfile": args.bfile,
         },
     }
     previous_step = 0
@@ -74,7 +80,7 @@ def main(args: Optional[argparse.Namespace] = None,
 
         # The bfile and out file
         argv = [
-            ["--bfile", usable_files[previous_step]["usable_bfile"]],
+            ["--bfile", usable_files[previous_step]["bfile"]],
             ["--out", str(sub_dir / qc_module.DEFAULT_OUT)],
         ]
 
@@ -99,12 +105,30 @@ def main(args: Optional[argparse.Namespace] = None,
             logger.info("  %s", " ".join(map(shlex.quote, argument)))
 
         # Executing the QC module
-        usable_files[step] = qc_module.main(
+        qc_module_out = qc_module.main(
             argv=[item for subitems in argv for item in subitems],
         )
+        usable_files[step] = qc_module_out["usable_files"]
+
+        # The methods and results
+        step_qc_modules.append(qc_module_name)
+        step_methods.append(qc_module_out["methods"])
+        step_results.append(qc_module_out["results"])
 
         # The previous step
         previous_step = step
+
+    # Generating the report
+    with open(args.report, "w") as f:
+        print(
+            generate_report(
+                qc_modules=step_qc_modules,
+                step_methods=step_methods,
+                step_results=step_results,
+                **vars(args),
+            ),
+            file=f,
+        )
 
 
 def generate_options(step_info: Dict[str, Any]):
@@ -210,6 +234,27 @@ def add_args(parser: argparse.ArgumentParser) -> None:
         "--qc-dir", metavar="DIR", type=str,
         help="The output directory. If not is specified, the directory name "
              "will automatically be generated.",
+    )
+
+    # The report option
+    group = parser.add_argument_group("Report Options")
+    group.add_argument(
+        "--report", type=str, metavar="FILE", default="pyGenClean.qmd",
+        help="The file which will contain the report. [%(default)s]",
+    )
+    group.add_argument(
+        "--report-title", type=str, metavar="TITLE",
+        default="Genetic Data Clean Up",
+        help="The title of the report. [%(default)s]",
+    )
+    group.add_argument(
+        "--report-authors", type=str, metavar="AUTHOR", nargs="+",
+        default="pyGenClean",
+        help="The author(s) of the report. [%(default)s]",
+    )
+    group.add_argument(
+        "--report-number", type=str, metavar="STRING",
+        default="Simple Project", help="The project's number. [%(default)s]",
     )
 
 
