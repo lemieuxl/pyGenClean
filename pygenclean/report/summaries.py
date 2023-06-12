@@ -5,20 +5,40 @@ import argparse
 import re
 from os import path
 from pathlib import Path
-from typing import Dict, Optional
+from typing import Dict, Optional, Union
 
+import jinja2
 import pandas as pd
 from jinja2 import BaseLoader, Environment
 
 
-class SubsetSummary():
-    """Subset summary."""
-    def __init__(self, args: argparse.Namespace):
+class Summary():
+    """Summary core object."""
+    summary = ""
+
+    """The summary core function."""
+    def __init__(self, args: argparse.Namespace) -> None:
         self.args = args
 
-        # The summary
-        summary = """
-### Subset{{ " (" + summary + ")" if summary }}
+    def get_summary_template(self) -> jinja2.environment.Template:
+        """Generate the Jinja2 template."""
+        return Environment(loader=BaseLoader).from_string(self.summary)
+
+    def get_summary_information(self) -> Dict[str, Optional[Union[str, int]]]:
+        """Get the summary information"""
+        raise NotImplementedError()
+
+    def generate_summary(self) -> str:
+        """Generate the summary"""
+        template = self.get_summary_template()
+        print(type(template))
+        return template.render(**self.get_summary_information())
+
+
+class SubsetSummary(Summary):
+    """Subset summary."""
+    summary = """
+### Subset{{ " (" + reason + ")" if reason }}
 
 {% if nb_markers %}
 The file for marker exclusion contained {{ "{:,d}".format(nb_markers) }}
@@ -36,10 +56,6 @@ samples to {{ sample_excl_type }}. Out of a total of
 ({{ "{:,d}".format(nb_samples_before - nb_samples_after) }} excluded).
 {% endif %}
 """
-
-        # The summary template
-        self.summary_template = Environment(loader=BaseLoader)\
-            .from_string(summary)
 
     def get_marker_info(self) -> Dict[str, Optional[int]]:
         """Get marker information."""
@@ -103,22 +119,18 @@ samples to {{ sample_excl_type }}. Out of a total of
             "sample_excl_type": exclusion_type,
         }
 
-    def generate_summary(self) -> str:
-        """Generate the summary from the arguments."""
-        return self.summary_template.render(
-            summary=self.args.reason,
+    def get_summary_information(self) -> Dict[str, Optional[Union[str, int]]]:
+        """Get the summary information"""
+        return {
+            "reason": self.args.reason,
             **self.get_marker_info(),
             **self.get_sample_info(),
-        )
+        }
 
 
-class SexCheckSummary():
+class SexCheckSummary(Summary):
     """Sexcheck summary."""
-    def __init__(self, args: argparse.Namespace):
-        self.args = args
-
-        # The summary
-        summary = """
+    summary = """
 ### Sex check
 
 Using $F$ thresholds of {{ male_f }} and {{ female_f }} for males and females,
@@ -170,12 +182,8 @@ calls on the Y chromosome. {{ "{#" }}tbl-sexcheck-results}
 {% endif %}
 """
 
-        # The summary template
-        self.summary_template = Environment(loader=BaseLoader)\
-            .from_string(summary)
-
-    def generate_summary(self) -> str:
-        """Generate the summary from the arguments."""
+    def get_summary_information(self) -> Dict[str, Optional[Union[str, int]]]:
+        """Get the summary information"""
         # Reading samples with sex problems
         sex_problems = pd.read_csv(self.args.out + ".list_problem_sex",
                                    sep="\t")\
@@ -209,11 +217,11 @@ calls on the Y chromosome. {{ "{#" }}tbl-sexcheck-results}
             for file_path in baf_lrr_figures
         ]
 
-        return self.summary_template.render(
-            male_f=self.args.male_f,
-            female_f=self.args.female_f,
-            nb_problems=nb_problems,
-            table=sex_problems.to_markdown(index=False),
-            figure_intensities=figure_intensities,
-            figure_baf_lrr=list(zip(baf_lrr_figures, baf_lrr_samples)),
-        )
+        return {
+            "male_f": self.args.male_f,
+            "female_f": self.args.female_f,
+            "nb_problems": nb_problems,
+            "table": sex_problems.to_markdown(index=False),
+            "figure_intensities": figure_intensities,
+            "figure_baf_lrr": list(zip(baf_lrr_figures, baf_lrr_samples)),
+        }
