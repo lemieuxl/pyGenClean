@@ -254,3 +254,28 @@ samples were heterozygous (excluding the mitochondrial chromosome)
             "all_failed": all_failed,
             "all_hetero": all_hetero,
         }
+
+
+class SampleCallRateSummary(Summary):
+    """Sample call rate summary."""
+    summary = r"""
+### Sample call rate
+
+Using a mind threshold of {{ mind }} ( i.e.  keeping only samples with a
+missing rate $\geq {{ mind }} $), {{ nb_samples }}
+sample{{ "s" if nb_samples > 1 }} {{ "was" if nb_samples == 1 else "were" }}
+excluded from the dataset.
+"""
+
+    def get_summary_information(self) -> Dict[str, Optional[Union[str, int]]]:
+        """Get the summary information"""
+        with open(self.args.bfile + ".fam") as f:
+            nb_before = len(f.read().splitlines())
+
+        with open(self.args.out + ".fam") as f:
+            nb_after = len(f.read().splitlines())
+
+        return {
+            "mind": self.args.mind,
+            "nb_samples": nb_before - nb_after,
+        }

@@ -6,6 +6,7 @@ import logging
 from typing import Dict, List, Optional
 
 from ...error import ProgramError
+from ...report.summaries import SampleCallRateSummary
 from ...utils import plink as plink_utils
 from ...utils import timer
 from ...utils.task import execute_external_command
@@ -43,6 +44,10 @@ def main(args: Optional[argparse.Namespace] = None,
 
     # Running Plink
     run_plink(args)
+
+    # Generating the summary
+    with open(args.out + ".summary.qmd", "w") as f:
+        print(SampleCallRateSummary(args).generate_summary(), file=f)
 
     return {
         "usable_bfile": args.out,
