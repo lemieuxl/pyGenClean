@@ -1,4 +1,4 @@
-"""Summaries for QC modules"""
+"""Summaries for QC modules."""
 
 
 import argparse
@@ -14,30 +14,43 @@ from jinja2 import BaseLoader, Environment
 
 class Summary():
     """Summary core object."""
-    summary = ""
+    results = ""
+    methods = ""
 
     """The summary core function."""
     def __init__(self, args: argparse.Namespace) -> None:
         self.args = args
 
-    def get_summary_template(self) -> jinja2.environment.Template:
-        """Generate the Jinja2 template."""
-        return Environment(loader=BaseLoader).from_string(self.summary)
+    def get_results_template(self) -> jinja2.environment.Template:
+        """Generate the Jinja2 template for the results."""
+        return Environment(loader=BaseLoader).from_string(self.results)
 
-    def get_summary_information(self) -> Dict[str, Optional[Union[str, int]]]:
-        """Get the summary information"""
+    def get_methods_template(self) -> jinja2.environment.Template:
+        """Generate the Jinja2 template for the methods."""
+        return Environment(loader=BaseLoader).from_string(self.methods)
+
+    def get_results_information(self) -> Dict[str, Optional[Union[str, int]]]:
+        """Get the summary information for the results."""
         raise NotImplementedError()
 
-    def generate_summary(self) -> str:
-        """Generate the summary"""
-        template = self.get_summary_template()
-        print(type(template))
-        return template.render(**self.get_summary_information())
+    def get_methods_information(self) -> Dict[str, Optional[Union[str, int]]]:
+        """Get the summary information for the methods."""
+        raise NotImplementedError()
+
+    def generate_results(self) -> str:
+        """Generate the summary (results)."""
+        template = self.get_results_template()
+        return template.render(**self.get_results_information())
+
+    def generate_methods(self) -> str:
+        """Generate the methods summary."""
+        template = self.get_methods_template()
+        return template.render(**self.get_methods_information())
 
 
 class SubsetSummary(Summary):
     """Subset summary."""
-    summary = """
+    results = """
 ### Subset{{ " (" + reason + ")" if reason }}
 
 {% if nb_markers %}
@@ -56,6 +69,10 @@ samples to {{ sample_excl_type }}. Out of a total of
 ({{ "{:,d}".format(nb_samples_before - nb_samples_after) }} excluded).
 {% endif %}
 """
+
+    methods = (
+        "Subsets {{ subset_type }} ({{ reason }}) using _Plink_."
+    )
 
     def get_marker_info(self) -> Dict[str, Optional[int]]:
         """Get marker information."""
@@ -119,18 +136,31 @@ samples to {{ sample_excl_type }}. Out of a total of
             "sample_excl_type": exclusion_type,
         }
 
-    def get_summary_information(self) -> Dict[str, Optional[Union[str, int]]]:
-        """Get the summary information"""
+    def get_results_information(self) -> Dict[str, Optional[Union[str, int]]]:
+        """Get the summary information for the results."""
         return {
             "reason": self.args.reason,
             **self.get_marker_info(),
             **self.get_sample_info(),
         }
 
+    def get_methods_information(self) -> Dict[str, Optional[Union[str, int]]]:
+        """Get the summary information for the methods."""
+        subset_type = []
+        if self.args.keep or self.args.remove:
+            subset_type.append("samples")
+        if self.args.exclude or self.args.extract:
+            subset_type.append("markers")
+
+        return {
+            "subset_type": " and ".join(subset_type),
+            "reason": self.args.reason,
+        }
+
 
 class SexCheckSummary(Summary):
     """Sexcheck summary."""
-    summary = """
+    results = """
 ### Sex check
 
 Using $F$ thresholds of {{ male_f }} and {{ female_f }} for males and females,
@@ -182,8 +212,8 @@ calls on the Y chromosome. {{ "{#" }}tbl-sexcheck-results}
 {% endif %}
 """
 
-    def get_summary_information(self) -> Dict[str, Optional[Union[str, int]]]:
-        """Get the summary information"""
+    def get_results_information(self) -> Dict[str, Optional[Union[str, int]]]:
+        """Get the summary information for the results."""
         # Reading samples with sex problems
         sex_problems = pd.read_csv(self.args.out + ".list_problem_sex",
                                    sep="\t")\
@@ -229,7 +259,7 @@ calls on the Y chromosome. {{ "{#" }}tbl-sexcheck-results}
 
 class NoCallHeteroSummary(Summary):
     """No call and heterozygotes summary."""
-    summary = """
+    results = """
 ### No calls and heterozygous only markers
 
 After scrutiny, {{ "{:,d}".format(all_failed) }}
@@ -237,11 +267,16 @@ marker{{ "s" if all_failed > 1 }} {{ "was" if all_failed == 1 else "were" }}
 excluded from the dataset because of a call rate of 0. Also,
 {{ "{:,d}".format(all_hetero) }} marker{{ "s" if all_hetero > 1 }}
 {{ "was" if all_hetero == 1 else "was" }} excluded from the dataset because all
-samples were heterozygous (excluding the mitochondrial chromosome)
+samples were heterozygous (excluding the mitochondrial chromosome).
 """
 
-    def get_summary_information(self) -> Dict[str, Optional[Union[str, int]]]:
-        """Get the summary information"""
+    methods = (
+        "Removes completely failed markers (no calls) or markers with only "
+        "heterozygous genotypes (excluding the mitochondrial chromosome)."
+    )
+
+    def get_results_information(self) -> Dict[str, Optional[Union[str, int]]]:
+        """Get the summary information for the results."""
         # All failed markers
         with open(self.args.out + ".all_failed") as f:
             all_failed = len(f.read().splitlines())
@@ -255,20 +290,30 @@ samples were heterozygous (excluding the mitochondrial chromosome)
             "all_hetero": all_hetero,
         }
 
+    def get_methods_information(self) -> Dict[str, Optional[Union[str, int]]]:
+        """Get the summary information for the methods."""
+        return {}
+
 
 class SampleCallRateSummary(Summary):
     """Sample call rate summary."""
-    summary = """
+    results = """
 ### Sample call rate
 
 Using a `mind` threshold of {{ mind }} (_i.e._ keeping only samples with a
-missing rate $\\leq {{ mind }}$), {{ nb_samples }}
+missing rate $\\leq{{ mind }}$), {{ nb_samples }}
 sample{{ "s" if nb_samples > 1 }} {{ "was" if nb_samples == 1 else "were" }}
 excluded from the dataset.
 """
 
-    def get_summary_information(self) -> Dict[str, Optional[Union[str, int]]]:
-        """Get the summary information"""
+    methods = (
+        "Computes sample call rate using Plink (`mind` = {{ mind }}). The "
+        "script identifies poorly performing DNA samples with a genome-wide "
+        "genotyping success rate $<{{ (1 - mind) * 100 }}\\%$."
+    )
+
+    def get_results_information(self) -> Dict[str, Optional[Union[str, int]]]:
+        """Get the summary information for the results."""
         with open(self.args.bfile + ".fam") as f:
             nb_before = len(f.read().splitlines())
 
@@ -280,20 +325,32 @@ excluded from the dataset.
             "nb_samples": nb_before - nb_after,
         }
 
+    def get_methods_information(self) -> Dict[str, Optional[Union[str, int]]]:
+        """Get the summary information for the methods."""
+        return {
+            "mind": self.args.mind,
+        }
+
 
 class MarkerCallRateSummary(Summary):
     """Marker call rate summary."""
-    summary = """
+    results = """
 ### Marker call rate
 
 Using a `geno` threshold of {{ geno }} (_i.e._ keeping only markers with a
-missing rate $\\leq {{ geno }}$), {{ nb_markers }}
+missing rate $\\leq{{ geno }}$), {{ nb_markers }}
 marker{{ "s" if nb_markers > 1 }} {{ "was" if nb_markers == 1 else "were" }}
 excluded from the dataset.
 """
 
-    def get_summary_information(self) -> Dict[str, Optional[Union[str, int]]]:
-        """Get the summary information"""
+    methods = (
+        "Computes marker call rate using Plink (`geno` = {{ geno }}). The "
+        "script identifies poorly performing markers genotyping success rate "
+        "$<{{ (1 - geno) * 100 }}\\%$."
+    )
+
+    def get_results_information(self) -> Dict[str, Optional[Union[str, int]]]:
+        """Get the summary information for the results."""
         with open(self.args.bfile + ".bim") as f:
             nb_before = len(f.read().splitlines())
 
@@ -303,4 +360,10 @@ excluded from the dataset.
         return {
             "geno": self.args.geno,
             "nb_markers": nb_before - nb_after,
+        }
+
+    def get_methods_information(self) -> Dict[str, Optional[Union[str, int]]]:
+        """Get the summary information for the methods."""
+        return {
+            "geno": self.args.geno,
         }

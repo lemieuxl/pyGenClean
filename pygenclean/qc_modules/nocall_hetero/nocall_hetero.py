@@ -50,11 +50,16 @@ def main(args: Optional[argparse.Namespace] = None,
     process_file(args.bfile, args.out, args.plink_107)
 
     # Generating the summary
+    summary = NoCallHeteroSummary(args)
     with open(args.out + ".summary.qmd", "w") as f:
-        print(NoCallHeteroSummary(args).generate_summary(), file=f)
+        print(summary.generate_results(), file=f)
 
     return {
-        "usable_bfile": args.out,
+        "methods": summary.generate_methods(),
+        "results": args.out + ".summary.qmd",
+        "usable_files": {
+            "bfile": args.out,
+        },
     }
 
 

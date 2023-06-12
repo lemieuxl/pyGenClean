@@ -51,12 +51,17 @@ def main(args: Optional[argparse.Namespace] = None,
     compare_bim(args)
 
     # Generating the summary
+    summary = MarkerCallRateSummary(args)
     with open(args.out + ".summary.qmd", "w") as f:
-        print(MarkerCallRateSummary(args).generate_summary(), file=f)
+        print(summary.generate_results(), file=f)
 
     # Returns a dictionary of usable files (for next step, if any)
     return {
-        "usable_bfile": args.out,
+        "methods": summary.generate_methods(),
+        "results": args.out + ".summary.qmd",
+        "usable_files": {
+            "bfile": args.out,
+        },
     }
 
 

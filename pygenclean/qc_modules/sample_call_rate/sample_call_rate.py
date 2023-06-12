@@ -46,11 +46,16 @@ def main(args: Optional[argparse.Namespace] = None,
     run_plink(args)
 
     # Generating the summary
+    summary = SampleCallRateSummary(args)
     with open(args.out + ".summary.qmd", "w") as f:
-        print(SampleCallRateSummary(args).generate_summary(), file=f)
+        print(summary.generate_results(), file=f)
 
     return {
-        "usable_bfile": args.out,
+        "methods": summary.generate_methods(),
+        "results": args.out + ".summary.qmd",
+        "usable_files": {
+            "bfile": args.out,
+        },
     }
 
 
