@@ -10,6 +10,7 @@ import numpy as np
 from geneparse.readers.plink import PlinkReader
 
 from ...error import ProgramError
+from ...report.summaries import NoCallHeteroSummary
 from ...utils import plink as plink_utils
 from ...utils import timer
 from ...version import pygenclean_version as __version__
@@ -47,6 +48,10 @@ def main(args: Optional[argparse.Namespace] = None,
 
     # Process the files
     process_file(args.bfile, args.out, args.plink_107)
+
+    # Generating the summary
+    with open(args.out + ".summary.qmd", "w") as f:
+        print(NoCallHeteroSummary(args).generate_summary(), file=f)
 
     return {
         "usable_bfile": args.out,

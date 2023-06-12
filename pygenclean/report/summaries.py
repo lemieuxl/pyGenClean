@@ -225,3 +225,32 @@ calls on the Y chromosome. {{ "{#" }}tbl-sexcheck-results}
             "figure_intensities": figure_intensities,
             "figure_baf_lrr": list(zip(baf_lrr_figures, baf_lrr_samples)),
         }
+
+
+class NoCallHeteroSummary(Summary):
+    """No call and heterozygotes summary."""
+    summary = """
+### No calls and heterozygous only markers
+
+After scrutiny, {{ "{:,d}".format(all_failed) }}
+marker{{ "s" if all_failed > 1 }} {{ "was" if all_failed == 1 else "were" }}
+excluded from the dataset because of a call rate of 0. Also,
+{{ "{:,d}".format(all_hetero) }} marker{{ "s" if all_hetero > 1 }}
+{{ "was" if all_hetero == 1 else "was" }} excluded from the dataset because all
+samples were heterozygous (excluding the mitochondrial chromosome)
+"""
+
+    def get_summary_information(self) -> Dict[str, Optional[Union[str, int]]]:
+        """Get the summary information"""
+        # All failed markers
+        with open(self.args.out + ".all_failed") as f:
+            all_failed = len(f.read().splitlines())
+
+        # All heterozygous markers
+        with open(self.args.out + ".all_hetero") as f:
+            all_hetero = len(f.read().splitlines())
+
+        return {
+            "all_failed": all_failed,
+            "all_hetero": all_hetero,
+        }
