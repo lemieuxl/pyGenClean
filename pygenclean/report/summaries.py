@@ -5,9 +5,111 @@ import argparse
 import re
 from os import path
 from pathlib import Path
+from typing import Dict, Optional
 
 import pandas as pd
 from jinja2 import BaseLoader, Environment
+
+
+class SubsetSummary():
+    """Subset summary."""
+    def __init__(self, args: argparse.Namespace):
+        self.args = args
+
+        # The summary
+        summary = """
+### Subset{{ " (" + summary + ")" if summary }}
+
+{% if nb_markers %}
+The file for marker exclusion contained {{ "{:,d}".format(nb_markers) }}
+markers to {{ marker_excl_type }}. Out of a total of
+{{ "{:,d}".format(nb_markers_before) }} markers,
+{{ "{:,d}".format(nb_markers_after) }} remained
+({{ "{:,d}".format(nb_markers_before - nb_markers_after) }} excluded).
+{% endif %}
+
+{% if nb_samples %}
+The file for sample exclusion contained {{ "{:,d}".format(nb_samples) }}
+samples to {{ sample_excl_type }}. Out of a total of
+{{ "{:,d}".format(nb_samples_before) }} samples,
+{{ "{:,d}".format(nb_samples_after) }} remained
+({{ "{:,d}".format(nb_samples_before - nb_samples_after) }} excluded).
+{% endif %}
+"""
+
+        # The summary template
+        self.summary_template = Environment(loader=BaseLoader)\
+            .from_string(summary)
+
+    def get_marker_info(self) -> Dict[str, Optional[int]]:
+        """Get marker information."""
+        nb_markers = None
+        nb_markers_before = None
+        nb_markers_after = None
+        exclusion_type = None
+        if self.args.extract or self.args.exclude:
+            # Before
+            with open(self.args.bfile + ".bim") as f:
+                nb_markers_before = len(f.read().splitlines())
+
+            # After
+            with open(self.args.out + ".bim") as f:
+                nb_markers_after = len(f.read().splitlines())
+
+            # Exclusion
+            exclusion_file = self.args.extract if self.args.extract \
+                else self.args.exclude
+            with open(exclusion_file) as f:
+                nb_markers = len(f.read().splitlines())
+
+            # Exclusion type
+            exclusion_type = "extract" if self.args.extract else "exclude"
+
+        return {
+            "nb_markers": nb_markers,
+            "nb_markers_before": nb_markers_before,
+            "nb_markers_after": nb_markers_after,
+            "marker_excl_type": exclusion_type,
+        }
+
+    def get_sample_info(self) -> Dict[str, Optional[int]]:
+        """Get sample information."""
+        nb_samples = None
+        nb_samples_before = None
+        nb_samples_after = None
+        exclusion_type = None
+        if self.args.keep or self.args.remove:
+            # Before
+            with open(self.args.bfile + ".fam") as f:
+                nb_samples_before = len(f.read().splitlines())
+
+            # After
+            with open(self.args.out + ".fam") as f:
+                nb_samples_after = len(f.read().splitlines())
+
+            # Exclusion
+            exclusion_file = self.args.remove if self.args.remove \
+                else self.args.keep
+            with open(exclusion_file) as f:
+                nb_samples = len(f.read().splitlines())
+
+            # Exclusion type
+            exclusion_type = "keep" if self.args.keep else "remove"
+
+        return {
+            "nb_samples": nb_samples,
+            "nb_samples_before": nb_samples_before,
+            "nb_samples_after": nb_samples_after,
+            "sample_excl_type": exclusion_type,
+        }
+
+    def generate_summary(self) -> str:
+        """Generate the summary from the arguments."""
+        return self.summary_template.render(
+            summary=self.args.reason,
+            **self.get_marker_info(),
+            **self.get_sample_info(),
+        )
 
 
 class SexCheckSummary():

@@ -7,6 +7,7 @@ from os import path
 from typing import Dict, List, Optional, Tuple
 
 from ...error import ProgramError
+from ...report.summaries import SubsetSummary
 from ...utils import plink as plink_utils
 from ...utils import timer
 from ...version import pygenclean_version as __version__
@@ -51,6 +52,10 @@ def main(args: Optional[argparse.Namespace] = None,
         marker_subset_type=marker_subset_type,
         use_original_plink=args.plink_107,
     )
+
+    # Generating the summary
+    with open(args.out + ".summary.qmd", "w") as f:
+        print(SubsetSummary(args).generate_summary(), file=f)
 
     # Returns a dictionary of usable files
     return {
@@ -149,6 +154,10 @@ def add_args(parser: argparse.ArgumentParser) -> None:
 
     # The options
     group = parser.add_argument_group("Options")
+    group.add_argument(
+        "--reason", metavar="REASON", type=str,
+        help="The reason for the susbset (for the report)",
+    )
     group.add_argument(
         "--plink-1.07", dest="plink_107", action="store_true",
         help="Use original Plink (version 1.07)",
