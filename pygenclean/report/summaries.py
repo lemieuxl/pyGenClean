@@ -600,3 +600,98 @@ results. {{ "{#" }}tbl-{{ label_prefix }}-results}
     def get_methods_information(self) -> Dict[str, Optional[Union[str, int]]]:
         """Get the summary information for the methods."""
         return {}
+
+
+class EthnicitySummary(Summary):
+    """Plate bias summary."""
+    methods = (
+        "Checks sample's ethnicity using reference populations and IBS. The "
+        "script uses pairwise IBS matrix as a distance metric to identify "
+        "cryptic relatedness among samples and sample outliers by "
+        "multidimensional scaling (MDS)."
+    )
+
+    results = """
+### Ethnicity
+
+{% if skip_ref_pops -%}
+
+Principal components analysis was performed using
+{{ "{:,d}".format(nb_markers) }} marker{{ "s" if nb_markers > 1 }} on the study
+dataset only.
+
+{%- else -%}
+
+Using {{ "{:,d}".format(nb_markers) }} marker{{ "s" if nb_markers > 1 }} and a
+multiplier of {{ multiplier }}, there was a total of
+{{ "{:,d}".format(nb_outliers) }} outlier{{ "s" if nb_outliers > 1 }} of the
+{{ outliers_of }} population.
+{% if outlier_figure -%}
+@fig-{{ label_prefix }}-outliers shows the first two principal components
+of the MDS analysis, where outliers of the {{ outliers_of }} population are
+shown in grey.
+{% endif -%}
+{% if scree_figure -%}
+@fig-{{ label_prefix }}-scree shows the scree plot for the principal components
+of the MDS analysis.
+{% endif %}
+
+{% if outlier_figure %}
+![
+    MDS plots showing the first two principal components of the source dataset
+    with the reference panels. The outliers of the {{ outliers_of }} population
+    are shown in grey, while samples of the source dataset that resemble the
+    {{ outliers_of }} population are shown in orange. A multiplier of
+    {{ multiplier }} was used to find the {{ "{:,d}".format(nb_outliers) }}
+    outlier{{ "s" if nb_outliers > 1 }}.
+]({{ outlier_figure }}){{ "{#" }}fig-{{ label_prefix }}-outliers}
+{% endif %}
+
+{% if scree_figure %}
+![
+    Scree plot for the principal components of the MDS analysis.
+]({{ scree_figure }}){{ "{#" }}fig-{{ label_prefix }}-scree width='10cm'}
+{% endif %}
+
+{%- endif %}
+"""
+
+    def get_results_information(self) -> Dict[str, Optional[Union[str, int]]]:
+        """Get the summary information for the results."""
+        # The number of markers
+        with open(self.args.out + ".ibs.pruned_data.bim") as f:
+            nb_markers = len(f.read().splitlines())
+
+        if self.args.skip_ref_pops:
+            return {
+                "nb_markers": nb_markers,
+                "skip_ref_pops": self.args.skip_ref_pops,
+            }
+
+        # The number of outliers
+        with open(self.args.out + ".outliers") as f:
+            nb_outliers = len(f.read().splitlines())
+
+        # The outlier figure
+        outlier_figure = None
+        if path.isfile(self.args.out + ".outliers.png"):
+            outlier_figure = self.args.out + ".outliers.png"
+
+        scree_figure = None
+        if path.isfile(self.args.out + ".smartpca.scree_plot.png"):
+            scree_figure = self.args.out + ".smartpca.scree_plot.png"
+
+        return {
+            "skip_ref_pops": self.args.skip_ref_pops,
+            "nb_markers": nb_markers,
+            "multiplier": self.args.multiplier,
+            "outliers_of": self.args.outliers_of,
+            "nb_outliers": nb_outliers,
+            "outlier_figure": outlier_figure,
+            "scree_figure": scree_figure,
+            "label_prefix": LABEL_RE.sub("-", self.args.out),
+        }
+
+    def get_methods_information(self) -> Dict[str, Optional[Union[str, int]]]:
+        """Get the summary information for the methods."""
+        return {}

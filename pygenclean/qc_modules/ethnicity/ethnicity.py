@@ -7,6 +7,7 @@ from collections import defaultdict
 from typing import Dict, KeysView, List, Optional, Set, Tuple
 
 from ...error import ProgramError
+from ...report.summaries import EthnicitySummary
 from ...utils import flip_alleles
 from ...utils import plink as plink_utils
 from ...utils import timer
@@ -280,8 +281,18 @@ def main(args: Optional[argparse.Namespace] = None,
             ],
         )
 
+    summary = EthnicitySummary(args)
+
+    # Generating the results
+    with open(args.out + ".summary.qmd", "w") as f:
+        print(summary.generate_results(), file=f)
+
     return {
-        "usable_bfile": args.bfile,
+        "methods": summary.generate_methods(),
+        "results": args.out + ".summary.qmd",
+        "usable_files": {
+            "bfile": args.bfile,
+        }
     }
 
 
