@@ -53,7 +53,7 @@ def main(args: Optional[argparse.Namespace] = None,
         use_original_plink=args.plink_107,
     )
 
-    # Generating the summary
+    # Generating the results
     summary = SubsetSummary(args)
     with open(args.out + ".summary.qmd", "w") as f:
         print(summary.generate_results(), file=f)

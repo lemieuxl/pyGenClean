@@ -50,7 +50,7 @@ def main(args: Optional[argparse.Namespace] = None,
     logger.info("Comparing BIM files")
     compare_bim(args)
 
-    # Generating the summary
+    # Generating the results
     summary = MarkerCallRateSummary(args)
     with open(args.out + ".summary.qmd", "w") as f:
         print(summary.generate_results(), file=f)

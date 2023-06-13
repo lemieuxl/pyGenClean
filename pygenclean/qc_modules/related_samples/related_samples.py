@@ -129,6 +129,7 @@ def main(args: Optional[argparse.Namespace] = None,
     # Plotting the related samples (z1 and z2)
     plot_related_samples(related, args.out, args)
 
+    # Generating the results
     with open(args.out + ".summary.qmd", "w") as f:
         print(summary.generate_results(), file=f)
 

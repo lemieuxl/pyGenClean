@@ -125,7 +125,7 @@ def main(args: Optional[argparse.Namespace] = None,
             "--out", path.join(dirname, "sample"),
         ] + args.baf_lrr_extra_args)
 
-    # Generating the summary
+    # Generating the results
     with open(args.out + ".summary.qmd", "w") as f:
         print(summary.generate_results(), file=f)
 

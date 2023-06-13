@@ -49,7 +49,7 @@ def main(args: Optional[argparse.Namespace] = None,
     # Process the files
     process_file(args.bfile, args.out, args.plink_107)
 
-    # Generating the summary
+    # Generating the results
     summary = NoCallHeteroSummary(args)
     with open(args.out + ".summary.qmd", "w") as f:
         print(summary.generate_results(), file=f)

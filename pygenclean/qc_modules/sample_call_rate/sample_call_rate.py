@@ -45,7 +45,7 @@ def main(args: Optional[argparse.Namespace] = None,
     # Running Plink
     run_plink(args)
 
-    # Generating the summary
+    # Generating the results
     summary = SampleCallRateSummary(args)
     with open(args.out + ".summary.qmd", "w") as f:
         print(summary.generate_results(), file=f)
