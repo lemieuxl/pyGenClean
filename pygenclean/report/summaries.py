@@ -163,7 +163,11 @@ samples to {{ sample_excl_type }}. Out of a total of
 
 class SexCheckSummary(Summary):
     """Sexcheck summary."""
-    methods = ""
+    methods = (
+        "Check sample's genetic sex using _Plink_. The script identifies any "
+        "individual with discrepancies between phenotype and genotype data "
+        "for sex. Individuals with sex error are to be investigated."
+    )
 
     results = """
 ### Sex check
@@ -172,30 +176,30 @@ Using $F$ thresholds of {{ male_f }} and {{ female_f }} for males and females,
 respectively, {{ "{:,d}".format(nb_problems) }}
 sample{{ "s" if nb_problems > 1 }} had sex problems according to _Plink_.
 {%- if nb_problems > 1 %}
-@tbl-sexcheck-results summarizes the sex problems encountered during the
-analysis.
+@tbl-{{ label_prefix }}-results summarizes the sex problems encountered during
+the analysis.
 {%- endif -%}
 {%- if figure_intensities %}
-@fig-sexcheck-intensities shows the $y$ intensities versus the $x$ intensities
-for each samples. Problematic samples are shown using triangles.
+@fig-{{ label_prefix }}-intensities shows the $y$ intensities versus the $x$
+intensities for each samples. Problematic samples are shown using triangles.
 {%- endif -%}
 {%- if figure_baf_lrr|length > 0 -%}
 {%- if figure_baf_lrr|length == 1 %}
-@fig-baf_lrr-{{ figure_baf_lrr[0][1] }} shows
+@fig-{{ label_prefix }}-baf_lrr-{{ figure_baf_lrr[0][1] }} shows
 {%- else %}
-@fig-baf_lrr-{{ figure_baf_lrr[0][1] }} to
-@fig-baf_lrr-{{ figure_baf_lrr[-1][1] }} show
+@fig-{{ label_prefix }}-baf_lrr-{{ figure_baf_lrr[0][1] }} to
+@fig-{{ label_prefix }}-baf_lrr-{{ figure_baf_lrr[-1][1] }} show
 {%- endif %}
 the log R ratio and the B allele frequency versus the position on chromosome X
 and Y for the problematic samples.
 {% endif %}
 
 {% if nb_problems > 1 %}
-{{ table | safe }}
+{{ table }}
 
 : Summarization of the gender problems encountered during Plink's analysis. HET
 is the heterozygosity rate on the X chromosome. NOCALL is the percentage of no
-calls on the Y chromosome. {{ "{#" }}tbl-sexcheck-results}
+calls on the Y chromosome. {{ "{#" }}tbl-{{ label_prefix }}-results}
 
 {% if figure_intensities %}
 ![
@@ -203,7 +207,7 @@ calls on the Y chromosome. {{ "{#" }}tbl-sexcheck-results}
     sample. Males are shown in blue, and females in red. Triangles show
     problematic samples (green for males, mauve for females). Unknown gender
     are shown in gray.
-]({{ figure_intensities }}){{ "{#" }}fig-sexcheck-intensities}
+]({{ figure_intensities }}){{ "{#" }}fig-{{ label_prefix }}-intensities}
 {% endif %}
 
 {% if figure_baf_lrr|length > 0 %}
@@ -211,7 +215,7 @@ calls on the Y chromosome. {{ "{#" }}tbl-sexcheck-results}
 ![
     Plots showing the log R ratio and the B allele frequency for chromosome X
     and Y (on the left and right, respectively) for sample {{ sample_id }}.
-]({{ figure_path }}){{ "{#" }}fig-baf_lrr-{{ sample_id }}}
+]({{ figure_path }}){{ "{#" }}fig-{{ label_prefix }}-baf_lrr-{{ sample_id }}}
 {% endfor %}
 {% endif %}
 {% endif %}
@@ -259,7 +263,12 @@ calls on the Y chromosome. {{ "{#" }}tbl-sexcheck-results}
             "table": sex_problems.to_markdown(index=False),
             "figure_intensities": figure_intensities,
             "figure_baf_lrr": list(zip(baf_lrr_figures, baf_lrr_samples)),
+            "label_prefix": LABEL_RE.sub("-", self.args.out),
         }
+
+    def get_methods_information(self) -> Dict[str, Optional[Union[str, int]]]:
+        """Get the summary information for the methods."""
+        return {}
 
 
 class NoCallHeteroSummary(Summary):
@@ -431,7 +440,7 @@ related samples found by _Plink_.
 {%- endif %}
 """
 
-    def get_results_information(self) -> Dict[str, str | int | None]:
+    def get_results_information(self) -> Dict[str, Optional[Union[str, int]]]:
         # Getting the number of pruned markers
         with open(self.args.out + ".pruned_data.bim") as f:
             nb_markers = len(f.read().splitlines())
@@ -478,10 +487,10 @@ related samples found by _Plink_.
             "nb_discarded": nb_discarded,
             "figure_z1": figure_z1,
             "figure_z2": figure_z2,
-            "label_prefix": LABEL_RE.sub("-", self.args.out)
+            "label_prefix": LABEL_RE.sub("-", self.args.out),
         }
 
-    def get_methods_information(self) -> Dict[str, str | int | None]:
+    def get_methods_information(self) -> Dict[str, Optional[Union[str, int]]]:
         return {
             "ibs2_ratio": self.args.ibs2_ratio,
             "r2_threshold": self.args.indep_pairwise[-1],

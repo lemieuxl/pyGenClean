@@ -57,6 +57,9 @@ def main(args: Optional[argparse.Namespace] = None,
 
     logger.info("%s", DESCRIPTION)
 
+    # The summary object
+    summary = SexCheckSummary(args)
+
     # Getting the list of markers on chromosome 23
     nb_markers = len(
         plink_utils.get_markers_on_chrom(args.bfile + ".bim", {23})
@@ -65,8 +68,14 @@ def main(args: Optional[argparse.Namespace] = None,
         logger.warning(
             "There are not enough markers on chromosome 23: STOPPING NOW!",
         )
+        with open(args.out + ".summary.qmd", "w") as f:
+            print(summary.generate_results(), file=f)
         return {
-            "usable_bfile": args.bfile,
+            "methods": summary.generate_methods(),
+            "results": args.out + ".summary.qmd",
+            "usable_files": {
+                "bfile": args.bfile,
+            },
         }
 
     # Run Plink sex-check
@@ -118,10 +127,14 @@ def main(args: Optional[argparse.Namespace] = None,
 
     # Generating the summary
     with open(args.out + ".summary.qmd", "w") as f:
-        print(SexCheckSummary(args).generate_summary(), file=f)
+        print(summary.generate_results(), file=f)
 
     return {
-        "usable_bfile": args.bfile,
+        "methods": summary.generate_methods(),
+        "results": args.out + ".summary.qmd",
+        "usable_files": {
+            "bfile": args.bfile,
+        },
     }
 
 
