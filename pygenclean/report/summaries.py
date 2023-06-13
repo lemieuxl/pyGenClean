@@ -12,6 +12,8 @@ import numpy as np
 import pandas as pd
 from jinja2 import BaseLoader, Environment
 
+from .utils import format_numbers
+
 
 LABEL_RE = re.compile(r"[\/]")
 
@@ -547,6 +549,51 @@ by _bafRegress_ $>0.01$). {{ "{#" }}tbl-{{ label_prefix }}-results}
             "nb_autosomal": nb_autosomal,
             "nb_contaminated": nb_contaminated,
             "table": df.loc[contaminated, :].to_markdown(index=False),
+            "label_prefix": LABEL_RE.sub("-", self.args.out),
+        }
+
+    def get_methods_information(self) -> Dict[str, Optional[Union[str, int]]]:
+        """Get the summary information for the methods."""
+        return {}
+
+
+class PlateBiasSummary(Summary):
+    """Plate bias summary."""
+    methods = (
+        "Checks for plate bias. The script identifies markers with plate "
+        "bias, based on the plates used to dilute DNA samples."
+    )
+
+    results = """
+### Plate bias
+
+After performing the plate bias analysis using _Plink_, a total of
+{{ "{:,d}".format(nb_significant) }} unique
+marker{{ "s" if nb_significant != 1 }} had a significant result
+(_i.e._ a value less than ${{ p_threshold }}$).
+{%- if nb_significant > 0 %}
+@tbl-{{ label_prefix }}-results summarizes the plate bias results.
+
+{{ table }}
+
+: Summary of the plate bias analysis performed by _Plink_. For each plate, the
+number of significant markers is shown (threshold of ${{ p_threshold }}$). The
+plates are sorted according to the total number of significant
+results. {{ "{#" }}tbl-{{ label_prefix }}-results}
+{% endif %}
+"""
+
+    def get_results_information(self) -> Dict[str, Optional[Union[str, int]]]:
+        """Get the summary information for the results."""
+        # Reading the significant markers with the plate information
+        df = pd.read_csv(self.args.out + ".significant_markers.summary.tsv",
+                         sep="\t")
+        return {
+            "nb_significant": df.shape[0],
+            "p_threshold": format_numbers(self.args.p_filter),
+            "table": df.plate.value_counts()
+                       .sort_values(ascending=False)
+                       .to_markdown(),
             "label_prefix": LABEL_RE.sub("-", self.args.out),
         }
 

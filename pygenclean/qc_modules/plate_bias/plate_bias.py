@@ -9,6 +9,7 @@ from os import path
 from typing import Dict, List, Optional, Set, Tuple
 
 from ...error import ProgramError
+from ...report.summaries import PlateBiasSummary
 from ...utils import plink as plink_utils
 from ...utils import task, timer
 from ...version import pygenclean_version as __version__
@@ -79,16 +80,26 @@ def main(args: Optional[argparse.Namespace] = None,
     # Computing the frequencies of the significant markers
     maf = compute_frequency(args.bfile, args.out, args.plink_107)
 
-    write_summary(assoc_results, maf, args.out)
+    write_significant(assoc_results, maf, args.out)
+
+    summary = PlateBiasSummary(args)
+
+    # Generating the results
+    with open(args.out + ".summary.qmd", "w") as f:
+        print(summary.generate_results(), file=f)
 
     return {
-        "usable_bfile": args.bfile,
-        "flagged": args.out + ".significant_markers.txt",
+        "methods": summary.generate_methods(),
+        "results": args.out + ".summary.qmd",
+        "usable_files": {
+            "bfile": args.bfile,
+            "flagged": args.out + ".significant_markers.txt",
+        },
     }
 
 
-def write_summary(results: List[SignificantMarker], maf: Dict[str, str],
-                  out: str) -> None:
+def write_significant(results: List[SignificantMarker], maf: Dict[str, str],
+                      out: str) -> None:
     """Writes the results.
 
     Args:

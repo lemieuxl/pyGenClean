@@ -78,7 +78,7 @@ def main(args: Optional[argparse.Namespace] = None,
         # The QC module
         qc_module = qc_modules[qc_module_name]
 
-        # The bfile and out file
+        # The bfile and out file (bfile should always be first)
         argv = [
             ["--bfile", usable_files[previous_step]["bfile"]],
             ["--out", str(sub_dir / qc_module.DEFAULT_OUT)],
