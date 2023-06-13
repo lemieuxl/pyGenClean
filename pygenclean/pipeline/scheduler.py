@@ -88,7 +88,16 @@ def main(args: Optional[argparse.Namespace] = None,
         if "from_step" in step_info:
             for from_step, from_step_info in step_info["from_step"].items():
                 for key, value in from_step_info.items():
-                    argv.append([f"--{key}", usable_files[from_step][value]])
+                    if key == "bfile":
+                        # We're using anoter bfile than the one from the
+                        # previous step. The original bfile value is the second
+                        # element of the first element
+                        argv[0][1] = usable_files[from_step][value]
+
+                    else:
+                        argv.append(
+                            [f"--{key}", usable_files[from_step][value]]
+                        )
 
         # Building the argument list from the configuration (excluding special
         # cases)
