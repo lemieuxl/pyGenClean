@@ -8,7 +8,10 @@ from os import path
 from pathlib import Path
 from typing import Dict, List, Optional, Set
 
+import pandas as pd
+
 from ...error import ProgramError
+from ...report.summaries import ContaminationSummary
 from ...utils import plink as plink_utils
 from ...utils import task as task_utils
 from ...utils import timer
@@ -62,7 +65,7 @@ def main(args: Optional[argparse.Namespace] = None,
         use_original_plink=args.plink_107,
     )
 
-    run_bafRegress(
+    run_bafregress(
         filenames=sample_files,
         out=args.out,
         extract=args.out + ".to_extract",
@@ -70,8 +73,25 @@ def main(args: Optional[argparse.Namespace] = None,
         args=args,
     )
 
+    # Writing contaminated samples
+    write_contaminated_samples(
+        filename=args.out + ".bafRegress",
+        out=args.out,
+    )
+
+    summary = ContaminationSummary(args)
+
+    # Generating the results
+    with open(args.out + ".summary.qmd", "w") as f:
+        print(summary.generate_results(), file=f)
+
     return {
-        "usable_bfile": args.bfile,
+        "methods": summary.generate_methods(),
+        "results": args.out + ".summary.qmd",
+        "usable_files": {
+            "bfile": args.bfile,
+            "contaminated": args.out + ".contaminated_samples",
+        },
     }
 
 
@@ -133,7 +153,7 @@ def create_extraction_file(bim: str, out: str):
                 f"{len(autosomal):,d}")
 
 
-def run_bafRegress(filenames: Set[str], out: str, extract: str, freq: str,
+def run_bafregress(filenames: Set[str], out: str, extract: str, freq: str,
                    args: argparse.Namespace) -> None:
     """Runs the bafRegress function.
 
@@ -190,6 +210,18 @@ def run_bafRegress(filenames: Set[str], out: str, extract: str, freq: str,
                 if content[0] != header:
                     raise ProgramError("different header from BAFregress")
                 print(*content[1:], sep="\n", file=f)
+
+
+def write_contaminated_samples(filename: str, out: str) -> None:
+    """Write contaminated samples to file."""
+    # Reading the contaminated samples
+    df = pd.read_csv(filename, sep="\t")
+    contaminated = df.loc[df.estimate > 0.01, "sample"]
+
+    # Printing to file
+    with open(out + ".contaminated_samples", "w") as f:
+        for sample in contaminated.to_list():
+            print(sample, sample, file=f)
 
 
 def check_args(args: argparse.Namespace) -> None:

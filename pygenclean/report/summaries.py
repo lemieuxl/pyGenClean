@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import Dict, Optional, Union
 
 import jinja2
+import numpy as np
 import pandas as pd
 from jinja2 import BaseLoader, Environment
 
@@ -54,7 +55,8 @@ class Summary():
 class SubsetSummary(Summary):
     """Subset summary."""
     methods = (
-        "Subsets {{ subset_type }} ({{ reason }}) using _Plink_."
+        "Subsets {{ subset_type }}{{ ' (' + reason + ')' if reason }} using "
+        "_Plink_."
     )
 
     results = """
@@ -441,6 +443,7 @@ related samples found by _Plink_.
 """
 
     def get_results_information(self) -> Dict[str, Optional[Union[str, int]]]:
+        """Get the summary information for the results."""
         # Getting the number of pruned markers
         with open(self.args.out + ".pruned_data.bim") as f:
             nb_markers = len(f.read().splitlines())
@@ -491,7 +494,62 @@ related samples found by _Plink_.
         }
 
     def get_methods_information(self) -> Dict[str, Optional[Union[str, int]]]:
+        """Get the summary information for the methods."""
         return {
             "ibs2_ratio": self.args.ibs2_ratio,
             "r2_threshold": self.args.indep_pairwise[-1],
         }
+
+
+class ContaminationSummary(Summary):
+    """Contamination summary."""
+    methods = (
+        "Check _BAF_ and _LogR_ ratio for data contamination. The script "
+        "search for sample contamination using the `bafRegress.py` software."
+    )
+
+    results = """
+### Contamination
+
+A total of {{ "{:,d}".format(nb_samples) }} sample{{ "s" if nb_samples > 1 }}
+{{ "were" if nb_samples > 1 else "was" }} analyzed for contamination using
+_bafRegress_. The analysis was performed using
+{{ "{:,d}".format(nb_autosomal) }} autosomal
+marker{{ "s" if nb_autosomal > 1 }}. Using a threshold of 0.01,
+{{ "{:,d}".format(nb_contaminated) }} sample{{ "s" if nb_contaminated > 1 }}
+{{ "were" if nb_contaminated > 1 else "was" }} estimated to be contaminated.
+{%- if nb_contaminated > 1 %}
+@tbl-{{ label_prefix }}-results lists all the samples that were estimated to be
+contaminated (_i.e._ with an estimate $>0.01$)
+
+{{ table }}
+
+: List of all possible contaminated samples (_i.e._ with an estimate computed
+by _bafRegress_ $>0.01$). {{ "{#" }}tbl-{{ label_prefix }}-results}
+{% endif -%}
+"""
+
+    def get_results_information(self) -> Dict[str, Optional[Union[str, int]]]:
+        """Get the summary information for the results."""
+        # Counting the number of autosomal markers
+        nb_autosomal = 0
+        with open(self.args.out + ".to_extract") as f:
+            for _ in f:
+                nb_autosomal += 1
+
+        # Reading the output, and finding the contaminated samples
+        df = pd.read_csv(self.args.out + ".bafRegress", sep="\t")
+        contaminated = df.estimate > 0.01
+        nb_contaminated = np.count_nonzero(contaminated)
+
+        return {
+            "nb_samples": df.shape[0],
+            "nb_autosomal": nb_autosomal,
+            "nb_contaminated": nb_contaminated,
+            "table": df.loc[contaminated, :].to_markdown(index=False),
+            "label_prefix": LABEL_RE.sub("-", self.args.out),
+        }
+
+    def get_methods_information(self) -> Dict[str, Optional[Union[str, int]]]:
+        """Get the summary information for the methods."""
+        return {}
