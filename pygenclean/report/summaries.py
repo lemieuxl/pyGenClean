@@ -12,10 +12,13 @@ import pandas as pd
 from jinja2 import BaseLoader, Environment
 
 
+LABEL_RE = re.compile(r"[\/]")
+
+
 class Summary():
     """Summary core object."""
-    results = ""
     methods = ""
+    results = ""
 
     """The summary core function."""
     def __init__(self, args: argparse.Namespace) -> None:
@@ -50,6 +53,10 @@ class Summary():
 
 class SubsetSummary(Summary):
     """Subset summary."""
+    methods = (
+        "Subsets {{ subset_type }} ({{ reason }}) using _Plink_."
+    )
+
     results = """
 ### Subset{{ " (" + reason + ")" if reason }}
 
@@ -69,10 +76,6 @@ samples to {{ sample_excl_type }}. Out of a total of
 ({{ "{:,d}".format(nb_samples_before - nb_samples_after) }} excluded).
 {% endif %}
 """
-
-    methods = (
-        "Subsets {{ subset_type }} ({{ reason }}) using _Plink_."
-    )
 
     def get_marker_info(self) -> Dict[str, Optional[int]]:
         """Get marker information."""
@@ -160,6 +163,8 @@ samples to {{ sample_excl_type }}. Out of a total of
 
 class SexCheckSummary(Summary):
     """Sexcheck summary."""
+    methods = ""
+
     results = """
 ### Sex check
 
@@ -259,6 +264,11 @@ calls on the Y chromosome. {{ "{#" }}tbl-sexcheck-results}
 
 class NoCallHeteroSummary(Summary):
     """No call and heterozygotes summary."""
+    methods = (
+        "Removes completely failed markers (no calls) or markers with only "
+        "heterozygous genotypes (excluding the mitochondrial chromosome)."
+    )
+
     results = """
 ### No calls and heterozygous only markers
 
@@ -269,11 +279,6 @@ excluded from the dataset because of a call rate of 0. Also,
 {{ "was" if all_hetero == 1 else "was" }} excluded from the dataset because all
 samples were heterozygous (excluding the mitochondrial chromosome).
 """
-
-    methods = (
-        "Removes completely failed markers (no calls) or markers with only "
-        "heterozygous genotypes (excluding the mitochondrial chromosome)."
-    )
 
     def get_results_information(self) -> Dict[str, Optional[Union[str, int]]]:
         """Get the summary information for the results."""
@@ -297,6 +302,12 @@ samples were heterozygous (excluding the mitochondrial chromosome).
 
 class SampleCallRateSummary(Summary):
     """Sample call rate summary."""
+    methods = (
+        "Computes sample call rate using Plink (`mind` = {{ mind }}). The "
+        "script identifies poorly performing DNA samples with a genome-wide "
+        "genotyping success rate $<{{ (1 - mind) * 100 }}\\%$."
+    )
+
     results = """
 ### Sample call rate
 
@@ -305,12 +316,6 @@ missing rate $\\leq{{ mind }}$), {{ nb_samples }}
 sample{{ "s" if nb_samples > 1 }} {{ "was" if nb_samples == 1 else "were" }}
 excluded from the dataset.
 """
-
-    methods = (
-        "Computes sample call rate using Plink (`mind` = {{ mind }}). The "
-        "script identifies poorly performing DNA samples with a genome-wide "
-        "genotyping success rate $<{{ (1 - mind) * 100 }}\\%$."
-    )
 
     def get_results_information(self) -> Dict[str, Optional[Union[str, int]]]:
         """Get the summary information for the results."""
@@ -334,6 +339,12 @@ excluded from the dataset.
 
 class MarkerCallRateSummary(Summary):
     """Marker call rate summary."""
+    methods = (
+        "Computes marker call rate using Plink (`geno` = {{ geno }}). The "
+        "script identifies poorly performing markers genotyping success rate "
+        "$<{{ (1 - geno) * 100 }}\\%$."
+    )
+
     results = """
 ### Marker call rate
 
@@ -342,12 +353,6 @@ missing rate $\\leq{{ geno }}$), {{ nb_markers }}
 marker{{ "s" if nb_markers > 1 }} {{ "was" if nb_markers == 1 else "were" }}
 excluded from the dataset.
 """
-
-    methods = (
-        "Computes marker call rate using Plink (`geno` = {{ geno }}). The "
-        "script identifies poorly performing markers genotyping success rate "
-        "$<{{ (1 - geno) * 100 }}\\%$."
-    )
 
     def get_results_information(self) -> Dict[str, Optional[Union[str, int]]]:
         """Get the summary information for the results."""
@@ -366,4 +371,118 @@ excluded from the dataset.
         """Get the summary information for the methods."""
         return {
             "geno": self.args.geno,
+        }
+
+
+class RelatedSamplesSummary(Summary):
+    """Related samples summary."""
+    methods = (
+        "Finds related samples according to IBS values. The script conducts "
+        "close familial relationship checks with pairwise IBD. It flags and "
+        "removes all but one pair member of samples duplicates "
+        "($IBS2^{\\ast}_{ratio} > {{ ibs2_ratio }}$) based on a selection of "
+        "uncorrelated markers ($r^2 < {{ r2_threshold }}$)."
+    )
+
+    results = """
+### Related samples
+
+{% if not_enough -%}
+
+There were not enough markers to perform the analysis
+(_i.e._ {{ "{:,d}".format(nb_markers) }} markers is less than the required
+{{ "{:,d}".format(nb_markers_required) }} markers).
+
+{%- elif genome_only -%}
+
+The _genome_ file was created using Plink and {{ "{:,d}".format(nb_markers) }}
+markers.
+
+{%- else -%}
+
+According to _Plink_ relatedness analysis (using
+{{ "{:,d}".format(nb_markers) }} markers),
+{{ "{:,d}".format(nb_unique_samples) }} unique samples were related
+to at least one other sample. A total of {{ "{:,d}".format(nb_discarded) }}
+samples were randomly selected for downstream exclusion from the dataset.
+{% if figure_z1 -%}
+@fig-{{ label_prefix }}-z1 shows $Z_1$ versus $IBS2_{ratio}^\\ast$ for all
+related samples found by _Plink_.
+{% endif -%}
+{% if figure_z2 -%}
+@fig-{{ label_prefix }}-z2 shows $Z_2$ versus $IBS2_{ratio}^\\ast$ for all
+related samples found by _Plink_.
+{% endif %}
+
+{% if figure_z1 %}
+![
+    $Z_1$ versus $IBS2_{ratio}^\\ast$ for all related samples found by _Plink_
+    in the IBS analysis.
+]({{ figure_z1 }}){{ "{#" }}fig-{{ label_prefix }}-z1}
+{% endif %}
+
+{% if figure_z2 %}
+![
+    $Z_2$ versus $IBS2_{ratio}^\\ast$ for all related samples found by _Plink_
+    in the IBS analysis.
+]({{ figure_z2 }}){{ "{#" }}fig-{{ label_prefix }}-z2}
+{% endif %}
+
+{%- endif %}
+"""
+
+    def get_results_information(self) -> Dict[str, str | int | None]:
+        # Getting the number of pruned markers
+        with open(self.args.out + ".pruned_data.bim") as f:
+            nb_markers = len(f.read().splitlines())
+
+        # Did we have enough?
+        if nb_markers < self.args.min_nb_snp:
+            return {
+                "nb_markers": nb_markers,
+                "nb_markers_required": self.args.min_nb_snp,
+                "not_enough": True,
+            }
+
+        if self.args.genome_only:
+            return {
+                "genome_only": True,
+                "nb_markers": nb_markers,
+            }
+
+        # Reading the related sample file
+        related_samples = pd.read_csv(self.args.out + ".related_individuals",
+                                      sep="\t")
+
+        # Counting the number of related samples
+        related = set()
+        for _, row in related_samples.iterrows():
+            related.add((row.FID1, row.IID1))
+            related.add((row.FID2, row.IID2))
+
+        # Reading the number of discated samples
+        with open(self.args.out + ".discarded_related_individuals") as f:
+            nb_discarded = len(f.read().splitlines())
+
+        # Checking if we have z1 figure
+        if path.isfile(self.args.out + ".related_individuals_z1.png"):
+            figure_z1 = self.args.out + ".related_individuals_z1.png"
+
+        # Checking if we have z2 figure
+        if path.isfile(self.args.out + ".related_individuals_z2.png"):
+            figure_z2 = self.args.out + ".related_individuals_z2.png"
+
+        return {
+            "nb_markers": nb_markers,
+            "nb_unique_samples": len(related),
+            "nb_discarded": nb_discarded,
+            "figure_z1": figure_z1,
+            "figure_z2": figure_z2,
+            "label_prefix": LABEL_RE.sub("-", self.args.out)
+        }
+
+    def get_methods_information(self) -> Dict[str, str | int | None]:
+        return {
+            "ibs2_ratio": self.args.ibs2_ratio,
+            "r2_threshold": self.args.indep_pairwise[-1],
         }

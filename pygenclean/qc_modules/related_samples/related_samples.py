@@ -10,6 +10,7 @@ import numpy as np
 import pandas as pd
 
 from ...error import ProgramError
+from ...report.summaries import RelatedSamplesSummary
 from ...utils import plink as plink_utils
 from ...utils import task, timer
 from ...version import pygenclean_version as __version__
@@ -53,6 +54,8 @@ def main(args: Optional[argparse.Namespace] = None,
         args = parse_args(argv)
     check_args(args)
 
+    summary = RelatedSamplesSummary(args)
+
     logger.info("%s", DESCRIPTION)
 
     markers_to_extract = select_markers_by_ld(
@@ -65,8 +68,14 @@ def main(args: Optional[argparse.Namespace] = None,
 
     if nb_markers < args.min_nb_snp:
         logger.warning("Only %d markers on autosome, stopping", nb_markers)
+        with open(args.out + ".summary.qmd", "w") as f:
+            print(summary.generate_results(), file=f)
         return {
-            "usable_bfile": args.bfile,
+            "methods": summary.generate_methods(),
+            "results": args.out + ".summary.qmd",
+            "usable_files": {
+                "bfile": args.bfile,
+            },
         }
 
     # Extracting the markers
@@ -83,8 +92,14 @@ def main(args: Optional[argparse.Namespace] = None,
 
     # We only need the genome file to be created
     if args.genome_only:
+        with open(args.out + ".summary.qmd", "w") as f:
+            print(summary.generate_results(), file=f)
         return {
-            "usable_bfile": args.bfile,
+            "methods": summary.generate_methods(),
+            "results": args.out + ".summary.qmd",
+            "usable_files": {
+                "bfile": args.bfile,
+            },
         }
 
     # Getting the related samples
@@ -93,8 +108,14 @@ def main(args: Optional[argparse.Namespace] = None,
 
     if related is None:
         logger.info("There are no related samples in the dataset")
+        with open(args.out + ".summary.qmd", "w") as f:
+            print(summary.generate_results(), file=f)
         return {
-            "usable_bfile": args.bfile,
+            "methods": summary.generate_methods(),
+            "results": args.out + ".summary.qmd",
+            "usable_files": {
+                "bfile": args.bfile,
+            },
         }
 
     # Merge related samples
@@ -108,9 +129,16 @@ def main(args: Optional[argparse.Namespace] = None,
     # Plotting the related samples (z1 and z2)
     plot_related_samples(related, args.out, args)
 
+    with open(args.out + ".summary.qmd", "w") as f:
+        print(summary.generate_results(), file=f)
+
     return {
-        "usable_bfile": args.bfile,
-        "flagged": args.out + ".discarded_related_individuals",
+        "methods": summary.generate_methods(),
+        "results": args.out + ".summary.qmd",
+        "usable_files": {
+            "bfile": args.bfile,
+            "flagged": args.out + ".discarded_related_individuals",
+        },
     }
 
 
