@@ -120,8 +120,9 @@ def main(args: Optional[argparse.Namespace] = None,
         "results": args.out + ".summary.qmd",
         "usable_files": {
             "bfile": args.bfile,
-            "flagged": args.out + ".threshold_" + args.hwe,
-            "flagged_bonferroni": args.out + ".threshold_" + hw_threshold,
+            "flagged": args.out + ".snp_flag_threshold_" + args.hwe,
+            "flagged_bonferroni": args.out + ".snp_flag_threshold_"
+                                  + hw_threshold,
         },
     }
 
