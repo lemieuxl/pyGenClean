@@ -2,8 +2,6 @@
 
 
 from .contamination import contamination
-from .dup_markers import duplicated_markers
-from .dup_samples import duplicated_samples
 from .ethnicity import ethnicity, find_outliers, plot_eigenvalues, plot_mds
 from .flag_hw import flag_hw
 from .flag_maf import flag_maf
@@ -29,8 +27,6 @@ qc_modules = {
     "hetero_hap": hetero_hap,
     "nocall_hetero": nocall_hetero,
     "ethnicity": ethnicity,
-    "duplicated_samples": duplicated_samples,
-    "duplicated_markers": duplicated_markers,
     "subset": subset,
     "contamination": contamination,
 }
