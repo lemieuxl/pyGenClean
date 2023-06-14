@@ -2,12 +2,13 @@
 
 
 import re
+from typing import Union
 
 
 __all__ = ["format_numbers"]
 
 
-def format_numbers(number: float) -> str:
+def format_numbers(number: Union[float, str]) -> str:
     """Formats number in the scientific notation for LaTeX.
 
     Args:
@@ -17,7 +18,7 @@ def format_numbers(number: float) -> str:
         str: a string containing the scientific notation of the number.
 
     """
-    # Changing to str
+    # Changing to str just to be safe
     number = str(number)
 
     # Matching
