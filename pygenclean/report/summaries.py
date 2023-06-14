@@ -695,3 +695,39 @@ of the MDS analysis.
     def get_methods_information(self) -> Dict[str, Optional[Union[str, int]]]:
         """Get the summary information for the methods."""
         return {}
+
+
+class HeteroHapSummary(Summary):
+    """Heterozygous haploid summary."""
+    methods = (
+        "Removes heterozygous haploid genotypes. The script sets heterozygous "
+        "haploid genotypes to missing."
+    )
+
+    results = """
+### Heterozygous haploid
+
+After _Plink_'s heterozygous haploid analysis, a total of
+{{ "{:,d}".format(nb_hetero_hap) }} genotype{{ "s" if nb_hetero_hap > 1}}
+{{ "was" if nb_hetero_hap == 1 else "were" }} set to missing.
+"""
+
+    def get_results_information(self) -> Dict[str, Optional[Union[str, int]]]:
+        """Get the summary information for the results."""
+        # Regular expression to gather the number of heterozygous haploid
+        plink_re = re.compile(r"Warning: (\d+) het. haploid genotypes present")
+        if self.args.plink_107:
+            plink_re = re.compile(
+                r"(\d+) heterozygous haploid genotypes; set to missing",
+            )
+
+        with open(self.args.out + ".log") as f:
+            nb_hetero_hap = int(plink_re.search(f.read()).group(1))
+
+        return {
+            "nb_hetero_hap": nb_hetero_hap,
+        }
+
+    def get_methods_information(self) -> Dict[str, Optional[Union[str, int]]]:
+        """Get the summary information for the methods."""
+        return {}

@@ -6,6 +6,7 @@ import logging
 from typing import Dict, List, Optional
 
 from ...error import ProgramError
+from ...report.summaries import HeteroHapSummary
 from ...utils import plink as plink_utils
 from ...utils import timer
 from ...utils.task import execute_external_command
@@ -41,9 +42,19 @@ def main(args: Optional[argparse.Namespace] = None,
 
     run_plink(args)
 
+    summary = HeteroHapSummary(args)
+
+    # Generating the results
+    with open(args.out + ".summary.qmd", "w") as f:
+        print(summary.generate_results(), file=f)
+
     # Returns a dictionary of usable files (for next step, if any)
     return {
-        "usable_bfile": args.out,
+        "methods": summary.generate_methods(),
+        "results": args.out + ".summary.qmd",
+        "usable_files": {
+            "bfile": args.out,
+        },
     }
 
 
