@@ -762,3 +762,65 @@ information).
     def get_methods_information(self) -> Dict[str, Optional[Union[str, int]]]:
         """Get the summary information for the methods."""
         return {}
+
+
+class FlagHwSummary(Summary):
+    """Flag HW summary."""
+    methods = (
+        "Flags markers with Hardy-Weinberg disequilibrium. The script tests "
+        "for Hardy-Weinberg equilibrium for each marker (using an exact "
+        "test).  It adjusts for multiple testing using Bonferroni."
+    )
+
+    results = """
+### Flag Hardy-Weinberg
+
+{% if flagged_markers|length == 0 %}
+
+There were no markers to perform the analysis.
+
+{% else %}
+
+Markers which failed Hardy-Weinberg equilibrium test (using _Plink_) were
+flagged.
+{%- for p_threshold, nb_flagged, _ in flagged_markers %}
+A total of {{ "{:,d}".format(nb_flagged) }} markers failed with a threshold of
+${{ p_threshold }}$.
+{%- endfor %}
+For a total list of markers, check the files
+{%- for _, _, filename in flagged_markers %}
+{{ "and " if loop.last }}`{{ filename }}`{{ "," if loop.index < (loop.length - 1) }}
+{%- endfor -%}, respectively.
+
+{% endif %}
+"""
+
+    def get_results_information(self) -> Dict[str, Optional[Union[str, int]]]:
+        """Get the summary information for the results."""
+        # Finding the files containing the flagged markers
+        flag_files = Path(path.dirname(self.args.out))\
+            .glob("flag_hw.snp_flag_threshold_*")
+
+        p_threshold_re = re.compile(r"^flag_hw\.snp_flag_threshold_")
+
+        flagged_markers = []
+        for filename in flag_files:
+            if "between" in filename.name:
+                continue
+
+            # The p threshold
+            p_threshold = format_numbers(p_threshold_re.sub("", filename.name))
+
+            # The number of flagged markers
+            with open(filename) as f:
+                nb_flagged = len(f.read().splitlines())
+
+            flagged_markers.append((p_threshold, nb_flagged, filename.name))
+
+        return {
+            "flagged_markers": flagged_markers,
+        }
+
+    def get_methods_information(self) -> Dict[str, Optional[Union[str, int]]]:
+        """Get the summary information for the methods."""
+        return {}

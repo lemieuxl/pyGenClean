@@ -6,6 +6,7 @@ import logging
 from typing import Dict, List, Optional, Set
 
 from ...error import ProgramError
+from ...report.summaries import FlagHwSummary
 from ...utils import plink as plink_utils
 from ...utils import timer
 from ...utils.task import execute_external_command
@@ -54,17 +55,24 @@ def main(args: Optional[argparse.Namespace] = None,
     logger.info("Counting the number of markers")
     nb_markers = get_nb_markers(args.bfile + ".bim")
 
+    # The summary
+    summary = FlagHwSummary(args)
+
     if nb_markers <= 0:
         logger.info("  - There are no markers: STOPPING NOW!")
         return {
-            "usable_bfile": args.bfile,
+            "methods": summary.generate_methods(),
+            "results": args.out + ".summary.qmd",
+            "usable_files": {
+                "bfile": args.bfile,
+            },
         }
 
     logger.info("  - There are %d markers", nb_markers)
 
     hw_threshold = str(0.05 / nb_markers)
 
-    # Run the plink command for the Bonferonni threshold
+    # Run the plink command for the Bonferroni threshold
     logger.info("Computing the HW equilibrium for %s", hw_threshold)
     compute_hw(args.bfile, hw_threshold,
                args.out + ".threshold_" + hw_threshold, args.plink_107)
@@ -103,9 +111,18 @@ def main(args: Optional[argparse.Namespace] = None,
     except IOError as exception:
         raise ProgramError(f"{filename}: can't write file") from exception
 
+    # Generating the results
+    with open(args.out + ".summary.qmd", "w") as f:
+        print(summary.generate_results(), file=f)
+
     return {
-        "usable_bfile": args.bfile,
-        "flagged": None,
+        "methods": summary.generate_methods(),
+        "results": args.out + ".summary.qmd",
+        "usable_files": {
+            "bfile": args.bfile,
+            "flagged": args.out + ".threshold_" + args.hwe,
+            "flagged_bonferroni": args.out + ".threshold_" + hw_threshold,
+        },
     }
 
 
