@@ -47,6 +47,15 @@ Briefly, the clean up procedure was as follow:
 {{ "{{< include " + step_results + " >}}" }}
 
 ## Conclusions
+
+After the genetic data clean up procedure, a total of
+{{ "{:,d}".format(final_nb_samples) }} samples and
+{{ "{:,d}".format(final_nb_markers) }} markers remained. The following files
+are available for downstream analysis.
+
+- `{{ final_prefix }}.bed`
+- `{{ final_prefix }}.bim`
+- `{{ final_prefix }}.fam`
 """)
 
 
@@ -76,6 +85,12 @@ def generate_report(**kwargs: Dict[str, Optional[Union[str, int]]]) -> str:
         for file_name in kwargs["step_results"]:
             print("{{< include " + str(file_name) + " >}}\n", file=f)
 
+    # Getting the number of samples and markers from the final file
+    with open(kwargs["final_prefix"] + ".bim") as f:
+        final_nb_markers = len(f.read().splitlines())
+    with open(kwargs["final_prefix"] + ".fam") as f:
+        final_nb_samples = len(f.read().splitlines())
+
     return TEMPLATE.render(
         docx_template=kwargs["report_template"],
         title=kwargs["report_title"],
@@ -85,6 +100,9 @@ def generate_report(**kwargs: Dict[str, Optional[Union[str, int]]]) -> str:
         bfile=kwargs["bfile"],
         nb_markers=nb_markers,
         nb_samples=nb_samples,
+        final_nb_markers=final_nb_markers,
+        final_nb_samples=final_nb_samples,
+        final_prefix=kwargs["final_prefix"],
         step_methods=str(methods_file),
         step_results=str(results_file),
     )

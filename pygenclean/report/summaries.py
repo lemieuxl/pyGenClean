@@ -769,7 +769,7 @@ class FlagHwSummary(Summary):
     methods = (
         "Flags markers with Hardy-Weinberg disequilibrium. The script tests "
         "for Hardy-Weinberg equilibrium for each marker (using an exact "
-        "test).  It adjusts for multiple testing using Bonferroni."
+        "test). It adjusts for multiple testing using Bonferroni."
     )
 
     results = """
@@ -793,7 +793,7 @@ For a total list of markers, check the files
 {%- endfor -%}, respectively.
 
 {% endif %}
-"""
+"""  # noqa: E501
 
     def get_results_information(self) -> Dict[str, Optional[Union[str, int]]]:
         """Get the summary information for the results."""
@@ -819,6 +819,37 @@ For a total list of markers, check the files
 
         return {
             "flagged_markers": flagged_markers,
+        }
+
+    def get_methods_information(self) -> Dict[str, Optional[Union[str, int]]]:
+        """Get the summary information for the methods."""
+        return {}
+
+
+class DuplicatedSamplesSummary(Summary):
+    """Duplicated samples summary."""
+    methods = (
+        "Extracts and merges duplicated samples. The script evaluates "
+        "concordance and completion rate. If the thresholds are met, the "
+        "script merges and completes the genotypes."
+    )
+
+    results = """
+### Duplicated samples
+
+A total of {{ "{:,d}".format(nb_dup_samples) }} duplicated
+sample{{ "s" if nb_dup_samples > 1 }}
+{{ "was" if nb_dup_samples == 1 else "were" }} found.
+"""
+
+    def get_results_information(self) -> Dict[str, Optional[Union[str, int]]]:
+        """Get the summary information for the results."""
+        # The duplicated samples
+        with open(self.args.duplicated_samples) as f:
+            dup_samples = {line.split()[0] for line in f}
+
+        return {
+            "nb_dup_samples": len(dup_samples),
         }
 
     def get_methods_information(self) -> Dict[str, Optional[Union[str, int]]]:
