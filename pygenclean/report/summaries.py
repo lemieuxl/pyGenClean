@@ -731,3 +731,34 @@ After _Plink_'s heterozygous haploid analysis, a total of
     def get_methods_information(self) -> Dict[str, Optional[Union[str, int]]]:
         """Get the summary information for the methods."""
         return {}
+
+
+class FlagMafSummary(Summary):
+    """Flag MAF summary."""
+    methods = (
+        "Flags markers with MAF of 0. The script flags markers with a minor "
+        "allele frequency of 0 (_i.e._ monomorphic markers)."
+    )
+
+    results = """
+### Flag MAF
+
+After computing minor allele frequencies (MAF) of all markers using _Plink_, a
+total of {{ "{:,d}".format(nb_flagged) }} marker{{ "s" if nb_flagged > 1 }} had
+a MAF of zero and were flagged (see file `flag_maf_0.list` for more
+information).
+"""
+
+    def get_results_information(self) -> Dict[str, Optional[Union[str, int]]]:
+        """Get the summary information for the results."""
+        # the number of flagged markers
+        with open(self.args.out + ".list") as f:
+            nb_flagged = len(f.read().splitlines())
+
+        return {
+            "nb_flagged": nb_flagged,
+        }
+
+    def get_methods_information(self) -> Dict[str, Optional[Union[str, int]]]:
+        """Get the summary information for the methods."""
+        return {}

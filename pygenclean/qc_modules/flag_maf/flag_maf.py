@@ -7,6 +7,7 @@ from os import path
 from typing import Dict, List, Optional, Set
 
 from ...error import ProgramError
+from ...report.summaries import FlagMafSummary
 from ...utils import plink as plink_utils
 from ...utils import timer
 from ...version import pygenclean_version as __version__
@@ -52,10 +53,20 @@ def main(args: Optional[argparse.Namespace] = None,
     logger.info("  - list in '%s'", args.out + ".list")
     find_maf_0(args.out + ".frq", args.out)
 
+    summary = FlagMafSummary(args)
+
+    # Generating the results
+    with open(args.out + ".summary.qmd", "w") as f:
+        print(summary.generate_results(), file=f)
+
     # Returns a dictionary of usable files (for next step, if any)
     return {
-        "usable_bfile": args.bfile,
-        "flagged": args.out + ".list",
+        "methods": summary.generate_methods(),
+        "results": args.out + ".summary.qmd",
+        "usable_files": {
+            "bfile": args.bfile,
+            "flagged": args.out + ".list",
+        },
     }
 
 
