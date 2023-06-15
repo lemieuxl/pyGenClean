@@ -108,7 +108,7 @@ def main(args: Optional[argparse.Namespace] = None,
         logger.info("Generating the intensity plot")
         intensity_plot.main(argv=[
             "--bfile", args.bfile,
-            "--intensities", args.intensities,
+            "--sex-intensities", args.sex_intensities,
             "--sex-mismatches", args.out + ".list_problem_sex",
             "--out", args.out,
         ] + args.intensity_plot_extra_args)
@@ -120,7 +120,7 @@ def main(args: Optional[argparse.Namespace] = None,
             os.mkdir(dirname)
 
         baf_lrr_plot.main(argv=[
-            "--intensity-dir", args.intensity_dir,
+            "--per-sample-baf-lrr-dir", args.per_sample_baf_lrr_dir,
             "--problematic-samples", args.out + ".list_problem_sex_ids",
             "--out", path.join(dirname, "sample"),
         ] + args.baf_lrr_extra_args)
@@ -312,7 +312,7 @@ def check_args(args: argparse.Namespace) -> None:
 
     # Intensity plot
     if args.intensity_plot:
-        if args.intensities is None:
+        if args.sex_intensities is None:
             raise ProgramError(
                 "Asking for intensity plot, but no '--intensities' provided"
             )
@@ -323,7 +323,7 @@ def check_args(args: argparse.Namespace) -> None:
 
     # BAF and LRR plot
     if args.baf_lrr:
-        if args.intensity_dir is None:
+        if args.per_sample_baf_lrr_dir is None:
             raise ProgramError(
                 "Asking for BAF & LRR plot, but no '--intensity-dir' provided"
             )
@@ -384,9 +384,10 @@ def add_args(parser: argparse.ArgumentParser) -> None:
              "samples.",
     )
     group.add_argument(
-        "--intensities", type=str, metavar="FILE",
-        help="A file containing alleles intensities for each of the markers "
-             "located on the X and Y chromosome for the gender plot.",
+        "--sex-intensities", type=str, metavar="FILE",
+        help="A file containing allele intensities for each of the markers "
+             "located on the X and Y chromosome for the gender plot. Note "
+             "that all samples need to be in this file.",
     )
     group.add_argument(
         "--intensity-plot-format", type=str, metavar="FORMAT",
@@ -406,9 +407,9 @@ def add_args(parser: argparse.ArgumentParser) -> None:
         help="Create the LRR and BAF plot for problematic samples",
     )
     group.add_argument(
-        "--intensity-dir", type=str, metavar="DIR",
-        help="Directory or list of directories containing information about "
-             "every samples (BAF and LRR).",
+        "--per-sample-baf-lrr-dir", type=str, metavar="DIR",
+        help="Directory containing BAF and LRR values for every samples (one "
+             "file per sample).",
     )
     group.add_argument(
         "--baf-lrr-format", type=str, metavar="FORMAT",

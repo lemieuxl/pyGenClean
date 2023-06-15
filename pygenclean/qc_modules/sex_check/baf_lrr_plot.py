@@ -55,7 +55,9 @@ def main(args: Optional[argparse.Namespace] = None,
 
     # Searching for the intensities
     logger.info("Searching for intensity files")
-    filenames = get_intensity_filenames(samples, args.intensity_dir, args)
+    filenames = get_intensity_filenames(
+        samples, args.per_sample_baf_lrr_dir, args,
+    )
 
     # Plotting the BAF and LRR values
     logger.info("Plotting LRR and BAF values")
@@ -225,8 +227,8 @@ def check_args(args: argparse.Namespace) -> None:
         raise ProgramError(f"{args.problematic_samples}: no such file")
 
     # Checking the raw directory
-    if not path.isdir(args.intensity_dir):
-        raise ProgramError(f"{args.intensity_dir}: no such directory")
+    if not path.isdir(args.per_sample_baf_lrr_dir):
+        raise ProgramError(f"{args.per_sample_baf_lrr_dir}: no such directory")
 
     # Checking the DPI value
     if args.dpi < 100:
@@ -273,7 +275,7 @@ def add_args(parser: argparse.ArgumentParser) -> None:
              "names. [%(default)s]",
     )
     group.add_argument(
-        "--intensity-dir", type=str, metavar="DIR", required=True,
+        "--per-sample-baf-lrr-dir", type=str, metavar="DIR", required=True,
         help="Directory containing information about every samples (BAF and "
              "LRR).",
     )

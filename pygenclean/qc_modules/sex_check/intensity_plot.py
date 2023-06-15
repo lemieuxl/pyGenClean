@@ -112,7 +112,7 @@ def main(args: Optional[argparse.Namespace] = None,
         # Reading the intensity file
         logger.info("Fetching intensities")
         data = read_intensities(
-            filename=args.intensities,
+            filename=args.sex_intensities,
             required_markers=xy_markers,
             sample_sex=sample_sex,
             mismatches=sex_mismatches,
@@ -360,7 +360,7 @@ def check_args(args: argparse.Namespace) -> None:
     """
     # Checking if there are input files
     if args.summarized_intensities is None:
-        if args.bfile is None or args.intensities is None:
+        if args.bfile is None or args.sex_intensities is None:
             raise ProgramError(
                 "need to specify either '--bfile' and '--intensities', or "
                 "'--summarized-intensities'"
@@ -371,11 +371,11 @@ def check_args(args: argparse.Namespace) -> None:
             raise ProgramError(f"{args.bfile}: no such binary files")
 
         # Checking the intensity file
-        if not path.isfile(args.intensities):
-            raise ProgramError(f"{args.intensities}: no such file")
+        if not path.isfile(args.sex_intensities):
+            raise ProgramError(f"{args.sex_intensities}: no such file")
 
     else:
-        if args.bfile is not None or args.intensities is not None:
+        if args.bfile is not None or args.sex_intensities is not None:
             raise ProgramError(
                 "need to specify either '--bfile' and '--intensities', or "
                 "'--summarized-intensities'"
@@ -416,7 +416,7 @@ def add_args(parser: argparse.ArgumentParser) -> None:
              "'--summarized-intensities' is not.",
     )
     group.add_argument(
-        "--intensities", type=str, metavar="FILE",
+        "--sex-intensities", type=str, metavar="FILE",
         help="A file containing alleles intensities for each of the markers "
              "located on the X and Y chromosome. Must be specified if "
              "'--summarized-intensities' is not.",
