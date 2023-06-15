@@ -77,6 +77,7 @@ def main(args: Optional[argparse.Namespace] = None,
     write_contaminated_samples(
         filename=args.out + ".bafRegress",
         out=args.out,
+        threshold=args.estimate_threshold,
     )
 
     summary = ContaminationSummary(args)
@@ -212,11 +213,12 @@ def run_bafregress(filenames: Set[str], out: str, extract: str, freq: str,
                 print(*content[1:], sep="\n", file=f)
 
 
-def write_contaminated_samples(filename: str, out: str) -> None:
+def write_contaminated_samples(filename: str, out: str,
+                               threshold: float) -> None:
     """Write contaminated samples to file."""
     # Reading the contaminated samples
     df = pd.read_csv(filename, sep="\t")
-    contaminated = df.loc[df.estimate > 0.01, "sample"]
+    contaminated = df.loc[df.estimate > threshold, "sample"]
 
     # Printing to file
     with open(out + ".contaminated_samples", "w") as f:
@@ -236,7 +238,11 @@ def check_args(args: argparse.Namespace) -> None:
 
     # Checking that the raw directory exists
     if not path.isdir(args.raw_dir):
-        raise ProgramError("{args.raw_dir}: no such directory")
+        raise ProgramError(f"{args.raw_dir}: no such directory")
+
+    # Checking the estimate is between 0 and 1
+    if not 0 <= args.estimate_threshold <= 1:
+        raise ProgramError(f"{args.estimate_threshold}: not between 0 and 1")
 
 
 def parse_args(argv: Optional[list[str]] = None) -> argparse.Namespace:
@@ -295,6 +301,11 @@ def add_args(parser: argparse.ArgumentParser) -> None:
 
     # The options
     group = parser.add_argument_group("Options")
+    group.add_argument(
+        "--estimate-threshold", type=float, metavar="FLOAT", default=0.01,
+        help="The estimate threshold for which a sample is considered "
+             "contaminated. [>%(default).2f]",
+    )
     group.add_argument(
         "--nb-cpu", type=int, metavar="NB", default=1,
         help="The number of CPU to use. [default: %(default)s]",

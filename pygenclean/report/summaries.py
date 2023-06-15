@@ -517,17 +517,17 @@ A total of {{ "{:,d}".format(nb_samples) }} sample{{ "s" if nb_samples > 1 }}
 {{ "were" if nb_samples > 1 else "was" }} analyzed for contamination using
 _bafRegress_. The analysis was performed using
 {{ "{:,d}".format(nb_autosomal) }} autosomal
-marker{{ "s" if nb_autosomal > 1 }}. Using a threshold of 0.01,
+marker{{ "s" if nb_autosomal > 1 }}. Using a threshold of {{ threshold }},
 {{ "{:,d}".format(nb_contaminated) }} sample{{ "s" if nb_contaminated > 1 }}
 {{ "were" if nb_contaminated > 1 else "was" }} estimated to be contaminated.
 {%- if nb_contaminated > 1 %}
 @tbl-{{ label_prefix }}-results lists all the samples that were estimated to be
-contaminated (_i.e._ with an estimate $>0.01$)
+contaminated (_i.e._ with an estimate $>{{ threshold }}$)
 
 {{ table }}
 
 : List of all possible contaminated samples (_i.e._ with an estimate computed
-by _bafRegress_ $>0.01$). {{ "{#" }}tbl-{{ label_prefix }}-results}
+by _bafRegress_ $>{{ threshold }}$). {{ "{#" }}tbl-{{ label_prefix }}-results}
 {% endif -%}
 """
 
@@ -541,13 +541,14 @@ by _bafRegress_ $>0.01$). {{ "{#" }}tbl-{{ label_prefix }}-results}
 
         # Reading the output, and finding the contaminated samples
         df = pd.read_csv(self.args.out + ".bafRegress", sep="\t")
-        contaminated = df.estimate > 0.01
+        contaminated = df.estimate > self.args.estimate_threshold
         nb_contaminated = np.count_nonzero(contaminated)
 
         return {
             "nb_samples": df.shape[0],
             "nb_autosomal": nb_autosomal,
             "nb_contaminated": nb_contaminated,
+            "threshold": self.args.estimate_threshold,
             "table": df.loc[contaminated, :].to_markdown(index=False),
             "label_prefix": LABEL_RE.sub("-", self.args.out),
         }
