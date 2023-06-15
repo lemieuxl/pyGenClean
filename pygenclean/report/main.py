@@ -11,9 +11,9 @@ from ..version import pygenclean_version
 
 TEMPLATE = Environment(loader=BaseLoader).from_string("""\
 ---
-title: {{ title }}
-subtitle: {{ subtitle }}
-author: {{ authors }}
+title: "{{ title }}"
+subtitle: "{{ subtitle }}"
+author: "{{ authors }}"
 date: today
 date-format: long
 format:
