@@ -292,6 +292,7 @@ def main(args: Optional[argparse.Namespace] = None,
         "results": args.out + ".summary.qmd",
         "usable_files": {
             "bfile": args.bfile,
+            "outliers": args.out + ".outliers",
         }
     }
 
