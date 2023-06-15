@@ -183,8 +183,6 @@ def read_configuration(fn: str) -> None:
     with open(fn, "rb") as f:
         conf = tomllib.load(f)
 
-    # Verifying the configuration
-    # TODO: make sure that minimal step is 1 and unique sequential numbers
     return conf
 
 
