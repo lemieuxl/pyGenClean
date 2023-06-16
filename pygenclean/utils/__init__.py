@@ -13,7 +13,7 @@ from ..error import ProgramError
 
 __all__ = ["decode_chrom", "decode_sex", "is_gzip", "get_open_func",
            "split_extra_args", "timer", "flip_alleles", "compatible_alleles",
-           "check_allele_status"]
+           "check_allele_status", "count_lines"]
 
 
 def decode_chrom(chrom: str) -> int:
@@ -214,3 +214,10 @@ def check_allele_status(alleles_1: Set[str],
                     status = "problem"
 
     return status
+
+
+def count_lines(filename: str) -> int:
+    """Count the number of lines in a file."""
+    with open(filename) as f:
+        count = sum(1 for _ in f)
+    return count
