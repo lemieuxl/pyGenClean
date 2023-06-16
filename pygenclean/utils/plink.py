@@ -14,8 +14,8 @@ from .task import execute_external_command
 
 __all__ = ["check_files", "get_markers_on_chrom", "get_sample_sexes",
            "parse_bim", "parse_fam", "split_line", "subset", "compare_bim",
-           "compute_freq", "rename_markers", "merge_files", "flip_markers",
-           "check_unique_iid", "get_acgt_geno_map"]
+           "compare_fam", "compute_freq", "rename_markers", "merge_files",
+           "flip_markers", "check_unique_iid", "get_acgt_geno_map"]
 
 
 logger = logging.getLogger(__name__)
@@ -288,6 +288,35 @@ def compare_bim(bim_a: str, bim_b: str) -> Tuple[Set[str], Set[str], Set[str]]:
         markers_a - in_both,
         in_both,
         markers_b - in_both,
+    )
+
+
+def compare_fam(fam_a: str, fam_b: str) -> Tuple[Set[Tuple[str, str]],
+                                                 Set[Tuple[str, str]],
+                                                 Set[Tuple[str, str]]]:
+    """Compares two FAM file.
+
+    Args:
+        fam_a (str): the first FAM file.
+        fam_b (str): the second FAM file.
+
+    Returns:
+        tuple: A tuple of three sets. The first one contains the samples only
+        in A. The second one contains the samples in both. The third one
+        contains the samples only in B.
+
+    """
+    # Getting the set of samples in the two FAM files
+    samples_a = {(row.fid, row.iid) for row in parse_fam(fam_a)}
+    samples_b = {(row.fid, row.iid) for row in parse_fam(fam_b)}
+
+    # Samples in both FAM files
+    in_both = samples_a & samples_b
+
+    return (
+        samples_a - in_both,
+        in_both,
+        samples_b - in_both,
     )
 
 
