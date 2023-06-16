@@ -280,8 +280,6 @@ def _generate_dot_nodes(
             f'style="filled" fontcolor="white" shape="note" color="white"];'
         )
 
-    # Some REGEX
-
     for step in all_steps:
         if step == "0":
             continue
@@ -296,14 +294,25 @@ def _generate_dot_nodes(
             step_stats=step_stats.get(step),
         )
 
+        # The node style
+        node_style = _create_node_style(step_stats.get(step))
+
         # The node color (light gray when impact on markers)
         color = _create_node_color(qc_module, node_label)
 
         nodes.append(
-            f'{step} [label="{node_label}"{color}];'
+            f'{step} [label="{node_label}"{color}{node_style}];'
         )
 
     return nodes
+
+
+def _create_node_style(stats: Optional[Dict[str, int]]) -> str:
+    """Create the node style."""
+    if stats:
+        if sum(stats.values()) > 0:
+            return ""
+    return ' style="rounded"'
 
 
 _SUBSET_MARKER_RE = re.compile(r"\\n-[0-9,]+ markers$")
@@ -340,7 +349,7 @@ def _create_node_label(step: str, step_conf: dict,
 
     # Step diff (markers or samples)
     step_diff = []
-    for item_type in ("samples", "markers"):
+    for item_type in ("markers", "samples"):
         if step_stats:
             nb_item = step_stats["nb_" + item_type]
             if nb_item:
