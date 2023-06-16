@@ -17,6 +17,8 @@ SCRIPT_NAME = "sample-call-rate"
 DESCRIPTION = "Remove samples with poor call rate."
 DEFAULT_OUT = "clean_mind"
 
+_DEFAULT_MIND = 0.1
+
 
 logger = logging.getLogger(__name__)
 
@@ -130,7 +132,7 @@ def add_args(parser: argparse.ArgumentParser) -> None:
     # The options
     group = parser.add_argument_group("Options")
     group.add_argument(
-        "--mind", type=float, metavar="FLOAT", default=0.1,
+        "--mind", type=float, metavar="FLOAT", default=_DEFAULT_MIND,
         help="The call rate threshold (remove samples with more than x "
              "percent missing genotypes). [Default: %(default)s]",
     )

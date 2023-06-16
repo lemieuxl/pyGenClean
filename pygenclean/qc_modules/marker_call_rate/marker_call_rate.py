@@ -17,6 +17,8 @@ SCRIPT_NAME = "marker-call-rate"
 DESCRIPTION = "Remove markers with poor call rate."
 DEFAULT_OUT = "clean_geno"
 
+_DEFAULT_GENO = 0.02
+
 
 logger = logging.getLogger(__name__)
 
@@ -163,7 +165,7 @@ def add_args(parser: argparse.ArgumentParser) -> None:
     # The options
     group = parser.add_argument_group("Options")
     group.add_argument(
-        "--geno", type=float, metavar="FLOAT", default=0.02,
+        "--geno", type=float, metavar="FLOAT", default=_DEFAULT_GENO,
         help="The missingness threshold (remove SNPs with more than x percent "
              "missing genotypes). [Default: %(default)s]",
     )
