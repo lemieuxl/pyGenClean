@@ -173,6 +173,7 @@ def main(args: Optional[argparse.Namespace] = None,
         }
 
     # Generating the report
+    logger.info("Generating the report")
     with open(args.report, "w") as f:
         print(
             generate_report(
