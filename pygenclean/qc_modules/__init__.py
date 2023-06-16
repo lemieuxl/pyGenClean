@@ -16,6 +16,7 @@ from .sex_check import (baf_lrr_plot, intensity_plot, intensity_viewer,
 from .subset import subset
 
 
+# The mapping from name to module
 qc_modules = {
     "plate_bias": plate_bias,
     "related_samples": related_samples,
@@ -32,6 +33,24 @@ qc_modules = {
 }
 
 
+# The impact of each of the modules (on either samples, markers or both)
+qc_module_impact = {
+    "plate_bias": "markers",
+    "related_samples": "samples",
+    "sex_check": "samples",
+    "flag_maf": "markers",
+    "sample_call_rate": "samples",
+    "marker_call_rate": "markers",
+    "flag_hw": "markers",
+    "hetero_hap": "both",
+    "nocall_hetero": "markers",
+    "ethnicity": "samples",
+    "subset": "both",
+    "contamination": "samples",
+}
+
+
+# The mapping from name to module for submodules
 qc_sub_modules = {
     "sex_check": {
         "intensity_plot": intensity_plot,
