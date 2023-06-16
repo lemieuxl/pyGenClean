@@ -11,6 +11,7 @@ import pandas as pd
 
 from ...error import ProgramError
 from ...report.summaries import RelatedSamplesSummary
+from ...utils import count_lines
 from ...utils import plink as plink_utils
 from ...utils import task, timer
 from ...version import pygenclean_version as __version__
@@ -63,8 +64,7 @@ def main(args: Optional[argparse.Namespace] = None,
     )
 
     # Counting the number of markers
-    with open(markers_to_extract) as f:
-        nb_markers = len(f.read().splitlines())
+    nb_markers = count_lines(markers_to_extract)
 
     if nb_markers < args.min_nb_snp:
         logger.warning("Only %d markers on autosome, stopping", nb_markers)
