@@ -12,3 +12,5 @@ pyGenClean.egg-info
 _build
 
 test
+
+/.luarc.json
