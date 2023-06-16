@@ -19,6 +19,7 @@ from ..report.main import generate_report
 from ..utils import plink as plink_utils
 from ..utils import timer
 from ..version import pygenclean_version as __version__
+from .tree import QCNode, Tree
 
 
 DESCRIPTION = "The main pyGenClean pipeline."
@@ -56,13 +57,26 @@ def main(args: Optional[argparse.Namespace] = None,
     step_methods = []
     step_results = []
 
-    # Executing the pipeline
+    # The usable files
     usable_files = {
-        0: {
+        "0": {
             "bfile": args.bfile,
         },
     }
-    previous_step = 0
+    previous_step = "0"
+
+    # The tree for the pipeline (with the initial data as a node). This tree
+    # shows where the bfile comes from for each qc module
+    tree = Tree()
+    tree.add_node(QCNode("0"))
+
+    # A dictionary containing information from where a bfile comes
+    step_of_bfile = {args.bfile: "0"}
+
+    # The final datasets
+    final_datasets = {}
+
+    # Executing the pipeline
     for step, step_info in sorted(conf["steps"].items(),
                                   key=lambda x: int(x[0])):
         # The "pretty" name
@@ -77,6 +91,9 @@ def main(args: Optional[argparse.Namespace] = None,
 
         # The QC module
         qc_module = qc_modules[qc_module_name]
+
+        # The current qc node
+        qc_node = QCNode(step)
 
         # The bfile and out file (bfile should always be first)
         argv = [
@@ -98,6 +115,10 @@ def main(args: Optional[argparse.Namespace] = None,
                         argv.append(
                             [f"--{key}", usable_files[from_step][value]]
                         )
+                        qc_node.add_data_from_node(from_step)
+
+        # Chaning the parent of the node
+        qc_node.change_parent(step_of_bfile[argv[0][1]])
 
         # Building the argument list from the configuration (excluding special
         # cases)
@@ -127,6 +148,29 @@ def main(args: Optional[argparse.Namespace] = None,
         # The previous step
         previous_step = step
 
+        # Checking if this qc module provides a new bfile
+        if qc_module_out["usable_files"]["bfile"] != argv[0][1]:
+            # This is a new bfile
+            step_of_bfile[qc_module_out["usable_files"]["bfile"]] = step
+
+        # Updating the tree
+        tree.add_node(qc_node)
+
+        # Is this a final dataset
+        if "final-dataset" in step_info:
+            final_datasets[step] = {
+                "bfile": qc_module_out["usable_files"]["bfile"],
+                "desc": step_info["final-dataset"],
+            }
+
+    # If no 'final-dataset' keyword, we save the last one we see...
+    final_step = step_of_bfile[usable_files[previous_step]["bfile"]]
+    if final_step not in final_datasets:
+        final_datasets[final_step] = {
+            "bfile": usable_files[final_step]["bfile"],
+            "desc": None,
+        }
+
     # Generating the report
     with open(args.report, "w") as f:
         print(
@@ -135,6 +179,9 @@ def main(args: Optional[argparse.Namespace] = None,
                 step_methods=step_methods,
                 step_results=step_results,
                 final_prefix=usable_files[previous_step]["bfile"],
+                qc_conf=conf,
+                qc_tree=tree,
+                final_datasets=final_datasets,
                 **vars(args),
             ),
             file=f,
@@ -144,7 +191,7 @@ def main(args: Optional[argparse.Namespace] = None,
 def generate_options(step_info: Dict[str, Any]):
     """Generate the options for ARGV."""
     for key, value in step_info.items():
-        if key in ("module", "from_step"):
+        if key in ("module", "from_step", "final-dataset"):
             continue
         if isinstance(value, bool) and value:
             yield [f"--{key}"]
