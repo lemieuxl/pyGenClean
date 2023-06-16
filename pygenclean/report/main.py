@@ -4,11 +4,15 @@
 import math
 import re
 from pathlib import Path
-from typing import Dict, List, Optional, Union
+from typing import IO, Dict, List, Optional, Union
 
 from jinja2 import BaseLoader, Environment
 
-from ..pipeline.tree import Tree
+from ..pipeline.tree import QCNode, Tree
+from ..qc_modules.marker_call_rate.marker_call_rate import _DEFAULT_GENO
+from ..qc_modules.sample_call_rate.sample_call_rate import _DEFAULT_MIND
+from ..utils import count_lines
+from ..utils.plink import compare_bim, compare_fam
 from ..version import pygenclean_version
 
 
@@ -70,6 +74,7 @@ digraph pipeline {
 }
 ```
 
+{#
 After the genetic data clean up procedure, a total of
 {{ "{:,d}".format(final_nb_samples) }} samples and
 {{ "{:,d}".format(final_nb_markers) }} markers remained. The following files
@@ -78,21 +83,26 @@ are available for downstream analysis.
 - `{{ final_prefix }}.bed`
 - `{{ final_prefix }}.bim`
 - `{{ final_prefix }}.fam`
+#}
 """)
 
 
 def generate_report(**kwargs: Dict[str, Optional[Union[str, int]]]) -> str:
     """Generate the report."""
-    # The QC directoru
+    # The QC directory
     qc_dir = Path(kwargs["qc_dir"])
 
-    # The number of markers
-    with open(kwargs["bfile"] + ".bim") as f:
-        nb_markers = len(f.read().splitlines())
+    # We want to compute the n's for each of the dataset
+    step_stats = _compute_step_stats(
+        qc_conf=kwargs["qc_conf"],
+        qc_dir=qc_dir,
+        tree=kwargs["qc_tree"],
+        datasets=kwargs["final_datasets"],
+    )
 
-    # The number of samples
-    with open(kwargs["bfile"] + ".fam") as f:
-        nb_samples = len(f.read().splitlines())
+    # The number of markers and samples of the initial files
+    nb_markers = count_lines(kwargs["bfile"] + ".bim")
+    nb_samples = count_lines(kwargs["bfile"] + ".fam")
 
     # Writing the file containing the methods for each step
     methods_file = qc_dir / "methods.qmd"
@@ -107,12 +117,6 @@ def generate_report(**kwargs: Dict[str, Optional[Union[str, int]]]) -> str:
         for file_name in kwargs["step_results"]:
             print("{{< include " + str(file_name) + " >}}\n", file=f)
 
-    # Getting the number of samples and markers from the final file
-    with open(kwargs["final_prefix"] + ".bim") as f:
-        final_nb_markers = len(f.read().splitlines())
-    with open(kwargs["final_prefix"] + ".fam") as f:
-        final_nb_samples = len(f.read().splitlines())
-
     return TEMPLATE.render(
         docx_template=kwargs["report_template"],
         title=kwargs["report_title"],
@@ -122,9 +126,6 @@ def generate_report(**kwargs: Dict[str, Optional[Union[str, int]]]) -> str:
         bfile=kwargs["bfile"],
         nb_markers=nb_markers,
         nb_samples=nb_samples,
-        final_nb_markers=final_nb_markers,
-        final_nb_samples=final_nb_samples,
-        final_prefix=kwargs["final_prefix"],
         step_methods=str(methods_file),
         step_results=str(results_file),
         dot_nodes=_generate_dot_nodes(
@@ -133,6 +134,9 @@ def generate_report(**kwargs: Dict[str, Optional[Union[str, int]]]) -> str:
                 "nb_samples": nb_samples,
             },
             final_datasets=kwargs["final_datasets"],
+            all_steps=kwargs["qc_tree"].get_nodes(),
+            step_stats=step_stats,
+            step_conf=kwargs["qc_conf"]["steps"],
         ),
         dot_edges=_generate_dot_edges(
             tree=kwargs["qc_tree"],
@@ -141,9 +145,113 @@ def generate_report(**kwargs: Dict[str, Optional[Union[str, int]]]) -> str:
     )
 
 
+def _compute_step_stats(
+        qc_dir: Path,
+        qc_conf: dict,
+        tree: Tree,
+        datasets: Dict[str, Dict[str, str]],
+) -> Dict[str, Dict[str, int]]:
+    """Compute datasets statistics"""
+    step_stats = {}
+
+    for dataset in datasets.keys():
+        # The two files (excluded markers and samples)
+        excluded_markers = qc_dir / f"excluded_markers_step_{dataset}.txt"
+        excluded_samples = qc_dir / f"excluded_samples_step_{dataset}.txt"
+
+        with open(excluded_markers, "w") as f_excluded_markers,\
+             open(excluded_samples, "w") as f_excluded_samples:
+            previous_step = None
+            for step in reversed(tree.get_from_node_to_root(dataset)):
+                if not previous_step:
+                    previous_step = step
+                    continue
+
+                # Comparing previous (newest) with current step
+                # Comparing FAM
+                nb_samples = _write_sample_exclusions(
+                    step=step,
+                    previous_step=previous_step,
+                    step_conf=qc_conf["steps"][step.name],
+                    f=f_excluded_samples,
+                )
+
+                # Comparing BIM
+                nb_markers = _write_marker_exclusions(
+                    step=step,
+                    previous_step=previous_step,
+                    step_conf=qc_conf["steps"][step.name],
+                    f=f_excluded_markers,
+                )
+
+                if step.name in step_stats:
+                    assert step_stats[step.name]["nb_samples"] == nb_samples
+                    assert step_stats[step.name]["nb_markers"] == nb_markers
+                else:
+                    step_stats[step.name] = {
+                        "nb_samples": nb_samples,
+                        "nb_markers": nb_markers,
+                    }
+
+                # Next step
+                previous_step = step
+
+    return step_stats
+
+
+def _write_marker_exclusions(step: QCNode, previous_step: QCNode,
+                             step_conf: str, f: IO) -> int:
+    """Write the marker exclusion to file."""
+    before_only, _, _ = compare_bim(
+        previous_step.bfile + ".bim", step.bfile + ".bim",
+    )
+    if before_only:
+        # Some markers were excluded
+        exclusion_info = _get_exclusion_info(
+            step=step.name,
+            qc_module=step_conf["module"],
+            reason=step_conf.get("reason"),
+        )
+        for marker in sorted(before_only):
+            print(marker, exclusion_info, sep="\t", file=f)
+
+    return len(before_only)
+
+
+def _write_sample_exclusions(step: QCNode, previous_step: QCNode,
+                             step_conf: str, f: IO) -> int:
+    """Write the sample exclusion to file."""
+    before_only, _, _ = compare_fam(
+        previous_step.bfile + ".fam", step.bfile + ".fam",
+    )
+    if before_only:
+        # Some samples were excluded
+        exclusion_info = _get_exclusion_info(
+            step=step.name,
+            qc_module=step_conf["module"],
+            reason=step_conf.get("reason"),
+        )
+        for fid, iid in sorted(before_only):
+            print(fid, iid, exclusion_info, sep="\t", file=f)
+
+    return len(before_only)
+
+
+def _get_exclusion_info(step: str, qc_module: str,
+                        reason: Optional[str]) -> str:
+    """Get the exclusion information."""
+    exclusion_info = f"{step} {qc_module.replace('-', '_')}"
+    if reason:
+        exclusion_info += f" ({reason})"
+    return exclusion_info
+
+
 def _generate_dot_nodes(
     initial_dataset: Dict[str, int],
     final_datasets: Dict[str, Dict[str, str]],
+    all_steps: List[str],
+    step_stats: Dict[str, Dict[str, int]],
+    step_conf: dict,
 ) -> List[str]:
     """Generate the DOT nodes."""
     nodes = []
@@ -158,23 +266,67 @@ def _generate_dot_nodes(
     # Final datasets
     for i, (_, dataset_info) in enumerate(sorted(final_datasets.items(),
                                                  key=lambda x: int(x[0]))):
-        # The number of samples
-        with open(dataset_info["bfile"] + ".fam") as f:
-            nb_samples = len(f.read().splitlines())
+        # The description of the dataset
+        description = dataset_info["desc"]
 
-        # The number of markers
-        with open(dataset_info["bfile"] + ".bim") as f:
-            nb_markers = len(f.read().splitlines())
+        # The number of samples and markers
+        nb_samples = count_lines(dataset_info["bfile"] + ".fam")
+        nb_markers = count_lines(dataset_info["bfile"] + ".bim")
 
-        # The node
-        node = (
-            f'FINAL{i + 1} [label="{nb_samples:,d} samples\\n{nb_markers:,d} '
-            f'markers" fillcolor="black" style="filled" fontcolor="white" '
-            f'shape="note" color="white"];'
+        nodes.append(
+            f'FINAL{i + 1} [label="{description}\\n{nb_samples:,d} '
+            f'samples\\n{nb_markers:,d} markers" fillcolor="black" '
+            f'style="filled" fontcolor="white" shape="note" color="white"];'
         )
-        nodes.append(node)
+
+    for step in all_steps:
+        if step == "0":
+            continue
+
+        # The node label
+        node_label = _create_node_label(
+            step=step,
+            step_conf=step_conf[step],
+            step_stats=step_stats.get(step),
+        )
+
+        nodes.append(
+            f'{step} [label="{node_label}"];'
+        )
 
     return nodes
+
+
+def _create_node_label(step: str, step_conf: dict,
+                       step_stats: Optional[Dict[str, int]]) -> str:
+    """create the node label."""
+    # The QC module
+    qc_module = step_conf["module"].replace("-", "_")
+
+    # Reason if any
+    reason = step_conf.get("reason", "")
+    if reason:
+        reason = r"\n" + reason
+
+    # Parameters if marker_call_rate sample_call_rate
+    parameter = ""
+    if qc_module == "marker_call_rate":
+        parameter = "\ngeno=" + str(step_conf.get("geno", _DEFAULT_GENO))
+    elif qc_module == "sample_call_rate":
+        parameter = "\nmind=" + str(step_conf.get("mind", _DEFAULT_MIND))
+
+    # Step diff (markers or samples)
+    step_diff = []
+    for item_type in ("samples", "markers"):
+        if step_stats:
+            nb_item = step_stats["nb_" + item_type]
+            if nb_item:
+                step_diff.append(f"-{nb_item:,d} {item_type}")
+    step_diff = ", ".join(step_diff)
+    if step_diff:
+        step_diff = r"\n" + step_diff
+
+    return f"{step}. {qc_module}{reason}{parameter}{step_diff}"
 
 
 def _generate_dot_edges(tree: Tree, final_datasets: List) -> List[str]:

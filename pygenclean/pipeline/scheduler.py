@@ -68,7 +68,7 @@ def main(args: Optional[argparse.Namespace] = None,
     # The tree for the pipeline (with the initial data as a node). This tree
     # shows where the bfile comes from for each qc module
     tree = Tree()
-    tree.add_node(QCNode("0"))
+    tree.add_node(QCNode("0", bfile=args.bfile))
 
     # A dictionary containing information from where a bfile comes
     step_of_bfile = {args.bfile: "0"}
@@ -152,6 +152,7 @@ def main(args: Optional[argparse.Namespace] = None,
         if qc_module_out["usable_files"]["bfile"] != argv[0][1]:
             # This is a new bfile
             step_of_bfile[qc_module_out["usable_files"]["bfile"]] = step
+            qc_node.set_bfile(qc_module_out["usable_files"]["bfile"])
 
         # Updating the tree
         tree.add_node(qc_node)
@@ -178,7 +179,6 @@ def main(args: Optional[argparse.Namespace] = None,
                 qc_modules=step_qc_modules,
                 step_methods=step_methods,
                 step_results=step_results,
-                final_prefix=usable_files[previous_step]["bfile"],
                 qc_conf=conf,
                 qc_tree=tree,
                 final_datasets=final_datasets,
@@ -223,7 +223,7 @@ def create_qc_dir(qc_dir: Optional[str]) -> Path:
     return qc_dir
 
 
-def read_configuration(fn: str) -> None:
+def read_configuration(fn: str) -> dict:
     """Reads the configuration file."""
     # Reading the configuration
     conf = None

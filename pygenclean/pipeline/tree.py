@@ -3,11 +3,12 @@
 
 class QCNode:
     """A node from the tree."""
-    def __init__(self, name: str, parent: str = None):
+    def __init__(self, name: str, parent: str = None, bfile: str = None):
         self.name = name
         self.parent = parent
         self.children = []
         self.data_from = set()
+        self.bfile = bfile
 
     def __repr__(self) -> str:
         """String representation"""
@@ -27,6 +28,10 @@ class QCNode:
     def add_data_from_node(self, node: str):
         """This current node get data from another one (except bfile)."""
         self.data_from.add(node)
+
+    def set_bfile(self, bfile: str):
+        """Set the bfile value (if any)"""
+        self.bfile = bfile
 
 
 class Tree:
