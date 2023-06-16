@@ -9,6 +9,7 @@ from typing import IO, Dict, List, Optional, Union
 from jinja2 import BaseLoader, Environment
 
 from ..pipeline.tree import QCNode, Tree
+from ..qc_modules import qc_module_impact
 from ..qc_modules.marker_call_rate.marker_call_rate import _DEFAULT_GENO
 from ..qc_modules.sample_call_rate.sample_call_rate import _DEFAULT_MIND
 from ..utils import count_lines
@@ -279,9 +280,14 @@ def _generate_dot_nodes(
             f'style="filled" fontcolor="white" shape="note" color="white"];'
         )
 
+    # Some REGEX
+
     for step in all_steps:
         if step == "0":
             continue
+
+        # The name of the QC module
+        qc_module = step_conf[step]["module"].replace("-", "_")
 
         # The node label
         node_label = _create_node_label(
@@ -290,11 +296,28 @@ def _generate_dot_nodes(
             step_stats=step_stats.get(step),
         )
 
+        # The node color (light gray when impact on markers)
+        color = _create_node_color(qc_module, node_label)
+
         nodes.append(
-            f'{step} [label="{node_label}"];'
+            f'{step} [label="{node_label}"{color}];'
         )
 
     return nodes
+
+
+_SUBSET_MARKER_RE = re.compile(r"\\n-[0-9,]+ markers$")
+
+
+def _create_node_color(qc_module: str, label: str) -> str:
+    """Create the node color."""
+    if (
+        (qc_module_impact[qc_module] == "markers")
+        or (qc_module == "subset" and _SUBSET_MARKER_RE.search(label))
+    ):
+        return ' fillcolor="lightgray" style="filled"'
+
+    return ""
 
 
 def _create_node_label(step: str, step_conf: dict,
