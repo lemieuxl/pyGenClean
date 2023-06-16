@@ -10,7 +10,7 @@ from typing import Dict, Optional, Union
 import jinja2
 import numpy as np
 import pandas as pd
-from jinja2 import BaseLoader, Environment
+from jinja2 import BaseLoader, Environment, PackageLoader
 
 from ..utils import count_lines
 from ..utils.plink import compare_bim, compare_fam
@@ -20,10 +20,13 @@ from .utils import format_numbers
 LABEL_RE = re.compile(r"[\/]")
 
 
+_TEMPLATES = Environment(loader=PackageLoader(__name__))
+
+
 class Summary():
     """Summary core object."""
     methods = ""
-    results = ""
+    result_section_name = ""
 
     """The summary core function."""
     def __init__(self, args: argparse.Namespace) -> None:
@@ -31,7 +34,7 @@ class Summary():
 
     def get_results_template(self) -> jinja2.environment.Template:
         """Generate the Jinja2 template for the results."""
-        return Environment(loader=BaseLoader).from_string(self.results)
+        return _TEMPLATES.get_template(self.__class__.__name__ + ".md")
 
     def get_methods_template(self) -> jinja2.environment.Template:
         """Generate the Jinja2 template for the methods."""
@@ -47,13 +50,22 @@ class Summary():
 
     def generate_results(self) -> str:
         """Generate the summary (results)."""
-        template = self.get_results_template()
-        return template.render(**self.get_results_information())
+        return self.get_results_template().render(
+            section_name=self.result_section_name,
+            **self.get_results_information(),
+        )
 
     def generate_methods(self) -> str:
         """Generate the methods summary."""
         template = self.get_methods_template()
         return template.render(**self.get_methods_information())
+
+    def write_results(self) -> str:
+        """Write the results."""
+        filename = self.args.out + ".summary.qmd"
+        with open(self.args.out + ".summary.qmd", "w") as f:
+            print(self.generate_results(), file=f)
+        return filename
 
 
 class SubsetSummary(Summary):
@@ -63,25 +75,7 @@ class SubsetSummary(Summary):
         "_Plink_."
     )
 
-    results = """
-### Subset{{ " (" + reason + ")" if reason }}
-
-{% if nb_markers %}
-The file for marker exclusion contained {{ "{:,d}".format(nb_markers) }}
-markers to {{ marker_excl_type }}. Out of a total of
-{{ "{:,d}".format(nb_markers_before) }} markers,
-{{ "{:,d}".format(nb_markers_after) }} remained
-({{ "{:,d}".format(nb_markers_before - nb_markers_after) }} excluded).
-{% endif %}
-
-{% if nb_samples %}
-The file for sample exclusion contained {{ "{:,d}".format(nb_samples) }}
-samples to {{ sample_excl_type }}. Out of a total of
-{{ "{:,d}".format(nb_samples_before) }} samples,
-{{ "{:,d}".format(nb_samples_after) }} remained
-({{ "{:,d}".format(nb_samples_before - nb_samples_after) }} excluded).
-{% endif %}
-"""
+    result_section_name = "Subset"
 
     def get_marker_info(self) -> Dict[str, Optional[int]]:
         """Get marker information."""
@@ -173,57 +167,7 @@ class SexCheckSummary(Summary):
         "for sex. Individuals with sex error are to be investigated."
     )
 
-    results = """
-### Sex check
-
-Using $F$ thresholds of {{ male_f }} and {{ female_f }} for males and females,
-respectively, {{ "{:,d}".format(nb_problems) }}
-sample{{ "s" if nb_problems > 1 }} had sex problems according to _Plink_.
-{%- if nb_problems > 1 %}
-@tbl-{{ label_prefix }}-results summarizes the sex problems encountered during
-the analysis.
-{%- endif -%}
-{%- if figure_intensities %}
-@fig-{{ label_prefix }}-intensities shows the $y$ intensities versus the $x$
-intensities for each samples. Problematic samples are shown using triangles.
-{%- endif -%}
-{%- if figure_baf_lrr|length > 0 -%}
-{%- if figure_baf_lrr|length == 1 %}
-@fig-{{ label_prefix }}-baf_lrr-{{ figure_baf_lrr[0][1] }} shows
-{%- else %}
-@fig-{{ label_prefix }}-baf_lrr-{{ figure_baf_lrr[0][1] }} to
-@fig-{{ label_prefix }}-baf_lrr-{{ figure_baf_lrr[-1][1] }} show
-{%- endif %}
-the log R ratio and the B allele frequency versus the position on chromosome X
-and Y for the problematic samples.
-{% endif %}
-
-{% if nb_problems > 1 %}
-{{ table }}
-
-: Summarization of the gender problems encountered during Plink's analysis. HET
-is the heterozygosity rate on the X chromosome. NOCALL is the percentage of no
-calls on the Y chromosome. {{ "{#" }}tbl-{{ label_prefix }}-results}
-
-{% if figure_intensities %}
-![
-    Gender check using Plink. Mean $x$ and $y$ intensities are shown for each
-    sample. Males are shown in blue, and females in red. Triangles show
-    problematic samples (green for males, mauve for females). Unknown gender
-    are shown in gray.
-]({{ figure_intensities }}){{ "{#" }}fig-{{ label_prefix }}-intensities}
-{% endif %}
-
-{% if figure_baf_lrr|length > 0 %}
-{% for figure_path, sample_id in figure_baf_lrr %}
-![
-    Plots showing the log R ratio and the B allele frequency for chromosome X
-    and Y (on the left and right, respectively) for sample {{ sample_id }}.
-]({{ figure_path }}){{ "{#" }}fig-{{ label_prefix }}-baf_lrr-{{ sample_id }}}
-{% endfor %}
-{% endif %}
-{% endif %}
-"""
+    result_section_name = "Sex check"
 
     def get_results_information(self) -> Dict[str, Optional[Union[str, int]]]:
         """Get the summary information for the results."""
@@ -282,16 +226,7 @@ class NoCallHeteroSummary(Summary):
         "heterozygous genotypes (excluding the mitochondrial chromosome)."
     )
 
-    results = """
-### No calls and heterozygous only markers
-
-After scrutiny, {{ "{:,d}".format(all_failed) }}
-marker{{ "s" if all_failed > 1 }} {{ "was" if all_failed == 1 else "were" }}
-excluded from the dataset because of a call rate of 0. Also,
-{{ "{:,d}".format(all_hetero) }} marker{{ "s" if all_hetero > 1 }}
-{{ "was" if all_hetero == 1 else "was" }} excluded from the dataset because all
-samples were heterozygous (excluding the mitochondrial chromosome).
-"""
+    result_section_name = "No calls and heterozygous only markers"
 
     def get_results_information(self) -> Dict[str, Optional[Union[str, int]]]:
         """Get the summary information for the results."""
@@ -319,14 +254,7 @@ class SampleCallRateSummary(Summary):
         "genotyping success rate $<{{ (1 - mind) * 100 }}\\%$."
     )
 
-    results = """
-### Sample call rate
-
-Using a `mind` threshold of {{ mind }} (_i.e._ keeping only samples with a
-missing rate $\\leq{{ mind }}$), {{ "{:,d}".format(nb_samples) }}
-sample{{ "s" if nb_samples > 1 }} {{ "was" if nb_samples == 1 else "were" }}
-excluded from the dataset.
-"""
+    result_section_name = "Sample call rate"
 
     def get_results_information(self) -> Dict[str, Optional[Union[str, int]]]:
         """Get the summary information for the results."""
@@ -355,14 +283,7 @@ class MarkerCallRateSummary(Summary):
         "$<{{ (1 - geno) * 100 }}\\%$."
     )
 
-    results = """
-### Marker call rate
-
-Using a `geno` threshold of {{ geno }} (_i.e._ keeping only markers with a
-missing rate $\\leq{{ geno }}$), {{ "{:,d}".format(nb_markers) }}
-marker{{ "s" if nb_markers > 1 }} {{ "was" if nb_markers == 1 else "were" }}
-excluded from the dataset.
-"""
+    result_section_name = "Marker call rate"
 
     def get_results_information(self) -> Dict[str, Optional[Union[str, int]]]:
         """Get the summary information for the results."""
@@ -393,52 +314,7 @@ class RelatedSamplesSummary(Summary):
         "uncorrelated markers ($r^2 < {{ r2_threshold }}$)."
     )
 
-    results = """
-### Related samples
-
-{% if not_enough -%}
-
-There were not enough markers to perform the analysis
-(_i.e._ {{ "{:,d}".format(nb_markers) }} markers is less than the required
-{{ "{:,d}".format(nb_markers_required) }} markers).
-
-{%- elif genome_only -%}
-
-The _genome_ file was created using Plink and {{ "{:,d}".format(nb_markers) }}
-markers.
-
-{%- else -%}
-
-According to _Plink_ relatedness analysis (using
-{{ "{:,d}".format(nb_markers) }} markers),
-{{ "{:,d}".format(nb_unique_samples) }} unique samples were related
-to at least one other sample. A total of {{ "{:,d}".format(nb_discarded) }}
-samples were randomly selected for downstream exclusion from the dataset.
-{% if figure_z1 -%}
-@fig-{{ label_prefix }}-z1 shows $Z_1$ versus $IBS2_{ratio}^\\ast$ for all
-related samples found by _Plink_.
-{% endif -%}
-{% if figure_z2 -%}
-@fig-{{ label_prefix }}-z2 shows $Z_2$ versus $IBS2_{ratio}^\\ast$ for all
-related samples found by _Plink_.
-{% endif %}
-
-{% if figure_z1 %}
-![
-    $Z_1$ versus $IBS2_{ratio}^\\ast$ for all related samples found by _Plink_
-    in the IBS analysis.
-]({{ figure_z1 }}){{ "{#" }}fig-{{ label_prefix }}-z1}
-{% endif %}
-
-{% if figure_z2 %}
-![
-    $Z_2$ versus $IBS2_{ratio}^\\ast$ for all related samples found by _Plink_
-    in the IBS analysis.
-]({{ figure_z2 }}){{ "{#" }}fig-{{ label_prefix }}-z2}
-{% endif %}
-
-{%- endif %}
-"""
+    result_section_name = "Related samples"
 
     def get_results_information(self) -> Dict[str, Optional[Union[str, int]]]:
         """Get the summary information for the results."""
@@ -506,26 +382,7 @@ class ContaminationSummary(Summary):
         "search for sample contamination using the `bafRegress.py` software."
     )
 
-    results = """
-### Contamination
-
-A total of {{ "{:,d}".format(nb_samples) }} sample{{ "s" if nb_samples > 1 }}
-{{ "were" if nb_samples > 1 else "was" }} analyzed for contamination using
-_bafRegress_. The analysis was performed using
-{{ "{:,d}".format(nb_autosomal) }} autosomal
-marker{{ "s" if nb_autosomal > 1 }}. Using a threshold of {{ threshold }},
-{{ "{:,d}".format(nb_contaminated) }} sample{{ "s" if nb_contaminated > 1 }}
-{{ "were" if nb_contaminated > 1 else "was" }} estimated to be contaminated.
-{%- if nb_contaminated > 1 %}
-@tbl-{{ label_prefix }}-results lists all the samples that were estimated to be
-contaminated (_i.e._ with an estimate $>{{ threshold }}$)
-
-{{ table }}
-
-: List of all possible contaminated samples (_i.e._ with an estimate computed
-by _bafRegress_ $>{{ threshold }}$). {{ "{#" }}tbl-{{ label_prefix }}-results}
-{% endif -%}
-"""
+    result_section_name = "Contamination"
 
     def get_results_information(self) -> Dict[str, Optional[Union[str, int]]]:
         """Get the summary information for the results."""
@@ -561,24 +418,7 @@ class PlateBiasSummary(Summary):
         "bias, based on the plates used to dilute DNA samples."
     )
 
-    results = """
-### Plate bias
-
-After performing the plate bias analysis using _Plink_, a total of
-{{ "{:,d}".format(nb_significant) }} unique
-marker{{ "s" if nb_significant != 1 }} had a significant result
-(_i.e._ a value less than ${{ p_threshold }}$).
-{%- if nb_significant > 0 %}
-@tbl-{{ label_prefix }}-results summarizes the plate bias results.
-
-{{ table }}
-
-: Summary of the plate bias analysis performed by _Plink_. For each plate, the
-number of significant markers is shown (threshold of ${{ p_threshold }}$). The
-plates are sorted according to the total number of significant
-results. {{ "{#" }}tbl-{{ label_prefix }}-results}
-{% endif %}
-"""
+    result_section_name = "Plate bias"
 
     def get_results_information(self) -> Dict[str, Optional[Union[str, int]]]:
         """Get the summary information for the results."""
@@ -608,50 +448,7 @@ class EthnicitySummary(Summary):
         "multidimensional scaling (MDS)."
     )
 
-    results = """
-### Ethnicity
-
-{% if skip_ref_pops -%}
-
-Principal components analysis was performed using
-{{ "{:,d}".format(nb_markers) }} marker{{ "s" if nb_markers > 1 }} on the study
-dataset only.
-
-{%- else -%}
-
-Using {{ "{:,d}".format(nb_markers) }} marker{{ "s" if nb_markers > 1 }} and a
-multiplier of {{ multiplier }}, there was a total of
-{{ "{:,d}".format(nb_outliers) }} outlier{{ "s" if nb_outliers > 1 }} of the
-{{ outliers_of }} population.
-{% if outlier_figure -%}
-@fig-{{ label_prefix }}-outliers shows the first two principal components
-of the MDS analysis, where outliers of the {{ outliers_of }} population are
-shown in grey.
-{% endif -%}
-{% if scree_figure -%}
-@fig-{{ label_prefix }}-scree shows the scree plot for the principal components
-of the MDS analysis.
-{% endif %}
-
-{% if outlier_figure %}
-![
-    MDS plots showing the first two principal components of the source dataset
-    with the reference panels. The outliers of the {{ outliers_of }} population
-    are shown in grey, while samples of the source dataset that resemble the
-    {{ outliers_of }} population are shown in orange. A multiplier of
-    {{ multiplier }} was used to find the {{ "{:,d}".format(nb_outliers) }}
-    outlier{{ "s" if nb_outliers > 1 }}.
-]({{ outlier_figure }}){{ "{#" }}fig-{{ label_prefix }}-outliers}
-{% endif %}
-
-{% if scree_figure %}
-![
-    Scree plot for the principal components of the MDS analysis.
-]({{ scree_figure }}){{ "{#" }}fig-{{ label_prefix }}-scree width='10cm'}
-{% endif %}
-
-{%- endif %}
-"""
+    result_section_name = "Ethnicity"
 
     def get_results_information(self) -> Dict[str, Optional[Union[str, int]]]:
         """Get the summary information for the results."""
@@ -699,13 +496,7 @@ class HeteroHapSummary(Summary):
         "haploid genotypes to missing."
     )
 
-    results = """
-### Heterozygous haploid
-
-After _Plink_'s heterozygous haploid analysis, a total of
-{{ "{:,d}".format(nb_hetero_hap) }} genotype{{ "s" if nb_hetero_hap > 1}}
-{{ "was" if nb_hetero_hap == 1 else "were" }} set to missing.
-"""
+    result_section_name = "Heterozygous haploid"
 
     def get_results_information(self) -> Dict[str, Optional[Union[str, int]]]:
         """Get the summary information for the results."""
@@ -735,14 +526,7 @@ class FlagMafSummary(Summary):
         "allele frequency of 0 (_i.e._ monomorphic markers)."
     )
 
-    results = """
-### Flag MAF
-
-After computing minor allele frequencies (MAF) of all markers using _Plink_, a
-total of {{ "{:,d}".format(nb_flagged) }} marker{{ "s" if nb_flagged > 1 }} had
-a MAF of zero and were flagged (see file `flag_maf_0.list` for more
-information).
-"""
+    result_section_name = "Flag MAF"
 
     def get_results_information(self) -> Dict[str, Optional[Union[str, int]]]:
         """Get the summary information for the results."""
@@ -766,28 +550,7 @@ class FlagHwSummary(Summary):
         "test). It adjusts for multiple testing using Bonferroni."
     )
 
-    results = """
-### Flag Hardy-Weinberg
-
-{% if flagged_markers|length == 0 %}
-
-There were no markers to perform the analysis.
-
-{% else %}
-
-Markers which failed Hardy-Weinberg equilibrium test (using _Plink_) were
-flagged.
-{%- for p_threshold, nb_flagged, _ in flagged_markers %}
-A total of {{ "{:,d}".format(nb_flagged) }} markers failed with a threshold of
-${{ p_threshold }}$.
-{%- endfor %}
-For a total list of markers, check the files
-{%- for _, _, filename in flagged_markers %}
-{{ "and " if loop.last }}`{{ filename }}`{{ "," if loop.index < (loop.length - 1) }}
-{%- endfor -%}, respectively.
-
-{% endif %}
-"""  # noqa: E501
+    result_section_name = "Flag Hardy-Weinberg"
 
     def get_results_information(self) -> Dict[str, Optional[Union[str, int]]]:
         """Get the summary information for the results."""
@@ -827,13 +590,7 @@ class DuplicatedSamplesSummary(Summary):
         "script merges and completes the genotypes."
     )
 
-    results = """
-### Duplicated samples
-
-A total of {{ "{:,d}".format(nb_dup_samples) }} duplicated
-sample{{ "s" if nb_dup_samples > 1 }}
-{{ "was" if nb_dup_samples == 1 else "were" }} found.
-"""
+    result_section_name = "Duplicated samples"
 
     def get_results_information(self) -> Dict[str, Optional[Union[str, int]]]:
         """Get the summary information for the results."""

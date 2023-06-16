@@ -12,6 +12,7 @@ import numpy as np
 from pyplink import PyPlink
 
 from ...error import ProgramError
+from ...report.summaries import DuplicatedSamplesSummary
 from ...utils import plink as plink_utils
 from ...utils import timer
 from ...version import pygenclean_version as __version__
@@ -106,8 +107,11 @@ def main(args: Optional[argparse.Namespace] = None,
     )
 
     return {
-        "usable_bfile": args.out,
-        "flagged": args.out + ".excluded_samples.info",
+        "summary": DuplicatedSamplesSummary(args),
+        "usable_files": {
+            "bfile": args.out + ".final",
+            "excluded": args.out + ".excluded_samples.info",
+        },
     }
 
 

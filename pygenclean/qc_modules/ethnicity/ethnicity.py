@@ -281,15 +281,8 @@ def main(args: Optional[argparse.Namespace] = None,
             ],
         )
 
-    summary = EthnicitySummary(args)
-
-    # Generating the results
-    with open(args.out + ".summary.qmd", "w") as f:
-        print(summary.generate_results(), file=f)
-
     return {
-        "methods": summary.generate_methods(),
-        "results": args.out + ".summary.qmd",
+        "summary": EthnicitySummary(args),
         "usable_files": {
             "bfile": args.bfile,
             "outliers": args.out + ".outliers",

@@ -80,15 +80,8 @@ def main(args: Optional[argparse.Namespace] = None,
         threshold=args.estimate_threshold,
     )
 
-    summary = ContaminationSummary(args)
-
-    # Generating the results
-    with open(args.out + ".summary.qmd", "w") as f:
-        print(summary.generate_results(), file=f)
-
     return {
-        "methods": summary.generate_methods(),
-        "results": args.out + ".summary.qmd",
+        "summary": ContaminationSummary(args),
         "usable_files": {
             "bfile": args.bfile,
             "contaminated": args.out + ".contaminated_samples",

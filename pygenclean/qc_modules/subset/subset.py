@@ -53,15 +53,9 @@ def main(args: Optional[argparse.Namespace] = None,
         use_original_plink=args.plink_107,
     )
 
-    # Generating the results
-    summary = SubsetSummary(args)
-    with open(args.out + ".summary.qmd", "w") as f:
-        print(summary.generate_results(), file=f)
-
     # Returns a dictionary of usable files
     return {
-        "methods": summary.generate_methods(),
-        "results": args.out + ".summary.qmd",
+        "summary": SubsetSummary(args),
         "usable_files": {
             "bfile": args.out,
         },

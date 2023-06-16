@@ -42,16 +42,9 @@ def main(args: Optional[argparse.Namespace] = None,
 
     run_plink(args)
 
-    summary = HeteroHapSummary(args)
-
-    # Generating the results
-    with open(args.out + ".summary.qmd", "w") as f:
-        print(summary.generate_results(), file=f)
-
     # Returns a dictionary of usable files (for next step, if any)
     return {
-        "methods": summary.generate_methods(),
-        "results": args.out + ".summary.qmd",
+        "summary": HeteroHapSummary(args),
         "usable_files": {
             "bfile": args.out,
         },

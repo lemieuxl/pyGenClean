@@ -53,16 +53,9 @@ def main(args: Optional[argparse.Namespace] = None,
     logger.info("  - list in '%s'", args.out + ".list")
     find_maf_0(args.out + ".frq", args.out)
 
-    summary = FlagMafSummary(args)
-
-    # Generating the results
-    with open(args.out + ".summary.qmd", "w") as f:
-        print(summary.generate_results(), file=f)
-
     # Returns a dictionary of usable files (for next step, if any)
     return {
-        "methods": summary.generate_methods(),
-        "results": args.out + ".summary.qmd",
+        "summary": FlagMafSummary(args),
         "usable_files": {
             "bfile": args.bfile,
             "flagged": args.out + ".list",

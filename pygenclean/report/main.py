@@ -108,15 +108,17 @@ def generate_report(**kwargs: Dict[str, Optional[Union[str, int]]]) -> str:
     # Writing the file containing the methods for each step
     methods_file = qc_dir / "methods.qmd"
     with open(methods_file, "w") as f:
-        zipped = zip(kwargs["qc_modules"], kwargs["step_methods"])
-        for i, (qc_module, qc_methods) in enumerate(zipped):
+        zipped = zip(kwargs["qc_modules"], kwargs["step_summaries"])
+        for i, (qc_module, (_, qc_summary)) in enumerate(zipped):
+            qc_methods = qc_summary.generate_methods()
             print(f"{i + 1}. {qc_methods} [`{qc_module}`]", file=f)
 
     # Writing the file containing the results for each step
     results_file = qc_dir / "results.qmd"
     with open(results_file, "w") as f:
-        for file_name in kwargs["step_results"]:
-            print("{{< include " + str(file_name) + " >}}\n", file=f)
+        for _, summary in kwargs["step_summaries"]:
+            filename = summary.write_results()
+            print("{{< include " + str(filename) + " >}}\n", file=f)
 
     return TEMPLATE.render(
         docx_template=kwargs["report_template"],

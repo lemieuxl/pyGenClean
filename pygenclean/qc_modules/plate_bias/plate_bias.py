@@ -82,15 +82,8 @@ def main(args: Optional[argparse.Namespace] = None,
 
     write_significant(assoc_results, maf, args.out)
 
-    summary = PlateBiasSummary(args)
-
-    # Generating the results
-    with open(args.out + ".summary.qmd", "w") as f:
-        print(summary.generate_results(), file=f)
-
     return {
-        "methods": summary.generate_methods(),
-        "results": args.out + ".summary.qmd",
+        "summary": PlateBiasSummary(args),
         "usable_files": {
             "bfile": args.bfile,
             "flagged": args.out + ".significant_markers.txt",

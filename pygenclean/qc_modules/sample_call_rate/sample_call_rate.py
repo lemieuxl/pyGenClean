@@ -47,14 +47,8 @@ def main(args: Optional[argparse.Namespace] = None,
     # Running Plink
     run_plink(args)
 
-    # Generating the results
-    summary = SampleCallRateSummary(args)
-    with open(args.out + ".summary.qmd", "w") as f:
-        print(summary.generate_results(), file=f)
-
     return {
-        "methods": summary.generate_methods(),
-        "results": args.out + ".summary.qmd",
+        "summary": SampleCallRateSummary(args),
         "usable_files": {
             "bfile": args.out,
         },

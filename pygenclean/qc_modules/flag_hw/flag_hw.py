@@ -61,8 +61,7 @@ def main(args: Optional[argparse.Namespace] = None,
     if nb_markers <= 0:
         logger.info("  - There are no markers: STOPPING NOW!")
         return {
-            "methods": summary.generate_methods(),
-            "results": args.out + ".summary.qmd",
+            "summary": summary,
             "usable_files": {
                 "bfile": args.bfile,
             },
@@ -111,13 +110,8 @@ def main(args: Optional[argparse.Namespace] = None,
     except IOError as exception:
         raise ProgramError(f"{filename}: can't write file") from exception
 
-    # Generating the results
-    with open(args.out + ".summary.qmd", "w") as f:
-        print(summary.generate_results(), file=f)
-
     return {
-        "methods": summary.generate_methods(),
-        "results": args.out + ".summary.qmd",
+        "summary": summary,
         "usable_files": {
             "bfile": args.bfile,
             "flagged": args.out + ".snp_flag_threshold_" + args.hwe,

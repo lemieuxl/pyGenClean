@@ -54,8 +54,7 @@ def main(args: Optional[argparse.Namespace] = None,
 
     # Steps methods and results
     step_qc_modules = []
-    step_methods = []
-    step_results = []
+    step_summaries = []
 
     # The usable files
     usable_files = {
@@ -142,8 +141,7 @@ def main(args: Optional[argparse.Namespace] = None,
 
         # The methods and results
         step_qc_modules.append(qc_module_name)
-        step_methods.append(qc_module_out["methods"])
-        step_results.append(qc_module_out["results"])
+        step_summaries.append((step, qc_module_out["summary"]))
 
         # The previous step
         previous_step = step
@@ -178,8 +176,7 @@ def main(args: Optional[argparse.Namespace] = None,
         print(
             generate_report(
                 qc_modules=step_qc_modules,
-                step_methods=step_methods,
-                step_results=step_results,
+                step_summaries=step_summaries,
                 qc_conf=conf,
                 qc_tree=tree,
                 final_datasets=final_datasets,

@@ -68,11 +68,8 @@ def main(args: Optional[argparse.Namespace] = None,
 
     if nb_markers < args.min_nb_snp:
         logger.warning("Only %d markers on autosome, stopping", nb_markers)
-        with open(args.out + ".summary.qmd", "w") as f:
-            print(summary.generate_results(), file=f)
         return {
-            "methods": summary.generate_methods(),
-            "results": args.out + ".summary.qmd",
+            "summary": summary,
             "usable_files": {
                 "bfile": args.bfile,
             },
@@ -92,11 +89,8 @@ def main(args: Optional[argparse.Namespace] = None,
 
     # We only need the genome file to be created
     if args.genome_only:
-        with open(args.out + ".summary.qmd", "w") as f:
-            print(summary.generate_results(), file=f)
         return {
-            "methods": summary.generate_methods(),
-            "results": args.out + ".summary.qmd",
+            "summary": summary,
             "usable_files": {
                 "bfile": args.bfile,
             },
@@ -108,11 +102,8 @@ def main(args: Optional[argparse.Namespace] = None,
 
     if related is None:
         logger.info("There are no related samples in the dataset")
-        with open(args.out + ".summary.qmd", "w") as f:
-            print(summary.generate_results(), file=f)
         return {
-            "methods": summary.generate_methods(),
-            "results": args.out + ".summary.qmd",
+            "summary": summary,
             "usable_files": {
                 "bfile": args.bfile,
             },
@@ -129,13 +120,8 @@ def main(args: Optional[argparse.Namespace] = None,
     # Plotting the related samples (z1 and z2)
     plot_related_samples(related, args.out, args)
 
-    # Generating the results
-    with open(args.out + ".summary.qmd", "w") as f:
-        print(summary.generate_results(), file=f)
-
     return {
-        "methods": summary.generate_methods(),
-        "results": args.out + ".summary.qmd",
+        "summary": summary,
         "usable_files": {
             "bfile": args.bfile,
             "discarded": args.out + ".discarded_related_individuals",

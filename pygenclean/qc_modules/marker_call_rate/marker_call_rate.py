@@ -52,15 +52,9 @@ def main(args: Optional[argparse.Namespace] = None,
     logger.info("Comparing BIM files")
     compare_bim(args)
 
-    # Generating the results
-    summary = MarkerCallRateSummary(args)
-    with open(args.out + ".summary.qmd", "w") as f:
-        print(summary.generate_results(), file=f)
-
     # Returns a dictionary of usable files (for next step, if any)
     return {
-        "methods": summary.generate_methods(),
-        "results": args.out + ".summary.qmd",
+        "summary": MarkerCallRateSummary(args),
         "usable_files": {
             "bfile": args.out,
         },
