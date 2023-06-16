@@ -12,6 +12,8 @@ import numpy as np
 import pandas as pd
 from jinja2 import BaseLoader, Environment
 
+from ..utils import count_lines
+from ..utils.plink import compare_bim, compare_fam
 from .utils import format_numbers
 
 
@@ -88,19 +90,18 @@ samples to {{ sample_excl_type }}. Out of a total of
         nb_markers_after = None
         exclusion_type = None
         if self.args.extract or self.args.exclude:
-            # Before
-            with open(self.args.bfile + ".bim") as f:
-                nb_markers_before = len(f.read().splitlines())
+            before, both, after = compare_bim(
+                self.args.bfile + ".bim", self.args.out + ".bim",
+            )
+            assert len(after) == 0
 
-            # After
-            with open(self.args.out + ".bim") as f:
-                nb_markers_after = len(f.read().splitlines())
+            nb_markers_before = len(before) + len(both)
+            nb_markers_after = len(both)
 
             # Exclusion
             exclusion_file = self.args.extract if self.args.extract \
                 else self.args.exclude
-            with open(exclusion_file) as f:
-                nb_markers = len(f.read().splitlines())
+            nb_markers = count_lines(exclusion_file)
 
             # Exclusion type
             exclusion_type = "extract" if self.args.extract else "exclude"
@@ -119,19 +120,18 @@ samples to {{ sample_excl_type }}. Out of a total of
         nb_samples_after = None
         exclusion_type = None
         if self.args.keep or self.args.remove:
-            # Before
-            with open(self.args.bfile + ".fam") as f:
-                nb_samples_before = len(f.read().splitlines())
+            before, both, after = compare_fam(
+                self.args.bfile + ".fam", self.args.out + ".fam",
+            )
+            assert len(after) == 0
 
-            # After
-            with open(self.args.out + ".fam") as f:
-                nb_samples_after = len(f.read().splitlines())
+            nb_samples_before = len(before) + len(both)
+            nb_samples_after = len(both)
 
             # Exclusion
             exclusion_file = self.args.remove if self.args.remove \
                 else self.args.keep
-            with open(exclusion_file) as f:
-                nb_samples = len(f.read().splitlines())
+            nb_samples = count_lines(exclusion_file)
 
             # Exclusion type
             exclusion_type = "keep" if self.args.keep else "remove"
@@ -296,12 +296,10 @@ samples were heterozygous (excluding the mitochondrial chromosome).
     def get_results_information(self) -> Dict[str, Optional[Union[str, int]]]:
         """Get the summary information for the results."""
         # All failed markers
-        with open(self.args.out + ".all_failed") as f:
-            all_failed = len(f.read().splitlines())
+        all_failed = count_lines(self.args.out + ".all_failed")
 
         # All heterozygous markers
-        with open(self.args.out + ".all_hetero") as f:
-            all_hetero = len(f.read().splitlines())
+        all_hetero = count_lines(self.args.out + ".all_hetero")
 
         return {
             "all_failed": all_failed,
@@ -332,15 +330,14 @@ excluded from the dataset.
 
     def get_results_information(self) -> Dict[str, Optional[Union[str, int]]]:
         """Get the summary information for the results."""
-        with open(self.args.bfile + ".fam") as f:
-            nb_before = len(f.read().splitlines())
-
-        with open(self.args.out + ".fam") as f:
-            nb_after = len(f.read().splitlines())
+        before, _, after = compare_fam(
+            self.args.bfile + ".fam", self.args.out + ".fam",
+        )
+        assert len(after) == 0
 
         return {
             "mind": self.args.mind,
-            "nb_samples": nb_before - nb_after,
+            "nb_samples": len(before),
         }
 
     def get_methods_information(self) -> Dict[str, Optional[Union[str, int]]]:
@@ -369,15 +366,14 @@ excluded from the dataset.
 
     def get_results_information(self) -> Dict[str, Optional[Union[str, int]]]:
         """Get the summary information for the results."""
-        with open(self.args.bfile + ".bim") as f:
-            nb_before = len(f.read().splitlines())
-
-        with open(self.args.out + ".bim") as f:
-            nb_after = len(f.read().splitlines())
+        before, _, after = compare_bim(
+            self.args.bfile + ".bim", self.args.out + ".bim"
+        )
+        assert len(after) == 0
 
         return {
             "geno": self.args.geno,
-            "nb_markers": nb_before - nb_after,
+            "nb_markers": len(before),
         }
 
     def get_methods_information(self) -> Dict[str, Optional[Union[str, int]]]:
@@ -447,8 +443,7 @@ related samples found by _Plink_.
     def get_results_information(self) -> Dict[str, Optional[Union[str, int]]]:
         """Get the summary information for the results."""
         # Getting the number of pruned markers
-        with open(self.args.out + ".pruned_data.bim") as f:
-            nb_markers = len(f.read().splitlines())
+        nb_markers = count_lines(self.args.out + ".pruned_data.bim")
 
         # Did we have enough?
         if nb_markers < self.args.min_nb_snp:
@@ -475,8 +470,9 @@ related samples found by _Plink_.
             related.add((row.FID2, row.IID2))
 
         # Reading the number of discated samples
-        with open(self.args.out + ".discarded_related_individuals") as f:
-            nb_discarded = len(f.read().splitlines())
+        nb_discarded = count_lines(
+            self.args.out + ".discarded_related_individuals",
+        )
 
         # Checking if we have z1 figure
         if path.isfile(self.args.out + ".related_individuals_z1.png"):
@@ -660,8 +656,7 @@ of the MDS analysis.
     def get_results_information(self) -> Dict[str, Optional[Union[str, int]]]:
         """Get the summary information for the results."""
         # The number of markers
-        with open(self.args.out + ".ibs.pruned_data.bim") as f:
-            nb_markers = len(f.read().splitlines())
+        nb_markers = count_lines(self.args.out + ".ibs.pruned_data.bim")
 
         if self.args.skip_ref_pops:
             return {
@@ -670,8 +665,7 @@ of the MDS analysis.
             }
 
         # The number of outliers
-        with open(self.args.out + ".outliers") as f:
-            nb_outliers = len(f.read().splitlines())
+        nb_outliers = count_lines(self.args.out + ".outliers")
 
         # The outlier figure
         outlier_figure = None
@@ -753,8 +747,7 @@ information).
     def get_results_information(self) -> Dict[str, Optional[Union[str, int]]]:
         """Get the summary information for the results."""
         # the number of flagged markers
-        with open(self.args.out + ".list") as f:
-            nb_flagged = len(f.read().splitlines())
+        nb_flagged = count_lines(self.args.out + ".list")
 
         return {
             "nb_flagged": nb_flagged,
@@ -813,8 +806,7 @@ For a total list of markers, check the files
             p_threshold = format_numbers(p_threshold_re.sub("", filename.name))
 
             # The number of flagged markers
-            with open(filename) as f:
-                nb_flagged = len(f.read().splitlines())
+            nb_flagged = count_lines(filename)
 
             flagged_markers.append((p_threshold, nb_flagged, filename.name))
 
