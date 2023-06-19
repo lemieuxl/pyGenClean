@@ -1,6 +1,7 @@
 """Main report."""
 
 
+import logging
 import math
 import re
 from pathlib import Path
@@ -15,6 +16,9 @@ from ..qc_modules.sample_call_rate.sample_call_rate import _DEFAULT_MIND
 from ..utils import count_lines
 from ..utils.plink import compare_bim, compare_fam
 from ..version import pygenclean_version
+
+
+logger = logging.getLogger(__name__)
 
 
 TEMPLATE = Environment(loader=BaseLoader).from_string("""\
@@ -157,7 +161,10 @@ def _compute_step_stats(
     """Compute datasets statistics"""
     step_stats = {}
 
-    for dataset in datasets.keys():
+    for dataset, dataset_info in sorted(datasets.items(),
+                                        key=lambda x: int(x[0])):
+        logger.info("Generating exclusion lists for dataset %s (%s)",
+                    dataset, dataset_info["desc"])
         # The two files (excluded markers and samples)
         excluded_markers = qc_dir / f"excluded_markers_step_{dataset}.txt"
         excluded_samples = qc_dir / f"excluded_samples_step_{dataset}.txt"
