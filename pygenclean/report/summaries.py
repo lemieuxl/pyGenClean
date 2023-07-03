@@ -48,10 +48,11 @@ class Summary():
         """Get the summary information for the methods."""
         raise NotImplementedError()
 
-    def generate_results(self) -> str:
+    def generate_results(self, **kwargs) -> str:
         """Generate the summary (results)."""
         return self.get_results_template().render(
             section_name=self.result_section_name,
+            **kwargs,
             **self.get_results_information(),
         )
 
@@ -60,11 +61,11 @@ class Summary():
         template = self.get_methods_template()
         return template.render(**self.get_methods_information())
 
-    def write_results(self) -> str:
+    def write_results(self, **kwargs) -> str:
         """Write the results."""
         filename = self.args.out + ".summary.qmd"
         with open(self.args.out + ".summary.qmd", "w") as f:
-            print(self.generate_results(), file=f)
+            print(self.generate_results(**kwargs), file=f)
         return filename
 
 
