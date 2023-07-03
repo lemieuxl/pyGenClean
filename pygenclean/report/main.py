@@ -110,6 +110,7 @@ def generate_report(**kwargs: Dict[str, Optional[Union[str, int]]]) -> str:
     nb_samples = count_lines(kwargs["bfile"] + ".fam")
 
     # Writing the file containing the methods for each step
+    logger.info("Generating the methods section")
     methods_file = qc_dir / "methods.qmd"
     with open(methods_file, "w") as f:
         zipped = zip(kwargs["qc_modules"], kwargs["step_summaries"])
@@ -118,6 +119,7 @@ def generate_report(**kwargs: Dict[str, Optional[Union[str, int]]]) -> str:
             print(f"{i + 1}. {qc_methods} [`{qc_module}`]", file=f)
 
     # Writing the file containing the results for each step
+    logger.info("Generating the results sections")
     results_file = qc_dir / "results.qmd"
     with open(results_file, "w") as f:
         for _, summary in kwargs["step_summaries"]:
@@ -169,6 +171,8 @@ def _compute_step_stats(
         excluded_markers = qc_dir / f"excluded_markers_step_{dataset}.txt"
         excluded_samples = qc_dir / f"excluded_samples_step_{dataset}.txt"
 
+        total_nb_samples = 0
+        total_nb_markers = 0
         with open(excluded_markers, "w") as f_excluded_markers,\
              open(excluded_samples, "w") as f_excluded_samples:
             previous_step = None
@@ -194,6 +198,9 @@ def _compute_step_stats(
                     f=f_excluded_markers,
                 )
 
+                total_nb_samples += nb_samples
+                total_nb_markers += nb_markers
+
                 if step.name in step_stats:
                     assert step_stats[step.name]["nb_samples"] == nb_samples
                     assert step_stats[step.name]["nb_markers"] == nb_markers
@@ -206,15 +213,22 @@ def _compute_step_stats(
                 # Next step
                 previous_step = step
 
+        logger.info("  - %d markers were excluded", total_nb_markers)
+        logger.info("  - %d samples were excluded", total_nb_samples)
+
     return step_stats
 
 
 def _write_marker_exclusions(step: QCNode, previous_step: QCNode,
                              step_conf: str, f: IO) -> int:
     """Write the marker exclusion to file."""
-    before_only, _, _ = compare_bim(
+    before_only, _, after_only = compare_bim(
         previous_step.bfile + ".bim", step.bfile + ".bim",
     )
+
+    # Making sure no markers were added...
+    assert len(after_only) == 0
+
     if before_only:
         # Some markers were excluded
         exclusion_info = _get_exclusion_info(
@@ -231,9 +245,13 @@ def _write_marker_exclusions(step: QCNode, previous_step: QCNode,
 def _write_sample_exclusions(step: QCNode, previous_step: QCNode,
                              step_conf: str, f: IO) -> int:
     """Write the sample exclusion to file."""
-    before_only, _, _ = compare_fam(
+    before_only, _, after_only = compare_fam(
         previous_step.bfile + ".fam", step.bfile + ".fam",
     )
+
+    # Making sure no samples were added...
+    assert len(after_only) == 0
+
     if before_only:
         # Some samples were excluded
         exclusion_info = _get_exclusion_info(
@@ -352,9 +370,9 @@ def _create_node_label(step: str, step_conf: dict,
     # Parameters if marker_call_rate sample_call_rate
     parameter = ""
     if qc_module == "marker_call_rate":
-        parameter = "\ngeno=" + str(step_conf.get("geno", _DEFAULT_GENO))
+        parameter = r"\ngeno=" + str(step_conf.get("geno", _DEFAULT_GENO))
     elif qc_module == "sample_call_rate":
-        parameter = "\nmind=" + str(step_conf.get("mind", _DEFAULT_MIND))
+        parameter = r"\nmind=" + str(step_conf.get("mind", _DEFAULT_MIND))
 
     # Step diff (markers or samples)
     step_diff = []
