@@ -6,7 +6,6 @@ class QCNode:
     def __init__(self, name: str, parent: str = None, bfile: str = None):
         self.name = name
         self.parent = parent
-        self.children = []
         self.data_from = set()
         self.bfile = bfile
 
@@ -14,16 +13,12 @@ class QCNode:
         """String representation"""
         return (
             f"Node({self.name}, parent={self.parent}, "
-            f"children={self.children}, data_from={self.data_from})"
+            f"data_from={self.data_from})"
         )
 
     def change_parent(self, parent: str):
         """Change the parent."""
         self.parent = parent
-
-    def add_child(self, child):
-        """Adds a child."""
-        self.children.append(child)
 
     def add_data_from_node(self, node: str):
         """This current node get data from another one (except bfile)."""
@@ -47,10 +42,6 @@ class Tree:
         """Add a node (with specified parent)."""
         # Adding the node to the tree
         self.tree[node.name] = node
-
-        # If the node as a parent, we add the new node to it's children
-        if node.parent:
-            self.tree[node.parent].add_child(node.name)
 
     def get_from_node_to_root(self, node_name: str):
         """Get from a node to the root of the tree."""
