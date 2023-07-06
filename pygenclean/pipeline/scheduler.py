@@ -302,7 +302,7 @@ def add_args(parser: argparse.ArgumentParser) -> None:
     )
     group.add_argument(
         "--report-authors", type=str, metavar="AUTHOR", nargs="+",
-        default="pyGenClean",
+        default=["pyGenClean"],
         help="The author(s) of the report. [%(default)s]",
     )
     group.add_argument(
