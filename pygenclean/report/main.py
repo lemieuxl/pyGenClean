@@ -21,6 +21,8 @@ from ..version import pygenclean_version
 logger = logging.getLogger(__name__)
 
 
+# TODO: DOT PNG from file if quarto cannot process it
+
 TEMPLATE = Environment(loader=BaseLoader).from_string("""\
 ---
 title: "{{ title }}"
@@ -296,15 +298,19 @@ def _generate_dot_nodes(
                                                  key=lambda x: int(x[0]))):
         # The description of the dataset
         description = dataset_info["desc"]
+        if description:
+            description += r"\n"
+        else:
+            description = ""
 
         # The number of samples and markers
         nb_samples = count_lines(dataset_info["bfile"] + ".fam")
         nb_markers = count_lines(dataset_info["bfile"] + ".bim")
 
         nodes.append(
-            f'FINAL{i + 1} [label="{description}\\n{nb_samples:,d} '
-            f'samples\\n{nb_markers:,d} markers" fillcolor="black" '
-            f'style="filled" fontcolor="white" shape="note" color="white"];'
+            f'FINAL{i + 1} [label="{description}{nb_samples:,d} samples\\n'
+            f'{nb_markers:,d} markers" fillcolor="black" style="filled" '
+            f'fontcolor="white" shape="note" color="white"];'
         )
 
     for step in all_steps:
