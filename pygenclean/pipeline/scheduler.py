@@ -313,6 +313,11 @@ def add_args(parser: argparse.ArgumentParser) -> None:
         "--report-template", type=str, metavar="DOCX",
         help="A template for the DOCX document.",
     )
+    group.add_argument(
+        "--use-dot", action="store_true",
+        help="Use DOT to generate the pipeline summary (PNG figure). "
+             "Otherwise, quarto will generate the figure (need chromium).",
+    )
 
 
 if __name__ == "__main__":

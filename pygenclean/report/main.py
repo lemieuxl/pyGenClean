@@ -15,15 +15,14 @@ from ..qc_modules.marker_call_rate.marker_call_rate import _DEFAULT_GENO
 from ..qc_modules.sample_call_rate.sample_call_rate import _DEFAULT_MIND
 from ..utils import count_lines
 from ..utils.plink import compare_bim, compare_fam
+from ..utils.task import execute_external_command
 from ..version import pygenclean_version
 
 
 logger = logging.getLogger(__name__)
 
 
-# TODO: DOT PNG from file if quarto cannot process it
-
-TEMPLATE = Environment(loader=BaseLoader).from_string("""\
+MAIN_TEMPLATE = Environment(loader=BaseLoader).from_string("""\
 ---
 title: "{{ title }}"
 subtitle: "{{ subtitle }}"
@@ -62,10 +61,35 @@ Briefly, the clean up procedure was as follow:
 
 ## Conclusions
 
+@fig-pipeline-summary-dot shows the summary of the pipeline.
+
+{% if is_dot_code %}
 ```{dot}
 //| fig-cap: Pipeline summary.
-//| label: fig-pipeline-summary
+//| label: fig-pipeline-summary-dot
 //| fig-width: 100%
+{{ pipeline_summary|safe }}
+```
+{% else %}
+![
+    Pipeline summary.
+]({{ pipeline_summary }}){{ "{#" }}fig-pipeline-summary-dot}
+{% endif %}
+
+{#
+After the genetic data clean up procedure, a total of
+{{ "{:,d}".format(final_nb_samples) }} samples and
+{{ "{:,d}".format(final_nb_markers) }} markers remained. The following files
+are available for downstream analysis.
+
+- `{{ final_prefix }}.bed`
+- `{{ final_prefix }}.bim`
+- `{{ final_prefix }}.fam`
+#}
+""")
+
+
+DOT_TEMPLATE = Environment(loader=BaseLoader).from_string("""\
 digraph pipeline {
     graph [rankdir=TB]
     node [fontsize=10 shape="box"];
@@ -79,18 +103,6 @@ digraph pipeline {
     {{ edge }}
     {%- endfor %}
 }
-```
-
-{#
-After the genetic data clean up procedure, a total of
-{{ "{:,d}".format(final_nb_samples) }} samples and
-{{ "{:,d}".format(final_nb_markers) }} markers remained. The following files
-are available for downstream analysis.
-
-- `{{ final_prefix }}.bed`
-- `{{ final_prefix }}.bim`
-- `{{ final_prefix }}.fam`
-#}
 """)
 
 
@@ -128,17 +140,9 @@ def generate_report(**kwargs: Dict[str, Optional[Union[str, int]]]) -> str:
             filename = summary.write_results()
             print("{{< include " + str(filename) + " >}}\n", file=f)
 
-    return TEMPLATE.render(
-        docx_template=kwargs["report_template"],
-        title=kwargs["report_title"],
-        subtitle=kwargs["report_number"],
-        authors=", ".join(kwargs["report_authors"]),
-        version=pygenclean_version,
-        bfile=kwargs["bfile"],
-        nb_markers=nb_markers,
-        nb_samples=nb_samples,
-        step_methods=str(methods_file),
-        step_results=str(results_file),
+    # Generating the pipeline summary figure
+    pipeline_summary = generate_summary_figure(
+        qc_dir=qc_dir,
         dot_nodes=_generate_dot_nodes(
             initial_dataset={
                 "nb_markers": nb_markers,
@@ -153,7 +157,47 @@ def generate_report(**kwargs: Dict[str, Optional[Union[str, int]]]) -> str:
             tree=kwargs["qc_tree"],
             final_datasets=kwargs["final_datasets"].keys(),
         ),
+        use_dot=kwargs["use_dot"],
     )
+
+    return MAIN_TEMPLATE.render(
+        docx_template=kwargs["report_template"],
+        title=kwargs["report_title"],
+        subtitle=kwargs["report_number"],
+        authors=", ".join(kwargs["report_authors"]),
+        version=pygenclean_version,
+        bfile=kwargs["bfile"],
+        nb_markers=nb_markers,
+        nb_samples=nb_samples,
+        step_methods=str(methods_file),
+        step_results=str(results_file),
+        pipeline_summary=pipeline_summary,
+        is_dot_code=not kwargs["use_dot"],
+    )
+
+
+def generate_summary_figure(qc_dir: Path, dot_nodes: List[str],
+                            dot_edges: List[str], use_dot: bool) -> str:
+    """Generate the summary figure."""
+    dot_code = DOT_TEMPLATE.render(dot_nodes=dot_nodes, dot_edges=dot_edges)
+
+    # If we don't have to use dot, we just return the dot code (quarto will do
+    # the rest)
+    if not use_dot:
+        return dot_code
+
+    # We need to generate the dot file and compile it using dot
+    dot_file = qc_dir / "pipeline_summary.dot"
+    with open(dot_file, "w") as f:
+        print(dot_code, file=f)
+
+    # We execute dot
+    png_file = qc_dir / "pipeline_summary.png"
+    with open(png_file, "wb") as f:
+        f.write(execute_external_command(["dot", "-Tpng", str(dot_file)],
+                                         decode=False))
+
+    return str(png_file)
 
 
 def _compute_step_stats(
