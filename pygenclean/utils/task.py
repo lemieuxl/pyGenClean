@@ -16,7 +16,7 @@ __all__ = ["execute_external_command", "execute_external_commands"]
 logger = logging.getLogger(__name__)
 
 
-def execute_external_command(command: List[str]) -> str:
+def execute_external_command(command: List[str], decode: bool = True) -> str:
     """Executes an external command.
 
     Args:
@@ -45,7 +45,7 @@ def execute_external_command(command: List[str]) -> str:
         errs_str = errs.decode()
         raise ProgramError(f"Something went wrong:\n{errs_str}\n{command_str}")
 
-    return outs.decode()
+    return outs.decode() if decode else outs
 
 
 def execute_external_commands(commands: List[List[str]],
