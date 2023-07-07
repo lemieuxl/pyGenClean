@@ -255,10 +255,14 @@ def get_plates(filename: str) -> Dict[Tuple[str, str], str]:
     """
     logger.info("Reading plate information from '%s'", filename)
     plates = {}
+
+    # Plate name fix for filename
+    plate_re = re.compile(r"\W")
+
     with open(filename) as f:
         for line in f:
             fid, iid, plate = line.rstrip().split()
-            plates[(fid, iid)] = plate
+            plates[(fid, iid)] = plate_re.sub("_", plate)
     return plates
 
 
