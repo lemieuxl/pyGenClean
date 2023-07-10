@@ -52,10 +52,6 @@ def main(args: Optional[argparse.Namespace] = None,
     # Finding the "longest" step (number of characters)
     max_nb_char = max(map(len, conf["steps"].keys()))
 
-    # Steps methods and results
-    step_qc_modules = []
-    step_summaries = []
-
     # The usable files
     usable_files = {
         "0": {
@@ -92,7 +88,7 @@ def main(args: Optional[argparse.Namespace] = None,
         qc_module = qc_modules[qc_module_name]
 
         # The current qc node
-        qc_node = QCNode(step)
+        qc_node = QCNode(step, module_name=qc_module_name)
 
         # The bfile and out file (bfile should always be first)
         argv = [
@@ -139,9 +135,8 @@ def main(args: Optional[argparse.Namespace] = None,
         )
         usable_files[step] = qc_module_out["usable_files"]
 
-        # The methods and results
-        step_qc_modules.append(qc_module_name)
-        step_summaries.append((step, qc_module_out["summary"]))
+        # Adding the summary to the QC node
+        qc_node.add_summary(qc_module_out["summary"])
 
         # The previous step
         previous_step = step
@@ -175,8 +170,6 @@ def main(args: Optional[argparse.Namespace] = None,
     with open(args.report, "w") as f:
         print(
             generate_report(
-                qc_modules=step_qc_modules,
-                step_summaries=step_summaries,
                 qc_conf=conf,
                 qc_tree=tree,
                 final_datasets=final_datasets,

@@ -123,22 +123,23 @@ def generate_report(**kwargs: Dict[str, Optional[Union[str, int]]]) -> str:
     nb_markers = count_lines(kwargs["bfile"] + ".bim")
     nb_samples = count_lines(kwargs["bfile"] + ".fam")
 
-    # Writing the file containing the methods for each step
-    logger.info("Generating the methods section")
-    methods_file = qc_dir / "methods.qmd"
-    with open(methods_file, "w") as f:
-        zipped = zip(kwargs["qc_modules"], kwargs["step_summaries"])
-        for i, (qc_module, (_, qc_summary)) in enumerate(zipped):
-            qc_methods = qc_summary.generate_methods()
-            print(f"{i + 1}. {qc_methods} [`{qc_module}`]", file=f)
+    # Writing the files containing the methods for each step and the results
+    logger.info("Generating the methods and results sections")
+    with open(qc_dir / "methods.qmd", "w") as methods_f, \
+         open(qc_dir / "results.qmd", "w") as results_f:
+        # Skipping first step, because it's step 0 (initial dataaset)
+        for i, step_name in enumerate(kwargs["qc_tree"].get_node_order()[1:]):
+            # The QC node
+            qc_node = kwargs["qc_tree"].get_node(step_name)
 
-    # Writing the file containing the results for each step
-    logger.info("Generating the results sections")
-    results_file = qc_dir / "results.qmd"
-    with open(results_file, "w") as f:
-        for _, summary in kwargs["step_summaries"]:
-            filename = summary.write_results()
-            print("{{< include " + str(filename) + " >}}\n", file=f)
+            # The methods for this step
+            qc_methods = qc_node.summary.generate_methods()
+            print(f"{i + 1}. {qc_methods} [`{qc_node.module_name}`]",
+                  file=methods_f)
+
+            # The results for this step
+            filename = qc_node.summary.write_results()
+            print("{{< include " + str(filename) + " >}}\n", file=results_f)
 
     # Generating the pipeline summary figure
     pipeline_summary = generate_summary_figure(
@@ -169,8 +170,8 @@ def generate_report(**kwargs: Dict[str, Optional[Union[str, int]]]) -> str:
         bfile=kwargs["bfile"],
         nb_markers=nb_markers,
         nb_samples=nb_samples,
-        step_methods=str(methods_file),
-        step_results=str(results_file),
+        step_methods=str(qc_dir / "methods.qmd"),
+        step_results=str(qc_dir / "results.qmd"),
         pipeline_summary=pipeline_summary,
         is_dot_code=not kwargs["use_dot"],
     )
