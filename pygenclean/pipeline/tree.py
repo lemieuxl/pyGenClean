@@ -1,7 +1,7 @@
 """Pipeline tree structure."""
 
 
-from typing import List, Optional
+from typing import KeysView, List, Optional
 
 from ..report.summaries import Summary
 
@@ -48,7 +48,7 @@ class Tree:
         self.tree = {}
         self.node_order = []
 
-    def has_node(self, node: QCNode):
+    def has_node(self, node: QCNode) -> bool:
         """Checks if the tree contains a node."""
         return node.name in self.tree
 
@@ -59,7 +59,7 @@ class Tree:
         self.tree[node.name] = node
         self.node_order.append(node.name)
 
-    def get_from_node_to_root(self, node_name: str):
+    def get_from_node_to_root(self, node_name: str) -> List[QCNode]:
         """Get from a node to the root of the tree."""
         nodes = []
         node = self.tree[node_name]
@@ -70,7 +70,7 @@ class Tree:
 
         return nodes
 
-    def get_nodes(self):
+    def get_nodes(self) -> KeysView[str]:
         """Return all nodes from the tree."""
         return self.tree.keys()
 
