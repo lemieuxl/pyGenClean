@@ -222,18 +222,26 @@ def _generate_final_dataset_summary(
                 continue
 
             step_info = stats[step.name]
-            description = conf[step.name]["module"].replace("-", "_")
 
-            if description == "subset":
-                description += "\n\n  - " + conf[step.name]["reason"]
-            elif description == "sample_call_rate":
+            qc_module = conf[step.name]["module"].replace("-", "_")
+
+            description = step.summary.result_section_name
+
+            # Is this a subset?
+            if qc_module == "subset":
+                description += " - " + conf[step.name]["reason"]
+
+            # Is this a sample call rate?
+            elif qc_module == "sample_call_rate":
                 description += (
-                    "\n\n  - mind="
+                    " - mind="
                     + str(conf[step.name].get("mind", _DEFAULT_MIND))
                 )
-            elif description == "marker_call_rate":
+
+            # Is this a marker call rate?
+            elif qc_module == "marker_call_rate":
                 description += (
-                    "\n\n  - geno="
+                    " - geno="
                     + str(conf[step.name].get("geno", _DEFAULT_GENO))
                 )
 
@@ -248,7 +256,6 @@ def _generate_final_dataset_summary(
             dataset_summary,
             headers=("Description", "Info", "Markers", "Samples"),
             intfmt=",",
-            tablefmt="grid",
         )
 
     return dataset_summaries
