@@ -5,7 +5,7 @@ import logging
 import math
 import re
 from pathlib import Path
-from typing import IO, Dict, List, Optional, Union
+from typing import IO, Dict, List, Optional, Tuple, Union
 
 from jinja2 import BaseLoader, Environment
 from tabulate import tabulate
@@ -205,7 +205,7 @@ def _generate_final_dataset_summary(
 ) -> Dict[str, str]:
     """Generate the final dataset summary (Markdown tables)"""
     dataset_summaries = {}
-    for dataset, _ in datasets.items():
+    for dataset in datasets.keys():
         dataset_summary = []
 
         for step in reversed(tree.get_from_node_to_root(dataset)):
@@ -251,6 +251,15 @@ def _generate_final_dataset_summary(
                 -step_info["nb_markers"] if step_info["nb_markers"] else None,
                 -step_info["nb_samples"] if step_info["nb_samples"] else None,
             ))
+
+            # Is this the final step?
+            if dataset == step.name:
+                dataset_summary.append((
+                    "Final numbers",
+                    None,
+                    stats[dataset]["bim"],
+                    stats[dataset]["fam"],
+                ))
 
         dataset_summaries[dataset] = tabulate(
             dataset_summary,
@@ -314,7 +323,7 @@ def _compute_step_stats(
 
                 # Comparing previous (newest) with current step
                 # Comparing FAM
-                nb_samples = _write_sample_exclusions(
+                nb_samples, nb_samples_bfile = _write_sample_exclusions(
                     step=step,
                     previous_step=previous_step,
                     step_conf=qc_conf["steps"][step.name],
@@ -322,7 +331,7 @@ def _compute_step_stats(
                 )
 
                 # Comparing BIM
-                nb_markers = _write_marker_exclusions(
+                nb_markers, nb_markers_bfile = _write_marker_exclusions(
                     step=step,
                     previous_step=previous_step,
                     step_conf=qc_conf["steps"][step.name],
@@ -335,11 +344,15 @@ def _compute_step_stats(
                 if step.name in step_stats:
                     assert step_stats[step.name]["nb_samples"] == nb_samples
                     assert step_stats[step.name]["nb_markers"] == nb_markers
+                    assert step_stats[step.name]["fam"] == nb_samples_bfile
+                    assert step_stats[step.name]["bim"] == nb_markers_bfile
 
                 else:
                     step_stats[step.name] = {
                         "nb_samples": nb_samples,
                         "nb_markers": nb_markers,
+                        "fam": nb_samples_bfile,
+                        "bim": nb_markers_bfile
                     }
 
                 # Next step
@@ -352,9 +365,9 @@ def _compute_step_stats(
 
 
 def _write_marker_exclusions(step: QCNode, previous_step: QCNode,
-                             step_conf: str, f: IO) -> int:
+                             step_conf: str, f: IO) -> Tuple[int, int]:
     """Write the marker exclusion to file."""
-    before_only, _, after_only = compare_bim(
+    before_only, both, after_only = compare_bim(
         previous_step.bfile + ".bim", step.bfile + ".bim",
     )
 
@@ -371,13 +384,13 @@ def _write_marker_exclusions(step: QCNode, previous_step: QCNode,
         for marker in sorted(before_only):
             print(marker, exclusion_info, sep="\t", file=f)
 
-    return len(before_only)
+    return len(before_only), len(both)
 
 
 def _write_sample_exclusions(step: QCNode, previous_step: QCNode,
-                             step_conf: str, f: IO) -> int:
+                             step_conf: str, f: IO) -> Tuple[int, int]:
     """Write the sample exclusion to file."""
-    before_only, _, after_only = compare_fam(
+    before_only, both, after_only = compare_fam(
         previous_step.bfile + ".fam", step.bfile + ".fam",
     )
 
@@ -394,7 +407,7 @@ def _write_sample_exclusions(step: QCNode, previous_step: QCNode,
         for fid, iid in sorted(before_only):
             print(fid, iid, exclusion_info, sep="\t", file=f)
 
-    return len(before_only)
+    return len(before_only), len(both)
 
 
 def _get_exclusion_info(step: str, qc_module: str,
@@ -424,8 +437,8 @@ def _generate_dot_nodes(
     )
 
     # Final datasets
-    for i, (_, dataset_info) in enumerate(sorted(final_datasets.items(),
-                                                 key=lambda x: int(x[0]))):
+    for i, (step, dataset_info) in enumerate(sorted(final_datasets.items(),
+                                                    key=lambda x: int(x[0]))):
         # The description of the dataset
         description = dataset_info["desc"]
         if description:
@@ -434,8 +447,8 @@ def _generate_dot_nodes(
             description = ""
 
         # The number of samples and markers
-        nb_samples = count_lines(dataset_info["bfile"] + ".fam")
-        nb_markers = count_lines(dataset_info["bfile"] + ".bim")
+        nb_samples = step_stats[step]["fam"]
+        nb_markers = step_stats[step]["bim"]
 
         nodes.append(
             f'FINAL{i + 1} [label="{description}{nb_samples:,d} samples\\n'
