@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import IO, Dict, List, Optional, Union
 
 from jinja2 import BaseLoader, Environment
+from tabulate import tabulate
 
 from ..pipeline.tree import QCNode, Tree
 from ..qc_modules import qc_module_impact
@@ -86,6 +87,12 @@ are available for downstream analysis.
 - `{{ final_prefix }}.bim`
 - `{{ final_prefix }}.fam`
 #}
+
+{% for step, step_info in final_datasets %}
+### {{ step_info["desc"] if step_info["desc"] else "Step " + step }}
+
+{{ final_dataset_summaries[step]|safe }}
+{% endfor %}
 """)
 
 
@@ -142,7 +149,7 @@ def generate_report(**kwargs: Dict[str, Optional[Union[str, int]]]) -> str:
             print("{{< include " + str(filename) + " >}}\n", file=results_f)
 
     # Generating the pipeline summary figure
-    pipeline_summary = generate_summary_figure(
+    pipeline_summary = _generate_summary_figure(
         qc_dir=qc_dir,
         dot_nodes=_generate_dot_nodes(
             initial_dataset={
@@ -174,11 +181,81 @@ def generate_report(**kwargs: Dict[str, Optional[Union[str, int]]]) -> str:
         step_results=str(qc_dir / "results.qmd"),
         pipeline_summary=pipeline_summary,
         is_dot_code=not kwargs["use_dot"],
+        final_datasets=sorted(kwargs["final_datasets"].items(),
+                              key=lambda x: int(x[0])),
+        final_dataset_summaries=_generate_final_dataset_summary(
+            initial_numbers={
+                "nb_markers": nb_markers,
+                "nb_samples": nb_samples,
+            },
+            tree=kwargs["qc_tree"],
+            datasets=kwargs["final_datasets"],
+            stats=step_stats,
+            conf=kwargs["qc_conf"]["steps"],
+        ),
     )
 
 
-def generate_summary_figure(qc_dir: Path, dot_nodes: List[str],
-                            dot_edges: List[str], use_dot: bool) -> str:
+def _generate_final_dataset_summary(
+    initial_numbers: Dict[str, int],
+    tree: Tree,
+    datasets: Dict[str, Dict[str, str]],
+    stats: Dict[str, Dict[str, int]],
+    conf: dict,
+) -> Dict[str, str]:
+    """Generate the final dataset summary (Markdown tables)"""
+    dataset_summaries = {}
+    for dataset, _ in datasets.items():
+        dataset_summary = []
+
+        for step in reversed(tree.get_from_node_to_root(dataset)):
+            if step.name == "0":
+                assert len(dataset_summary) == 0
+
+                # Initial numbers
+                dataset_summary.append((
+                    "Initial numbers",
+                    None,
+                    initial_numbers['nb_markers'],
+                    initial_numbers['nb_samples'],
+                ))
+                continue
+
+            step_info = stats[step.name]
+            description = conf[step.name]["module"].replace("-", "_")
+
+            if description == "subset":
+                description += "\n\n  - " + conf[step.name]["reason"]
+            elif description == "sample_call_rate":
+                description += (
+                    "\n\n  - mind="
+                    + str(conf[step.name].get("mind", _DEFAULT_MIND))
+                )
+            elif description == "marker_call_rate":
+                description += (
+                    "\n\n  - geno="
+                    + str(conf[step.name].get("geno", _DEFAULT_GENO))
+                )
+
+            dataset_summary.append((
+                description,
+                step.summary.summary_table_info,
+                -step_info["nb_markers"] if step_info["nb_markers"] else None,
+                -step_info["nb_samples"] if step_info["nb_samples"] else None,
+            ))
+
+        dataset_summaries[dataset] = tabulate(
+            dataset_summary,
+            headers=("Description", "Info", "Markers", "Samples"),
+            intfmt=",",
+            tablefmt="grid",
+        )
+
+    return dataset_summaries
+
+
+def _generate_summary_figure(qc_dir: Path, dot_nodes: List[str],
+                             dot_edges: List[str], use_dot: bool) -> str:
     """Generate the summary figure."""
     dot_code = DOT_TEMPLATE.render(dot_nodes=dot_nodes, dot_edges=dot_edges)
 
@@ -251,6 +328,7 @@ def _compute_step_stats(
                 if step.name in step_stats:
                     assert step_stats[step.name]["nb_samples"] == nb_samples
                     assert step_stats[step.name]["nb_markers"] == nb_markers
+
                 else:
                     step_stats[step.name] = {
                         "nb_samples": nb_samples,

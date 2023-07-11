@@ -31,6 +31,7 @@ class Summary():
     """The summary core function."""
     def __init__(self, args: argparse.Namespace) -> None:
         self.args = args
+        self.summary_table_info = None
 
     def get_results_template(self) -> jinja2.environment.Template:
         """Generate the Jinja2 template for the results."""
@@ -510,6 +511,8 @@ class HeteroHapSummary(Summary):
 
         with open(self.args.out + ".log") as f:
             nb_hetero_hap = int(plink_re.search(f.read()).group(1))
+
+        self.summary_table_info = nb_hetero_hap
 
         return {
             "nb_hetero_hap": nb_hetero_hap,
