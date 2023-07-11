@@ -65,6 +65,7 @@ def main(args: Optional[argparse.Namespace] = None,
         use_original_plink=args.plink_107,
     )
 
+    logger.info("Executing bafRegress")
     run_bafregress(
         filenames=sample_files,
         out=args.out,
@@ -74,6 +75,7 @@ def main(args: Optional[argparse.Namespace] = None,
     )
 
     # Writing contaminated samples
+    logger.info("Writing bafRegress results")
     write_contaminated_samples(
         filename=args.out + ".bafRegress",
         out=args.out,
@@ -177,6 +179,7 @@ def run_bafregress(filenames: Set[str], out: str, extract: str, freq: str,
 
     # Creating equally numbered chunks (whith maximum number of samples)
     results = []
+    batch_i = 0
     for j in range(0, len(filenames), args.max_samples_per_job * args.nb_cpu):
         sample_chunk = filenames[j: j + args.max_samples_per_job * args.nb_cpu]
 
@@ -187,9 +190,12 @@ def run_bafregress(filenames: Set[str], out: str, extract: str, freq: str,
         ]
 
         # Creating and executing the commands
+        logger.info(" - batch %d (%d samples)", batch_i + 1, len(sample_chunk))
         results += task_utils.execute_external_commands(
             [base_command + chunk for chunk in chunks], args.nb_cpu,
         )
+
+        batch_i += 1
 
     # Saving the output
     header = None
