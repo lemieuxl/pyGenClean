@@ -206,6 +206,12 @@ class SexCheckSummary(Summary):
             for file_path in baf_lrr_figures
         ]
 
+        no_genetic_sex = sex_problems.SNPSEX == 0
+        self.summary_table_info = (
+            ("No genetic sex", np.count_nonzero(no_genetic_sex)),
+            ("Discordant sex", np.count_nonzero(~no_genetic_sex)),
+        )
+
         return {
             "male_f": self.args.male_f,
             "female_f": self.args.female_f,
@@ -360,6 +366,11 @@ class RelatedSamplesSummary(Summary):
         if path.isfile(self.args.out + ".related_individuals_z2.png"):
             figure_z2 = self.args.out + ".related_individuals_z2.png"
 
+        self.summary_table_info = (
+            ("Markers used for IBS", nb_markers),
+            ("Unique related samples", len(related)),
+        )
+
         return {
             "nb_markers": nb_markers,
             "nb_unique_samples": len(related),
@@ -399,6 +410,10 @@ class ContaminationSummary(Summary):
         contaminated = df.estimate > self.args.estimate_threshold
         nb_contaminated = np.count_nonzero(contaminated)
 
+        self.summary_table_info = (
+            ("Possibly contaminated", nb_contaminated),
+        )
+
         return {
             "nb_samples": df.shape[0],
             "nb_autosomal": nb_autosomal,
@@ -427,9 +442,16 @@ class PlateBiasSummary(Summary):
         # Reading the significant markers with the plate information
         df = pd.read_csv(self.args.out + ".significant_markers.summary.tsv",
                          sep="\t")
+
+        p_threshold = format_numbers(self.args.p_filter)
+
+        self.summary_table_info = (
+            (f"Marker with plate bias ($p<{p_threshold}$)", df.shape[0]),
+        )
+
         return {
             "nb_significant": df.shape[0],
-            "p_threshold": format_numbers(self.args.p_filter),
+            "p_threshold": p_threshold,
             "table": df.plate.value_counts()
                        .sort_values(ascending=False)
                        .to_markdown(),
@@ -458,6 +480,10 @@ class EthnicitySummary(Summary):
         nb_markers = count_lines(self.args.out + ".ibs.pruned_data.bim")
 
         if self.args.skip_ref_pops:
+            self.summary_table_info = (
+                ("Markers used for MDS", nb_markers),
+            )
+
             return {
                 "nb_markers": nb_markers,
                 "skip_ref_pops": self.args.skip_ref_pops,
@@ -474,6 +500,11 @@ class EthnicitySummary(Summary):
         scree_figure = None
         if path.isfile(self.args.out + ".smartpca.scree_plot.png"):
             scree_figure = self.args.out + ".smartpca.scree_plot.png"
+
+        self.summary_table_info = (
+            ("Markers used for MDS", nb_markers),
+            (f"{self.args.outliers_of} outliers", nb_outliers),
+        )
 
         return {
             "skip_ref_pops": self.args.skip_ref_pops,
@@ -512,7 +543,9 @@ class HeteroHapSummary(Summary):
         with open(self.args.out + ".log") as f:
             nb_hetero_hap = int(plink_re.search(f.read()).group(1))
 
-        self.summary_table_info = nb_hetero_hap
+        self.summary_table_info = (
+            ("Heterozygous haploid genotypes", nb_hetero_hap),
+        )
 
         return {
             "nb_hetero_hap": nb_hetero_hap,
@@ -536,6 +569,10 @@ class FlagMafSummary(Summary):
         """Get the summary information for the results."""
         # the number of flagged markers
         nb_flagged = count_lines(self.args.out + ".list")
+
+        self.summary_table_info = (
+            ("Markers with a MAF of 0", nb_flagged),
+        )
 
         return {
             "nb_flagged": nb_flagged,
@@ -564,6 +601,8 @@ class FlagHwSummary(Summary):
 
         p_threshold_re = re.compile(r"^flag_hw\.snp_flag_threshold_")
 
+        self.summary_table_info = []
+
         flagged_markers = []
         for filename in flag_files:
             if "between" in filename.name:
@@ -576,6 +615,10 @@ class FlagHwSummary(Summary):
             nb_flagged = count_lines(filename)
 
             flagged_markers.append((p_threshold, nb_flagged, filename.name))
+
+            self.summary_table_info.append((f"$p<{p_threshold}$", nb_flagged))
+
+        self.summary_table_info = tuple(self.summary_table_info)
 
         return {
             "flagged_markers": flagged_markers,

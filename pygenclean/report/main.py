@@ -62,7 +62,8 @@ Briefly, the clean up procedure was as follow:
 
 ## Conclusions
 
-@fig-pipeline-summary-dot shows the summary of the pipeline.
+@fig-pipeline-summary-dot shows the summary of the pipeline, and
+@tbl-final-summary-general shows the general steps' summary.
 
 {% if is_dot_code %}
 ```{dot}
@@ -77,16 +78,10 @@ Briefly, the clean up procedure was as follow:
 ]({{ pipeline_summary }}){{ "{#" }}fig-pipeline-summary-dot}
 {% endif %}
 
-{#
-After the genetic data clean up procedure, a total of
-{{ "{:,d}".format(final_nb_samples) }} samples and
-{{ "{:,d}".format(final_nb_markers) }} markers remained. The following files
-are available for downstream analysis.
+{{ conclusion_summaries["other_steps"]["summary_table"]|safe }}
 
-- `{{ final_prefix }}.bed`
-- `{{ final_prefix }}.bim`
-- `{{ final_prefix }}.fam`
-#}
+: Summary information of the data cleanup procedures for the general steps.
+{{ "{#" }}tbl-final-summary-general}
 
 {% for step, step_info in final_datasets %}
 ### {{ step_info["desc"] if step_info["desc"] else "Step " + step }}
@@ -221,11 +216,13 @@ def _generate_conlusion_summaries(
     """Generate the final dataset summary (Markdown tables)"""
     conclusion_summaries = {}
 
+    summarized_steps = set()
+
     for dataset in datasets.keys():
         dataset_summary = []
 
-        for step in reversed(tree.get_from_node_to_root(dataset)):
-            if step.name == "0":
+        for qc_node in reversed(tree.get_from_node_to_root(dataset)):
+            if qc_node.name == "0":
                 assert len(dataset_summary) == 0
 
                 # Initial numbers
@@ -237,39 +234,47 @@ def _generate_conlusion_summaries(
                 ))
                 continue
 
-            step_info = stats[step.name]
+            step_info = stats[qc_node.name]
 
-            qc_module = conf[step.name]["module"].replace("-", "_")
+            qc_module = conf[qc_node.name]["module"].replace("-", "_")
 
-            description = step.summary.result_section_name
+            description = qc_node.summary.result_section_name
 
             # Is this a subset?
             if qc_module == "subset":
-                description += " - " + conf[step.name]["reason"]
+                description += " - " + conf[qc_node.name]["reason"]
 
             # Is this a sample call rate?
             elif qc_module == "sample_call_rate":
                 description += (
                     " - mind="
-                    + str(conf[step.name].get("mind", _DEFAULT_MIND))
+                    + str(conf[qc_node.name].get("mind", _DEFAULT_MIND))
                 )
 
             # Is this a marker call rate?
             elif qc_module == "marker_call_rate":
                 description += (
                     " - geno="
-                    + str(conf[step.name].get("geno", _DEFAULT_GENO))
+                    + str(conf[qc_node.name].get("geno", _DEFAULT_GENO))
                 )
+
+            summary_table_info = qc_node.summary.summary_table_info
+            if summary_table_info:
+                assert len(summary_table_info) == 1
+                summary_table_info = summary_table_info[0][-1]
 
             dataset_summary.append((
                 description,
-                step.summary.summary_table_info,
+                summary_table_info,
                 -step_info["nb_markers"] if step_info["nb_markers"] else None,
                 -step_info["nb_samples"] if step_info["nb_samples"] else None,
             ))
 
+            # This step was summarized
+            summarized_steps.add(qc_node.name)
+
             # Is this the final step?
-            if dataset == step.name:
+            if dataset == qc_node.name:
                 dataset_summary.append((
                     "Final numbers",
                     None,
@@ -285,8 +290,41 @@ def _generate_conlusion_summaries(
             ),
             "nb_markers": dataset_summary[-1][2],
             "nb_samples": dataset_summary[-1][3],
-            "prefix": step.bfile,
+            "prefix": tree.get_node(dataset).bfile,
         }
+
+    # Adding the additionl summaries which are not present in the data
+    dataset_summary = []
+    for step_name in tree.get_node_order():
+        if step_name == "0" or step_name in summarized_steps:
+            continue
+
+        qc_node = tree.get_node(step_name)
+
+        # Generating the description and the information
+        description = qc_node.summary.result_section_name
+        information = None
+
+        if qc_node.summary.summary_table_info:
+            information = ""
+            for i, (desc, info) in enumerate(
+                qc_node.summary.summary_table_info
+            ):
+                if i == 0:
+                    description += "\n"
+                description += "\n  - " + desc
+                information += f"\n- {info:,d}"
+
+        dataset_summary.append((description, information))
+
+    conclusion_summaries["other_steps"] = {
+        "summary_table": tabulate(
+            dataset_summary,
+            headers=("Description", "Information"),
+            intfmt=",",
+            tablefmt="grid",
+        ),
+    }
 
     return conclusion_summaries
 
@@ -336,40 +374,40 @@ def _compute_step_stats(
         total_nb_markers = 0
         with open(excluded_markers, "w") as f_excluded_markers,\
              open(excluded_samples, "w") as f_excluded_samples:
-            previous_step = None
-            for step in reversed(tree.get_from_node_to_root(dataset)):
-                if not previous_step:
-                    previous_step = step
+            previous_qc_node = None
+            for qc_node in reversed(tree.get_from_node_to_root(dataset)):
+                if not previous_qc_node:
+                    previous_qc_node = qc_node
                     continue
 
                 # Comparing previous (newest) with current step
                 # Comparing FAM
                 nb_samples, nb_samples_bfile = _write_sample_exclusions(
-                    step=step,
-                    previous_step=previous_step,
-                    step_conf=qc_conf["steps"][step.name],
+                    qc_node=qc_node,
+                    previous_qc_node=previous_qc_node,
+                    step_conf=qc_conf["steps"][qc_node.name],
                     f=f_excluded_samples,
                 )
 
                 # Comparing BIM
                 nb_markers, nb_markers_bfile = _write_marker_exclusions(
-                    step=step,
-                    previous_step=previous_step,
-                    step_conf=qc_conf["steps"][step.name],
+                    qc_node=qc_node,
+                    previous_qc_node=previous_qc_node,
+                    step_conf=qc_conf["steps"][qc_node.name],
                     f=f_excluded_markers,
                 )
 
                 total_nb_samples += nb_samples
                 total_nb_markers += nb_markers
 
-                if step.name in step_stats:
-                    assert step_stats[step.name]["nb_samples"] == nb_samples
-                    assert step_stats[step.name]["nb_markers"] == nb_markers
-                    assert step_stats[step.name]["fam"] == nb_samples_bfile
-                    assert step_stats[step.name]["bim"] == nb_markers_bfile
+                if qc_node.name in step_stats:
+                    assert step_stats[qc_node.name]["nb_samples"] == nb_samples
+                    assert step_stats[qc_node.name]["nb_markers"] == nb_markers
+                    assert step_stats[qc_node.name]["fam"] == nb_samples_bfile
+                    assert step_stats[qc_node.name]["bim"] == nb_markers_bfile
 
                 else:
-                    step_stats[step.name] = {
+                    step_stats[qc_node.name] = {
                         "nb_samples": nb_samples,
                         "nb_markers": nb_markers,
                         "fam": nb_samples_bfile,
@@ -377,7 +415,7 @@ def _compute_step_stats(
                     }
 
                 # Next step
-                previous_step = step
+                previous_qc_node = qc_node
 
         logger.info("  - %d markers were excluded", total_nb_markers)
         logger.info("  - %d samples were excluded", total_nb_samples)
@@ -385,11 +423,11 @@ def _compute_step_stats(
     return step_stats
 
 
-def _write_marker_exclusions(step: QCNode, previous_step: QCNode,
+def _write_marker_exclusions(qc_node: QCNode, previous_qc_node: QCNode,
                              step_conf: str, f: IO) -> Tuple[int, int]:
     """Write the marker exclusion to file."""
     before_only, both, after_only = compare_bim(
-        previous_step.bfile + ".bim", step.bfile + ".bim",
+        previous_qc_node.bfile + ".bim", qc_node.bfile + ".bim",
     )
 
     # Making sure no markers were added...
@@ -398,7 +436,7 @@ def _write_marker_exclusions(step: QCNode, previous_step: QCNode,
     if before_only:
         # Some markers were excluded
         exclusion_info = _get_exclusion_info(
-            step=step.name,
+            step=qc_node.name,
             qc_module=step_conf["module"],
             reason=step_conf.get("reason"),
         )
@@ -408,11 +446,11 @@ def _write_marker_exclusions(step: QCNode, previous_step: QCNode,
     return len(before_only), len(both)
 
 
-def _write_sample_exclusions(step: QCNode, previous_step: QCNode,
+def _write_sample_exclusions(qc_node: QCNode, previous_qc_node: QCNode,
                              step_conf: str, f: IO) -> Tuple[int, int]:
     """Write the sample exclusion to file."""
     before_only, both, after_only = compare_fam(
-        previous_step.bfile + ".fam", step.bfile + ".fam",
+        previous_qc_node.bfile + ".fam", qc_node.bfile + ".fam",
     )
 
     # Making sure no samples were added...
@@ -421,7 +459,7 @@ def _write_sample_exclusions(step: QCNode, previous_step: QCNode,
     if before_only:
         # Some samples were excluded
         exclusion_info = _get_exclusion_info(
-            step=step.name,
+            step=qc_node.name,
             qc_module=step_conf["module"],
             reason=step_conf.get("reason"),
         )
