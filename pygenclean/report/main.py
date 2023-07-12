@@ -91,7 +91,22 @@ are available for downstream analysis.
 {% for step, step_info in final_datasets %}
 ### {{ step_info["desc"] if step_info["desc"] else "Step " + step }}
 
-{{ final_dataset_summaries[step]|safe }}
+After the genetic data clean up procedure, a total of
+{{ "{:,d}".format(conclusion_summaries[step]["nb_samples"]) }} samples and
+{{ "{:,d}".format(conclusion_summaries[step]["nb_markers"]) }} markers
+remained. The following files are available for downstream analysis, and
+@tbl-final-summary-{{ step }} shows a summary of exclusions for this
+dataset.
+
+- `{{ conclusion_summaries[step]["prefix"] }}.bed`
+- `{{ conclusion_summaries[step]["prefix"] }}.bim`
+- `{{ conclusion_summaries[step]["prefix"] }}.fam`
+
+{{ conclusion_summaries[step]["summary_table"]|safe }}
+
+: Summary information of the data cleanup procedure for
+{{ step_info["desc"] if step_info["desc"] else "Step " + step }}.
+{{ "{#" }}tbl-final-summary-{{ step }}}
 {% endfor %}
 """)
 
@@ -183,7 +198,7 @@ def generate_report(**kwargs: Dict[str, Optional[Union[str, int]]]) -> str:
         is_dot_code=not kwargs["use_dot"],
         final_datasets=sorted(kwargs["final_datasets"].items(),
                               key=lambda x: int(x[0])),
-        final_dataset_summaries=_generate_final_dataset_summary(
+        conclusion_summaries=_generate_conlusion_summaries(
             initial_numbers={
                 "nb_markers": nb_markers,
                 "nb_samples": nb_samples,
@@ -196,15 +211,16 @@ def generate_report(**kwargs: Dict[str, Optional[Union[str, int]]]) -> str:
     )
 
 
-def _generate_final_dataset_summary(
+def _generate_conlusion_summaries(
     initial_numbers: Dict[str, int],
     tree: Tree,
     datasets: Dict[str, Dict[str, str]],
     stats: Dict[str, Dict[str, int]],
     conf: dict,
-) -> Dict[str, str]:
+) -> Dict[str, Dict[str, str]]:
     """Generate the final dataset summary (Markdown tables)"""
-    dataset_summaries = {}
+    conclusion_summaries = {}
+
     for dataset in datasets.keys():
         dataset_summary = []
 
@@ -261,13 +277,18 @@ def _generate_final_dataset_summary(
                     stats[dataset]["fam"],
                 ))
 
-        dataset_summaries[dataset] = tabulate(
-            dataset_summary,
-            headers=("Description", "Info", "Markers", "Samples"),
-            intfmt=",",
-        )
+        conclusion_summaries[dataset] = {
+            "summary_table": tabulate(
+                dataset_summary,
+                headers=("Description", "Info", "Markers", "Samples"),
+                intfmt=",",
+            ),
+            "nb_markers": dataset_summary[-1][2],
+            "nb_samples": dataset_summary[-1][3],
+            "prefix": step.bfile,
+        }
 
-    return dataset_summaries
+    return conclusion_summaries
 
 
 def _generate_summary_figure(qc_dir: Path, dot_nodes: List[str],
