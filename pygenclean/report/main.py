@@ -319,12 +319,17 @@ def _generate_conlusion_summaries(
                 description += "\n  - " + desc
                 information += f"\n- {info:,d}"
 
-        dataset_summary.append((int(qc_node.name), description, information))
+        dataset_summary.append((
+            int(qc_node.name),
+            int(qc_node.parent),
+            description,
+            information,
+        ))
 
     conclusion_summaries["other_steps"] = {
         "summary_table": tabulate(
             dataset_summary,
-            headers=("Step", "Description", "Information"),
+            headers=("Step", "Parent Step", "Description", "Information"),
             intfmt=",",
             tablefmt="grid",
         ),
