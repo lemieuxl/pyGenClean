@@ -32,6 +32,7 @@ class Summary():
     def __init__(self, args: argparse.Namespace) -> None:
         self.args = args
         self.summary_table_info = None
+        self.label_prefix = LABEL_RE.sub("-", self.args.out)
 
     def get_results_template(self) -> jinja2.environment.Template:
         """Generate the Jinja2 template for the results."""
@@ -52,7 +53,10 @@ class Summary():
     def generate_results(self, **kwargs) -> str:
         """Generate the summary (results)."""
         return self.get_results_template().render(
+            section_level=3,
+            section_key="results",
             section_name=self.result_section_name,
+            label_prefix=self.label_prefix,
             **kwargs,
             **self.get_results_information(),
         )
@@ -219,7 +223,6 @@ class SexCheckSummary(Summary):
             "table": sex_problems.to_markdown(index=False),
             "figure_intensities": figure_intensities,
             "figure_baf_lrr": list(zip(baf_lrr_figures, baf_lrr_samples)),
-            "label_prefix": LABEL_RE.sub("-", self.args.out),
         }
 
     def get_methods_information(self) -> Dict[str, Optional[Union[str, int]]]:
@@ -377,7 +380,6 @@ class RelatedSamplesSummary(Summary):
             "nb_discarded": nb_discarded,
             "figure_z1": figure_z1,
             "figure_z2": figure_z2,
-            "label_prefix": LABEL_RE.sub("-", self.args.out),
         }
 
     def get_methods_information(self) -> Dict[str, Optional[Union[str, int]]]:
@@ -420,7 +422,6 @@ class ContaminationSummary(Summary):
             "nb_contaminated": nb_contaminated,
             "threshold": self.args.estimate_threshold,
             "table": df.loc[contaminated, :].to_markdown(index=False),
-            "label_prefix": LABEL_RE.sub("-", self.args.out),
         }
 
     def get_methods_information(self) -> Dict[str, Optional[Union[str, int]]]:
@@ -455,7 +456,6 @@ class PlateBiasSummary(Summary):
             "table": df.plate.value_counts()
                        .sort_values(ascending=False)
                        .to_markdown(),
-            "label_prefix": LABEL_RE.sub("-", self.args.out),
         }
 
     def get_methods_information(self) -> Dict[str, Optional[Union[str, int]]]:
@@ -514,7 +514,6 @@ class EthnicitySummary(Summary):
             "nb_outliers": nb_outliers,
             "outlier_figure": outlier_figure,
             "scree_figure": scree_figure,
-            "label_prefix": LABEL_RE.sub("-", self.args.out),
         }
 
     def get_methods_information(self) -> Dict[str, Optional[Union[str, int]]]:
