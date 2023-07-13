@@ -227,6 +227,7 @@ def _generate_conlusion_summaries(
 
                 # Initial numbers
                 dataset_summary.append((
+                    None,
                     "Initial numbers",
                     None,
                     initial_numbers['nb_markers'],
@@ -264,6 +265,7 @@ def _generate_conlusion_summaries(
                 summary_table_info = summary_table_info[0][-1]
 
             dataset_summary.append((
+                int(qc_node.name),
                 description,
                 summary_table_info,
                 -step_info["nb_markers"] if step_info["nb_markers"] else None,
@@ -276,6 +278,7 @@ def _generate_conlusion_summaries(
             # Is this the final step?
             if dataset == qc_node.name:
                 dataset_summary.append((
+                    None,
                     "Final numbers",
                     None,
                     stats[dataset]["bim"],
@@ -285,11 +288,12 @@ def _generate_conlusion_summaries(
         conclusion_summaries[dataset] = {
             "summary_table": tabulate(
                 dataset_summary,
-                headers=("Description", "Info", "Markers", "Samples"),
+                headers=("Step", "Description", "Info", "Markers", "Samples"),
                 intfmt=",",
+                tablefmt="github",
             ),
-            "nb_markers": dataset_summary[-1][2],
-            "nb_samples": dataset_summary[-1][3],
+            "nb_markers": dataset_summary[-1][-2],
+            "nb_samples": dataset_summary[-1][-1],
             "prefix": tree.get_node(dataset).bfile,
         }
 
@@ -315,12 +319,12 @@ def _generate_conlusion_summaries(
                 description += "\n  - " + desc
                 information += f"\n- {info:,d}"
 
-        dataset_summary.append((description, information))
+        dataset_summary.append((int(qc_node.name), description, information))
 
     conclusion_summaries["other_steps"] = {
         "summary_table": tabulate(
             dataset_summary,
-            headers=("Description", "Information"),
+            headers=("Step", "Description", "Information"),
             intfmt=",",
             tablefmt="grid",
         ),
