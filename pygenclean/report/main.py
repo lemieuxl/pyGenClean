@@ -264,8 +264,14 @@ def _generate_conlusion_summaries(
                 assert len(summary_table_info) == 1
                 summary_table_info = summary_table_info[0][-1]
 
+            # The step link
+            step_link = (
+                f"[{qc_node.name}](#sec-results-"
+                f"{qc_node.summary.label_prefix})"
+            )
+
             dataset_summary.append((
-                int(qc_node.name),
+                step_link,
                 description,
                 summary_table_info,
                 -step_info["nb_markers"] if step_info["nb_markers"] else None,
@@ -319,9 +325,20 @@ def _generate_conlusion_summaries(
                 description += "\n  - " + desc
                 information += f"\n- {info:,d}"
 
+        # The step link
+        step_link = (
+            f"[{qc_node.name}](#sec-results-{qc_node.summary.label_prefix})"
+        )
+
+        # Create parent link
+        parent_link = (
+            f"[{qc_node.parent}](#sec-results-"
+            f"{tree.get_node(qc_node.parent).summary.label_prefix})"
+        )
+
         dataset_summary.append((
-            int(qc_node.name),
-            int(qc_node.parent),
+            step_link,
+            parent_link,
             description,
             information,
         ))
