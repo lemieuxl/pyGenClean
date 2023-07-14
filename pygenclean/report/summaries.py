@@ -145,10 +145,44 @@ class SubsetSummary(Summary):
 
     def get_results_information(self) -> Dict[str, Optional[Union[str, int]]]:
         """Get the summary information for the results."""
+        summary_table_info = []
+
+        # The marker information (if any)
+        marker_info = self.get_marker_info()
+        if marker_info["marker_excl_type"]:
+            marker_label = (
+                "excluded" if marker_info["marker_excl_type"] == "exclude"
+                else "extracted"
+            )
+            marker_label = "Markers " + marker_label
+            nb_markers = (
+                marker_info["nb_markers_before"]
+                - marker_info["nb_markers_after"]
+            )
+
+            summary_table_info.append((marker_label, nb_markers))
+
+        # The sample information
+        sample_info = self.get_sample_info()
+        if sample_info["sample_excl_type"]:
+            sample_label = (
+                "kept" if sample_info["sample_excl_type"] == "keep"
+                else "removed"
+            )
+            sample_label = "Samples " + sample_label
+            nb_samples = (
+                sample_info["nb_samples_before"]
+                - sample_info["nb_samples_after"]
+            )
+
+            summary_table_info.append((sample_label, nb_samples))
+
+        self.summary_table_info = tuple(summary_table_info)
+
         return {
             "reason": self.args.reason,
-            **self.get_marker_info(),
-            **self.get_sample_info(),
+            **marker_info,
+            **sample_info,
         }
 
     def get_methods_information(self) -> Dict[str, Optional[Union[str, int]]]:
@@ -247,6 +281,11 @@ class NoCallHeteroSummary(Summary):
         # All heterozygous markers
         all_hetero = count_lines(self.args.out + ".all_hetero")
 
+        self.summary_table_info = (
+            ("All failed", all_failed),
+            ("All heterozygous", all_hetero),
+        )
+
         return {
             "all_failed": all_failed,
             "all_hetero": all_hetero,
@@ -273,6 +312,10 @@ class SampleCallRateSummary(Summary):
             self.args.bfile + ".fam", self.args.out + ".fam",
         )
         assert len(after) == 0
+
+        self.summary_table_info = (
+            ("mind=" + str(self.args.mind), len(before)),
+        )
 
         return {
             "mind": self.args.mind,
@@ -302,6 +345,10 @@ class MarkerCallRateSummary(Summary):
             self.args.bfile + ".bim", self.args.out + ".bim"
         )
         assert len(after) == 0
+
+        self.summary_table_info = (
+            ("geno=" + str(self.args.geno), len(before)),
+        )
 
         return {
             "geno": self.args.geno,
@@ -600,7 +647,7 @@ class FlagHwSummary(Summary):
 
         p_threshold_re = re.compile(r"^flag_hw\.snp_flag_threshold_")
 
-        self.summary_table_info = []
+        summary_table_info = []
 
         flagged_markers = []
         for filename in flag_files:
@@ -615,9 +662,9 @@ class FlagHwSummary(Summary):
 
             flagged_markers.append((p_threshold, nb_flagged, filename.name))
 
-            self.summary_table_info.append((f"$p<{p_threshold}$", nb_flagged))
+            summary_table_info.append((f"$p<{p_threshold}$", nb_flagged))
 
-        self.summary_table_info = tuple(self.summary_table_info)
+        self.summary_table_info = tuple(summary_table_info)
 
         return {
             "flagged_markers": flagged_markers,
@@ -643,6 +690,10 @@ class DuplicatedSamplesSummary(Summary):
         # The duplicated samples
         with open(self.args.duplicated_samples) as f:
             dup_samples = {line.split()[0] for line in f}
+
+        self.summary_table_info = (
+            ("Number of duplicated samples", len(dup_samples)),
+        )
 
         return {
             "nb_dup_samples": len(dup_samples),

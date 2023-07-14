@@ -268,10 +268,14 @@ def _generate_conlusion_summaries(
                     + str(conf[qc_node.name].get("geno", _DEFAULT_GENO))
                 )
 
-            summary_table_info = qc_node.summary.summary_table_info
-            if summary_table_info:
-                assert len(summary_table_info) == 1
-                summary_table_info = summary_table_info[0][-1]
+            # We set the summary table information only if nb markers AND nb
+            # samples is 0
+            summary_table_info = None
+            if not step_info["nb_markers"] and not step_info["nb_samples"]:
+                summary_table_info = qc_node.summary.summary_table_info
+                if summary_table_info:
+                    assert len(summary_table_info) == 1
+                    summary_table_info = summary_table_info[0][-1]
 
             # The step link
             step_link = (
