@@ -157,9 +157,9 @@ def main(args: Optional[argparse.Namespace] = None,
                 "desc": step_info["final-dataset"],
             }
 
-    # If no 'final-dataset' keyword, we save the last one we see...
-    final_step = step_of_bfile[usable_files[previous_step]["bfile"]]
-    if final_step not in final_datasets:
+    # If no 'final-dataset' keyword, we save the last one we see
+    if not final_datasets:
+        final_step = step_of_bfile[usable_files[previous_step]["bfile"]]
         final_datasets[final_step] = {
             "bfile": usable_files[final_step]["bfile"],
             "desc": None,
