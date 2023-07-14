@@ -154,8 +154,17 @@ def generate_report(**kwargs: Dict[str, Optional[Union[str, int]]]) -> str:
             print(f"{i + 1}. {qc_methods} [`{qc_node.module_name}`]",
                   file=methods_f)
 
+            # The parent node
+            parent_node = kwargs["qc_tree"].get_node(qc_node.parent)
+
             # The results for this step
-            filename = qc_node.summary.write_results()
+            filename = qc_node.summary.write_results(
+                parent_step=parent_node.name,
+                parent_link=(
+                    None if parent_node.name == "0"
+                    else f"sec-results-{parent_node.summary.label_prefix}"
+                ),
+            )
             print("{{< include " + str(filename) + " >}}\n", file=results_f)
 
     # Generating the pipeline summary figure
@@ -634,7 +643,7 @@ def _generate_dot_edges(tree: Tree, final_datasets: List) -> List[str]:
     # Processing all final datasets
     for i, final_dataset in enumerate(sorted(final_datasets, key=int)):
         # Adding the final dataset key
-        edges.append(f'{final_dataset} -> FINAL{i + 1} [color="red"]')
+        edges.append(f'{final_dataset} -> FINAL{i + 1} [color="red"];')
 
         # Adding the nodes up to the root
         for node in tree.get_from_node_to_root(final_dataset):
