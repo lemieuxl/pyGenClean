@@ -80,6 +80,10 @@ def add_layout(application: dash.Dash, samples: List[str]) -> None:
                 ],
             ),
             dash.dcc.Graph(id="sex-check-graph"),
+            dash.html.Div(
+                className="selected-samples",
+                id="selected-sample-list",
+            ),
         ],
     )
 
@@ -88,10 +92,29 @@ def add_callbacks(app: dash.Dash, df: pd.DataFrame) -> None:
     """Adds callbacks to the Dash application."""
     @app.callback(
         dash.Output("sex-check-graph", "figure"),
+        dash.Output("selected-sample-list", "children"),
         dash.Input("selected-samples", "value"),
     )
     def update_graph(selected_samples: List[str]) -> go.Figure:
-        return create_sexcheck_figure(df, selected_samples)
+        # The list of selected samples (to add as LI element), if any
+        selected_samples_ul = None
+        if selected_samples:
+            selected_samples_ul = dash.html.Div(
+                children=[
+                    dash.html.H2("Selected samples"),
+                    dash.html.Ul(
+                        className="selected-samples-ul",
+                        children=[
+                            dash.html.Li(sample) for sample in selected_samples
+                        ],
+                    )
+                ],
+            )
+
+        return (
+            create_sexcheck_figure(df, selected_samples),
+            selected_samples_ul,
+        )
 
 
 def create_sexcheck_figure(
