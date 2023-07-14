@@ -81,6 +81,7 @@ def setup_package():
             "geneparse >= 0.8.1",
             "dash >= 2.8.1",
             "argcomplete >= 2.0.0",
+            "tabulate >= 0.9.0",
         ],
         classifiers=[
             "Development Status :: 5 - Production/Stable",
