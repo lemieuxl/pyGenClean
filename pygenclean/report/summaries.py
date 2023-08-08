@@ -539,6 +539,11 @@ class EthnicitySummary(Summary):
         # The number of markers
         nb_markers = count_lines(self.args.out + ".ibs.pruned_data.bim")
 
+        # Screen plot might be there if skipping reference populations
+        scree_figure = None
+        if path.isfile(self.args.out + ".smartpca.scree_plot.png"):
+            scree_figure = self.args.out + ".smartpca.scree_plot.png"
+
         if self.args.skip_ref_pops:
             self.summary_table_info = (
                 ("Markers used for MDS", nb_markers),
@@ -547,6 +552,7 @@ class EthnicitySummary(Summary):
             return {
                 "nb_markers": nb_markers,
                 "skip_ref_pops": self.args.skip_ref_pops,
+                "scree_figure": scree_figure,
             }
 
         # The number of outliers
@@ -556,10 +562,6 @@ class EthnicitySummary(Summary):
         outlier_figure = None
         if path.isfile(self.args.out + ".outliers.png"):
             outlier_figure = self.args.out + ".outliers.png"
-
-        scree_figure = None
-        if path.isfile(self.args.out + ".smartpca.scree_plot.png"):
-            scree_figure = self.args.out + ".smartpca.scree_plot.png"
 
         self.summary_table_info = (
             ("Markers used for MDS", nb_markers),

@@ -1,5 +1,7 @@
 {% extends "section_template.md" %}
 
+{% set scree_text = "@fig-" + label_prefix + "-scree shows the scree plot for the principal components of the MDS analysis." %}
+
 {% block section_content %}
 
 {% if skip_ref_pops -%}
@@ -7,6 +9,9 @@
 Principal components analysis was performed using
 {{ "{:,d}".format(nb_markers) }} marker{{ "s" if nb_markers > 1 }} on the study
 dataset only.
+{% if scree_figure -%}
+{{ scree_text }}
+{% endif %}
 
 {%- else -%}
 
@@ -20,8 +25,7 @@ of the MDS analysis, where outliers of the {{ outliers_of }} population are
 shown in grey.
 {% endif -%}
 {% if scree_figure -%}
-@fig-{{ label_prefix }}-scree shows the scree plot for the principal components
-of the MDS analysis.
+{{ scree_text }}
 {% endif %}
 
 {% if outlier_figure %}
@@ -35,12 +39,12 @@ of the MDS analysis.
 ]({{ outlier_figure }}){{ "{#" }}fig-{{ label_prefix }}-outliers}
 {% endif %}
 
+{%- endif %}
+
 {% if scree_figure %}
 ![
     Scree plot for the principal components of the MDS analysis.
 ]({{ scree_figure }}){{ "{#" }}fig-{{ label_prefix }}-scree width='10cm'}
 {% endif %}
-
-{%- endif %}
 
 {% endblock %}
