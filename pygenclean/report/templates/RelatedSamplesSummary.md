@@ -27,6 +27,10 @@ related samples found by _Plink_.
 {% if figure_z2 -%}
 @fig-{{ label_prefix }}-z2 shows $Z_2$ versus $IBS2_{ratio}^\ast$ for all
 related samples found by _Plink_.
+{% endif -%}
+{% if table -%}
+@tbl-{{ label_prefix }}-merged-related-samples lists the related sample pairs
+with estimated relationship.
 {% endif %}
 
 {% if figure_z1 %}
@@ -41,6 +45,14 @@ related samples found by _Plink_.
     $Z_2$ versus $IBS2_{ratio}^\ast$ for all related samples found by _Plink_
     in the IBS analysis.
 ]({{ figure_z2 }}){{ "{#" }}fig-{{ label_prefix }}-z2}
+{% endif %}
+
+{% if table %}
+{{ table }}
+
+: List of all related samples with estimated relationship. Sample pairs are
+grouped according to their estimated family (the index
+column). {{ "{#" }}tbl-{{ label_prefix }}-merged-related-samples}
 {% endif %}
 
 {%- endif %}

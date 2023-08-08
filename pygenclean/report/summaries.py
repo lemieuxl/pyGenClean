@@ -421,12 +421,23 @@ class RelatedSamplesSummary(Summary):
             ("Unique related samples", len(related)),
         )
 
+        # Reading the merged related samples
+        merged_related_samples = pd.read_csv(
+            self.args.out + ".merged_related_individuals",
+            sep="\t",
+            usecols=["index", "FID1", "IID1", "FID2", "IID2", "status"],
+        )
+        table = None
+        if merged_related_samples.shape[0]:
+            table = merged_related_samples.to_markdown(index=False)
+
         return {
             "nb_markers": nb_markers,
             "nb_unique_samples": len(related),
             "nb_discarded": nb_discarded,
             "figure_z1": figure_z1,
             "figure_z2": figure_z2,
+            "table": table,
         }
 
     def get_methods_information(self) -> Dict[str, Optional[Union[str, int]]]:
