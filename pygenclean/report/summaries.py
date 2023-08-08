@@ -254,7 +254,7 @@ class SexCheckSummary(Summary):
             "male_f": self.args.male_f,
             "female_f": self.args.female_f,
             "nb_problems": nb_problems,
-            "table": sex_problems.to_markdown(index=False),
+            "table": sex_problems.to_markdown(index=False, floatfmt=".4f"),
             "figure_intensities": figure_intensities,
             "figure_baf_lrr": list(zip(baf_lrr_figures, baf_lrr_samples)),
         }
@@ -468,7 +468,9 @@ class ContaminationSummary(Summary):
             "nb_autosomal": nb_autosomal,
             "nb_contaminated": nb_contaminated,
             "threshold": self.args.estimate_threshold,
-            "table": df.loc[contaminated, :].to_markdown(index=False),
+            "table": df.loc[contaminated, :].to_markdown(
+                index=False, floatfmt=".4f",
+            ),
         }
 
     def get_methods_information(self) -> Dict[str, Optional[Union[str, int]]]:
@@ -655,7 +657,8 @@ class FlagHwSummary(Summary):
                 continue
 
             # The p threshold
-            p_threshold = format_numbers(p_threshold_re.sub("", filename.name))
+            p_threshold = float(p_threshold_re.sub("", filename.name))
+            p_threshold = format_numbers(f"{p_threshold:.4g}")
 
             # The number of flagged markers
             nb_flagged = count_lines(filename)
