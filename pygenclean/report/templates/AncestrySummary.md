@@ -18,10 +18,10 @@ dataset only.
 Using {{ "{:,d}".format(nb_markers) }} marker{{ "s" if nb_markers > 1 }} and a
 multiplier of {{ multiplier }}, there was a total of
 {{ "{:,d}".format(nb_outliers) }} outlier{{ "s" if nb_outliers > 1 }} of the
-{{ outliers_of }} population.
+{{ outliers_of }} cluster.
 {% if outlier_figure -%}
 @fig-{{ label_prefix }}-outliers shows the first two principal components
-of the MDS analysis, where outliers of the {{ outliers_of }} population are
+of the MDS analysis, where outliers of the {{ outliers_of }} cluster are
 shown in grey.
 {% endif -%}
 {% if scree_figure -%}
@@ -31,9 +31,9 @@ shown in grey.
 {% if outlier_figure %}
 ![
     MDS plots showing the first two principal components of the source dataset
-    with the reference panels. The outliers of the {{ outliers_of }} population
+    with the reference panels. The outliers of the {{ outliers_of }} cluster
     are shown in grey, while samples of the source dataset that resemble the
-    {{ outliers_of }} population are shown in orange. A multiplier of
+    {{ outliers_of }} cluster are shown in orange. A multiplier of
     {{ multiplier }} was used to find the {{ "{:,d}".format(nb_outliers) }}
     outlier{{ "s" if nb_outliers > 1 }}.
 ]({{ outlier_figure }}){{ "{#" }}fig-{{ label_prefix }}-outliers}
