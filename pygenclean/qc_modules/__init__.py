@@ -1,8 +1,8 @@
 """List of tools available for pyGenClean"""
 
 
+from .ancestry import ancestry, find_outliers, plot_eigenvalues, plot_mds
 from .contamination import contamination
-from .ethnicity import ethnicity, find_outliers, plot_eigenvalues, plot_mds
 from .flag_hw import flag_hw
 from .flag_maf import flag_maf
 from .hetero_hap import hetero_hap
@@ -27,7 +27,7 @@ qc_modules = {
     "flag_hw": flag_hw,
     "hetero_hap": hetero_hap,
     "nocall_hetero": nocall_hetero,
-    "ethnicity": ethnicity,
+    "ancestry": ancestry,
     "subset": subset,
     "contamination": contamination,
 }
@@ -44,7 +44,7 @@ qc_module_impact = {
     "flag_hw": "markers",
     "hetero_hap": "both",
     "nocall_hetero": "markers",
-    "ethnicity": "samples",
+    "ancestry": "samples",
     "subset": "both",
     "contamination": "samples",
 }
@@ -63,7 +63,7 @@ qc_sub_modules = {
     "related_samples": {
         "merge_related_samples": merge_related_samples,
     },
-    "ethnicity": {
+    "ancestry": {
         "find_outliers": find_outliers,
         "plot_mds": plot_mds,
         "plot_eigenvalues": plot_eigenvalues,

@@ -1,4 +1,4 @@
-"""Checks sample's ethnicity using reference populations"""
+"""Checks sample's ancestry using reference populations"""
 
 
 import argparse
@@ -7,7 +7,7 @@ from collections import defaultdict
 from typing import Dict, KeysView, List, Optional, Set, Tuple
 
 from ...error import ProgramError
-from ...report.summaries import EthnicitySummary
+from ...report.summaries import AncestrySummary
 from ...utils import flip_alleles
 from ...utils import plink as plink_utils
 from ...utils import timer
@@ -17,9 +17,9 @@ from ..related_samples import related_samples
 from . import find_outliers, plot_eigenvalues, plot_mds
 
 
-SCRIPT_NAME = "ethnicity"
-DESCRIPTION = "Checks sample's ethnicity using reference populations."
-DEFAULT_OUT = "ethnicity"
+SCRIPT_NAME = "ancestry"
+DESCRIPTION = "Checks sample's ancestry using reference populations."
+DEFAULT_OUT = "ancestry"
 
 
 logger = logging.getLogger(__name__)
@@ -28,7 +28,7 @@ logger = logging.getLogger(__name__)
 @timer(logger)
 def main(args: Optional[argparse.Namespace] = None,
          argv: Optional[List[str]] = None) -> Dict[str, str]:
-    """Checks sample's ethnicity using reference populations.
+    """Checks sample's ancestry using reference populations.
 
     Args:
         args (argparse.Namespace): the arguments and options.
@@ -282,7 +282,7 @@ def main(args: Optional[argparse.Namespace] = None,
         )
 
     return {
-        "summary": EthnicitySummary(args),
+        "summary": AncestrySummary(args),
         "usable_files": {
             "bfile": args.bfile,
             "outliers": args.out + ".outliers",

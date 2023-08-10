@@ -523,16 +523,16 @@ class PlateBiasSummary(Summary):
         return {}
 
 
-class EthnicitySummary(Summary):
+class AncestrySummary(Summary):
     """Plate bias summary."""
     methods = (
-        "Checks sample's ethnicity using reference populations and IBS. The "
+        "Checks sample's ancestry using reference populations and IBS. The "
         "script uses pairwise IBS matrix as a distance metric to identify "
         "cryptic relatedness among samples and sample outliers by "
         "multidimensional scaling (MDS)."
     )
 
-    result_section_name = "Ethnicity"
+    result_section_name = "Ancestry"
 
     def get_results_information(self) -> Dict[str, Optional[Union[str, int]]]:
         """Get the summary information for the results."""

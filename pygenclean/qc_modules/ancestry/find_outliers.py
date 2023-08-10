@@ -405,7 +405,7 @@ def add_args(parser: argparse.ArgumentParser) -> None:
     # The OUTPUT files
     group = parser.add_argument_group("Output File")
     group.add_argument(
-        "--out", type=str, metavar="FILE", default="ethnicity",
+        "--out", type=str, metavar="FILE", default="ancestry",
         help="The prefix of the output files. [default: %(default)s]",
     )
 
