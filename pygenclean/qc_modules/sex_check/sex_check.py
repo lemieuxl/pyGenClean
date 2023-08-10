@@ -47,7 +47,7 @@ def main(args: Optional[argparse.Namespace] = None,
     6.  If there are enough markers on chromosome ``24`` (at least 1), creates
         the recoded file for this chromosome.
     7.  Computes the number of no call on the chromosome ``24``.
-    8.  If required, plots the gender plot.
+    8.  If required, plots the sex plot.
     9. If required, plots the BAF and LRR plot.
 
     """
@@ -371,20 +371,20 @@ def add_args(parser: argparse.ArgumentParser) -> None:
     group = parser.add_argument_group("Intensity plot")
     group.add_argument(
         "--intensity-plot", action="store_true",
-        help="Create the gender plot (summarized chr Y intensities in "
+        help="Create the sex plot (summarized chr Y intensities in "
              "function of summarized chr X intensities) for problematic "
              "samples.",
     )
     group.add_argument(
         "--sex-intensities", type=str, metavar="FILE",
         help="A file containing allele intensities for each of the markers "
-             "located on the X and Y chromosome for the gender plot. Note "
+             "located on the X and Y chromosome for the sex plot. Note "
              "that all samples need to be in this file.",
     )
     group.add_argument(
         "--intensity-plot-format", type=str, metavar="FORMAT",
         default="png", choices=["png", "ps", "pdf"],
-        help="The output file format for the gender plot (png, ps or pdf "
+        help="The output file format for the sex plot (png, ps or pdf "
              "formats are available). [default: %(default)s]",
     )
     group.add_argument(

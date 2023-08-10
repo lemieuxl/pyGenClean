@@ -27,15 +27,16 @@ and Y for the problematic samples.
 {% if nb_problems > 1 %}
 {{ table }}
 
-: Summarization of the gender problems encountered during Plink's analysis. HET
-is the heterozygosity rate on the X chromosome. NOCALL is the percentage of no
-calls on the Y chromosome. {{ "{#" }}tbl-{{ label_prefix }}-results}
+: Summarization of the sex mismatch problems encountered during Plink's
+analysis. `HET` is the heterozygosity rate on the X chromosome. `NOCALL` is the
+percentage of no calls on the Y
+chromosome. {{ "{#" }}tbl-{{ label_prefix }}-results}
 
 {% if figure_intensities %}
 ![
-    Gender check using Plink. Mean $x$ and $y$ intensities are shown for each
+    Sex check using Plink. Mean $x$ and $y$ intensities are shown for each
     sample. Males are shown in blue, and females in red. Triangles show
-    problematic samples (green for males, mauve for females). Unknown gender
+    problematic samples (green for males, mauve for females). Unknown sex
     are shown in gray.
 ]({{ figure_intensities }}){{ "{#" }}fig-{{ label_prefix }}-intensities}
 {% endif %}
