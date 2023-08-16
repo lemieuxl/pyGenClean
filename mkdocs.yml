@@ -1,0 +1,54 @@
+site_name: pyGenClean - Automated Data Clean Up
+
+# GitHub information
+repo_url: https://github.com/lemieuxl/pyGenClean
+repo_name: lemieuxl/pyGenClean
+
+# Code highlight
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - admonition
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - def_list
+
+# Theme
+theme:
+  name: material
+
+  features:
+    - navigation.sections
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.top
+    - navigation.tracking
+    - navigation.indexes
+    - toc.follow
+
+  palette:
+  # Light mode
+  - media: "(prefers-color-scheme: light)"
+    schema: default
+    toggle:
+      icon: material/brightness-7
+      name: Switch to dark mode
+
+  # Dark mode
+  - media: "(prefers-color-scheme: dark)"
+    scheme: slate
+    toggle:
+      icon: material/brightness-4
+      name: Switch to system preference
+
+nav:
+  - Home: index.md
+  - QC modules:
+    - qc_modules/index.md
+    - Ancestry: qc_modules/ancestry.md
+
+extra_css:
+  - style.css

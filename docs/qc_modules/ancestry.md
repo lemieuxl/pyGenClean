@@ -282,3 +282,7 @@ the output prefix shown is the one by default, _i.e._ ancestry):
 
 : A population file containing the outliers (to help creating a new MDS plot
   using pyGenClean.PlinkUtils.plot_MDS_standalone).
+
+### Figures
+
+Multiple figures are generated.

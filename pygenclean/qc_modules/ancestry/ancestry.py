@@ -36,37 +36,29 @@ def main(args: Optional[argparse.Namespace] = None,
 
     These are the steps of this module:
 
-    1.  Prints the options.
-    2.  Finds the overlapping markers between the three reference panels and
-        the source panel (:py:func:`findOverlappingSNPsWithReference`).
-    3.  Extract the required markers from all the data sets
-        (:py:func:`extractSNPs`).
-    4.  Renames the reference panel's marker names to that they are the same as
-        the source panel (for all populations) (:py:func:`renameSNPs`).
-    5.  Combines the three reference panels together
-        (:py:func:`combinePlinkBinaryFiles`).
-    6.  Compute the frequency of all the markers from the reference and the
-        source panels (:py:func:`computeFrequency`).
-    7.  Finds the markers to flip in the reference panel (when compared to the
-        source panel) (:py:func:`findFlippedSNPs`).
-    8.  Excludes the unflippable markers from the reference and the source
-        panels (:py:func:`excludeSNPs`).
-    9.  Flips the markers that need flipping in their reference panel
-        (:py:func:`flipSNPs`).
-    10. Combines the reference and the source panels
-        (:py:func:`combinePlinkBinaryFiles`).
-    11. Runs part of :py:mod:`pyGenClean.RelatedSamples.find_related_samples`
-        on the combined data set (:py:func:`runRelatedness`).
-    12. Creates the ``mds`` file from the combined data set and the result of
-        previous step (:py:func:`createMDSFile`).
-    13. Creates the population file (:py:func:`createPopulationFile`).
-    14. Plots the ``mds`` values (:py:func:`plotMDS`).
-    15. Finds the outliers of a given reference population
-        (:py:func:`find_the_outliers`).
-    16. If required, computes the Eigenvalues using smartpca
-        (:py:func:`compute_eigenvalues`).
-    17. If required, creates a scree plot from smartpca resutls
-        (:py:func:`create_scree_plot`).
+    1.  Finds the overlapping markers between the three reference panels and
+        the source panel.
+    2.  Extract the required markers from all the data sets.
+    3.  Renames the reference panel's marker names to that they are the same as
+        the source panel (for all populations).
+    4.  Combines the three reference panels together.
+    5.  Compute the frequency of all the markers from the reference and the
+        source panels.
+    6.  Finds the markers to flip in the reference panel (when compared to the
+        source panel).
+    7.  Excludes the unflippable markers from the reference and the source
+        panels.
+    8.  Flips the markers that need flipping in their reference panel.
+    9.  Combines the reference and the source panels.
+    10. Runs part of the related samples QC module on the combined data set to
+        generate the `genome` file.
+    11. Creates the `mds` file from the combined data set and the result of
+        previous step.
+    12. Creates the population file.
+    13. Plots the `mds` values.
+    14. Finds the outliers of a given reference population's cluster.
+    15. If required, computes the Eigenvalues using `smartpca`.
+    16. If required, creates a scree plot from `smartpca` resutls.
 
     """
     if args is None:
@@ -328,9 +320,9 @@ def create_population_file(fam_files: List[str], labels: List[str],
         labels (list): the list of labels (corresponding to the FAM files).
         out (str): the name of the output file.
 
-    The ``fam_files`` is in reality a list of ``fam`` files composed of
-    samples. For each of those ``fam`` files, there is a label associated with
-    it (representing the name of the population).
+    The `fam_files` is in reality a list of `fam` files composed of samples.
+    For each of those `fam` files, there is a label associated with it
+    (representing the name of the population).
 
     The output file consists of one row per sample, with the following three
     columns: the family ID, the individual ID and the population of each
@@ -355,8 +347,8 @@ def create_mds(bfile: str, out: str, genome_filename: str, nb_components: int,
         use_original_plink (bool): plink1.9 or plink1.07.
 
     Using Plink, computes the MDS values for each individual using the
-    ``inPrefix``, ``genomeFileName`` and the number of components. The results
-    are save using the ``outPrefix`` prefix.
+    plink binary file prefix, the genome file and the number of required
+    components. The results are save using the output prefix.
 
     """
     command = [
@@ -379,7 +371,7 @@ def find_flipped_snps(frq_f1: str, frq_f2: str, out: str) -> None:
         frq_f2 (str): the name of the second frequency file.
         out (str): the prefix of the output files.
 
-    By reading two frequency files (``frqFile1`` and ``frqFile2``), it finds a
+    By reading two frequency files (`frq_f1` and `frq_f2`), it finds a
     list of markers that need to be flipped so that the first file becomes
     comparable with the second one. Also finds marker that need to be removed.
 
@@ -389,7 +381,7 @@ def find_flipped_snps(frq_f1: str, frq_f2: str, out: str) -> None:
 
     A marker will be removed if it is all homozygous in at least one data set.
     It will also be removed if it's impossible to determine the phase of the
-    marker (*e.g.* if the two alleles are ``A`` and ``T`` or ``C`` and ``G``).
+    marker (_e.g._ if the two alleles are `A` and `T` or `C` and `G`).
 
     """
     alleles_f1: Dict[str, Set[str]] = {}
@@ -470,19 +462,19 @@ def find_overlapping_snps_with_ref(
         ref_pop_names (tuple): the name of the reference populations.
         out_prefix (str): the prefix of the output files.
 
-    It starts by reading the ``bim`` file of the source data set
-    (``prefix.bim``). It finds all the markers (excluding the duplicated ones).
-    Then it reads all of the reference population ``bim`` files
-    (``referencePrefixes.bim``) and find all the markers that were found in the
+    It starts by reading the `bim` file of the source data set
+    (`prefix.bim`). It finds all the markers (excluding the duplicated ones).
+    Then it reads all of the reference population `bim` files
+    (`ref_prefixes.bim`) and find all the markers that were found in the
     source data set.
 
     It creates three output files:
 
-    * ``outPrefix.ref_snp_to_extract``: the name of the markers that needs to
+    - `out_prefix.ref_snp_to_extract`: the name of the markers that needs to
       be extracted from the three reference panels.
-    * ``outPrefix.source_snp_to_extract``: the name of the markers that needs
+    - `out_prefix.source_snp_to_extract`: the name of the markers that needs
       to be extracted from the source panel.
-    * ``outPrefix.update_names``: a file (readable by Plink) that will help in
+    - `out_prefix.update_names`: a file (readable by Plink) that will help in
       changing the names of the selected markers in the reference panels, so
       that they become comparable with the source panel.
 
@@ -547,7 +539,16 @@ def get_unique_markers(
     prefix: str,
     subset: Optional[KeysView[Tuple[int, int]]] = None,
 ) -> Dict[Tuple[int, int], str]:
-    """Gets the unique set of markers in a BIM file."""
+    """Gets the unique set of markers in a BIM file.
+
+    Args:
+        prefix (str): the prefix of the BIM file.
+        subset (set): a set of markers to exclude.
+
+    Returns:
+        dict: unique markers using genomic location (chromosome / position).
+
+    """
     snps = {}
     duplicates = set()
 
@@ -581,8 +582,7 @@ def check_args(args: argparse.Namespace) -> None:
         args (argparse.Namespace): the arguments and options.
 
     If there is a problem with an option, an exception is raised using the
-    :py:class:`ProgramError` class, a message is printed to the
-    :py:class:`sys.stderr` and the program exists with code 1.
+    `ProgramError` class.
 
     """
     # Check if we have the required files
