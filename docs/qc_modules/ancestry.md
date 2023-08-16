@@ -256,23 +256,23 @@ the output prefix shown is the one by default, _i.e._ ancestry):
 
 `ancestry.mds.png`
 
-: The plot of the MDS values (see Figure Initial MDS plot).
+: The plot of the MDS values (see the [initial MDS figure](#initial_mds)).
 
 `ancestry.before.png`
 
-: The MDS values before outliers detection (see Figure MDS plot before outlier
-  detection).
+: The MDS values before outliers detection (see the
+  [before outlier detection figure](#before_outlier)).
 
 `ancestry.after.png`
 
 : The MDS values after outliers detection for each of the three reference
-  populations. The shaded points are the outliers (see Figure MDS plot after
-  outlier detection).
+  populations. The shaded points are the outliers of a given population cluster
+  (see the [figure generated after outlier detection](#after_outlier)).
 
 `ancestry.outliers.png`
 
 : The MDS values after outliers detection for the selected reference population
-  (default is CEU) (see Figure Ethnic outliers).
+  (default is CEU cluster) (see the [outliers figure](#outliers)).
 
 `ancestry.outliers`
 
@@ -285,4 +285,152 @@ the output prefix shown is the one by default, _i.e._ ancestry):
 
 ### Figures
 
-Multiple figures are generated.
+Multiple figures are created by this module. The [first figure](#initial_mds)
+shows the MDS values right after they are computed by _Plink_. There is one
+color per reference populations (CEU in blue, YRI in green and JPT-CHB in
+purple). The source population is represented as red crosses.
+
+<figure markdown><a name="initial_mds"></a>
+  ![Initial MDS](images/ancestry.mds.png){ loading=lazy }
+  <figcaption>Initial MDS plot.</figcaption>
+</figure>
+
+The [second figure](#before_outlier) shows the MDS values before outlier
+detection.  Points in red, green and blue represent the individuals part of the
+CEU, YRI and JPT-CHB clusters, respectively. The yellow points represent the
+center of each of the cluster, when only considering the three reference panels.
+
+<figure markdown><a name="before_outlier"></a>
+  ![Before outlier detection](images/ancestry.before.png){ loading=lazy }
+  <figcaption>MDS plot before outlier detection.</figcaption>
+</figure>
+
+The [third figure](#after_outlier) shows the MDS values after outlier detection.
+Points in red, green and blue represent the individuals part of the CEU, YRI and
+JPT-CHB clusters, respectively. Outliers are found for each of the three
+reference populations and they are represented with the same, but lighter color.
+Once again, the yellow points represent the center of each of the cluster, when
+only considering the three reference panels.
+
+<figure markdown><a name="after_outlier"></a>
+  ![After outlier detection](images/ancestry.after.png){ loading=lazy }
+  <figcaption>MDS plot after outlier detection.</figcaption>
+</figure>
+
+The [last figure](#outliers) shows the outliers of the selected reference
+population cluster (CEU by default). Red, green and blue represent the CEU, YRI
+and JPT-CHB samples, respectively. Orange represents the individuals from the
+source panel who are part of the selected reference population cluster. Gray
+represents the outliers of the selected reference population cluster.
+
+<figure markdown><a name="outliers"></a>
+  ![Outliers](images/ancestry.outliers.png){ loading=lazy }
+  <figcaption>Ancestry outliers.</figcaption>
+</figure>
+
+## MDS plot
+
+If you want to manually modify the above figures, have a look at the
+`plot-mds` subcommand of the _ancestry_ QC module.
+
+```shell-session
+$ pyGenClean ancestry plot-mds --help
+usage: pyGenClean ancestry plot-mds [-h] --file FILE --population-file FORMAT
+                                    [--format FORMAT] [--title STRING]
+                                    [--xaxis STRING] [--yaxis STRING]
+                                    [--legend-position POSITION]
+                                    [--legend-fontsize SIZE]
+                                    [--legend-ncols INT]
+                                    [--legend-alpha FLOAT]
+                                    [--title-fontsize SIZE]
+                                    [--label-fontsize SIZE]
+                                    [--axis-fontsize SIZE]
+                                    [--adjust-left float]
+                                    [--adjust-right float]
+                                    [--adjust-bottom float]
+                                    [--adjust-top float]
+                                    [--population-order POP [POP ...]]
+                                    [--population-color COLOR [COLOR ...]]
+                                    [--population-marker MARKER [MARKER ...]]
+                                    [--population-size SIZE [SIZE ...]]
+                                    [--out FILE]
+
+Create an MDS plot.
+
+options:
+  -h, --help            show this help message and exit
+
+Input File:
+  --file FILE           The MBS file.
+  --population-file FORMAT
+                        A file containing population information. There must
+                        be three columns: famID, indID and population
+                        information.
+
+Graphical Options:
+  --format FORMAT       The output file format (png, ps, pdf, or X11 formats
+                        are available). [default: png]
+  --title STRING        The title of the MDS plot. [default: C2 in function of
+                        C1 - MDS]
+  --xaxis STRING        The component to use for the X axis. [default: C1]
+  --yaxis STRING        The component to use for the Y axis. [default: C2]
+  --legend-position POSITION
+                        The position of the legend. [default: best]
+  --legend-fontsize SIZE
+                        The font size of the legend. [default: medium]
+  --legend-ncols INT    The number of columns in the legend. [1]
+  --legend-alpha FLOAT  The transparency of the legend's background. [0.8]
+  --title-fontsize SIZE
+                        The fontsize of the title. [large]
+  --label-fontsize SIZE
+                        The fontsize of the X and Y labels. [medium]
+  --axis-fontsize SIZE  The fontsize of the X and Y axis tick labels. [medium]
+  --adjust-left float   Adjust the left margin. [0.125]
+  --adjust-right float  Adjust the left margin. [0.9]
+  --adjust-bottom float
+                        Adjust the left margin. [0.11]
+  --adjust-top float    Adjust the left margin. [0.88]
+
+Population Options:
+  --population-order POP [POP ...]
+                        The population order. [['CEU', 'YRI', 'JPT-CHB',
+                        'SOURCE']]
+  --population-color COLOR [COLOR ...]
+                        The population marker color. [['#3700B8', '#4DAF4A',
+                        '#984EA3', '#E41A1C']]
+  --population-marker MARKER [MARKER ...]
+                        The population marker. [['.', '.', '.', '+']]
+  --population-size SIZE [SIZE ...]
+                        The population marker size. [[60, 60, 60, 60]]
+
+Output File:
+  --out FILE            The prefix of the output files. [default: mds]
+```
+
+Below is an example of usage (for a MDS and a population file named
+`ethnicity.mds.mds` and `ethnicity.population_file_outliers`, respectively),
+producing the [following figure](#custom_mds).
+
+```bash
+pyGenClean ancestry plot-mds \
+    --file ancestry.mds.mds \
+    --population-file ancestry.population_file_outliers \
+    --population-order SOURCE CEU YRI JPT-CHB OUTLIER \
+    --population-color '#e41a1c' '#377eb8' '#4daf4a' '#984ea3' '#000000' \
+    --population-marker . . . . + \
+    --population-size 20 20 20 20 48 \
+    --legend-position "lower left" \
+    --legend-fontsize large \
+    --axis-fontsize x-large \
+    --adjust-left 0.17 \
+    --adjust-bottom 0.13 \
+    --adjust-right 0.96 \
+    --label-fontsize xx-large \
+    --title-fontsize xx-large \
+    --out custom_mds
+```
+
+<figure markdown><a name="custom_mds"></a>
+  ![Outliers](images/custom_mds.png){ loading=lazy }
+  <figcaption>Custom MDS plot.</figcaption>
+</figure>
