@@ -32,9 +32,9 @@ def main(args: Optional[argparse.Namespace] = None,
 
     These are the steps:
 
-    1. Reads the population file (:py:func:`readPopulations`).
-    2. Extract the MDS data (:py:func:`extractData`).
-    3. Plots the MDS data (:py:func:`plotMDS`).
+    1. Reads the population file.
+    2. Extract the MDS data.
+    3. Plots the MDS data.
 
     """
     if args is None:
@@ -146,8 +146,7 @@ def check_args(args: argparse.Namespace) -> None:
         args (argparse.Namespace): the arguments and options.
 
     If there is a problem with an option, an exception is raised using the
-    :py:class:`ProgramError` class, a message is printed to the
-    :py:class:`sys.stderr` and the program exists with code 1.
+    `ProgramError` class.
 
     """
     # Check in input file
