@@ -91,15 +91,33 @@ def plot_mds(df: pd.DataFrame, args: argparse.Namespace) -> None:
             s=args.population_size[i],
             marker=args.population_marker[i],
             label=pop_name,
+            linewidths=0.5,
         )
 
     # The legend
-    axe.legend(loc="best", fancybox=True, fontsize=10)
+    axe.legend(
+        loc=args.legend_position,
+        fancybox=True,
+        fontsize=args.legend_fontsize,
+        ncols=args.legend_ncols,
+        framealpha=args.legend_alpha,
+    )
 
     # The title and XY labels
-    axe.set_title(args.title)
-    axe.set_xlabel(args.xaxis)
-    axe.set_ylabel(args.yaxis)
+    axe.set_title(args.title, fontdict={"fontsize": args.title_fontsize})
+    axe.set_xlabel(args.xaxis, fontsize=args.label_fontsize)
+    axe.set_ylabel(args.yaxis, fontsize=args.label_fontsize)
+
+    # The ticks font size
+    axe.tick_params(axis="both", labelsize=args.axis_fontsize)
+
+    # The parameters
+    figure.subplots_adjust(
+        left=args.adjust_left,
+        right=args.adjust_right,
+        bottom=args.adjust_bottom,
+        top=args.adjust_top,
+    )
 
     if args.format == "X11":
         plt.show()
@@ -204,6 +222,7 @@ def add_args(parser: argparse.ArgumentParser) -> None:
     # The graphical options
     group = parser.add_argument_group("Graphical Options")
     add_graphical_options(group)
+    add_extra_graphical_options(group)
 
     # The population options
     group = parser.add_argument_group("Population Options")
@@ -241,7 +260,7 @@ def add_graphical_options(parser: argparse._ArgumentGroup,
     """Adds the graphical options."""
     parser.add_argument(
         f"--{prefix}format", type=str, metavar="FORMAT", default="png",
-        choices=["png", "ps", "pdf", "X11"],
+        choices={"png", "ps", "pdf", "X11"},
         help="The output file format (png, ps, pdf, or X11 formats are "
              "available). [default: %(default)s]",
     )
@@ -257,4 +276,63 @@ def add_graphical_options(parser: argparse._ArgumentGroup,
     parser.add_argument(
         f"--{prefix}yaxis", type=str, metavar="STRING", default="C2",
         help="The component to use for the Y axis. [default: %(default)s]",
+    )
+
+
+def add_extra_graphical_options(parser: argparse._ArgumentGroup) -> None:
+    """Adds extra graphical options (not to be shown in pipeline)."""
+    parser.add_argument(
+        "--legend-position", type=str, metavar="POSITION", default="best",
+        choices={"best", "upper right", "upper left", "lower left",
+                 "lower right", "right", "center left", "center right",
+                 "lower center", "upper center", "center"},
+        help="The position of the legend. [default: %(default)s]",
+    )
+    parser.add_argument(
+        "--legend-fontsize", type=str, metavar="SIZE", default="medium",
+        choices={"xx-small", "x-small", "small", "medium", "large", "x-large",
+                 "xx-large"},
+        help="The font size of the legend. [default: %(default)s]",
+    )
+    parser.add_argument(
+        "--legend-ncols", type=int, metavar="INT", default=1,
+        help="The number of columns in the legend. [%(default)s]",
+    )
+    parser.add_argument(
+        "--legend-alpha", type=float, metavar="FLOAT", default=0.8,
+        help="The transparency of the legend's background. [%(default)s]",
+    )
+    parser.add_argument(
+        "--title-fontsize", type=str, metavar="SIZE", default="large",
+        choices={"xx-small", "x-small", "small", "medium", "large", "x-large",
+                 "xx-large"},
+        help="The fontsize of the title. [%(default)s]",
+    )
+    parser.add_argument(
+        "--label-fontsize", type=str, metavar="SIZE", default="medium",
+        choices={"xx-small", "x-small", "small", "medium", "large", "x-large",
+                 "xx-large"},
+        help="The fontsize of the X and Y labels. [%(default)s]",
+    )
+    parser.add_argument(
+        "--axis-fontsize", type=str, metavar="SIZE", default="medium",
+        choices={"xx-small", "x-small", "small", "medium", "large", "x-large",
+                 "xx-large"},
+        help="The fontsize of the X and Y axis tick labels. [%(default)s]",
+    )
+    parser.add_argument(
+        "--adjust-left", type=float, metavar="float", default=0.125,
+        help="Adjust the left margin. [%(default)s]",
+    )
+    parser.add_argument(
+        "--adjust-right", type=float, metavar="float", default=0.9,
+        help="Adjust the left margin. [%(default)s]",
+    )
+    parser.add_argument(
+        "--adjust-bottom", type=float, metavar="float", default=0.11,
+        help="Adjust the left margin. [%(default)s]",
+    )
+    parser.add_argument(
+        "--adjust-top", type=float, metavar="float", default=0.88,
+        help="Adjust the left margin. [%(default)s]",
     )
