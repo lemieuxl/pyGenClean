@@ -411,7 +411,7 @@ Below is an example of usage (for a MDS and a population file named
 `ethnicity.mds.mds` and `ethnicity.population_file_outliers`, respectively),
 producing the [following figure](#custom_mds).
 
-```bash
+``` { .bash .copy}
 pyGenClean ancestry plot-mds \
     --file ancestry.mds.mds \
     --population-file ancestry.population_file_outliers \
