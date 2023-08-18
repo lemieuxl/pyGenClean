@@ -5,7 +5,7 @@ scripts).
 
 - [ancestry](ancestry.md)
 - [contamination](contamination.md)
-- flag hw
+- [flag hw](flag_hw.md)
 - flag MAF
 - heterozygous haploid
 - marker call rate

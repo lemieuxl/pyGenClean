@@ -76,6 +76,7 @@ nav:
     - reference/index.md
     - Ancestry: reference/ancestry.md
     - Contamination: reference/contamination.md
+    - Flag Hardy-Weinberg: reference/flag_hw.md
 
 extra_javascript:
   - javascripts/katex.js
