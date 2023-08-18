@@ -27,6 +27,10 @@ plugins:
   - mkdocstrings:
       handlers:
         python:
+          options:
+            heading_level: 3
+            show_root_heading: true
+            members_order: source
           paths: [pygenclean]
           import:
             - url: https://docs.python-requests.org/en/master/objects.inv
@@ -67,6 +71,9 @@ nav:
     - qc_modules/index.md
     - Ancestry: qc_modules/ancestry.md
     - Contamination: qc_modules/contamination.md
+  - API reference:
+    - reference/index.md
+    - Ancestry: reference/ancestry.md
 
 extra_css:
   - style.css

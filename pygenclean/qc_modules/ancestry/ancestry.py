@@ -1,4 +1,4 @@
-"""Checks sample's ancestry using reference populations"""
+"""Perform MDS analysis and more."""
 
 
 import argparse
@@ -27,12 +27,15 @@ logger = logging.getLogger(__name__)
 
 @timer(logger)
 def main(args: Optional[argparse.Namespace] = None,
-         argv: Optional[List[str]] = None) -> Dict[str, str]:
-    """Checks sample's ancestry using reference populations.
+         argv: Optional[List[str]] = None) -> dict:
+    """Perform MDS analysis and more.
 
     Args:
-        args (argparse.Namespace): the arguments and options.
-        argv (list): the argument as a list.
+        args: The arguments and options.
+        argv: The argument as a list.
+
+    Returns:
+        A dictionary containing summary information about the run.
 
     These are the steps of this module:
 
@@ -282,14 +285,14 @@ def main(args: Optional[argparse.Namespace] = None,
     }
 
 
-def compute_eigenvalues(prefix: str, out: str, nb_components: int) -> None:
-    """Computes the Eigenvalues using smartpca from Eigensoft.
+def compute_eigenvalues(prefix: str, out: str, nb_components: int):
+    """Compute the eigenvalues using smartpca from Eigensoft.
 
     Args:
-        prefix (str): the prefix of the input files.
-        out (str): the prefix of the output files.
+        prefix: The prefix of the input files.
+        out: The prefix of the output files.
 
-    Creates a "parameter file" used by smartpca and runs it.
+    Create a "parameter file" used by `smartpca` and execute it.
 
     """
     # First, we create the parameter file
@@ -311,14 +314,13 @@ def compute_eigenvalues(prefix: str, out: str, nb_components: int) -> None:
     execute_external_command(command)
 
 
-def create_population_file(fam_files: List[str], labels: List[str],
-                           out: str) -> None:
-    """Creates a population file.
+def create_population_file(fam_files: List[str], labels: List[str], out: str):
+    """Create a population file.
 
     Args:
-        fam_files (list): the list of FAM files.
-        labels (list): the list of labels (corresponding to the FAM files).
-        out (str): the name of the output file.
+        fam_files: The list of FAM files.
+        labels: The list of labels (corresponding to the FAM files).
+        out: The name of the output file.
 
     The `fam_files` is in reality a list of `fam` files composed of samples.
     For each of those `fam` files, there is a label associated with it
@@ -336,15 +338,15 @@ def create_population_file(fam_files: List[str], labels: List[str],
 
 
 def create_mds(bfile: str, out: str, genome_filename: str, nb_components: int,
-               use_original_plink: bool = False) -> None:
-    """Creates a MDS file using Plink.
+               use_original_plink: bool = False):
+    """Create a MDS file using Plink.
 
     Args:
-        bfile (str): the prefix of the input file.
-        out (str): the prefix of the output file.
-        genome_filename (str): the name of the ``genome`` file.
-        nb_components (int): the number of component.
-        use_original_plink (bool): plink1.9 or plink1.07.
+        bfile: The prefix of the input file.
+        out: The prefix of the output file.
+        genome_filename: The name of the ``genome`` file.
+        nb_components: The number of component.
+        use_original_plink: Use either Plink version 1.07 (instead of 1.9).
 
     Using Plink, computes the MDS values for each individual using the
     plink binary file prefix, the genome file and the number of required
@@ -363,13 +365,13 @@ def create_mds(bfile: str, out: str, genome_filename: str, nb_components: int,
     execute_external_command(command)
 
 
-def find_flipped_snps(frq_f1: str, frq_f2: str, out: str) -> None:
-    """Find flipped SNPs and flip them in the data.
+def find_flipped_snps(frq_f1: str, frq_f2: str, out: str):
+    """Find flipped markers and flip them.
 
     Args:
-        frq_f1 (str): the name of the first frequency file
-        frq_f2 (str): the name of the second frequency file.
-        out (str): the prefix of the output files.
+        frq_f1: The name of the first frequency file
+        frq_f2: The name of the second frequency file.
+        out: The prefix of the output files.
 
     By reading two frequency files (`frq_f1` and `frq_f2`), it finds a
     list of markers that need to be flipped so that the first file becomes
@@ -453,14 +455,14 @@ def find_overlapping_snps_with_ref(
     ref_prefixes: Tuple[str, str, str],
     ref_pop_names: Tuple[str, str, str],
     out_prefix: str,
-) -> None:
+):
     """Find the overlapping SNPs in 4 different data sets.
 
     Args:
-        prefix (str): the prefix source file.
-        ref_prefixes (tuple): the prefix of the reference populations.
-        ref_pop_names (tuple): the name of the reference populations.
-        out_prefix (str): the prefix of the output files.
+        prefix: the prefix source file.
+        ref_prefixes: the prefix of the reference populations.
+        ref_pop_names: the name of the reference populations.
+        out_prefix: the prefix of the output files.
 
     It starts by reading the `bim` file of the source data set
     (`prefix.bim`). It finds all the markers (excluding the duplicated ones).
@@ -470,13 +472,17 @@ def find_overlapping_snps_with_ref(
 
     It creates three output files:
 
-    - `out_prefix.ref_snp_to_extract`: the name of the markers that needs to
-      be extracted from the three reference panels.
-    - `out_prefix.source_snp_to_extract`: the name of the markers that needs
-      to be extracted from the source panel.
-    - `out_prefix.update_names`: a file (readable by Plink) that will help in
-      changing the names of the selected markers in the reference panels, so
-      that they become comparable with the source panel.
+    `out_prefix.ref_snp_to_extract`
+    : Contains the markers that needs to be extracted from the three
+      reference panels.
+
+    `out_prefix.source_snp_to_extract`
+    : Contains the markers that needs to be extracted from the source panel.
+
+    `out_prefix.update_names`
+    : A file (readable by Plink) that will help in changing the names of the
+      selected markers in the reference panels, so that they become comparable
+      with the source panel.
 
     """
     # Reading the source BIM file
@@ -539,14 +545,14 @@ def get_unique_markers(
     prefix: str,
     subset: Optional[KeysView[Tuple[int, int]]] = None,
 ) -> Dict[Tuple[int, int], str]:
-    """Gets the unique set of markers in a BIM file.
+    """Get the unique set of markers in a BIM file.
 
     Args:
-        prefix (str): the prefix of the BIM file.
-        subset (set): a set of markers to exclude.
+        prefix: The prefix of the BIM file.
+        subset: A set of markers to exclude.
 
     Returns:
-        dict: unique markers using genomic location (chromosome / position).
+        Unique markers using genomic location (chromosome / position).
 
     """
     snps = {}
@@ -575,11 +581,11 @@ def get_unique_markers(
     return snps
 
 
-def check_args(args: argparse.Namespace) -> None:
-    """Checks the arguments and options.
+def check_args(args: argparse.Namespace):
+    """Check the arguments and options.
 
     Args:
-        args (argparse.Namespace): the arguments and options.
+        args: The arguments and options.
 
     If there is a problem with an option, an exception is raised using the
     `ProgramError` class.
@@ -634,7 +640,15 @@ def check_args(args: argparse.Namespace) -> None:
 
 
 def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
-    """Parses the command line options and arguments."""
+    """Parse the command line options and arguments.
+
+    Args:
+        argv: An optional list of arguments.
+
+    Returns:
+        The parsed arguments and options.
+
+    """
     parser = argparse.ArgumentParser(description=DESCRIPTION)
 
     parser.add_argument(
@@ -648,8 +662,13 @@ def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
     return parser.parse_args(argv)
 
 
-def add_args(parser: argparse.ArgumentParser) -> None:
-    """Add arguments and options to the parser."""
+def add_args(parser: argparse.ArgumentParser):
+    """Add arguments and options to the parser.
+
+    Args:
+        parser: An argument parser to which arguments will be added.
+
+    """
     # The INPUT files
     group = parser.add_argument_group("Input File")
     group.add_argument(
