@@ -74,6 +74,13 @@ nav:
   - API reference:
     - reference/index.md
     - Ancestry: reference/ancestry.md
+    - Contamination: reference/contamination.md
+
+extra_javascript:
+  - javascripts/katex.js
+  - https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js
+  - https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js
 
 extra_css:
   - style.css
+  - https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css
