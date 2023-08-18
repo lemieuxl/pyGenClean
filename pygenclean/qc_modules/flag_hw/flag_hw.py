@@ -1,4 +1,4 @@
-"""Flags markers failing Hardy Weinberg equilibrium."""
+"""Flag markers failing Hardy Weinberg equilibrium."""
 
 
 import argparse
@@ -24,24 +24,24 @@ logger = logging.getLogger(__name__)
 @timer(logger)
 def main(args: Optional[argparse.Namespace] = None,
          argv: Optional[List[str]] = None) -> Dict[str, Optional[str]]:
-    """Flags markers failing Hardy Weinberg equilibrium.
+    """Flag markers failing Hardy Weinberg equilibrium.
 
     Args:
-        args (argparse.Namespace): the arguments and options
-        argv (list): the argument as a list.
+        args: the arguments and options
+        argv: the argument as a list.
+
+    Returns:
+        A dictionary containing summary information about the run.
 
     These are the steps performed by this module:
 
-    1. Prints the options of the module.
-    2. Computes the number of markers in the input file
-       (:py:func:`computeNumberOfMarkers`).
-    3. If there are no markers, the module stops.
-    4. Computes the Bonferroni therhold (:math:`0.05 / \\textrm{nbMarkers}`).
-    5. Runs Plink to find failed markers with the Bonferroni threshold.
-    6. Runs Plink to find failed markers with the default threshold.
-    7. Compares the ``bim`` files for the Bonferroni threshold.
-    8. Compares the ``bim`` files for the default threshold.
-    9. Computes the "in between" marker list, which is the markers from the
+    1. Compute the number of markers in the input file.
+    2. Compute the Bonferroni therhold ($0.05 / \\textrm{nb markers}$).
+    3. Run _Plink_ to find failed markers with the Bonferroni threshold.
+    4. Run _Plink_ to find failed markers with the default threshold.
+    5. Compare the `bim` files for the Bonferroni threshold.
+    6. Compare the `bim` files for the default threshold.
+    7. Compute the "in between" marker list, which is the markers from the
        default threshold and the Bonferroni threshold.
 
     """
@@ -125,16 +125,16 @@ def compare_bim(before: str, after: str, output_filename: str) -> Set[str]:
     """Compare two BIM files for differences.
 
     Args:
-        before (str): the name of the file before modification.
-        after (str): the name of the file after modification.
-        output_filename: the name of the output file.
+        before: The name of the file before modification.
+        after: The name of the file after modification.
+        output_filename: The name of the output file.
 
     Returns:
-        set: the set difference before and after.
+        The set difference before and after.
 
-    The ``bim`` files contain the list of markers in a given dataset. The
-    ``before`` file should have more markers than the ``after`` file. The
-    ``after`` file should be a subset of the markers in the ``before`` file.
+    The `bim` files contain the list of markers in a given dataset. The
+    `before` file should have more markers than the `after` file. The
+    `after` file should be a subset of the markers in the `before` file.
 
     """
     in_before, _, in_after = plink_utils.compare_bim(bim_a=before, bim_b=after)
@@ -157,10 +157,10 @@ def get_nb_markers(filename: str) -> int:
     """Count the number of markers (line) in a BIM file.
 
     Args:
-        filename (str): the name of the BIM file.
+        filename: The name of the BIM file.
 
     Returns:
-        int: the number of markers (line) in the BIM file.
+        The number of markers (line) in the BIM file.
 
     """
     nb_line = 0
@@ -171,16 +171,16 @@ def get_nb_markers(filename: str) -> int:
 
 
 def compute_hw(prefix: str, threshold: str, out_prefix: str,
-               use_original_plink: bool) -> None:
+               use_original_plink: bool):
     """Compute the Hardy Weinberg test using Plink.
 
     Args:
-        prefix (str): the prefix of all the files.
-        threshold (str): the Hardy Weinberg threshold.
-        out_prefix (str): the prefix of the output file.
-        use_original_plink (bool): use plink 1.07 instead of plink 1.9.
+        prefix: The prefix of all the files.
+        threshold: The Hardy Weinberg threshold.
+        out_prefix: The prefix of the output file.
+        use_original_plink: Use the original Plink (version 1.07).
 
-    Uses Plink to exclude markers that failed the Hardy-Weinberg test at a
+    Use Plink to exclude markers that failed the Hardy-Weinberg test at a
     specified significance threshold.
 
     """
@@ -196,15 +196,14 @@ def compute_hw(prefix: str, threshold: str, out_prefix: str,
     )
 
 
-def check_args(args: argparse.Namespace) -> None:
-    """Checks the arguments and options.
+def check_args(args: argparse.Namespace):
+    """Check the arguments and options.
 
     Args:
-        args (argparse.Namespace): the arguments and options.
+        args: The arguments and options.
 
     If there is a problem with an option, an exception is raised using the
-    :py:class:`ProgramError` class, a message is printed to the
-    :py:class:`sys.stderr` and the program exists with code 1.
+    `ProgramError` class.
 
     """
     # Check if we have the required files
@@ -223,7 +222,15 @@ def check_args(args: argparse.Namespace) -> None:
 
 
 def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
-    """Parses the command line options and arguments."""
+    """Parse the command line options and arguments.
+
+    Args:
+        argv: An optional list of arguments.
+
+    Returns:
+        The parsed arguments and options.
+
+    """
     parser = argparse.ArgumentParser(description=DESCRIPTION)
 
     parser.add_argument(
@@ -237,8 +244,13 @@ def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
     return parser.parse_args(argv)
 
 
-def add_args(parser: argparse.ArgumentParser) -> None:
-    """Add arguments and options to the parser."""
+def add_args(parser: argparse.ArgumentParser):
+    """Add arguments and options to the parser.
+
+    Args:
+        parser: An argument parser to which arguments will be added.
+
+    """
     # The INPUT files
     group = parser.add_argument_group("Input File")
     group.add_argument(
