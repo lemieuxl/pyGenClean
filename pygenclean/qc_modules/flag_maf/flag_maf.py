@@ -27,15 +27,16 @@ def main(args: Optional[argparse.Namespace] = None,
     """Flag monomorphic markers (i.e. MAF of 0).
 
     Args:
-        args (argparse.Namespace): the arguments and options.
-        argv (list): the argument as list.
+        args: The arguments and options.
+        argv: The argument as list.
+
+    Returns:
+        A dictionary containing summary information about the run.
 
     These are the steps:
 
-    1. Prints the options.
-    2. Computes the frequencies using Plink (:py:func:`computeFrequency`).
-    3. Finds markers with MAF of 0, and saves them in a file
-       (:py:func:`findSnpWithMaf0`).
+    1. Compute the frequencies using Plink.
+    2. Find markers with MAF of 0, and saves them in a file.
 
     """
     if args is None:
@@ -63,12 +64,12 @@ def main(args: Optional[argparse.Namespace] = None,
     }
 
 
-def find_maf_0(freq_filename: str, prefix: str) -> None:
-    """Finds SNPs with MAF of 0 and put them in a file.
+def find_maf_0(freq_filename: str, prefix: str):
+    """Find markers with MAF of 0 and put them in a file.
 
     Args:
-        freq_filename (str): the name of the frequency file.
-        prefix (str): the prefix of all the files.
+        freq_filename: The name of the frequency file.
+        prefix: The prefix of all the files.
 
     Reads a frequency file from Plink, and find markers with a minor allele
     frequency of zero.
@@ -124,15 +125,14 @@ def find_maf_0(freq_filename: str, prefix: str) -> None:
                 print(marker_name,  file=output_file)
 
 
-def check_args(args: argparse.Namespace) -> None:
-    """Checks the arguments and options.
+def check_args(args: argparse.Namespace):
+    """Check the arguments and options.
 
     Args:
-        args (argparse.Namespace): the arguments and options.
+        args: The arguments and options.
 
     If there is a problem with an option, an exception is raised using the
-    :py:class:`ProgramError` class, a message is printed to the
-    :class:`sys.stderr` and the program exists with code 1.
+    `ProgramError` class.
 
     """
     # Check if we have the bed, bim and fam files
@@ -141,7 +141,15 @@ def check_args(args: argparse.Namespace) -> None:
 
 
 def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
-    """Parses the arguments and function."""
+    """Parse the command line options and arguments.
+
+    Args:
+        argv: An optional list of arguments.
+
+    Returns:
+        The parsed arguments and options.
+
+    """
     parser = argparse.ArgumentParser(description=DESCRIPTION)
 
     parser.add_argument(
@@ -155,8 +163,13 @@ def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
     return parser.parse_args(argv)
 
 
-def add_args(parser: argparse.ArgumentParser) -> None:
-    """Add arguments and options to the parser."""
+def add_args(parser: argparse.ArgumentParser):
+    """Add arguments and options to the parser.
+
+    Args:
+        parser: An argument parser to which arguments will be added.
+
+    """
     # The INPUT files
     group = parser.add_argument_group("Input File")
     group.add_argument(
