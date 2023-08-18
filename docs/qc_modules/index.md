@@ -5,10 +5,10 @@ scripts).
 
 - [ancestry](ancestry.md)
 - [contamination](contamination.md)
-- [flag HW](flag_hw.md)
+- [flag Hardy-Weinberg](flag_hw.md)
 - [flag MAF](flag_maf.md)
 - [heterozygous haploid](hetero_hap.md)
-- marker call rate
+- [marker call rate](marker_call_rate.md)
 - no call / heterozygous
 - plate bias
 - related samples

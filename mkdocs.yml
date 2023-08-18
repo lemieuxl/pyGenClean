@@ -74,6 +74,7 @@ nav:
     - Flag Hardy-Weinberg: qc_modules/flag_hw.md
     - Flag MAF: qc_modules/flag_maf.md
     - Heterozygous haploid: qc_modules/hetero_hap.md
+    - Marker call rate: qc_modules/marker_call_rate.md
   - API reference:
     - reference/index.md
     - QC modules:
@@ -82,6 +83,7 @@ nav:
       - Flag Hardy-Weinberg: reference/qc_modules/flag_hw.md
       - Flag MAF: reference/qc_modules/flag_maf.md
       - Heterozygous haploid: reference/qc_modules/hetero_hap.md
+      - Marker call rate: reference/qc_modules/marker_call_rate.md
 
 extra_javascript:
   - javascripts/katex.js
