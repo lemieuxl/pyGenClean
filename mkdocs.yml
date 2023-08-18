@@ -71,6 +71,7 @@ nav:
     - qc_modules/index.md
     - Ancestry: qc_modules/ancestry.md
     - Contamination: qc_modules/contamination.md
+    - Flag Hardy-Weinberg: qc_modules/flag_hw.md
   - API reference:
     - reference/index.md
     - Ancestry: reference/ancestry.md
