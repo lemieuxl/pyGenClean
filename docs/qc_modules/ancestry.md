@@ -1,8 +1,8 @@
 # Ancestry
 
-The _ancestry_ QC module consists of a main script and three companion scripts.
-It performs a PCA analysis (with or without reference populations) and generates
-multiple ancestry plots.
+The _ancestry_ QC module consists of a [main script](#main-script) and three
+[companion scripts](#submodules).  It performs an MDS analysis using _Plink_
+(with or without reference populations) and generates multiple ancestry plots.
 
 Use the following command to access the multiple scripts of the _ancestry_ QC
 module.
@@ -31,7 +31,7 @@ subcommands:
 
 ## Main script
 
-The main script (access by using the `run` subcommand) performs a PCA analysis
+The main script (accessed using the `run` subcommand) performs an MDS analysis
 of the source dataset (with or without reference populations).
 
 ```shell-session
@@ -148,13 +148,19 @@ files for the reference panels (_CEU_, _YRI_ and _JPG-CHB_).
 12. Creates the population file.
 13. Plots the `mds` values.
 14. Finds the outliers of a given reference population's cluster.
-15. If required, computes the Eigenvalues using `smartpca`.
-16. If required, creates a scree plot from `smartpca` resutls.
+15. If required, computes the eigenvalues using `smartpca`.
+16. If required, creates a scree plot from `smartpca` results.
 
 ### Output files
 
-The output files of each of the steps described above are as follow (note that
-the output prefix shown is the one by default, _i.e._ ancestry):
+Here is a comprehensive list of all the possible output files for each of the
+steps described above.
+
+!!! note
+
+    The output prefix shown is the one by default, _i.e._ ancestry). Also, the
+    majority of the files will be absent if the option `--skip-ref-pops` has
+    been used.
 
 `ancestry.ref_snp_to_extract`
 
@@ -241,12 +247,12 @@ the output prefix shown is the one by default, _i.e._ ancestry):
 
 : The data set containing the merged reference and source panels.
 
-`ancestry.ibs`
+`ancestry.ibs.*`
 
 : For more information about those files (see the
   [related samples](related_samples.md) QC module for more information).
 
-`ancestry.mds`
+`ancestry.mds.mds`
 
 : Files containing the MDS values.
 
@@ -256,22 +262,23 @@ the output prefix shown is the one by default, _i.e._ ancestry):
 
 `ancestry.mds.png`
 
-: The plot of the MDS values (see the [initial MDS figure](#initial_mds)).
+: The plot of the MDS values (see the [initial MDS figure](#initial_mds)). This
+  figure can be regenerated using the [`plot-mds`](#plot-mds) subcommand.
 
 `ancestry.before.png`
 
-: The MDS values before outliers detection (see the
+: The MDS values before outlier detection (see the
   [before outlier detection figure](#before_outlier)).
 
 `ancestry.after.png`
 
-: The MDS values after outliers detection for each of the three reference
+: The MDS values after outlier detection for each of the three reference
   populations. The shaded points are the outliers of a given population cluster
   (see the [figure generated after outlier detection](#after_outlier)).
 
 `ancestry.outliers.png`
 
-: The MDS values after outliers detection for the selected reference population
+: The MDS values after outlier detection for the selected reference population
   (default is CEU cluster) (see the [outliers figure](#outliers)).
 
 `ancestry.outliers`
@@ -280,15 +287,23 @@ the output prefix shown is the one by default, _i.e._ ancestry):
 
 `ancestry.population_file_outliers`
 
-: A population file containing the outliers (to help creating a new MDS plot
+: A population file containing the outliers (to help create a new MDS plot
   using pyGenClean.PlinkUtils.plot_MDS_standalone).
+
+`ancestry.smartpca.scree_plot.png` (optional)
+
+: A figure containing the [scree plot](#scree_plot) for this analysis. This
+  figure is created only if the option `--create-scree-plot` is used. This
+  figure can be regenerated using the [`plot-eigenvalues`](#plot-eigenvalues)
+  subcommand.
 
 ### Figures
 
-Multiple figures are created by this module. The [first figure](#initial_mds)
-shows the MDS values right after they are computed by _Plink_. There is one
-color per reference populations (CEU in blue, YRI in green and JPT-CHB in
-purple). The source population is represented as red crosses.
+Unless `--skip-ref-pops` is used, multiple figures are created by this module.
+The [first figure](#initial_mds) shows the MDS values right after they are
+computed by _Plink_. There is one color per reference populations (CEU in blue,
+YRI in green and JPT-CHB in purple). The source population is represented as red
+crosses.
 
 <figure markdown><a name="initial_mds"></a>
   ![Initial MDS](images/ancestry.mds.png){ loading=lazy }
@@ -328,7 +343,20 @@ represents the outliers of the selected reference population cluster.
   <figcaption>Ancestry outliers.</figcaption>
 </figure>
 
-## MDS plot
+Finally, if the option `--create-scree-plot` was used, the following [scree
+plot](#scree_plot) will be generated.
+
+<figure markdown><a name="scree_plot"></a>
+  ![Outliers](images/ancestry.smartpca.scree_plot.png){ loading=lazy }
+  <figcaption>Scree plot.</figcaption>
+</figure>
+
+## Submodules
+
+The _ancestry_ QC module also contains three submodules: `plot-mds`,
+`find-outliers`, and `plot-eigenvalues`.
+
+### plot-mds
 
 If you want to manually modify the above figures, have a look at the
 `plot-mds` subcommand of the _ancestry_ QC module.
@@ -434,3 +462,75 @@ pyGenClean ancestry plot-mds \
   ![Outliers](images/custom_mds.png){ loading=lazy }
   <figcaption>Custom MDS plot.</figcaption>
 </figure>
+
+### find-outliers
+
+If the multiplier of the cluster standard deviation was too stringent (or not
+stringent enough), there is no need to run the QC module from the start. A
+standalone script was created for this exact purpose, and it will find the
+outliers using the MDS and population file previously created. Just modify the
+`--multiplier` option and restart the analysis (which takes about a couple of
+seconds).
+
+```shell-session
+$ pyGenClean ancestry find-outliers --help
+usage: pyGenClean ancestry find-outliers [-h] --mds FILE --population-file
+                                         FILE [--format FORMAT]
+                                         [--outliers-of POP]
+                                         [--multiplier FLOAT]
+                                         [--xaxis COMPONENT]
+                                         [--yaxis COMPONENT] [--out FILE]
+
+Finds outliers in SOURCE from CEU samples.
+
+options:
+  -h, --help            show this help message and exit
+
+Input File:
+  --mds FILE            The MDS file from Plink
+  --population-file FILE
+                        A population file containing the following columns
+                        (without a header): FID, IID and POP. POP should be
+                        one of 'CEU', 'JPT-CHB', 'YRI' and SOURCE.
+
+Graphical Options:
+  --format FORMAT       The output file format (png, ps, or pdf formats are
+                        available). [default: png]
+  --outliers-of POP     Finds the outliers of this population. [default: CEU]
+  --multiplier FLOAT    To find the outliers, we look for more than x times
+                        the cluster standard deviation. [default: 1.9]
+  --xaxis COMPONENT     The component to use for the X axis. [default: C1]
+  --yaxis COMPONENT     The component to use for the Y axis. [default: C2]
+
+Output File:
+  --out FILE            The prefix of the output files. [default: ancestry]
+```
+
+### plot-eigenvalues
+
+To generate a scree plot, use the `plot-eigenvalues` subcommand of the
+_ancestry_ QC module.
+
+```shell-session
+$ pyGenClean ancestry plot-eigenvalues --help
+usage: pyGenClean ancestry plot-eigenvalues [-h] --evec FILE [--title TITLE]
+                                            [--out FILE]
+
+Plot eigenvalues (scree plot).
+
+options:
+  -h, --help     show this help message and exit
+
+Input File:
+  --evec FILE    The EVEC file from EIGENSOFT
+
+Plot Options:
+  --title TITLE  The main title of the scree plot [EIGENSOFT results]
+
+Output Options:
+  --out FILE     The name of the output file [scree_plot.png]
+```
+
+The script will generate a [scree plot](#scree_plot) from the eigenvalues
+generated by the [main script](#main-script) (if the `--create-scree-plot`
+option was used).

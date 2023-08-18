@@ -18,6 +18,19 @@ markdown_extensions:
   - attr_list
   - md_in_html
 
+# Watch changes in the source directory
+watch:
+  - pygenclean
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: [pygenclean]
+          import:
+            - url: https://docs.python-requests.org/en/master/objects.inv
+
 # Theme
 theme:
   name: material
@@ -30,27 +43,30 @@ theme:
     - navigation.tracking
     - navigation.indexes
     - toc.follow
+    - search.highlight
 
   palette:
-  # Light mode
-  - media: "(prefers-color-scheme: light)"
-    schema: default
-    toggle:
-      icon: material/brightness-7
-      name: Switch to dark mode
+    # Palette toggle for light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
 
-  # Dark mode
-  - media: "(prefers-color-scheme: dark)"
-    scheme: slate
-    toggle:
-      icon: material/brightness-4
-      name: Switch to system preference
+    # Palette toggle for dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
 
 nav:
   - Home: index.md
+  - Pipeline: pipeline/index.md
   - QC modules:
     - qc_modules/index.md
     - Ancestry: qc_modules/ancestry.md
+    - Contamination: qc_modules/contamination.md
 
 extra_css:
   - style.css

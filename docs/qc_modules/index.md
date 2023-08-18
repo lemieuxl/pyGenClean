@@ -4,9 +4,7 @@ Multiple QC modules are available (either via the pipeline or as standalone
 scripts).
 
 - [ancestry](ancestry.md)
-- contamination
-- duplicated markers
-- duplicated samples
+- [contamination](contamination.md)
 - flag hw
 - flag MAF
 - heterozygous haploid
