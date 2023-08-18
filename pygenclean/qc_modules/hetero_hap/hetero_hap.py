@@ -1,4 +1,4 @@
-"""Remove heterozygous haploid (males on chromosome X)."""
+"""Remove heterozygous haploid genotypes (males on chromosome X)."""
 
 
 import argparse
@@ -24,11 +24,18 @@ logger = logging.getLogger(__name__)
 @timer(logger)
 def main(args: Optional[argparse.Namespace] = None,
          argv: Optional[List[str]] = None) -> Dict[str, str]:
-    """The main function of this module.
+    """Remove heterozygous haploid genotypes (males on chromosome X).
 
     Args:
-        args (argparse.Namespace): the arguments and options
-        argv (list): the argument as a list.
+        args: the arguments and options
+        argv: the argument as a list.
+
+    Returns:
+        A dictionary containing summary information about the run.
+
+    These are the steps:
+
+    1. Use Plink to remove heterozygous haploid genotypes.
 
     """
     if args is None:
@@ -51,11 +58,11 @@ def main(args: Optional[argparse.Namespace] = None,
     }
 
 
-def run_plink(options: argparse.Namespace) -> None:
-    """Sets heterozygous haploid markers to missing Plink.
+def run_plink(options: argparse.Namespace):
+    """Set heterozygous haploid markers to missing Plink.
 
     Args:
-        options (argparse.Namespace): The arguments and options.
+        options: The arguments and options.
 
     """
     execute_external_command(
@@ -70,15 +77,14 @@ def run_plink(options: argparse.Namespace) -> None:
     )
 
 
-def check_args(args: argparse.Namespace) -> None:
-    """Checks the arguments and options.
+def check_args(args: argparse.Namespace):
+    """Check the arguments and options.
 
     Args:
-        args (argparse.Namespace): the arguments and options.
+        args: The arguments and options.
 
     If there is a problem with an option, an exception is raised using the
-    :py:class:`ProgramError` class, a message is printed to the
-    :class:`sys.stderr` and the program exists with code 1.
+    `ProgramError` class.
 
     """
     # Check if we have the tped and the tfam files
@@ -87,7 +93,15 @@ def check_args(args: argparse.Namespace) -> None:
 
 
 def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
-    """Parses the command line options and arguments."""
+    """Parse the command line options and arguments.
+
+    Args:
+        argv: An optional list of arguments.
+
+    Returns:
+        The parsed arguments and options.
+
+    """
     parser = argparse.ArgumentParser(description=DESCRIPTION)
 
     parser.add_argument(
@@ -101,8 +115,13 @@ def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
     return parser.parse_args(argv)
 
 
-def add_args(parser: argparse.ArgumentParser) -> None:
-    """Add arguments and options to the parser."""
+def add_args(parser: argparse.ArgumentParser):
+    """Add arguments and options to the parser.
+
+    Args:
+        parser: An argument parser to which arguments will be added.
+
+    """
     # The INPUT files
     group = parser.add_argument_group("Input File")
     group.add_argument(
