@@ -32,14 +32,18 @@ def main(args: Optional[argparse.Namespace] = None,
     """Check for sample contamination using BAFRegress.
 
     Args:
-        args (argparse.Namespace): the arguments and options.
-        argv (list): the arguments as list.
+        args: The arguments and options.
+        argv: The arguments as list.
+
+    Returns:
+        A dictionary containing summary information about the run.
 
     These are the steps:
 
-    1. Prints the options.
-    2. Compute frequency using Plink.
-    3. Runs bafRegress.
+    1. Compare the `FAM` and the files in the intensity directory.
+    2. Find the markers located on the autosomes.
+    3. Compute frequency using Plink.
+    4. Runs BAFRegress and write the results to file.
 
     """
     if args is None:
@@ -92,15 +96,14 @@ def main(args: Optional[argparse.Namespace] = None,
 
 
 def check_sample_files(fam: str, raw_dirname: str) -> Set[str]:
-    """Checks the raw sample files.
+    """Check the raw sample files.
 
     Args:
-        fam (str): the name of the FAM file.
-        raw_dirname (str): the name of the directory containing the raw file.
+        fam: The name of the FAM file.
+        raw_dirname: The name of the directory containing the raw file.
 
     Returns:
-        set: the set of all the sample files that are compatible with the FAM
-             file.
+        The set of all the sample files that are compatible with the FAM file.
 
     """
     # Reading the sample identification number from the FAM file
@@ -132,11 +135,11 @@ def check_sample_files(fam: str, raw_dirname: str) -> Set[str]:
 
 
 def create_extraction_file(bim: str, out: str):
-    """Creates an extraction file (keeping only markers on autosomes).
+    """Create an extraction file (keeping only markers on autosomes).
 
     Args:
-        bim (str): the name of the BIM file.
-        out (str): the prefix for the output file.
+        bim: The name of the BIM file.
+        out: The prefix for the output file.
 
     """
     # Fetching the markers on the autosomes
@@ -150,15 +153,15 @@ def create_extraction_file(bim: str, out: str):
 
 
 def run_bafregress(filenames: Set[str], out: str, extract: str, freq: str,
-                   args: argparse.Namespace) -> None:
-    """Runs the bafRegress function.
+                   args: argparse.Namespace):
+    """Run the bafRegress function.
 
     Args:
-        filenames (set): the set of all sample files.
-        out (str): the output prefix.
-        extract (str): the name of the markers to extract.
-        freq (str): the name of the file containing the frequency.
-        args (argparse.Namespace): the other options.
+        filenames: The set of all sample files.
+        out: The output prefix.
+        extract: The name of the markers to extract.
+        freq: The name of the file containing the frequency.
+        args: The other options.
 
     """
     # The base command
@@ -212,9 +215,15 @@ def run_bafregress(filenames: Set[str], out: str, extract: str, freq: str,
                 print(*content[1:], sep="\n", file=f)
 
 
-def write_contaminated_samples(filename: str, out: str,
-                               threshold: float) -> None:
-    """Write contaminated samples to file."""
+def write_contaminated_samples(filename: str, out: str, threshold: float):
+    """Write contaminated samples to file.
+
+    Args:
+        filename: The name of the file containing BAFregress results.
+        out: The prefix of the output files.
+        threshold: The threshold for which a sample is considered contaminated.
+
+    """
     # Reading the contaminated samples
     df = pd.read_csv(filename, sep="\t")
     contaminated = df.loc[df.estimate > threshold, "sample"]
@@ -225,11 +234,14 @@ def write_contaminated_samples(filename: str, out: str,
             print(sample, sample, file=f)
 
 
-def check_args(args: argparse.Namespace) -> None:
-    """Checks the arguments and options.
+def check_args(args: argparse.Namespace):
+    """Check the arguments and options.
 
     Args:
-        args (argparse.Namespace): the arguments and options to check.
+        args: The arguments and options to check.
+
+    If there is a problem with an option, an exception is raised using the
+    `ProgramError` class.
 
     """
     if not plink_utils.check_files(args.bfile):
@@ -245,7 +257,15 @@ def check_args(args: argparse.Namespace) -> None:
 
 
 def parse_args(argv: Optional[list[str]] = None) -> argparse.Namespace:
-    """Parses the arguments and function."""
+    """Parse the command line options and arguments.
+
+    Args:
+        argv: An optional list of arguments.
+
+    Returns:
+        The parsed arguments and options.
+
+    """
     parser = argparse.ArgumentParser(description=DESCRIPTION)
 
     parser.add_argument(
@@ -258,8 +278,13 @@ def parse_args(argv: Optional[list[str]] = None) -> argparse.Namespace:
     return parser.parse_args(argv)
 
 
-def add_args(parser: argparse.ArgumentParser) -> None:
-    """Adds argument to the parser."""
+def add_args(parser: argparse.ArgumentParser):
+    """Add arguments and options to the parser.
+
+    Args:
+        parser: An argument parser to which arguments will be added.
+
+    """
     # The INPUT files
     group = parser.add_argument_group("Input File")
     group.add_argument(
