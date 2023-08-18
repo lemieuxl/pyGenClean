@@ -1,4 +1,4 @@
-# Welcome to pyGenClean’s documentation
+# Welcome to pyGenClean's documentation
 
 ## Introduction
 
@@ -60,7 +60,7 @@ function. Optional manual checks for go-no-go decisions are indicated.
 ## Installation
 
 `pyGenClean` is a Python package that works on both Linux and Windows operating
-systems. It requires a set of Python dependencies and PLINK. Complete
+systems. It requires a set of Python dependencies and _Plink_. Complete
 installation procedures are available for both Linux and Windows in the
 following sections.
 
@@ -74,11 +74,11 @@ a configuration file (using the `TOML` format).
 
 ### Genotype files
 
-The input files (`--bfile`) of the main program (`pyGenClean`) are _PLINK_'s
+The input files (`--bfile`) of the main program (`pyGenClean`) are _Plink_'s
 binary pedfile format consists of three files with the following extensions:
 _BED_, _BIM_ and _FAM_.
 
-For more information about these file formats, have a look at PLINK’s website,
+For more information about these file formats, have a look at _Plink_'s website,
 in the Basic usage/data formats section
 ([https://zzz.bwh.harvard.edu/plink/data.shtml](https://zzz.bwh.harvard.edu/plink/data.shtml)).
 

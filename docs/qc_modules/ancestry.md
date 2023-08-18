@@ -1,7 +1,7 @@
 # Ancestry
 
 The _ancestry_ QC module consists of a [main script](#main-script) and three
-[companion scripts](#submodules).  It performs an MDS analysis using _Plink_
+[companion scripts](#submodules). It performs an MDS analysis using _Plink_
 (with or without reference populations) and generates multiple ancestry plots.
 
 Use the following command to access the multiple scripts of the _ancestry_ QC
@@ -121,7 +121,7 @@ Output File:
 
 ### Input files
 
-This module uses PLINK’s binary file format (`bed`, `bim` and `fam` files) for
+This module uses _Plink_'s binary file format (`bed`, `bim` and `fam` files) for
 the source data set (the data of interest) and, optionally, three sets of binary
 files for the reference panels (_CEU_, _YRI_ and _JPG-CHB_).
 
@@ -157,7 +157,6 @@ Here is a comprehensive list of all the possible output files for each of the
 steps described above.
 
 !!! note
-
     The output prefix shown is the one by default, _i.e._ ancestry). Also, the
     majority of the files will be absent if the option `--skip-ref-pops` has
     been used.
@@ -282,7 +281,7 @@ crosses.
 </figure>
 
 The [second figure](#before_outlier) shows the MDS values before outlier
-detection.  Points in red, green and blue represent the individuals part of the
+detection. Points in red, green and blue represent the individuals part of the
 CEU, YRI and JPT-CHB clusters, respectively. The yellow points represent the
 center of each of the cluster, when only considering the three reference panels.
 
