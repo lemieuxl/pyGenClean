@@ -1,4 +1,4 @@
-"""Removes markers with poor call rate."""
+"""Remove markers with poor call rate."""
 
 
 import argparse
@@ -26,18 +26,20 @@ logger = logging.getLogger(__name__)
 @timer(logger)
 def main(args: Optional[argparse.Namespace] = None,
          argv: Optional[List[str]] = None) -> Dict[str, str]:
-    """Removes markers with poor call rate.
+    """Remove markers with poor call rate.
 
     Args:
-        args (arparse.Namespace): the arguments and options
-        argv (list): the argument as a list.
+        args: The arguments and options
+        argv: The argument as a list.
+
+    Returns:
+        A dictionary containing summary information about the run.
 
     These are the steps:
 
-    1. Prints the options.
-    2. Runs Plink with the ``geno`` option (:py:func:`runPlink`).
-    3. Compares the two ``bim`` files (before and after the Plink ``geno``
-       analysis) (:py:func:`compareBIM`).
+    1. Run Plink with the `geno` option.
+    2. Compare the two `bim` files (before and after the Plink `geno`
+       analysis).
 
     """
     if args is None:
@@ -61,13 +63,13 @@ def main(args: Optional[argparse.Namespace] = None,
     }
 
 
-def compare_bim(args: argparse.Namespace) -> None:
+def compare_bim(args: argparse.Namespace):
     """Compare two BIM files.
 
     Args:
-        args (argparse.Namespace): the arguments and options.
+        args: The arguments and options.
 
-    Compares two BIM files (before and after a change).
+    Compare two BIM files (before and after a change).
 
     """
     # Comparing the two BIM files
@@ -88,11 +90,11 @@ def compare_bim(args: argparse.Namespace) -> None:
         print(*in_before, sep="\n", file=f)
 
 
-def run_plink(options: argparse.Namespace) -> None:
-    """Runs Plink with the ``geno`` option.
+def run_plink(options: argparse.Namespace):
+    """Run Plink with the `geno` option.
 
     Args:
-        options (argparse.Namespace): the arguments and options.
+        options: The arguments and options.
 
     """
     # Executing the command
@@ -108,15 +110,14 @@ def run_plink(options: argparse.Namespace) -> None:
     )
 
 
-def check_args(args: argparse.Namespace) -> None:
-    """Checks the arguments and options.
+def check_args(args: argparse.Namespace):
+    """Check the arguments and options.
 
     Args:
-        args (argparse.Namespace): the arguments and options.
+        args: The arguments and options.
 
     If there is a problem with an option, an exception is raised using the
-    :py:class:`ProgramError` class, a message is printed to the
-    :class:`sys.stderr` and the program exists with code 1.
+    `ProgramError` class.
 
     """
     # Check if we have the tped and the tfam files
@@ -131,7 +132,15 @@ def check_args(args: argparse.Namespace) -> None:
 
 
 def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
-    """Parses the arguments and options."""
+    """Parse the command line options and arguments.
+
+    Args:
+        argv: An optional list of arguments.
+
+    Returns:
+        The parsed arguments and options.
+
+    """
     parser = argparse.ArgumentParser(description=DESCRIPTION)
 
     parser.add_argument(
@@ -145,8 +154,13 @@ def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
     return parser.parse_args(argv)
 
 
-def add_args(parser: argparse.ArgumentParser) -> None:
-    """Add arguments and options to the parser."""
+def add_args(parser: argparse.ArgumentParser):
+    """Add arguments and options to the parser.
+
+    Args:
+        parser: An argument parser to which arguments will be added.
+
+    """
     # The INPUT files
     group = parser.add_argument_group("Input File")
     group.add_argument(
