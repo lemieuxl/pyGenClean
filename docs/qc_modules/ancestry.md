@@ -161,45 +161,43 @@ steps described above.
     majority of the files will be absent if the option `--skip-ref-pops` has
     been used.
 
-`ancestry.ref_snp_to_extract`
+`ancestry.{CEU,YRI,JPT-CHB}_snp_to_extract`
 : The list of markers to extract from the reference panels.
 
 `ancestry.source_snp_to_extract`
 : The list of markers to extract from the source panel.
 
-`ancestry.update_names`
+`ancestry.{CEU,YRI,JPT-CHB}_update_names`
 : The updated names of the marker in the reference panels, so that they match
   with the names in the source panel.
 
-`ancestry.reference_panel.CEU`
+`ancestry.reference_panel.CEU.{bed,bim,fam}`
 : The data set containing the extracted markers from the CEU reference
   population.
 
-`ancestry.reference_panel.YRI`
+`ancestry.reference_panel.YRI.{bed,bim,fam}`
 : The data set containing the extracted markers from the YRI reference
   population.
 
-`ancestry.reference_panel.JPT-CHB`
+`ancestry.reference_panel.JPT-CHB.{bed,bim,fam}`
 : The data set containing the extracted markers from the JPG-CHB reference
-  population.
+  population. Note that the markers were renamed manually in the `bim` files (a
+  backups with the current date and time in the file names were created).
 
-`ancestry.source_panel.ALL`
+`ancestry.source_panel.{bed,bim,fam}`
 : The data set containing the extracted markers from the source population.
 
 `ancestry.reference_panel.ALL.files_to_merge`
 : The file required by Plink to merge more than two data sets together.
 
-`ancestry.reference_panel.ALL`
+`ancestry.reference_panel.ALL.{bed,bim,fam}`
 : The data set containing the merged data sets of the three reference
   population.
 
-`ancestry.reference_panel.ALL.rename`
-: The data set after markers have been renamed in the reference panels.
-
-`ancestry.reference_panel.ALL.rename.frequency`
+`ancestry.reference_panel.ALL.frequency.frq`
 : The frequencies of the markers in the reference panels.
 
-`ancestry.source_panel.ALL.frequency`
+`ancestry.source_panel.frequency.frq`
 : The frequencies of the markers in the source panels.
 
 `ancestry.snp_to_flip_in_reference`
@@ -209,22 +207,22 @@ steps described above.
 : The list of markers to remove because they are not comparable to the markers
   in the source panel, even after trying to flip them.
 
-`ancestry.reference_panel.ALL.rename.cleaned`
+`ancestry.reference_panel.ALL.cleaned.{bed,bim,fam}`
 : The data set after the markers found in the previous step are excluded from
   the reference panels.
 
-`ancestry.source_panel.ALL.cleaned`
+`ancestry.source_panel.cleaned.{bed,bim,fam}`
 : The data set after the markers found in the previous step are excluded from
   the source panel.
 
-`ancestry.reference_panel.ALL.rename.cleaned.flipped`
+`ancestry.reference_panel.ALL.cleaned.flipped.{bed,bim,fam}`
 : The data set after markers from the reference panels were flipped so that they
   become comparable with the source panel.
 
 `ancestry.final_dataset_for_genome.files_to_merge`
 : The file required by Plink to merge more than two data sets together.
 
-`ancestry.final_dataset_for_genome`
+`ancestry.final_dataset_for_genome.{bed,bim,fam}`
 : The data set containing the merged reference and source panels.
 
 `ancestry.ibs.*`
