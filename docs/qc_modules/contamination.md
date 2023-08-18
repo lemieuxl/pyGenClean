@@ -137,4 +137,9 @@ SNP Name,Sample Name,Allele1 - AB,Allele2 - AB,B Allele Freq
 : The frequency of each of the autosomal markers.
 
 `contamination.bafRegress`
-: The bafRegress results for each of the tested sample.
+: The bafRegress results for each of the tested sample. See the
+[original documentation](https://genome.sph.umich.edu/wiki/BAFRegress#Interpreting_Results)
+for results interpretation.
+
+`contamination.contaminated_samples`
+: A file containing the list of contaminated samples.
