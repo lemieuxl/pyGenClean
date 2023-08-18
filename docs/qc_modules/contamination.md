@@ -130,15 +130,11 @@ SNP Name,Sample Name,Allele1 - AB,Allele2 - AB,B Allele Freq
 
 ### Output files
 
-
 `contamination.to_extract`
-
 : The autosomal markers that will be used by bafRegress.
 
 `contamination.frq`
-
 : The frequency of each of the autosomal markers.
 
 `contamination.bafRegress`
-
 : The bafRegress results for each of the tested sample.

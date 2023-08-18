@@ -163,135 +163,106 @@ steps described above.
     been used.
 
 `ancestry.ref_snp_to_extract`
-
 : The list of markers to extract from the reference panels.
 
 `ancestry.source_snp_to_extract`
-
 : The list of markers to extract from the source panel.
 
 `ancestry.update_names`
-
 : The updated names of the marker in the reference panels, so that they match
   with the names in the source panel.
 
 `ancestry.reference_panel.CEU`
-
 : The data set containing the extracted markers from the CEU reference
   population.
 
 `ancestry.reference_panel.YRI`
-
 : The data set containing the extracted markers from the YRI reference
   population.
 
 `ancestry.reference_panel.JPT-CHB`
-
 : The data set containing the extracted markers from the JPG-CHB reference
   population.
 
 `ancestry.source_panel.ALL`
-
 : The data set containing the extracted markers from the source population.
 
 `ancestry.reference_panel.ALL.files_to_merge`
-
 : The file required by Plink to merge more than two data sets together.
 
 `ancestry.reference_panel.ALL`
-
 : The data set containing the merged data sets of the three reference
   population.
 
 `ancestry.reference_panel.ALL.rename`
-
 : The data set after markers have been renamed in the reference panels.
 
 `ancestry.reference_panel.ALL.rename.frequency`
-
 : The frequencies of the markers in the reference panels.
 
 `ancestry.source_panel.ALL.frequency`
-
 : The frequencies of the markers in the source panels.
 
 `ancestry.snp_to_flip_in_reference`
-
 : The list of markers to flip in the reference panels.
 
 `ancestry.snp_to_remove`
-
 : The list of markers to remove because they are not comparable to the markers
   in the source panel, even after trying to flip them.
 
 `ancestry.reference_panel.ALL.rename.cleaned`
-
 : The data set after the markers found in the previous step are excluded from
   the reference panels.
 
 `ancestry.source_panel.ALL.cleaned`
-
 : The data set after the markers found in the previous step are excluded from
   the source panel.
 
 `ancestry.reference_panel.ALL.rename.cleaned.flipped`
-
 : The data set after markers from the reference panels were flipped so that they
   become comparable with the source panel.
 
 `ancestry.final_dataset_for_genome.files_to_merge`
-
 : The file required by Plink to merge more than two data sets together.
 
 `ancestry.final_dataset_for_genome`
-
 : The data set containing the merged reference and source panels.
 
 `ancestry.ibs.*`
-
 : For more information about those files (see the
   [related samples](related_samples.md) QC module for more information).
 
 `ancestry.mds.mds`
-
 : Files containing the MDS values.
 
 `ancestry.population_file`
-
 : The population file required for MDS value plotting.
 
 `ancestry.mds.png`
-
 : The plot of the MDS values (see the [initial MDS figure](#initial_mds)). This
   figure can be regenerated using the [`plot-mds`](#plot-mds) subcommand.
 
 `ancestry.before.png`
-
 : The MDS values before outlier detection (see the
   [before outlier detection figure](#before_outlier)).
 
 `ancestry.after.png`
-
 : The MDS values after outlier detection for each of the three reference
   populations. The shaded points are the outliers of a given population cluster
   (see the [figure generated after outlier detection](#after_outlier)).
 
 `ancestry.outliers.png`
-
 : The MDS values after outlier detection for the selected reference population
   (default is CEU cluster) (see the [outliers figure](#outliers)).
 
 `ancestry.outliers`
-
 : The list of outliers (excluding the reference populations).
 
 `ancestry.population_file_outliers`
-
 : A population file containing the outliers (to help create a new MDS plot
   using pyGenClean.PlinkUtils.plot_MDS_standalone).
 
 `ancestry.smartpca.scree_plot.png` (optional)
-
 : A figure containing the [scree plot](#scree_plot) for this analysis. This
   figure is created only if the option `--create-scree-plot` is used. This
   figure can be regenerated using the [`plot-eigenvalues`](#plot-eigenvalues)
