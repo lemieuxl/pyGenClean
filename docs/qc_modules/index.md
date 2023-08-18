@@ -5,9 +5,9 @@ scripts).
 
 - [ancestry](ancestry.md)
 - [contamination](contamination.md)
-- [flag hw](flag_hw.md)
-- flag MAF
-- heterozygous haploid
+- [flag HW](flag_hw.md)
+- [flag MAF](flag_maf.md)
+- [heterozygous haploid](hetero_hap.md)
 - marker call rate
 - no call / heterozygous
 - plate bias
