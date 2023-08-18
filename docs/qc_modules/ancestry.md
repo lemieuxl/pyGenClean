@@ -157,7 +157,7 @@ Here is a comprehensive list of all the possible output files for each of the
 steps described above.
 
 !!! note
-    The output prefix shown is the one by default, _i.e._ ancestry). Also, the
+    The output prefix shown is the one by default (_i.e._ `ancestry`). Also, the
     majority of the files will be absent if the option `--skip-ref-pops` has
     been used.
 

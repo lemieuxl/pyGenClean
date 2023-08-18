@@ -73,8 +73,11 @@ Here are the steps performed by the module:
 
 ### Output files
 
-The output files of each of the steps described above are as follow (note that
-the output prefix shown is the one by default [i.e. flag_hw]):
+Here is a comprehensive list of all the possible output files for each of the
+steps described above.
+
+!!! note
+    The output prefix shown is the one by default (_i.e._ `flag_hw`).
 
 `flag_hw.threshold_X.Xe-X.{bed,bim,fam}`
 : The data set containing only the markers passing the HW equilibrium test

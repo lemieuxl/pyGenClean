@@ -130,6 +130,12 @@ SNP Name,Sample Name,Allele1 - AB,Allele2 - AB,B Allele Freq
 
 ### Output files
 
+Here is a comprehensive list of all the possible output files for each of the
+steps described above.
+
+!!! note
+    The output prefix shown is the one by default (_i.e._ `contamination`).
+
 `contamination.to_extract`
 : The autosomal markers that will be used by bafRegress.
 
