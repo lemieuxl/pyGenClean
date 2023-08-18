@@ -73,6 +73,7 @@ nav:
     - Contamination: qc_modules/contamination.md
     - Flag Hardy-Weinberg: qc_modules/flag_hw.md
     - Flag MAF: qc_modules/flag_maf.md
+    - Heterozygous haploid: qc_modules/hetero_hap.md
   - API reference:
     - reference/index.md
     - QC modules:
@@ -80,6 +81,7 @@ nav:
       - Contamination: reference/qc_modules/contamination.md
       - Flag Hardy-Weinberg: reference/qc_modules/flag_hw.md
       - Flag MAF: reference/qc_modules/flag_maf.md
+      - Heterozygous haploid: reference/qc_modules/hetero_hap.md
 
 extra_javascript:
   - javascripts/katex.js
