@@ -1,4 +1,4 @@
-"""Finds outliers in SOURCE from CEU samples."""
+"""Find outliers of a given population cluster (MDS values)."""
 
 
 import argparse
@@ -28,25 +28,23 @@ logger = logging.getLogger(__name__)
 
 @timer(logger)
 def main(args: Optional[argparse.Namespace] = None,
-         argv: Optional[List[str]] = None) -> None:
-    """The main function of the module.
+         argv: Optional[List[str]] = None):
+    """Find outliers of a given population cluster (MDS values).
 
     Args:
-        args (argparse.Namespace): the arguments and options.
-        argv (list): the argument as a list.
+        args: The arguments and options.
+        argv: The argument as a list.
 
     These are the steps of the modules:
 
-    1. Prints the options.
-    2. Reads the population file (:py:func:`read_population_file`).
-    3. Reads the ``mds`` file (:py:func:`read_mds_file`).
-    4. Computes the three reference population clusters' centers
-       (:py:func:`find_ref_centers`).
-    5. Computes three clusters according to the reference population clusters'
-       centers, and finds the outliers of a given reference population
-       (:py:func:`find_outliers`). This steps also produce three different
-       plots.
-    6. Writes outliers in a file (``prefix.outliers``).
+    1. Read the population file.
+    2. Read the `mds` file.
+    3. Find the center of each of the three reference population clusters.
+    4. Compute three clusters using the center of each of the reference
+       population clusters. Find the outliers of a given reference
+       population.
+    5. Write outliers in a file.
+    6. Write a new population file with the outliers.
 
     """
     # Getting and checking the options
@@ -94,42 +92,41 @@ def find_outliers(
     center_info: Dict[str, int],
     args: argparse.Namespace,
 ) -> Set[Tuple[str, str]]:
-    """Finds the outliers for a given population.
+    """Find the outliers for a given population.
 
     Args:
-        mds (pd.DataFrame): the ``mds`` information about each samples.
-        centers (np.ndarray): the centers of the three reference population
-                              clusters.
-        center_info (dict): the label of the three reference population
-                            clusters.
-        args (argparse.Namespace): the arguments and options.
+        mds: The `mds` information about each samples.
+        centers: The centers of the three reference population clusters.
+        center_info: The label of the three reference population clusters.
+        args: The arguments and options.
 
     Returns:
-        set: the outliers from the ``ref_pop`` population.
+        The outliers from the `ref_pop` population.
 
-    Perform a ``KMeans`` classification using the three centers from the three
+    Perform a _K-means_ classification using the three centers from the three
     reference population cluster.
 
-    Samples are outliers of the required reference population (``ref_pop``) if:
+    Samples are outliers of the required reference population cluster
+    (`ref_pop`) if:
 
-    * the sample is part of another reference population cluster;
-    * the sample is an outlier of the desired reference population
-      (``ref_pop``).
+    - the sample is part of another reference population cluster;
+    - the sample is an outlier of the desired reference population (`ref_pop`).
 
-    A sample is an outlier of a given cluster :math:`C_j` if the distance
-    between this sample and the center of the cluster :math:`C_j` (:math:`O_j`)
-    is bigger than a constant times the cluster's standard deviation
-    :math:`\\sigma_j`.
+    A sample is an outlier of a given cluster $C_j$ if the distance between
+    this sample and the center of the cluster $C_j$ ($O_j$) is bigger than a
+    constant times the cluster's standard deviation $\\sigma_j$.
 
-    .. math::
+    $$
         \\sigma_j = \\sqrt{\\frac{\\sum{d(s_i,O_j)^2}}{||C_j|| - 1}}
+    $$
 
-    where :math:`||C_j||` is the number of samples in the cluster :math:`C_j`,
-    and :math:`d(s_i,O_j)` is the distance between the sample :math:`s_i` and
-    the center :math:`O_j` of the cluster :math:`C_j`.
+    where $||C_j||$ is the number of samples in the cluster $C_j$, and
+    $d(s_i,O_j)$ is the distance between the sample $s_i$ and the center $O_j$
+    of the cluster $C_j$.
 
-    .. math::
+    $$
         d(s_i, O_j) = \\sqrt{(x_{O_j} - x_{s_i})^2 + (y_{O_j} - y_{s_i})^2}
+    $$
 
     Using a constant equals to one ensure we remove 100% of the outliers from
     the cluster. Using a constant of 1.6 or 1.9 ensures we remove 99% and 95%
@@ -307,16 +304,16 @@ def find_ref_centers(
     xaxis: str,
     yaxis: str,
 ) -> Tuple[np.ndarray, Dict[str, int]]:
-    """Finds the center of the three reference clusters.
+    """Find the center of the three reference clusters.
 
     Args:
-        mds (pd.DataFrame): the ``mds`` information about each samples.
+        mds: The `mds` information about each samples.
+        xaxis: The column to use as the X axis.
+        yaxis: The column to use as the Y axis.
 
     Returns:
-        tuple: a tuple with a :py:class:`numpy.array` containing the centers of
-               the three reference population cluster as first element, and a
-               :py:class:`dict` containing the label of each of the three
-               reference population clusters.
+        The centers of the three reference population cluster.
+        The label of each of the three reference population clusters.
 
     First, we extract the ``mds`` values of each of the three reference
     populations. The, we compute the center of each of those clusters by
@@ -341,15 +338,14 @@ def find_ref_centers(
     return np.array(centers), {"CEU": 0, "YRI": 1, "JPT-CHB": 2}
 
 
-def check_args(args: argparse.Namespace) -> None:
-    """Checks the arguments and options.
+def check_args(args: argparse.Namespace):
+    """Check the arguments and options.
 
     Args:
-        args (argparse.Namespace): the arguments and options
+        args: The arguments and options.
 
     If there is a problem with an option, an exception is raised using the
-    :py:class:`ProgramError` class, a message is printed to the
-    :class:`sys.stderr` and the program exists with code 1.
+    `ProgramError` class.
 
     """
     # Checking the input files
@@ -369,7 +365,15 @@ def check_args(args: argparse.Namespace) -> None:
 
 
 def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
-    """Parses the command line options and arguments."""
+    """Parse the command line options and arguments.
+
+    Args:
+        argv: An optional list of arguments.
+
+    Returns:
+        The parsed arguments and options.
+
+    """
     parser = argparse.ArgumentParser(description=DESCRIPTION)
 
     parser.add_argument(
@@ -383,8 +387,13 @@ def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
     return parser.parse_args(argv)
 
 
-def add_args(parser: argparse.ArgumentParser) -> None:
-    """Add arguments and options to the parser."""
+def add_args(parser: argparse.ArgumentParser):
+    """Add arguments and options to the parser.
+
+    Args:
+        parser: An argument parser to which arguments will be added.
+
+    """
     # The INPUT files
     group = parser.add_argument_group("Input File")
     group.add_argument(
@@ -410,9 +419,14 @@ def add_args(parser: argparse.ArgumentParser) -> None:
     )
 
 
-def add_graphical_options(parser: argparse._ArgumentGroup,
-                          prefix: str = "") -> None:
-    """Adds the graphical options."""
+def add_graphical_options(parser: argparse._ArgumentGroup, prefix: str = ""):
+    """Add the graphical options to the parser.
+
+    Args:
+        parser: An argument parser to which arguments will be added.
+        prefix: A prefix for the arguments.
+
+    """
     parser.add_argument(
         f"--{prefix}format", type=str, metavar="FORMAT", default="png",
         choices=["png", "ps", "pdf"],

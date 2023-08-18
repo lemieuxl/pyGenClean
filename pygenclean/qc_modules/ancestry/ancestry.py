@@ -39,29 +39,29 @@ def main(args: Optional[argparse.Namespace] = None,
 
     These are the steps of this module:
 
-    1.  Finds the overlapping markers between the three reference panels and
+    1.  Find the overlapping markers between the three reference panels and
         the source panel.
     2.  Extract the required markers from all the data sets.
-    3.  Renames the reference panel's marker names to that they are the same as
+    3.  Rename the reference panel's marker names to that they are the same as
         the source panel (for all populations).
-    4.  Combines the three reference panels together.
-    5.  Compute the frequency of all the markers from the reference and the
-        source panels.
-    6.  Finds the markers to flip in the reference panel (when compared to the
+    4.  Combine the three reference panels together.
+    5.  Compute the frequency of all the markers from both the reference and
+        the source panels.
+    6.  Find the markers to flip in the reference panel (when compared to the
         source panel).
-    7.  Excludes the unflippable markers from the reference and the source
+    7.  Exclude the unflippable markers from the reference and the source
         panels.
-    8.  Flips the markers that need flipping in their reference panel.
-    9.  Combines the reference and the source panels.
-    10. Runs part of the related samples QC module on the combined data set to
+    8.  Flip the markers that need flipping in their reference panel.
+    9.  Combine the reference and the source panels.
+    10. Run part of the related samples QC module on the combined data set to
         generate the `genome` file.
-    11. Creates the `mds` file from the combined data set and the result of
+    11. Create the `mds` file from the combined data set and the result of
         previous step.
-    12. Creates the population file.
-    13. Plots the `mds` values.
-    14. Finds the outliers of a given reference population's cluster.
-    15. If required, computes the Eigenvalues using `smartpca`.
-    16. If required, creates a scree plot from `smartpca` resutls.
+    12. Create the population file.
+    13. Plot the `mds` values.
+    14. Find the outliers of a given reference population's cluster.
+    15. If required, compute the Eigenvalues using `smartpca`.
+    16. If required, create a scree plot from `smartpca` resutls.
 
     """
     if args is None:

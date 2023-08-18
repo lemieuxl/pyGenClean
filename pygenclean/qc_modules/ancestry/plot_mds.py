@@ -1,4 +1,4 @@
-"""Create an MDS plot."""
+"""Create the MDS plot."""
 
 
 import argparse
@@ -23,18 +23,18 @@ logger = logging.getLogger(__name__)
 
 @timer(logger)
 def main(args: Optional[argparse.Namespace] = None,
-         argv: Optional[List[str]] = None) -> None:
-    """The main function of the module.
+         argv: Optional[List[str]] = None):
+    """Create the MDS plot.
 
     Args:
-        args (argparse.Namespace): the arguments and options.
-        argv (list): the argument as a list.
+        args: The arguments and options.
+        argv: The argument as a list.
 
     These are the steps:
 
-    1. Reads the population file.
+    1. Read the population file.
     2. Extract the MDS data.
-    3. Plots the MDS data.
+    3. Plot the MDS data.
 
     """
     if args is None:
@@ -52,13 +52,13 @@ def main(args: Optional[argparse.Namespace] = None,
 
 
 def read_populations(filename: str) -> pd.DataFrame:
-    """Reads a population file.
+    """Read a population file.
 
     Args:
-        filename (str): the name of the population file.
+        filename: The name of the population file.
 
     Returns:
-        dict: Dictionary of population for each of the samples.
+        A dictionary of population for each of the samples.
 
     """
     return pd.read_csv(
@@ -69,12 +69,12 @@ def read_populations(filename: str) -> pd.DataFrame:
     ).set_index(["fid", "iid"], verify_integrity=True).sort_index()
 
 
-def plot_mds(df: pd.DataFrame, args: argparse.Namespace) -> None:
+def plot_mds(df: pd.DataFrame, args: argparse.Namespace):
     """Plot the MDS data.
 
     Args:
-        df (pd.DataFrame): the data to plot (MDS values and population).
-        args (argparse.Namespace): the options.
+        df: The data to plot (MDS values and population).
+        args: The options and arguments.
 
     """
     figure, axe = plt.subplots()
@@ -129,14 +129,14 @@ def plot_mds(df: pd.DataFrame, args: argparse.Namespace) -> None:
 
 
 def read_mds(filename: str, populations: pd.DataFrame) -> pd.DataFrame:
-    """Reads the MDS data and adds the population.
+    """Read the MDS data and adds the population.
 
     Args:
-        filename (str): the name of the MDS file.
-        populations (pd.DataFrame): the population of each sample.
+        filename: The name of the MDS file.
+        populations: The population of each sample.
 
     Returns:
-        pd.DataFrame: the MDS data with information about the population.
+        The MDS data with information about the population.
 
     """
     # Reading the MDS file
@@ -157,11 +157,11 @@ def read_mds(filename: str, populations: pd.DataFrame) -> pd.DataFrame:
     return mds
 
 
-def check_args(args: argparse.Namespace) -> None:
-    """Checks the arguments and options.
+def check_args(args: argparse.Namespace):
+    """Check the arguments and options.
 
     Args:
-        args (argparse.Namespace): the arguments and options.
+        args: The arguments and options.
 
     If there is a problem with an option, an exception is raised using the
     `ProgramError` class.
@@ -191,7 +191,15 @@ def check_args(args: argparse.Namespace) -> None:
 
 
 def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
-    """Parses the command line options and arguments."""
+    """Parse the command line options and arguments.
+
+    Args:
+        argv: An optional list of arguments.
+
+    Returns:
+        The parsed arguments and options.
+
+    """
     parser = argparse.ArgumentParser(description=DESCRIPTION)
 
     parser.add_argument(
@@ -205,8 +213,13 @@ def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
     return parser.parse_args(argv)
 
 
-def add_args(parser: argparse.ArgumentParser) -> None:
-    """Add arguments and options to the parser."""
+def add_args(parser: argparse.ArgumentParser):
+    """Add arguments and options to the parser.
+
+    Args:
+        parser: An argument parser to which arguments will be added.
+
+    """
     # The INPUT files
     group = parser.add_argument_group("Input File")
     group.add_argument(
@@ -255,9 +268,14 @@ def add_args(parser: argparse.ArgumentParser) -> None:
     )
 
 
-def add_graphical_options(parser: argparse._ArgumentGroup,
-                          prefix: str = "") -> None:
-    """Adds the graphical options."""
+def add_graphical_options(parser: argparse._ArgumentGroup, prefix: str = ""):
+    """Add the graphical options to the parser.
+
+    Args:
+        parser: An argument parser to which arguments will be added.
+        prefix: A prefix for the arguments.
+
+    """
     parser.add_argument(
         f"--{prefix}format", type=str, metavar="FORMAT", default="png",
         choices={"png", "ps", "pdf", "X11"},
@@ -279,8 +297,13 @@ def add_graphical_options(parser: argparse._ArgumentGroup,
     )
 
 
-def add_extra_graphical_options(parser: argparse._ArgumentGroup) -> None:
-    """Adds extra graphical options (not to be shown in pipeline)."""
+def add_extra_graphical_options(parser: argparse._ArgumentGroup):
+    """Add extra graphical options to the parser.
+
+    Args:
+        parser: An argument parser to which arguments will be added.
+
+    """
     parser.add_argument(
         "--legend-position", type=str, metavar="POSITION", default="best",
         choices={"best", "upper right", "upper left", "lower left",

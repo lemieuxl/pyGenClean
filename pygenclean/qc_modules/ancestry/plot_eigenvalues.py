@@ -24,20 +24,20 @@ logger = logging.getLogger(__name__)
 
 @timer(logger)
 def main(args: Optional[argparse.Namespace] = None,
-         argv: Optional[List[str]] = None) -> None:
-    """The main function.
+         argv: Optional[List[str]] = None):
+    """Plot eigenvalues (scree plot).
 
     Args:
-        args (argparse.Namespace): the arguments and options.
-        argv (list): the argument as a list.
+        args: The arguments and options.
+        argv: The argument as a list.
 
     The purpose of this module is to plot Eigenvectors provided by the
     Eigensoft software.
 
     Here are the steps of this module:
 
-    1. Reads the Eigenvector (:py:func:`read_eigenvalues`).
-    2. Plots the Scree Plot (:py:func:`create_scree_plot`).
+    1. Read the Eigenvector.
+    2. Plot the Scree Plot.
 
     """
     if args is None:
@@ -52,13 +52,13 @@ def main(args: Optional[argparse.Namespace] = None,
 
 
 def create_scree_plot(data: np.ndarray, filename: str,
-                      args: argparse.Namespace) -> None:
-    """Creates the scree plot.
+                      args: argparse.Namespace):
+    """Create the scree plot.
 
     Args:
-        data (np.ndarray): the eigenvalues.
-        filename (str): the name of the output files.
-        args (argparse.Namespace): the options.
+        data: The eigenvalues.
+        filename: The name of the output files.
+        args: The options.
 
     """
     # Computing the cumulative sum
@@ -128,13 +128,13 @@ def create_scree_plot(data: np.ndarray, filename: str,
 
 
 def read_eigenvalues(filename: str) -> np.ndarray:
-    """Reads the eigenvalues from EIGENSOFT results.
+    """Read the eigenvalues from EIGENSOFT results.
 
     Args:
-        filename (str): the name of the input file.
+        filename: The name of the input file.
 
     Returns:
-        pd.DataFrame: the eigenvalues.
+        The eigenvalues.
 
     """
     re_splitter = re.compile(r"\s+")
@@ -150,15 +150,14 @@ def read_eigenvalues(filename: str) -> np.ndarray:
     return np.array(data[1:], dtype=float)
 
 
-def check_args(args:  argparse.Namespace) -> None:
-    """Checks the arguments and options.
+def check_args(args:  argparse.Namespace):
+    """Check the arguments and options.
 
     Args:
-        args (argparse.Namespace): the arguments and options.
+        args: The arguments and options.
 
     If there is a problem with an option, an exception is raised using the
-    :py:class:`ProgramError` class, a message is printed to the
-    :class:`sys.stderr` and the program exits with error code 1.
+    `ProgramError` class.
 
     """
     # Checking that the input file exists
@@ -167,7 +166,15 @@ def check_args(args:  argparse.Namespace) -> None:
 
 
 def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
-    """Parses the command line options and arguments."""
+    """Parse the command line options and arguments.
+
+    Args:
+        argv: An optional list of arguments.
+
+    Returns:
+        The parsed arguments and options.
+
+    """
     parser = argparse.ArgumentParser(description=DESCRIPTION)
 
     parser.add_argument(
@@ -180,8 +187,13 @@ def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
     return parser.parse_args(argv)
 
 
-def add_args(parser: argparse.ArgumentParser) -> None:
-    """Add arguments and options to the parser."""
+def add_args(parser: argparse.ArgumentParser):
+    """Add arguments and options to the parser.
+
+    Args:
+        parser: An argument parser to which arguments will be added.
+
+    """
     # The input files
     group = parser.add_argument_group("Input File")
     group.add_argument(
@@ -201,9 +213,14 @@ def add_args(parser: argparse.ArgumentParser) -> None:
     )
 
 
-def add_graphical_options(parser: argparse._ArgumentGroup,
-                          prefix: str = "") -> None:
-    """Adds the graphical options."""
+def add_graphical_options(parser: argparse._ArgumentGroup, prefix: str = ""):
+    """Add the graphical options to the parser.
+
+    Args:
+        parser: An argument parser to which arguments will be added.
+        prefix: A prefix for the arguments.
+
+    """
     parser.add_argument(
         f"--{prefix}title", type=str, metavar="TITLE",
         default="EIGENSOFT results",
