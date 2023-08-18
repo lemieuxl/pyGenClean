@@ -72,12 +72,14 @@ nav:
     - Ancestry: qc_modules/ancestry.md
     - Contamination: qc_modules/contamination.md
     - Flag Hardy-Weinberg: qc_modules/flag_hw.md
+    - Flag MAF: qc_modules/flag_maf.md
   - API reference:
     - reference/index.md
     - QC modules:
       - Ancestry: reference/qc_modules/ancestry.md
       - Contamination: reference/qc_modules/contamination.md
       - Flag Hardy-Weinberg: reference/qc_modules/flag_hw.md
+      - Flag MAF: reference/qc_modules/flag_maf.md
 
 extra_javascript:
   - javascripts/katex.js
