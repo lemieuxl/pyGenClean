@@ -9,7 +9,7 @@ scripts).
 - [flag MAF](flag_maf.md)
 - [heterozygous haploid](hetero_hap.md)
 - [marker call rate](marker_call_rate.md)
-- no call / heterozygous
+- [no call / heterozygous](nocall_hetero.md)
 - plate bias
 - related samples
 - sample call rate
