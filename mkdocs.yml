@@ -76,6 +76,7 @@ nav:
     - Heterozygous haploid: qc_modules/hetero_hap.md
     - Marker call rate: qc_modules/marker_call_rate.md
     - No call / heterozygous: qc_modules/nocall_hetero.md
+    - Plate bias: qc_modules/plate_bias.md
   - API reference:
     - reference/index.md
     - QC modules:
@@ -86,6 +87,7 @@ nav:
       - Heterozygous haploid: reference/qc_modules/hetero_hap.md
       - Marker call rate: reference/qc_modules/marker_call_rate.md
       - No call / heterozygous: reference/qc_modules/nocall_hetero.md
+      - Plate bias: reference/qc_modules/plate_bias.md
 
 extra_javascript:
   - javascripts/katex.js

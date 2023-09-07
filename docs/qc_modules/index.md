@@ -10,7 +10,7 @@ scripts).
 - [heterozygous haploid](hetero_hap.md)
 - [marker call rate](marker_call_rate.md)
 - [no call / heterozygous](nocall_hetero.md)
-- plate bias
+- [plate bias](plate_bias.md)
 - related samples
 - sample call rate
 - sex check
