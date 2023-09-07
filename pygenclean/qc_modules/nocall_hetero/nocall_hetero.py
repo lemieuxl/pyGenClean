@@ -1,4 +1,4 @@
-"""Clean markers with no call or heterozygous only."""
+"""Clean markers with no call or heterozygous genotypes only."""
 
 
 import argparse
@@ -27,17 +27,20 @@ logger = logging.getLogger(__name__)
 @timer(logger)
 def main(args: Optional[argparse.Namespace] = None,
          argv: Optional[List[str]] = None) -> Dict[str, str]:
-    """Clean markers with no call or heterozygous only.
+    """Clean markers with no call or heterozygous genotypes only.
 
     Args:
-        args (argparse.Namespace): the arguments and options
-        argv (list): the argument as a list.
+        args: The arguments and options
+        argv: The argument as a list.
+
+    Returns:
+        A dictionary containing summary information about the run.
 
     These are the steps:
 
-    1. Prints the options.
-    2. Reads the ``tfam`` and ``tped`` files and find all heterozygous and all
-       failed markers (:py:func:`processTPEDandTFAM`).
+    1. Read the binary _Plink_ files and find all heterozygous and all failed
+       markers.
+    2. Use _Plink_ to exclude the markers found at the first step.
 
     """
     if args is None:
@@ -57,24 +60,23 @@ def main(args: Optional[argparse.Namespace] = None,
     }
 
 
-def process_file(prefix: str, out_prefix: str,
-                 use_original_plink: bool) -> None:
-    """Process the TPED and TFAM files.
+def process_file(prefix: str, out_prefix: str, use_original_plink: bool):
+    """Process the binary _Plink_ files.
 
     Args:
-        prefix (str): the prefix of the BED/BIM/FAM files.
-        out_prefix (str): the prefix of output files.
+        prefix: The prefix of the BED/BIM/FAM files.
+        out_prefix: The prefix of the output files.
 
     Reads the input files and keeps in memory two sets containing the markers
     which are all failed or which contains only heterozygous genotypes.
 
-    It creates two output files, ``prefix.all_failed`` and
-    ``prefix.all_hetero``, containing the markers that are all failed and are
+    It creates two output files, `{prefix}.all_failed` and
+    `{prefix}.all_hetero`, containing the markers that are all failed and are
     all heterozygous, respectively.
 
-    .. note::
+    note:
         All heterozygous markers located on the mitochondrial chromosome are
-        not remove.
+        not removed.
 
     """
     # The name of the bad SNPs
@@ -134,15 +136,14 @@ def process_file(prefix: str, out_prefix: str,
             shutil.copy(prefix + extension, out_prefix + extension)
 
 
-def check_args(args: argparse.Namespace) -> None:
-    """Checks the arguments and options.
+def check_args(args: argparse.Namespace):
+    """Check the arguments and options.
 
     Args:
-        args (argparse.Namespace): the arguments and options.
+        args: The arguments and options.
 
     If there is a problem with an option, an exception is raised using the
-    :py:class:`ProgramError` class, a message is printed to the
-    :class:`sys.stderr` and the program exists with code 1.
+    `ProgramError` class.
 
     """
     # Checking the input files
@@ -151,7 +152,15 @@ def check_args(args: argparse.Namespace) -> None:
 
 
 def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
-    """Parses the command line options and arguments."""
+    """Parse the command line options and arguments.
+
+    Args:
+        argv: An optional list of arguments.
+
+    Returns:
+        The parsed arguments and options.
+
+    """
     parser = argparse.ArgumentParser(description=DESCRIPTION)
 
     parser.add_argument(
@@ -165,8 +174,13 @@ def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
     return parser.parse_args(argv)
 
 
-def add_args(parser: argparse.ArgumentParser) -> None:
-    """Add arguments and options to the parser."""
+def add_args(parser: argparse.ArgumentParser):
+    """Add arguments and options to the parser.
+
+    Args:
+        parser: An argument parser to which arguments will be added.
+
+    """
     # The INPUT files
     group = parser.add_argument_group("Input File")
     group.add_argument(
