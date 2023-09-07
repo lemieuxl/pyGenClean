@@ -1,4 +1,4 @@
-"""Computes heterozygosity rate and plots it."""
+"""Compute heterozygosity rate and plots it."""
 
 
 import argparse
@@ -24,21 +24,18 @@ logger = logging.getLogger(__name__)
 
 @timer(logger)
 def main(args: Optional[argparse.Namespace] = None,
-         argv: Optional[List[str]] = None) -> None:
-    """Computes heterozygosity rate and plots it.
+         argv: Optional[List[str]] = None):
+    """Compute heterozygosity rate and plots it.
 
     Args:
-        args (argparse.Namespace): the arguments and options
-        argv (list): the argument as a list.
+        args: The arguments and options
+        argv: The argument as a list.
 
     These are the steps:
 
-    1. Prints the options.
-    2. Checks the number of samples in the ``tfam`` file
-       (:py:func:`compute_nb_samples`).
-    3. Computes the heterozygosity rate (:py:func:`compute_heterozygosity`).
-    4. Saves the heterozygosity data (in ``out.het``).
-    5. Plots the heterozygosity rate (:py:func:`plot_heterozygosity`).
+    1. Computes the heterozygosity rate.
+    2. Save the heterozygosity rate for each samples in a file.
+    3. Plot the heterozygosity rate (histogram or boxplot).
 
     """
     if args is None:
@@ -59,13 +56,13 @@ def main(args: Optional[argparse.Namespace] = None,
 
 
 def save_heterozygosity(heterozygosity: np.ndarray, samples: np.ndarray,
-                        out_prefix: str) -> None:
-    """Saves the heterozygosity data.
+                        out_prefix: str):
+    """Save the heterozygosity data to file.
 
     Args:
-        heterozygosity (numpy.array): the heterozygosity data.
-        samples (list): the list of samples.
-        out_prefix (str): the prefix of the output files.
+        heterozygosity: The heterozygosity data.
+        samples: The list of samples.
+        out_prefix: The prefix of the output files.
 
     """
     with open(out_prefix + ".het", "w") as f:
@@ -74,13 +71,13 @@ def save_heterozygosity(heterozygosity: np.ndarray, samples: np.ndarray,
 
 
 def read_het_file(filename: str) -> np.ndarray:
-    """Reads the heterozygosity file.
+    """Read the heterozygosity file.
 
     Args:
-        filename (str): the name of the heterozygosity file.
+        filename: The name of the heterozygosity file.
 
     Returns:
-        numpy.ndarray: the heterozygosity of all samples.
+        The heterozygosity rate for all samples.
 
     """
     data = []
@@ -93,7 +90,15 @@ def read_het_file(filename: str) -> np.ndarray:
 
 
 def compute_heterozygosity(prefix: str) -> Tuple[np.ndarray, np.ndarray]:
-    """Computes the heterozygosity ratio of samples."""
+    """Compute the heterozygosity ratio of all samples.
+
+    Args:
+        prefix: The prefix of the binary _Plink_ files.
+
+    Returns:
+        The heterozygosity rates for all the samples.
+
+    """
     logger.info("Computing heterozygosity from binary files")
     # The autosomes
     autosomes = {str(i) for i in range(1, 23)}
@@ -122,14 +127,14 @@ def compute_heterozygosity(prefix: str) -> Tuple[np.ndarray, np.ndarray]:
 
 
 def plot_heterozygosity(heterozygosity: np.ndarray,
-                        options: argparse.Namespace) -> None:
-    """Plots the heterozygosity rate distribution.
+                        options: argparse.Namespace):
+    """Plot the heterozygosity rate distribution.
 
     Args:
-        heterozygosity (numpy.ndarray): the heterozygosity data.
-        options (argparse.Namespace): the options.
+        heterozygosity: The heterozygosity data.
+        options: The options.
 
-    Plots a histogram or a boxplot of the heterozygosity distribution.
+    Plot a histogram or a boxplot of the heterozygosity distribution.
 
     """
     # pylint: disable=import-outside-toplevel
@@ -164,12 +169,18 @@ def plot_heterozygosity(heterozygosity: np.ndarray,
     )
     axe.set_xlabel("Heterozygosity rate")
 
+    if options.xlim is not None:
+        heterozygosity = heterozygosity[
+            (heterozygosity >= options.xlim[0])
+            & (heterozygosity <= options.xlim[1])
+        ]
+
     # Plotting the histogram
     if options.boxplot:
         # Specific settings for the boxplot
         axe.yaxis.set_ticks_position("none")
         axe.spines["left"].set_visible(False)
-        axe.set_yticklabels([])
+        axe.yaxis.set_visible(False)
         figure.subplots_adjust(bottom=0.18)
 
         # The boxplot
@@ -185,7 +196,9 @@ def plot_heterozygosity(heterozygosity: np.ndarray,
             bins=options.bins,
             color="#0099CC",
             histtype="stepfilled",
-            weights=np.zeros_like(heterozygosity) + 1.0 / len(heterozygosity),
+            weights=(
+                np.zeros_like(heterozygosity) + 1.0 / heterozygosity.shape[0]
+            ),
         )
 
         # Plotting the mean, the median and the variance
@@ -197,7 +210,7 @@ def plot_heterozygosity(heterozygosity: np.ndarray,
         median_line = axe.axvline(the_median, color="#FF8800", ls="--", lw=2,
                                   clip_on=False)
         variance_line = axe.axvline(the_variance, color="#FFFFFF", ls="--",
-                                    lw=0, clip_on=False)
+                                    lw=2, clip_on=False)
         axe.legend(
             [mean_line, median_line, variance_line],
             [
@@ -228,8 +241,16 @@ def plot_heterozygosity(heterozygosity: np.ndarray,
         plt.savefig(file_name, dpi=300)
 
 
-def check_args(args: argparse.Namespace) -> None:
-    """Checks the arguments and options."""
+def check_args(args: argparse.Namespace):
+    """Check the arguments and options.
+
+    Args:
+        args: The arguments and options.
+
+    If there is a problem with an option, an exception is raised using the
+    `ProgramError` class.
+
+    """
     if args.het_file is None and args.bfile is None:
         raise ProgramError("Specify either '--het-file' or '--bfile'")
 
@@ -254,7 +275,15 @@ def check_args(args: argparse.Namespace) -> None:
 
 
 def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
-    """Parses the command line options and arguments."""
+    """Parse the command line options and arguments.
+
+    Args:
+        argv: An optional list of arguments.
+
+    Returns:
+        The parsed arguments and options.
+
+    """
     parser = argparse.ArgumentParser(description=DESCRIPTION)
 
     parser.add_argument(
@@ -268,8 +297,13 @@ def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
     return parser.parse_args(argv)
 
 
-def add_args(parser: argparse.ArgumentParser) -> None:
-    """Add arguments and options to the parser."""
+def add_args(parser: argparse.ArgumentParser):
+    """Add arguments and options to the parser.
+
+    Args:
+        parser: An argument parser to which arguments will be added.
+
+    """
     # The INPUT files
     group = parser.add_argument_group("Input File")
     group.add_argument(
@@ -299,7 +333,8 @@ def add_args(parser: argparse.ArgumentParser) -> None:
     )
     group.add_argument(
         "--xlim", type=float, metavar="FLOAT", nargs=2,
-        help="The limit of the x axis (floats).",
+        help="The limit of the x axis (floats). The heterozygosity values"
+             "will be restricted around those two values (inclusive).",
     )
     group.add_argument(
         "--ymax", type=float, metavar="FLOAT",
