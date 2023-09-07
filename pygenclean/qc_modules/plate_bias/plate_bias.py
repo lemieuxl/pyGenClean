@@ -1,4 +1,4 @@
-"""Finds plate bias (if any)."""
+"""Find plate bias (if any)."""
 
 
 import argparse
@@ -44,15 +44,18 @@ class SignificantMarker():
 @timer(logger)
 def main(args: Optional[argparse.Namespace] = None,
          argv: Optional[List[str]] = None) -> Dict[str, str]:
-    """Finds plate biases (if any).
+    """Find plate biases (if any).
 
     Args:
-        args (argparse.Namespace): the arguments and options.
-        argv (list): the arguments as list.
+        args: The arguments and options.
+        argv: The arguments as list.
+
+    Returns:
+        A dictionary containing summary information about the run.
 
     These are the steps:
 
-    1. Runs a plate bias analysis using Plink.
+    1. Runs a plate bias analysis using _Plink_.
     2. Extracts the list of significant markers after plate bias analysis.
     3. Computes the frequency of all significant markers after plate bias
        analysis.
@@ -92,13 +95,13 @@ def main(args: Optional[argparse.Namespace] = None,
 
 
 def write_significant(results: List[SignificantMarker], maf: Dict[str, str],
-                      out: str) -> None:
-    """Writes the results.
+                      out: str):
+    """Write the results.
 
     Args:
-        results (list): the plate bias results.
-        maf (dict): the MAF of each markers.
-        out (str): the output rpefix.
+        results: The plate bias results.
+        maf: The MAF of each markers.
+        out: The output rpefix.
 
     """
     with open(out + ".significant_markers.summary.tsv", "w") as f:
@@ -115,16 +118,17 @@ def compute_frequency(bfile: str, out: str,
     """Compute the frequency of specific markers.
 
     Args:
-        bfile (str): the prefix of the input Plink file.
-        out (str): the prefix of the output files.
+        bfile: The prefix of the input Plink file.
+        out: The prefix of the output files.
 
     Returns:
-        dict: the MAF for each marker.
+        The MAF for each significant marker.
 
     """
     logger.info("Computing the frequencies of significant markers")
 
     plink_utils.compute_freq(bfile=bfile, out=out + ".significant_markers",
+                             extract=out + ".significant_markers.txt",
                              use_original_plink=use_original_plink)
 
     # Reading the MAF
@@ -150,10 +154,10 @@ def extract_significant_markers(prefix: str) -> List[SignificantMarker]:
     """Extract significant markers from the association files.
 
     Args:
-        prefix (str): the prefix of the association files.
+        prefix: The prefix of the association files.
 
     Returns:
-        list: the list of significant markers.
+        The list of significant markers.
 
     """
     data = []
@@ -195,15 +199,15 @@ def extract_significant_markers(prefix: str) -> List[SignificantMarker]:
 
 def execute_plate_bias(bfile: str, plates: Set[str], p_filter: float,
                        out: str, threads: int,
-                       use_original_plink: bool = False) -> None:
+                       use_original_plink: bool = False):
     """Execute plate bias on each plates.
 
     Args:
-        bfile (str): the file prefix.
-        plates (set): the set of plates.
-        p_filter (float): the p-value filter.
-        out (str): the output prefix.
-        threads (int): the number of threads.
+        bfile: The file prefix.
+        plates: The set of plates.
+        p_filter: The p-value filter.
+        out: The output prefix.
+        threads: The number of threads.
 
     """
     commands = [
@@ -222,13 +226,13 @@ def execute_plate_bias(bfile: str, plates: Set[str], p_filter: float,
 
 
 def create_plate_files(sample_plates: Dict[Tuple[str, str], str],
-                       fam: str, prefix: str) -> None:
-    """Creates the files for the test (one file per plate.
+                       fam: str, prefix: str):
+    """Create the files for the test (one file per plate.
 
     Args:
-        sample_plates (dict): the plate for each sample.
-        fam (str): the fam file.
-        prefix (str): the output prefix.
+        sample_plates: The plate for each sample.
+        fam: The fam file.
+        prefix: The output prefix.
 
     """
     logger.info("Generating plate bias files")
@@ -244,13 +248,13 @@ def create_plate_files(sample_plates: Dict[Tuple[str, str], str],
 
 
 def get_plates(filename: str) -> Dict[Tuple[str, str], str]:
-    """Gets the plate for each samples.
+    """Get the plate for each samples.
 
     Args:
-        filename (str): the file containing the plates.
+        filename: The file containing the plates.
 
     Returns:
-        dict: the (FID, IID) assigned to each plate.
+        The (`FID`, `IID`) assigned to each plate.
 
     """
     logger.info("Reading plate information from '%s'", filename)
@@ -266,11 +270,14 @@ def get_plates(filename: str) -> Dict[Tuple[str, str], str]:
     return plates
 
 
-def check_args(args: argparse.Namespace) -> None:
-    """Checks the arguments and options.
+def check_args(args: argparse.Namespace):
+    """Check the arguments and options.
 
     Args:
-        args (argparse.Namespace): the arguments and options to check.
+        args: The arguments and options.
+
+    If there is a problem with an option, an exception is raised using the
+    `ProgramError` class.
 
     """
     if not plink_utils.check_files(args.bfile):
@@ -281,7 +288,15 @@ def check_args(args: argparse.Namespace) -> None:
 
 
 def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
-    """Parses the arguments and function."""
+    """Parse the command line options and arguments.
+
+    Args:
+        argv: An optional list of arguments.
+
+    Returns:
+        The parsed arguments and options.
+
+    """
     parser = argparse.ArgumentParser(description=DESCRIPTION)
 
     parser.add_argument(
@@ -295,8 +310,13 @@ def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
     return parser.parse_args(argv)
 
 
-def add_args(parser: argparse.ArgumentParser) -> None:
-    """Adds argument to the parser."""
+def add_args(parser: argparse.ArgumentParser):
+    """Add arguments and options to the parser.
+
+    Args:
+        parser: An argument parser to which arguments will be added.
+
+    """
     # The INPUT files
     group = parser.add_argument_group("Input files")
     group.add_argument(
