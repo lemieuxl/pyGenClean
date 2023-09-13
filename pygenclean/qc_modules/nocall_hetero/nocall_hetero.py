@@ -74,7 +74,7 @@ def process_file(prefix: str, out_prefix: str, use_original_plink: bool):
     `{prefix}.all_hetero`, containing the markers that are all failed and are
     all heterozygous, respectively.
 
-    note:
+    Note:
         All heterozygous markers located on the mitochondrial chromosome are
         not removed.
 
