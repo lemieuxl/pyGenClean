@@ -1,9 +1,11 @@
 """Utility function which might be used throughout the pipeline."""
 
 
+import bz2
 import datetime
 import functools
 import gzip
+import lzma
 import shlex
 import time
 from typing import Any, Callable, Iterable, List, Optional, Set
@@ -11,9 +13,9 @@ from typing import Any, Callable, Iterable, List, Optional, Set
 from ..error import ProgramError
 
 
-__all__ = ["decode_chrom", "decode_sex", "is_gzip", "get_open_func",
-           "split_extra_args", "timer", "flip_alleles", "compatible_alleles",
-           "check_allele_status", "count_lines"]
+__all__ = ["decode_chrom", "decode_sex", "is_gzip", "is_bzip2", "is_xz",
+           "get_open_func", "split_extra_args", "timer", "flip_alleles",
+           "compatible_alleles", "check_allele_status", "count_lines"]
 
 
 def decode_chrom(chrom: str) -> int:
@@ -69,9 +71,9 @@ def decode_sex(sex: str) -> str:
     Returns:
         str: the decoded sex.
 
-    Notes:
-        It changes ``1`` and ``2`` to ``Male`` and ``Female`` respectively. It
-        encodes everything else to ``Unknown``.
+    Note:
+        It changes `1` and `2` to `Male` and `Female` respectively. It
+        encodes everything else to `Unknown`.
 
     """
     if sex == "1":
@@ -84,22 +86,74 @@ def decode_sex(sex: str) -> str:
 
 
 def is_gzip(filename: str) -> bool:
-    """Checks if a file is compressed using gzip.
+    """Check if a file is compressed using gzip.
 
     Args:
-        filename (str): the file to check.
+        filename: The file to check.
 
     Returns:
-        bool: ``True`` if the file is compressed by gzip, false otherwise.
+        `True` if the file is compressed by gzip, false otherwise.
+
+    Used information from the following website:
+    https://www.baeldung.com/linux/check-if-file-compressed#2-magic-numbers-of-compression-formats
+
+    - `gzip`: `1f8b` or `1f9e`
+
+    Note:
+        We only use `1f8b`, because `1f9e` is for old version of gzip.
 
     """
     with open(filename, "rb") as f:
         first = f.read(2)
-    return first == b'\x1f\x8b'
+    return first == b"\x1f\x8b"
+
+
+def is_xz(filename: str) -> bool:
+    """Checks if a file is compressed using xz.
+
+    Args:
+        filename: The file to check.
+
+    Returns:
+        `True` if the file is compressed using xz, false otherwise.
+
+    Used information from the following website:
+    https://www.baeldung.com/linux/check-if-file-compressed#2-magic-numbers-of-compression-formats
+
+    - `xz`: `fd377a585a`
+
+    """
+    with open(filename, "rb") as f:
+        first = f.read(5)
+    return first == b"\xfd\x37\x7a\x58\x5a"
+
+
+def is_bzip2(filename: str) -> bool:
+    """Checks if a file is compressed using bzip2.
+
+    Args:
+        filename: The file to check.
+
+    Returns:
+        `True` if the file is compressed by bzip2, false otherwise.
+
+    Used information from the following website:
+    https://www.baeldung.com/linux/check-if-file-compressed#2-magic-numbers-of-compression-formats
+
+    - `bzip2`: `425a68` or `425a30`
+
+    Note:
+        We only use `425a68`, because `425a30` is for the deprecated old
+        version.
+
+    """
+    with open(filename, "rb") as f:
+        first = f.read(3)
+    return first == b"\x42\x5a\x68"
 
 
 def get_open_func(filename: str) -> functools.partial:
-    """Opens a file even if it's gzipped.
+    """Open a file even if it's compressed (gzip, bzip2 and xz).
 
     Args:
         filename (str): the file to open
@@ -110,6 +164,13 @@ def get_open_func(filename: str) -> functools.partial:
     """
     if is_gzip(filename):
         return functools.partial(gzip.open, filename, mode="rt")
+
+    if is_bzip2(filename):
+        return functools.partial(bz2.open, filename, mode="rt")
+
+    if is_xz(filename):
+        return functools.partial(lzma.open, filename, mode="rt")
+
     return functools.partial(open, filename)
 
 
