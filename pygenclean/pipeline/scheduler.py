@@ -6,12 +6,11 @@ import json
 import logging
 import shlex
 import time
+import tomllib
 from datetime import datetime
 from os import path
 from pathlib import Path
 from typing import Any, Dict, List, Optional
-
-import tomllib
 
 from ..error import ProgramError
 from ..qc_modules import qc_modules
