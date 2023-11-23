@@ -192,7 +192,8 @@ def extract_significant_markers(prefix: str) -> List[SignificantMarker]:
 
     # Creating the output file
     with open(prefix + ".significant_markers.txt", "w") as f:
-        print(*{marker.name for marker in data}, sep="\n", file=f)
+        if data:
+            print(*{marker.name for marker in data}, sep="\n", file=f)
 
     return data
 
