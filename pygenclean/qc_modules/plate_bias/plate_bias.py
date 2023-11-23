@@ -81,7 +81,9 @@ def main(args: Optional[argparse.Namespace] = None,
     assoc_results = extract_significant_markers(args.out)
 
     # Computing the frequencies of the significant markers
-    maf = compute_frequency(args.bfile, args.out, args.plink_107)
+    maf = {}
+    if assoc_results:
+        maf = compute_frequency(args.bfile, args.out, args.plink_107)
 
     write_significant(assoc_results, maf, args.out)
 
