@@ -9,7 +9,7 @@ _bafRegress_. The analysis was performed using
 marker{{ "s" if nb_autosomal > 1 }}. Using a threshold of {{ threshold }},
 {{ "{:,d}".format(nb_contaminated) }} sample{{ "s" if nb_contaminated > 1 }}
 {{ "were" if nb_contaminated > 1 else "was" }} estimated to be contaminated.
-{%- if nb_contaminated > 1 %}
+{%- if nb_contaminated > 0 %}
 @tbl-{{ label_prefix }}-results lists all the samples that were estimated to be
 contaminated (_i.e._ with an estimate $>{{ threshold }}$)
 
