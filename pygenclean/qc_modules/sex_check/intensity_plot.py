@@ -230,7 +230,7 @@ def read_intensities(filename: str, required_markers: Set[str],
         raise ProgramError("There are no intensities for sexual chromosomes")
 
     # Creating the final format
-    df = df.loc[:, "intensity_sum"]
+    df = df.loc[:, "intensity_sum"].copy()
     df["mean"] = df["sum"] / df["count"]
     df = df.reset_index().pivot_table(
         values="mean", index=cols["sample"], columns=[cols["new_chrom"]],
