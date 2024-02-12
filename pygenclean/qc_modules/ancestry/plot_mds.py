@@ -142,7 +142,7 @@ def read_mds(filename: str, populations: pd.DataFrame) -> pd.DataFrame:
     # Reading the MDS file
     mds = pd.read_csv(
         filename,
-        delim_whitespace=True,
+        sep=r"\s+",
         dtype={"FID": str, "IID": str},
     ).set_index(["FID", "IID"], verify_integrity=True).sort_index()
 

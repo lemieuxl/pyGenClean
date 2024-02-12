@@ -188,7 +188,7 @@ def get_related_samples(
     # This file is pretty big, so we neet to parse it chuinks by chunks
     reader = pd.read_csv(
         filename,
-        delim_whitespace=True,
+        sep=r"\s+",
         dtype={"FID1": str, "IID1": str, "FID2": str, "IID2": str},
         chunksize=10e6,
     )

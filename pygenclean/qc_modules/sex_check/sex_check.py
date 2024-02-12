@@ -237,7 +237,7 @@ def get_sex_mismatch(filename: str, female_f: float, male_f: float,
     if not path.isfile(filename):
         raise ProgramError(f"{filename}: something went wrong with PLink")
 
-    df = pd.read_csv(filename, delim_whitespace=True)
+    df = pd.read_csv(filename, sep=r"\s+")
 
     # Getting some statistics
     #   - the problems (i.e. != OK)
