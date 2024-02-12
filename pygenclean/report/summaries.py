@@ -217,6 +217,14 @@ class SexCheckSummary(Summary):
             .set_index(["FID", "IID"], verify_integrity=True)
         nb_problems = sex_problems.shape[0]
 
+        # There are no sex problems
+        if not nb_problems:
+            return {
+                "male_f": self.args.male_f,
+                "female_f": self.args.female_f,
+                "nb_problems": nb_problems,
+            }
+
         # Adding the heterozygosity on chromosome 23
         heterozygosity = pd.read_csv(self.args.out + ".chr23.hetero.tsv",
                                      sep="\t")\
