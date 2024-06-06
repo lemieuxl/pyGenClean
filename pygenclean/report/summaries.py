@@ -340,7 +340,7 @@ class SampleCallRateSummary(Summary):
 class MarkerCallRateSummary(Summary):
     """Marker call rate summary."""
     methods = (
-        "Computes marker call rate using Plink (`geno` = {{ geno }}). The "
+        "Compute marker call rate using Plink (`geno` = {{ geno }}). The "
         "script identifies poorly performing markers genotyping success rate "
         "$<{{ (1 - geno) * 100 }}\\%$."
     )
@@ -460,7 +460,7 @@ class ContaminationSummary(Summary):
     """Contamination summary."""
     methods = (
         "Check _BAF_ and _LogR_ ratio for data contamination. The script "
-        "search for sample contamination using the `bafRegress.py` software."
+        "searches for sample contamination using the `bafRegress.py` software."
     )
 
     result_section_name = "Contamination"
@@ -722,6 +722,24 @@ class DuplicatedSamplesSummary(Summary):
         return {
             "nb_dup_samples": len(dup_samples),
         }
+
+    def get_methods_information(self) -> Dict[str, Optional[Union[str, int]]]:
+        """Get the summary information for the methods."""
+        return {}
+
+
+class CompareSummary(Summary):
+    """Compare summary."""
+    methods = (
+        "Compares genotypes with a reference (in VCF format). The script "
+        "generates differences and various statistics."
+    )
+
+    result_section_name = "Compare with reference"
+
+    def get_results_information(self) -> Dict[str, Optional[Union[str, int]]]:
+        """Get the summary information for the results."""
+        return {}
 
     def get_methods_information(self) -> Dict[str, Optional[Union[str, int]]]:
         """Get the summary information for the methods."""
