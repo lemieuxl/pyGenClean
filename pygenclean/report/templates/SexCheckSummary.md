@@ -5,7 +5,7 @@
 Using $F$ thresholds of {{ male_f }} and {{ female_f }} for males and females,
 respectively, {{ "{:,d}".format(nb_problems) }}
 sample{{ "s" if nb_problems > 1 }} had sex problems according to _Plink_.
-{%- if nb_problems > 1 %}
+{%- if nb_problems > 0 %}
 @tbl-{{ label_prefix }}-results summarizes the sex problems encountered during
 the analysis.
 {%- endif -%}
@@ -24,7 +24,7 @@ the log R ratio and the B allele frequency versus the position on chromosome X
 and Y for the problematic samples.
 {% endif %}
 
-{% if nb_problems > 1 %}
+{% if nb_problems > 0 %}
 {{ table }}
 
 : Summarization of the sex mismatch problems encountered during Plink's
