@@ -99,8 +99,8 @@ dataset.
 
 {{ conclusion_summaries[step]["summary_table"]|safe }}
 
-: Summary information of the data cleanup procedure for
-{{ step_info["desc"] if step_info["desc"] else "Step " + step }}.
+: Summary of information and exclusions based on the genetic data cleanup to
+generate the {{ step_info["desc"] if step_info["desc"] else "Step " + step }}.
 {{ "{#" }}tbl-final-summary-{{ step }}}
 {% endfor %}
 """)
