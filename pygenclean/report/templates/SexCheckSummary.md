@@ -32,6 +32,8 @@ analysis. `HET` is the heterozygosity rate on the X chromosome. `NOCALL` is the
 percentage of no calls on the Y
 chromosome. {{ "{#" }}tbl-{{ label_prefix }}-results}
 
+{% endif %}
+
 {% if figure_intensities %}
 ![
     Sex check using Plink. Mean $x$ and $y$ intensities are shown for each
@@ -40,6 +42,8 @@ chromosome. {{ "{#" }}tbl-{{ label_prefix }}-results}
     are shown in gray.
 ]({{ figure_intensities }}){{ "{#" }}fig-{{ label_prefix }}-intensities}
 {% endif %}
+
+{% if nb_problems > 0 %}
 
 {% if figure_baf_lrr|length > 0 %}
 {% for figure_path, sample_id in figure_baf_lrr %}
