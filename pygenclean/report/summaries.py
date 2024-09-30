@@ -217,12 +217,19 @@ class SexCheckSummary(Summary):
             .set_index(["FID", "IID"], verify_integrity=True)
         nb_problems = sex_problems.shape[0]
 
+        # Checking if we have a figure for sumarized intensities (there might
+        # be one even if no problems were detected)
+        figure_intensities = None
+        if path.isfile(self.args.out + ".png"):
+            figure_intensities = self.args.out + ".png"
+
         # There are no sex problems
         if not nb_problems:
             return {
                 "male_f": self.args.male_f,
                 "female_f": self.args.female_f,
                 "nb_problems": nb_problems,
+                "figure_intensities": figure_intensities,
             }
 
         # Adding the heterozygosity on chromosome 23
@@ -239,11 +246,6 @@ class SexCheckSummary(Summary):
             HET=heterozygosity.HETERO,
             NOCALL=no_call.F_MISS,
         ).reset_index()
-
-        # Checking if we have a figure for sumarized intensities
-        figure_intensities = None
-        if path.isfile(self.args.out + ".png"):
-            figure_intensities = self.args.out + ".png"
 
         # Checking if we have BAF and LRR figures
         baf_lrr_figures = list(Path(self.args.out + ".BAF_LRR").glob("*.png"))
