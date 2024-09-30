@@ -5,13 +5,13 @@
 Using $F$ thresholds of {{ male_f }} and {{ female_f }} for males and females,
 respectively, {{ "{:,d}".format(nb_problems) }}
 sample{{ "s" if nb_problems > 1 }} had sex problems according to _Plink_.
-{%- if nb_problems > 0 %}
-@tbl-{{ label_prefix }}-results summarizes the sex problems encountered during
-the analysis.
-{%- endif -%}
 {%- if figure_intensities %}
 @fig-{{ label_prefix }}-intensities shows the $y$ intensities versus the $x$
 intensities for each samples. Problematic samples are shown using triangles.
+{%- endif -%}
+{%- if nb_problems > 0 %}
+@tbl-{{ label_prefix }}-results summarizes the sex problems encountered during
+the analysis.
 {%- endif -%}
 {%- if figure_baf_lrr|length > 0 -%}
 {%- if figure_baf_lrr|length == 1 %}
