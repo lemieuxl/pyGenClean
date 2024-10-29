@@ -1,6 +1,4 @@
-include README.mkd
-include configuration_example_1_of_2.ini
-include configuration_example_2_of_2.ini
+include README.md
 include LICENSE.txt
 
-graft pygenclean/utils/templates
+graft pygenclean/report/templates/*.md
