@@ -72,7 +72,9 @@ def setup_package():
             ],
         },
         packages=find_packages(),
-        include_package_data=True,
+        package_data={
+            "pygenclean.report": ["templates/*.md"],
+        },
         install_requires=[
             "numpy >= 1.24",
             "pyplink >= 1.3.5",
