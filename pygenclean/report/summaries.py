@@ -419,10 +419,12 @@ class RelatedSamplesSummary(Summary):
         )
 
         # Checking if we have z1 figure
+        figure_z1 = None
         if path.isfile(self.args.out + ".related_individuals_z1.png"):
             figure_z1 = self.args.out + ".related_individuals_z1.png"
 
         # Checking if we have z2 figure
+        figure_z2 = None
         if path.isfile(self.args.out + ".related_individuals_z2.png"):
             figure_z2 = self.args.out + ".related_individuals_z2.png"
 
