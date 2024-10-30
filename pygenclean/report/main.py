@@ -37,6 +37,11 @@ format:
         {% if docx_template -%}
         reference-doc: {{ docx_template }}
         {%- endif %}
+    html:
+        toc: true
+        code-fold: false
+        embed-resources: true
+        number-sections: true
 ---
 
 ## Background
@@ -318,7 +323,7 @@ def _generate_conlusion_summaries(
                 dataset_summary,
                 headers=("Step", "Description", "Info", "Markers", "Samples"),
                 intfmt=",",
-                tablefmt="github",
+                tablefmt="pipe",
             ),
             "nb_markers": dataset_summary[-1][-2],
             "nb_samples": dataset_summary[-1][-1],
