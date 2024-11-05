@@ -123,6 +123,10 @@ def create_sexcheck_figure(
     """Creates a Plotly figure containing sex-check intensities."""
     figure = go.Figure()
 
+    # The columns
+    chr23_col = "chr23"
+    chr24_col = "chr24" if "chr24" in df.columns else "random_chr24"
+
     # Adding all the points (excluding selected samples)
     remove = set(selected_samples)
     for status in ("OK", "Mismatch"):
@@ -140,8 +144,8 @@ def create_sexcheck_figure(
             figure.add_trace(
                 go.Scatter(
                     mode="markers",
-                    x=sub_df["chr23"],
-                    y=sub_df["chr24"],
+                    x=sub_df[chr23_col],
+                    y=sub_df[chr24_col],
                     name=f"{status} {sex} (n={sub_df.shape[0]:,d})",
                     text=sub_df.index.to_numpy(),
                     marker={
@@ -165,8 +169,8 @@ def create_sexcheck_figure(
         figure.add_trace(
             go.Scatter(
                 mode="markers",
-                x=sample_data["chr23"],
-                y=sample_data["chr24"],
+                x=sample_data[chr23_col],
+                y=sample_data[chr24_col],
                 name=sample_id,
                 text=sample_data["status"] + " " + sample_data["sex"],
                 marker={
@@ -191,7 +195,7 @@ def create_sexcheck_figure(
         title_text="chrX",
     )
     figure.update_yaxes(
-        title_text="chrY",
+        title_text="chrY" if "chr24" in df.columns else "chrY (random)",
     )
 
     return figure
