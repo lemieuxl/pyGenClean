@@ -244,7 +244,16 @@ def read_intensities(filename: str, required_markers: Set[str],
         "Mismatch" if sample in mismatches else "OK" for sample in df.sample_id
     ]
 
-    return df.loc[:, ["sample_id", "chr23", "chr24", "sex", "status"]]
+    # Sometimes, there is no chromosome 24 when sex is unknown and marker
+    # call rate QC module was performed
+    columns = ["sample_id", "chr23", "chr24", "sex", "status"]
+    if "chr24" not in df.columns:
+        logger.warning("No intensities found for chromosome 24: using random "
+                       "values")
+        df["random_chr24"] = np.random.random(df.shape[0]) - 0.5
+        columns = ["sample_id", "chr23", "random_chr24", "sex", "status"]
+
+    return df.loc[:, columns]
 
 
 def process_df(df: pd.DataFrame, snp_col: str, sample_col: str, chrom_col: str,
@@ -317,8 +326,18 @@ def plot_summarized_intensities(df: pd.DataFrame,
     Plots the summarized intensities of the markers on the sexual chromosomes.
     Samples with a sex mismatch will be highlighted.
 
+    Sometimes, there is no Y chromosome intensities (because of missing values
+    and missing sex). Hence, we need to adjust the plot because random values
+    were generated for the Y chromosome intensities.
+
     """
+    # The columns
+    chr23_col = "chr23"
+    chr24_col = "chr24" if "chr24" in df.columns else "random_chr24"
+
     figure, axe = plt.subplots(1, 1)
+    if "chr24" not in df.columns:
+        figure.set_figheight(2)
 
     # Changing the spines
     axe.xaxis.set_ticks_position("bottom")
@@ -328,7 +347,9 @@ def plot_summarized_intensities(df: pd.DataFrame,
 
     # Changing the titles
     axe.set_xlabel(args.xlabel)
-    axe.set_ylabel(args.ylabel)
+    axe.set_ylabel(
+        args.ylabel if "chr24" in df.columns else f"{args.ylabel} (random)"
+    )
 
     for status in ("OK", "Mismatch"):
         for sex in ("Male", "Female", "Unknown"):
@@ -339,7 +360,7 @@ def plot_summarized_intensities(df: pd.DataFrame,
             config = PLOT_CONFIG[(status, sex)]
             label = f"{status} {sex} (n={nb_subset:,d})"
             axe.scatter(
-                sub_df.chr23, sub_df.chr24, s=config["size"],
+                sub_df[chr23_col], sub_df[chr24_col], s=config["size"],
                 color=config["color"], edgecolors=config["edgecolor"],
                 marker=config["marker"], label=label,
             )
