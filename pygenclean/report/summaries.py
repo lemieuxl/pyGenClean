@@ -2,6 +2,7 @@
 
 
 import argparse
+import os
 import re
 from os import path
 from pathlib import Path
@@ -327,9 +328,16 @@ class SampleCallRateSummary(Summary):
             ("mind=" + str(self.args.mind), len(before)),
         )
 
+        table = ""
+        if os.path.isfile(f"{self.args.out}.imiss"):
+            df = pd.read_csv(f"{self.args.out}.imiss", sep=r"\s+")
+            table = df.loc[:, ["FID", "IID", "N_MISS", "N_GENO", "F_MISS"]]\
+                .to_markdown(index=False, intfmt=",", floatfmt=".4f")
+
         return {
             "mind": self.args.mind,
             "nb_samples": len(before),
+            "missing_rate_table": table
         }
 
     def get_methods_information(self) -> Dict[str, Optional[Union[str, int]]]:

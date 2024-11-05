@@ -3,6 +3,7 @@
 
 import argparse
 import logging
+import os
 from typing import Dict, List, Optional
 
 from ...error import ProgramError
@@ -47,6 +48,11 @@ def main(args: Optional[argparse.Namespace] = None,
     # Running Plink
     run_plink(args)
 
+    # Generating call rates if samples were removed
+    if os.path.isfile(args.out + ".irem"):
+        logger.info("Generating missing rates for excluded samples")
+        run_missing(args)
+
     return {
         "summary": SampleCallRateSummary(args),
         "usable_files": {
@@ -70,6 +76,26 @@ def run_plink(options: argparse.Namespace) -> None:
             "--bfile", options.bfile,
             "--mind", str(options.mind),
             "--make-bed",
+            "--out", options.out,
+        ]
+    )
+
+
+def run_missing(options: argparse.Namespace) -> None:
+    """Run Plink with the ``mind`` option.
+
+    Args:
+        options (argparse.Namespace): the arguments and options.
+
+    """
+    # Executing the command
+    execute_external_command(
+        command=[
+            "plink" if options.plink_107 else "plink1.9",
+            "--noweb",
+            "--bfile", options.bfile,
+            "--keep", options.out + ".irem",
+            "--missing",
             "--out", options.out,
         ]
     )
