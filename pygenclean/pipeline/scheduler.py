@@ -306,6 +306,11 @@ def add_args(parser: argparse.ArgumentParser) -> None:
         help="A template for the DOCX document.",
     )
     group.add_argument(
+        "--custom-css", type=str, metavar="CSS",
+        help="A custom CSS file to modify the appearance of the final HTML "
+             "report.",
+    )
+    group.add_argument(
         "--use-dot", action="store_true",
         help="Use DOT to generate the pipeline summary (PNG figure). "
              "Otherwise, quarto will generate the figure (need chromium).",

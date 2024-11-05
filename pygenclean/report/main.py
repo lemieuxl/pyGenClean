@@ -34,7 +34,7 @@ format:
     docx:
         toc: true
         number-sections: true
-        {% if docx_template -%}
+        {%- if docx_template %}
         reference-doc: {{ docx_template }}
         {%- endif %}
     html:
@@ -42,6 +42,9 @@ format:
         code-fold: false
         embed-resources: true
         number-sections: true
+        {%- if custom_css %}
+        css: {{ custom_css }}
+        {%- endif %}
 ---
 
 ## Background
@@ -203,6 +206,7 @@ def generate_report(**kwargs: Dict[str, Optional[Union[str, int]]]) -> str:
 
     return MAIN_TEMPLATE.render(
         docx_template=kwargs["report_template"],
+        custom_css=kwargs["custom_css"],
         title=kwargs["report_title"],
         subtitle=kwargs["report_number"],
         authors=", ".join(kwargs["report_authors"]),
