@@ -345,11 +345,15 @@ def plot_summarized_intensities(df: pd.DataFrame,
     axe.spines["top"].set_visible(False)
     axe.spines["right"].set_visible(False)
 
-    # Changing the titles
+    # Name of the X axis
     axe.set_xlabel(args.xlabel)
-    axe.set_ylabel(
-        args.ylabel if "chr24" in df.columns else f"{args.ylabel} (random)"
-    )
+
+    # Name of the Y axis (if any)
+    if "chr24" in df.columns:
+        axe.set_ylabel(args.ylabel)
+    else:
+        # Random chrY intensities, so we hide ticks
+        axe.set_yticks([])
 
     for status in ("OK", "Mismatch"):
         for sex in ("Male", "Female", "Unknown"):

@@ -190,13 +190,14 @@ def create_sexcheck_figure(
         title_x=0.5,
     )
 
-    # Adding the x and y labels
-    figure.update_xaxes(
-        title_text="chrX",
-    )
-    figure.update_yaxes(
-        title_text="chrY" if "chr24" in df.columns else "chrY (random)",
-    )
+    # Adding the x label
+    figure.update_xaxes(title_text="chrX")
+
+    # Adding the y label
+    if "chr24" in df.columns:
+        figure.update_yaxes(title_text="chrY")
+    else:
+        figure.update_yaxes(visible=False)
 
     return figure
 
