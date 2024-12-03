@@ -71,8 +71,8 @@ Briefly, the clean up procedure was as follow:
 ## Conclusions
 
 @fig-pipeline-summary-dot shows the summary of the
-pipeline{% if has_summary_table %}, and @tbl-final-summary-general shows the
-general steps' summary{% endif %}.
+pipeline{% if conclusion_summaries["other_steps"]["has_summary_table"] %}, and
+@tbl-final-summary-general shows the general steps' summary{% endif %}.
 
 {% if is_dot_code %}
 ```{dot}
@@ -87,7 +87,7 @@ general steps' summary{% endif %}.
 ]({{ pipeline_summary }}){{ "{#" }}fig-pipeline-summary-dot}
 {% endif %}
 
-{% if has_summary_table %}
+{% if conclusion_summaries["other_steps"]["has_summary_table"] %}
 {{ conclusion_summaries["other_steps"]["summary_table"]|safe }}
 
 : Summary information of the data cleanup procedures for the general steps.
