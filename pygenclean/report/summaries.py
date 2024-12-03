@@ -261,6 +261,10 @@ class SexCheckSummary(Summary):
             ("Discordant sex", np.count_nonzero(~no_genetic_sex)),
         )
 
+        # If FID and IID are the same, we can remove FID
+        if (sex_problems.FID == sex_problems.IID).all():
+            sex_problems = sex_problems.drop(columns="FID")
+
         return {
             "male_f": self.args.male_f,
             "female_f": self.args.female_f,
@@ -335,8 +339,16 @@ class SampleCallRateSummary(Summary):
 
         table = ""
         if os.path.isfile(f"{self.args.out}.imiss"):
+            # Reading the values
             df = pd.read_csv(f"{self.args.out}.imiss", sep=r"\s+")
-            table = df.loc[:, ["FID", "IID", "N_MISS", "N_GENO", "F_MISS"]]\
+
+            # The columns to print
+            columns = ["FID", "IID", "N_MISS", "N_GENO", "F_MISS"]
+            if (df.FID == df.IID).all():
+                columns = ["IID", "N_MISS", "N_GENO", "F_MISS"]
+
+            # Converting to markdown
+            table = df.loc[:, columns]\
                 .to_markdown(index=False, intfmt=",", floatfmt=".4f")
 
         return {
@@ -447,11 +459,26 @@ class RelatedSamplesSummary(Summary):
         )
 
         # Reading the merged related samples
+        columns = ["index", "FID1", "IID1", "FID2", "IID2", "status"]
         merged_related_samples = pd.read_csv(
             self.args.out + ".merged_related_individuals",
             sep="\t",
-            usecols=["index", "FID1", "IID1", "FID2", "IID2", "status"],
+            usecols=columns,
         )
+
+        # Keeping only IID1 if FID1 and IID1 are equivalent
+        if (merged_related_samples.FID1 == merged_related_samples.IID1).all():
+            merged_related_samples = merged_related_samples.drop(
+                columns="FID1",
+            )
+
+        # Keeping only IID2 if FID2 and IID1 are equivalent
+        if (merged_related_samples.FID2 == merged_related_samples.IID2).all():
+            merged_related_samples = merged_related_samples.drop(
+                columns="FID2",
+            )
+
+        # The table as markdown
         table = None
         if merged_related_samples.shape[0]:
             table = merged_related_samples.to_markdown(index=False)
