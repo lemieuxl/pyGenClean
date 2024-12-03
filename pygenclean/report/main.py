@@ -289,6 +289,11 @@ def _generate_conlusion_summaries(
                     + str(conf[qc_node.name].get("geno", _DEFAULT_GENO))
                 )
 
+            # Is this nocall / hetero?
+            elif qc_module == "nocall_hetero":
+                if conf[qc_node.name].get("keep-het", False):
+                    description += " (`keep-het`)"
+
             # We set the summary table information only if nb markers AND nb
             # samples is 0
             summary_table_info = None
@@ -639,12 +644,14 @@ def _create_node_label(step: str, step_conf: dict,
     if reason:
         reason = r"\n" + reason
 
-    # Parameters if marker_call_rate sample_call_rate
+    # Parameters if marker_call_rate, sample_call_rate or nocall_hetero
     parameter = ""
     if qc_module == "marker_call_rate":
         parameter = r"\ngeno=" + str(step_conf.get("geno", _DEFAULT_GENO))
     elif qc_module == "sample_call_rate":
         parameter = r"\nmind=" + str(step_conf.get("mind", _DEFAULT_MIND))
+    elif qc_module == "nocall_hetero" and step_conf.get("keep-het", False):
+        parameter = r"\nkeep-het"
 
     # Step diff (markers or samples)
     step_diff = []

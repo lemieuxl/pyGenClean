@@ -278,8 +278,10 @@ class SexCheckSummary(Summary):
 class NoCallHeteroSummary(Summary):
     """No call and heterozygotes summary."""
     methods = (
-        "Removes completely failed markers (no calls) or markers with only "
-        "heterozygous genotypes (excluding the mitochondrial chromosome)."
+        "Removes completely failed markers (no calls){% if not keep_het %} or "
+        "markers with only heterozygous genotypes (excluding the "
+        "mitochondrial chromosome){% else %}, but keeps markers with only "
+        "heterozygous genotypes{% endif %}."
     )
 
     result_section_name = "No calls and heterozygous only markers"
@@ -300,11 +302,14 @@ class NoCallHeteroSummary(Summary):
         return {
             "all_failed": all_failed,
             "all_hetero": all_hetero,
+            "keep_het":   self.args.keep_het,
         }
 
     def get_methods_information(self) -> Dict[str, Optional[Union[str, int]]]:
         """Get the summary information for the methods."""
-        return {}
+        return {
+            "keep_het": self.args.keep_het,
+        }
 
 
 class SampleCallRateSummary(Summary):

@@ -50,7 +50,7 @@ def main(args: Optional[argparse.Namespace] = None,
     logger.info("%s", DESCRIPTION)
 
     # Process the files
-    process_file(args.bfile, args.out, args.plink_107)
+    process_file(args.bfile, args.out, args.keep_het, args.plink_107)
 
     return {
         "summary": NoCallHeteroSummary(args),
@@ -60,12 +60,15 @@ def main(args: Optional[argparse.Namespace] = None,
     }
 
 
-def process_file(prefix: str, out_prefix: str, use_original_plink: bool):
+def process_file(prefix: str, out_prefix: str, keep_het: bool,
+                 use_original_plink: bool):
     """Process the binary _Plink_ files.
 
     Args:
         prefix: The prefix of the BED/BIM/FAM files.
         out_prefix: The prefix of the output files.
+        keep_het: Should the heterozygous only variants be kept.
+        use_original_plink: Use Plink 1.07 instead of 1.9.
 
     Reads the input files and keeps in memory two sets containing the markers
     which are all failed or which contains only heterozygous genotypes.
@@ -109,10 +112,16 @@ def process_file(prefix: str, out_prefix: str, use_original_plink: bool):
     # Printing the SNPs with only hetero calls
     with open(out_prefix + ".all_hetero", 'w') as f:
         if len(all_hetero) > 0:
+            if keep_het:
+                logger.warning("%d heterozygous variants found but were kept",
+                               len(all_hetero))
             print(*all_hetero, sep="\n", file=f)
 
     # Printing the SNPs to exclude
-    exclude = all_hetero | all_failed
+    exclude = all_failed
+    if not keep_het:
+        exclude = exclude | all_hetero
+
     if len(exclude) > 0:
         logger.info("Excluding %d markers from original files", len(exclude))
 
@@ -191,6 +200,11 @@ def add_args(parser: argparse.ArgumentParser):
 
     # The options
     group = parser.add_argument_group("Options")
+    group.add_argument(
+        "--keep-het", action="store_true",
+        help="Keep markers which have heterozygous only genotypes. This can "
+             "be useful when the cohort is small or have a specific trait.",
+    )
     group.add_argument(
         "--plink-1.07", dest="plink_107", action="store_true",
         help="Use original Plink (version 1.07)",
