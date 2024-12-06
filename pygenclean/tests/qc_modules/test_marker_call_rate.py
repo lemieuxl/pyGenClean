@@ -72,7 +72,6 @@ def test_main_variants_removed(tmp_path: Path):
 
     # The last variant will have exactly 2% missing
     for j in random.sample(range(genotypes.shape[1]), 2):
-        print(j)
         genotypes[indices[-1], j] = -1
 
     # Generating the input Plink files from the genotypes
