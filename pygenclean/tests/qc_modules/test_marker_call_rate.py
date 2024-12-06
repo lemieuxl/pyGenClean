@@ -1,11 +1,13 @@
 """Test the marker call rate QC module."""
 
 
+import random
 from argparse import Namespace
 from pathlib import Path
-import random
 
+import numpy as np
 import pytest
+from pyplink import PyPlink
 from pytest_mock import MockerFixture
 
 from ...error import ProgramError
@@ -99,7 +101,23 @@ def test_main_variants_removed(tmp_path: Path):
     with open(prefix + ".fam", "rb") as f1, open(out + ".fam", "rb") as f2:
         assert f1.read() == f2.read()
 
-    # TODO: compare BIM and BED
+    # Comparing the BIM file
+    with open(prefix + ".bim") as f1, open(out + ".bim") as f2:
+        bim1 = [
+            line for i, line in enumerate(f1.read().splitlines())
+            if i not in indices[:-1]
+        ]
+        bim2 = f2.read().splitlines()
+        assert bim1 == bim2
+
+    # Comparing the BED file
+    with PyPlink(prefix) as bed1, PyPlink(out) as bed2:
+        bed1 = np.array([
+            geno for i, (_, geno) in enumerate(bed1)
+            if i not in indices[:-1]
+        ])
+        bed2 = np.array([geno for _, geno in bed2])
+        assert np.all(bed1 == bed2)
 
 
 def test_compare_bim(mocker: MockerFixture, tmp_path: Path):
