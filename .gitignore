@@ -13,4 +13,7 @@ _build
 
 test
 
+.coverage
+htmlcov
+
 /.luarc.json
