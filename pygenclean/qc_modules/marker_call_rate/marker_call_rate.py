@@ -87,7 +87,8 @@ def compare_bim(args: argparse.Namespace):
 
     # We want to save the markers only in the first file
     with open(args.out + ".removed_snps", "w") as f:
-        print(*in_before, sep="\n", file=f)
+        if len(in_before) > 0:
+            print(*in_before, sep="\n", file=f)
 
 
 def run_plink(options: argparse.Namespace):
