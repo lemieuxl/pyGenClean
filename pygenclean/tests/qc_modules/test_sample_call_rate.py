@@ -70,6 +70,7 @@ def test_main_samples_removed(tmp_path: Path):
             genotypes[i, j] = -1
 
     # The last sample will have exactly 2% missing
+    j = indices[-1]
     for i in random.sample(range(genotypes.shape[1]), 2):
         genotypes[j, indices[-1]] = -1
 
