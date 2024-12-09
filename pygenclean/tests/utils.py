@@ -23,9 +23,8 @@ def generate_plink_files(bfile: str, genotypes: np.array,
 
     # Generating chromosomes, of none provided (autosome only)
     if chromosomes is None:
-        chromosomes = np.sort(
-            np.random.randint(1, 23, size=genotypes.shape[0])
-        )
+        chromosomes = np.random.randint(1, 23, size=genotypes.shape[0])
+    chromosomes = np.sort(chromosomes)
 
     # Creating the BED and BIM files
     with PyPlink(bfile, "w") as bed, open(bfile + ".bim", "w") as bim:
