@@ -1,4 +1,8 @@
-"""Test the marker call rate QC module."""
+"""Test the marker call rate QC module.
+
+TODO: Variants on chromosome X and Y...
+
+"""
 
 
 import random

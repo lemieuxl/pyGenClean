@@ -3,12 +3,14 @@
 
 import random
 from pathlib import Path
+from typing import Optional
 
 import numpy as np
 from pyplink import PyPlink
 
 
-def generate_plink_files(bfile: str, genotypes: np.array) -> Path:
+def generate_plink_files(bfile: str, genotypes: np.array,
+                         chromosomes: Optional[np.array] = None) -> Path:
     """Generate Plink files randomly."""
     nb_samples = genotypes.shape[1]
 
@@ -19,11 +21,18 @@ def generate_plink_files(bfile: str, genotypes: np.array) -> Path:
             sex = random.randint(1, 2)
             print(sample_id, sample_id, 0, 0, sex, -9, file=fam)
 
+    # Generating chromosomes, of none provided (autosome only)
+    if chromosomes is None:
+        chromosomes = np.sort(
+            np.random.randint(1, 23, size=genotypes.shape[0])
+        )
+
     # Creating the BED and BIM files
     with PyPlink(bfile, "w") as bed, open(bfile + ".bim", "w") as bim:
-        for i, var_genotypes in enumerate(genotypes):
+        for i, (chrom, var_genotypes) in enumerate(zip(chromosomes,
+                                                       genotypes)):
             bed.write_genotypes(var_genotypes)
-            print(1, f"var{i + 1}", 0, i + 1, "A", "B", sep="\t", file=bim)
+            print(chrom, f"var{i + 1}", 0, i + 1, "A", "B", sep="\t", file=bim)
 
 
 def generate_genotypes(

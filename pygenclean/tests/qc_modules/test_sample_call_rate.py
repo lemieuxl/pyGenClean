@@ -1,4 +1,8 @@
-"""Test the sample call rate QC module."""
+"""Test the sample call rate QC module.
+
+TODO: Variants on chromosomes X and Y.
+
+"""
 
 
 import random
