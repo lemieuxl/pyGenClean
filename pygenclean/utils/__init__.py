@@ -174,7 +174,7 @@ def get_open_func(filename: str) -> functools.partial:
     return functools.partial(open, filename)
 
 
-def split_extra_args(args: str) -> List[str]:
+def split_extra_args(args: Optional[str]) -> List[str]:
     """Split extra arguments provided in a single string.
 
     Args:
