@@ -165,8 +165,12 @@ def test_compare_bim_fails(mocker: MockerFixture):
     )
 
     args = Namespace(bfile="fake_1", out="fake_2")
-    with pytest.raises(ProgramError):
+    with pytest.raises(ProgramError) as program_error:
         marker_call_rate.compare_bim(args)
+
+    assert str(program_error.value) == (
+        "There should not be markers in fake_1.bim which are not in fake_2.bim"
+    )
 
 
 def test_run_plink(mocker: MockerFixture):
@@ -251,8 +255,10 @@ def test_check_args_fail_bfile(mocker: MockerFixture):
     )
 
     args = Namespace(bfile="dummy_prefix", geno=0.1)
-    with pytest.raises(ProgramError):
+    with pytest.raises(ProgramError) as program_error:
         marker_call_rate.check_args(args)
+
+    assert str(program_error.value) == "dummy_prefix: no such binary files"
 
 
 def test_check_args_fail_geno(mocker: MockerFixture):
@@ -265,10 +271,18 @@ def test_check_args_fail_geno(mocker: MockerFixture):
 
     # Below 0
     args = Namespace(bfile="dummy_prefix", geno=-0.1)
-    with pytest.raises(ProgramError):
+    with pytest.raises(ProgramError) as program_error:
         marker_call_rate.check_args(args)
+
+    assert str(program_error.value) == (
+        "geno=-0.1: must be between 0 and 1 (inclusive)"
+    )
 
     # Above 1
     args = Namespace(bfile="dummy_prefix", geno=1.1)
-    with pytest.raises(ProgramError):
+    with pytest.raises(ProgramError) as program_error:
         marker_call_rate.check_args(args)
+
+    assert str(program_error.value) == (
+        "geno=1.1: must be between 0 and 1 (inclusive)"
+    )

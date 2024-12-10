@@ -257,8 +257,10 @@ def test_check_args_fail_bfile(mocker: MockerFixture):
     )
 
     args = Namespace(bfile="dummy_prefix", mind=0.1)
-    with pytest.raises(ProgramError):
+    with pytest.raises(ProgramError) as program_error:
         sample_call_rate.check_args(args)
+
+    assert str(program_error.value) == "dummy_prefix: no such binary files"
 
 
 def test_check_args_fail_geno(mocker: MockerFixture):
@@ -271,10 +273,18 @@ def test_check_args_fail_geno(mocker: MockerFixture):
 
     # Below 0
     args = Namespace(bfile="dummy_prefix", mind=-0.1)
-    with pytest.raises(ProgramError):
+    with pytest.raises(ProgramError) as program_error:
         sample_call_rate.check_args(args)
+
+    assert str(program_error.value) == (
+        "mind=-0.1: must be between 0 and 1 (inclusive)"
+    )
 
     # Above 1
     args = Namespace(bfile="dummy_prefix", mind=1.1)
-    with pytest.raises(ProgramError):
+    with pytest.raises(ProgramError) as program_error:
         sample_call_rate.check_args(args)
+
+    assert str(program_error.value) == (
+        "mind=1.1: must be between 0 and 1 (inclusive)"
+    )

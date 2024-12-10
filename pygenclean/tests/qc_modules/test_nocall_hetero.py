@@ -249,5 +249,7 @@ def test_check_args_fail_bfile(mocker: MockerFixture):
     )
 
     args = Namespace(bfile="dummy_prefix")
-    with pytest.raises(ProgramError):
+    with pytest.raises(ProgramError) as program_error:
         nocall_hetero.check_args(args)
+
+    assert str(program_error.value) == "dummy_prefix: no such binary files"
