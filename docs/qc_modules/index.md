@@ -11,7 +11,7 @@ scripts).
 - [marker call rate](marker_call_rate.md)
 - [no call / heterozygous](nocall_hetero.md)
 - [plate bias](plate_bias.md)
-- related samples
+- [related samples](related_samples.md)
 - sample call rate
 - sex check
 - data subset

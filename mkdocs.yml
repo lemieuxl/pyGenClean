@@ -77,6 +77,7 @@ nav:
     - Marker call rate: qc_modules/marker_call_rate.md
     - No call / heterozygous: qc_modules/nocall_hetero.md
     - Plate bias: qc_modules/plate_bias.md
+    - Related samples: qc_modules/related_samples.md
   - API reference:
     - reference/index.md
     - QC modules:
