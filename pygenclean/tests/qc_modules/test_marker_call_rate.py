@@ -103,6 +103,7 @@ def test_main_variants_removed(tmp_path: Path):
         assert f1.read() == f2.read()
 
     # Comparing the BIM file
+    # FIXME: What if MAF changes?
     with open(prefix + ".bim") as f1, open(out + ".bim") as f2:
         bim1 = [
             line for i, line in enumerate(f1.read().splitlines())
