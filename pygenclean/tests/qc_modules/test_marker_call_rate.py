@@ -96,7 +96,7 @@ def test_main_variants_removed(tmp_path: Path):
     # The '.removed_snps' file should have 9 variants
     with open(out + ".removed_snps") as f:
         removed_variants = set(f.read().splitlines())
-        assert removed_variants == {f"var{i + 1}" for i in indices[:-1]}
+        assert removed_variants == {f"var{i}" for i in indices[:-1]}
 
     # The FAM files should be identical
     with open(prefix + ".fam", "rb") as f1, open(out + ".fam", "rb") as f2:

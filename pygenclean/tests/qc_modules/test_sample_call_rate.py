@@ -98,7 +98,7 @@ def test_main_samples_removed(tmp_path: Path):
         removed_samples = set(
             tuple(line.split()) for line in f.read().splitlines()
         )
-        assert removed_samples == {(f"s{i + 1}", ) * 2 for i in indices[:-1]}
+        assert removed_samples == {(f"s{i}", ) * 2 for i in indices[:-1]}
 
     # Checking the imiss file
     with open(out + ".imiss") as f:
@@ -118,7 +118,7 @@ def test_main_samples_removed(tmp_path: Path):
 
             # Checking the values
             assert fid == iid
-            assert iid == f"s{sample_index + 1}"
+            assert iid == f"s{sample_index}"
             assert miss_pheno == "Y"
             assert int(n_miss) == nb_missing
             assert int(n_geno) == genotypes.shape[0]

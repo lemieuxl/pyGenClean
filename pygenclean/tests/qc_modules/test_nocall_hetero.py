@@ -111,17 +111,17 @@ def test_main_variants_no_call_all_hetero_removed(tmp_path: Path):
 
     # The '.all_failed' should contain the first 10 selected variants
     with open(out + ".all_failed") as f:
-        expected = {f"var{i + 1}" for i in indices[:10]}
+        expected = {f"var{i}" for i in indices[:10]}
         assert set(f.read().splitlines()) == expected
 
     # The '.all_hetero' should contain the last 10 selected variants
     with open(out + ".all_hetero") as f:
-        expected = {f"var{i + 1}" for i in indices[10:]}
+        expected = {f"var{i}" for i in indices[10:]}
         assert set(f.read().splitlines()) == expected
 
     # The '.exclude' file should contain the 20 selected variants
     with open(out + ".exclude") as f:
-        assert set(f.read().splitlines()) == {f"var{i + 1}" for i in indices}
+        assert set(f.read().splitlines()) == {f"var{i}" for i in indices}
 
     # The FAM files should be identical
     with open(prefix + ".fam", "rb") as f1, open(out + ".fam", "rb") as f2:
@@ -190,18 +190,18 @@ def test_main_variants_no_call_removed(tmp_path: Path):
 
     # The '.all_failed' should contain the first 10 selected variants
     with open(out + ".all_failed") as f:
-        expected = {f"var{i + 1}" for i in indices[:10]}
+        expected = {f"var{i}" for i in indices[:10]}
         assert set(f.read().splitlines()) == expected
 
     # The '.all_hetero' should contain the last 10 selected variants, even
     # though they were not removed
     with open(out + ".all_hetero") as f:
-        expected = {f"var{i + 1}" for i in indices[10:]}
+        expected = {f"var{i}" for i in indices[10:]}
         assert set(f.read().splitlines()) == expected
 
     # The '.exclude' file should contain the first 10 selected variants
     with open(out + ".exclude") as f:
-        expected = {f"var{i + 1}" for i in indices[:10]}
+        expected = {f"var{i}" for i in indices[:10]}
         assert set(f.read().splitlines()) == expected
 
     # The FAM files should be identical

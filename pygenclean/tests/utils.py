@@ -17,7 +17,7 @@ def generate_plink_files(bfile: str, genotypes: np.array,
     # Creating the FAM file
     with open(bfile + ".fam", "w") as fam:
         for i in range(nb_samples):
-            sample_id = f"s{i + 1}"
+            sample_id = f"s{i}"
             sex = random.randint(1, 2)
             print(sample_id, sample_id, 0, 0, sex, -9, file=fam)
 
@@ -31,7 +31,7 @@ def generate_plink_files(bfile: str, genotypes: np.array,
         for i, (chrom, var_genotypes) in enumerate(zip(chromosomes,
                                                        genotypes)):
             bed.write_genotypes(var_genotypes)
-            print(chrom, f"var{i + 1}", 0, i + 1, "A", "B", sep="\t", file=bim)
+            print(chrom, f"var{i}", 0, i + 1, "A", "B", sep="\t", file=bim)
 
 
 def generate_genotypes(
