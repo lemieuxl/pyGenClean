@@ -158,7 +158,7 @@ def compute_statistics(bfile: str, samples: Set[Tuple[str, str]],
     write_heterozygosity(
         prefix + ".chr23.hetero.tsv", samples, fam, chr23_genotypes,
     )
-    write_no_call(prefix + ".chr24.no_call.tsv", samples, fam, chr24_genotypes)
+    write_no_call(prefix + ".chr24.no_call.tsv", fam, chr24_genotypes)
 
 
 def write_heterozygosity(filename: str, samples: Set[Tuple[str, str]],
@@ -182,23 +182,21 @@ def write_heterozygosity(filename: str, samples: Set[Tuple[str, str]],
             print(*sample.name, sample.gender, hetero, sep="\t", file=f)
 
 
-def write_no_call(filename: str, samples: Set[Tuple[str, str]],
-                  fam: pd.DataFrame, genotypes: np.ndarray) -> None:
+def write_no_call(filename: str, fam: pd.DataFrame,
+                  genotypes: np.ndarray) -> None:
     """Writes the no call on chr24."""
     with open(filename, "w") as f:
         print("FID", "IID", "PEDSEX", "N_GENO", "N_MISS", "F_MISS", sep="\t",
               file=f)
 
-        for i in range(len(samples)):
+        for i, (sample, sample_info) in enumerate(fam.iterrows()):
             genos = genotypes[:, i]
             nb_no_call = np.sum(genos == -1)
             pct_no_call = -9
             if genos.shape[0] > 1:
                 pct_no_call = nb_no_call / genos.shape[0]
 
-            sample = fam.iloc[i, :]
-
-            print(*sample.name, sample.gender, genos.shape[0], nb_no_call,
+            print(*sample, sample_info.gender, genos.shape[0], nb_no_call,
                   pct_no_call, sep="\t", file=f)
 
 
