@@ -184,7 +184,16 @@ def write_heterozygosity(filename: str, samples: Set[Tuple[str, str]],
 
 def write_no_call(filename: str, fam: pd.DataFrame,
                   genotypes: np.ndarray) -> None:
-    """Writes the no call on chr24."""
+    """Writes the no call on chr24.
+
+    The shape of the FAM DataFrame (number of rows / samples) should match the
+    shape of the genotypes (number of columns / samples). The order should also
+    be the same.
+
+    """
+    # Making sure the shapes are equivalent
+    assert fam.shape[0] == genotypes.shape[1]
+
     with open(filename, "w") as f:
         print("FID", "IID", "PEDSEX", "N_GENO", "N_MISS", "F_MISS", sep="\t",
               file=f)
