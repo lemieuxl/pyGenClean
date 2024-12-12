@@ -202,7 +202,7 @@ def write_no_call(filename: str, fam: pd.DataFrame,
             genos = genotypes[:, i]
             nb_no_call = np.sum(genos == -1)
             pct_no_call = -9
-            if genos.shape[0] > 1:
+            if genos.shape[0] > 0:
                 pct_no_call = nb_no_call / genos.shape[0]
 
             print(*sample, sample_info.gender, genos.shape[0], nb_no_call,
