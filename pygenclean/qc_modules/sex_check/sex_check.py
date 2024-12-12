@@ -155,19 +155,17 @@ def compute_statistics(bfile: str, samples: Set[Tuple[str, str]],
             required_fam, bim.loc[bim.chrom == 24].index.tolist(), bed
         )
 
-    write_heterozygosity(
-        prefix + ".chr23.hetero.tsv", samples, fam, chr23_genotypes,
-    )
+    write_heterozygosity(prefix + ".chr23.hetero.tsv", fam, chr23_genotypes)
     write_no_call(prefix + ".chr24.no_call.tsv", fam, chr24_genotypes)
 
 
-def write_heterozygosity(filename: str, samples: Set[Tuple[str, str]],
-                         fam: pd.DataFrame, genotypes: np.ndarray) -> None:
+def write_heterozygosity(filename: str, fam: pd.DataFrame,
+                         genotypes: np.ndarray) -> None:
     """Writes heterozygosity rates in output file."""
     with open(filename, "w") as f:
         print("FID", "IID", "PEDSEX", "HETERO", sep="\t", file=f)
 
-        for i in range(len(samples)):
+        for i, (sample, sample_info) in enumerate(fam.iterrows()):
             # Getting the non-missing genotypes
             genos = genotypes[:, i]
             genos = genos[genos != -1]
@@ -176,10 +174,7 @@ def write_heterozygosity(filename: str, samples: Set[Tuple[str, str]],
             if genos.shape[0] > 0:
                 hetero = np.sum(genos == 1) / genos.shape[0]
 
-            # Getting the sample information
-            sample = fam.iloc[i, :]
-
-            print(*sample.name, sample.gender, hetero, sep="\t", file=f)
+            print(*sample, sample_info.gender, hetero, sep="\t", file=f)
 
 
 def write_no_call(filename: str, fam: pd.DataFrame,
