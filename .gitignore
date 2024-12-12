@@ -11,9 +11,6 @@ pyGenClean.egg-info
 
 _build
 
-test
-
 .coverage
-htmlcov
 
 /.luarc.json
