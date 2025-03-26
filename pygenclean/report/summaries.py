@@ -428,15 +428,16 @@ class RelatedSamplesSummary(Summary):
                 "nb_markers": nb_markers,
             }
 
-        # Reading the related sample file
-        related_samples = pd.read_csv(self.args.out + ".related_individuals",
-                                      sep="\t")
-
         # Counting the number of related samples
         related = set()
-        for _, row in related_samples.iterrows():
-            related.add((row.FID1, row.IID1))
-            related.add((row.FID2, row.IID2))
+        if path.isfile(self.args.out + ".related_individuals"):
+            # Reading the related sample file (if it exists)
+            related_samples = pd.read_csv(
+                self.args.out + ".related_individuals", sep="\t",
+            )
+            for _, row in related_samples.iterrows():
+                related.add((row.FID1, row.IID1))
+                related.add((row.FID2, row.IID2))
 
         # Reading the number of discated samples
         nb_discarded = count_lines(
