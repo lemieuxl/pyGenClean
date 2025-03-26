@@ -440,9 +440,11 @@ class RelatedSamplesSummary(Summary):
                 related.add((row.FID2, row.IID2))
 
         # Reading the number of discated samples
-        nb_discarded = count_lines(
-            self.args.out + ".discarded_related_individuals",
-        )
+        nb_discarded = 0
+        if path.isfile(self.args.out + ".discarded_related_individuals"):
+            nb_discarded = count_lines(
+                self.args.out + ".discarded_related_individuals",
+            )
 
         # Checking if we have z1 figure
         figure_z1 = None
