@@ -265,6 +265,7 @@ def main(args: Optional[argparse.Namespace] = None,
             prefix=args.out + ".ibs.pruned_data",
             out=args.out + ".smartpca",
             nb_components=args.nb_components,
+            rename_variants=args.scree_plot_change_var_id,
         )
 
         logger.info("Creating scree plot")
@@ -285,7 +286,8 @@ def main(args: Optional[argparse.Namespace] = None,
     }
 
 
-def compute_eigenvalues(prefix: str, out: str, nb_components: int):
+def compute_eigenvalues(prefix: str, out: str, nb_components: int,
+                        rename_variants: bool = False):
     """Compute the eigenvalues using smartpca from Eigensoft.
 
     Args:
@@ -295,10 +297,21 @@ def compute_eigenvalues(prefix: str, out: str, nb_components: int):
     Create a "parameter file" used by `smartpca` and execute it.
 
     """
+    # Do we need to rename the variants?
+    bim_fn = f"{prefix}.bim"
+    if rename_variants:
+        new_bim = f"{prefix}.renamed.bim"
+        with open(new_bim, "w") as bim_renamed:
+            for i, row in enumerate(plink_utils.parse_bim(bim_fn)):
+                print(row.chrom, f"var_{i + 1}", row.cm, row.pos, row.a1,
+                      row.a2, sep="\t", file=bim_renamed)
+
+        bim_fn = new_bim
+
     # First, we create the parameter file
     with open(out + ".parameters", "w") as f:
         print(f"genotypename:    {prefix}.bed", file=f)
-        print(f"snpname:         {prefix}.bim", file=f)
+        print(f"snpname:         {bim_fn}", file=f)
         print(f"indivname:       {prefix}.fam", file=f)
         print(f"numoutevec:      {nb_components}", file=f)
         print(f"evecoutname:     {out}.evec.txt", file=f)
@@ -745,6 +758,13 @@ def add_args(parser: argparse.ArgumentParser):
     group.add_argument(
         "--create-scree-plot", action="store_true",
         help="Computes Eigenvalues and creates a scree plot.",
+    )
+    group.add_argument(
+        "--scree-plot-change-var-id", action="store_true",
+        help="Changes the name of the variants to prevent an error with "
+             "smartpca of the type 'snp ID too long'. The new name will be "
+             "var_i, where i is unique. This won't affect the remaining of "
+             "the pipeline.",
     )
     plot_eigenvalues.add_graphical_options(group, prefix="plot-eigen-")
 
