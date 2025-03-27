@@ -461,30 +461,36 @@ class RelatedSamplesSummary(Summary):
             ("Unique related samples", len(related)),
         )
 
-        # Reading the merged related samples
-        columns = ["index", "FID1", "IID1", "FID2", "IID2", "status"]
-        merged_related_samples = pd.read_csv(
-            self.args.out + ".merged_related_individuals",
-            sep="\t",
-            usecols=columns,
-        )
-
-        # Keeping only IID1 if FID1 and IID1 are equivalent
-        if (merged_related_samples.FID1 == merged_related_samples.IID1).all():
-            merged_related_samples = merged_related_samples.drop(
-                columns="FID1",
-            )
-
-        # Keeping only IID2 if FID2 and IID1 are equivalent
-        if (merged_related_samples.FID2 == merged_related_samples.IID2).all():
-            merged_related_samples = merged_related_samples.drop(
-                columns="FID2",
-            )
-
-        # The table as markdown
+        # Generating the table (if there is data)
         table = None
-        if merged_related_samples.shape[0]:
-            table = merged_related_samples.to_markdown(index=False)
+        if os.path.isfile(self.args.out + ".merged_related_individuals"):
+            # Reading the merged related samples
+            columns = ["index", "FID1", "IID1", "FID2", "IID2", "status"]
+            merged_related_samples = pd.read_csv(
+                self.args.out + ".merged_related_individuals",
+                sep="\t",
+                usecols=columns,
+            )
+
+            # Keeping only IID1 if FID1 and IID1 are equivalent
+            if (
+                merged_related_samples.FID1 == merged_related_samples.IID1
+            ).all():
+                merged_related_samples = merged_related_samples.drop(
+                    columns="FID1",
+                )
+
+            # Keeping only IID2 if FID2 and IID1 are equivalent
+            if (
+                merged_related_samples.FID2 == merged_related_samples.IID2
+            ).all():
+                merged_related_samples = merged_related_samples.drop(
+                    columns="FID2",
+                )
+
+            # The table as markdown
+            if merged_related_samples.shape[0]:
+                table = merged_related_samples.to_markdown(index=False)
 
         return {
             "nb_markers": nb_markers,
