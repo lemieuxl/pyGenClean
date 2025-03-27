@@ -126,6 +126,7 @@ def main(args: Optional[argparse.Namespace] = None,
         "summary": summary,
         "usable_files": {
             "bfile": args.bfile,
+            "problematic_ids": args.out + ".list_problem_sex_ids",
         },
     }
 
