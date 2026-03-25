@@ -21,7 +21,7 @@ from setuptools import setup, find_packages
 
 MAJOR = 2
 MINOR = 0
-MICRO = "0b1"
+MICRO = "0b2"
 VERSION = "{0}.{1}.{2}".format(MAJOR, MINOR, MICRO)
 
 
@@ -80,7 +80,7 @@ def setup_package():
             "pyplink >= 1.3.5",
             "matplotlib >= 3.7",
             "scikit-learn >= 1.2",
-            "geneparse >= 0.8.1",
+            "pyplink >= 1.3.0",
             "dash >= 2.8.1",
             "argcomplete >= 2.0.0",
             "tabulate >= 0.9.0",

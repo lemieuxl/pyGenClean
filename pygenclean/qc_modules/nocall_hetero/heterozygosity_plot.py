@@ -7,7 +7,7 @@ from os import path
 from typing import List, Optional, Tuple
 
 import numpy as np
-from geneparse.readers.plink import PlinkReader
+from pyplink import PyPlink
 
 from ...error import ProgramError
 from ...utils import plink as plink_utils
@@ -101,27 +101,28 @@ def compute_heterozygosity(prefix: str) -> Tuple[np.ndarray, np.ndarray]:
     """
     logger.info("Computing heterozygosity from binary files")
     # The autosomes
-    autosomes = {str(i) for i in range(1, 23)}
+    autosomes = {str(i) for i in range(1, 23)} | set(range(1, 23))
 
     # Parsing the binary files
-    with PlinkReader(prefix) as bed:
-        fam = bed.fam
+    with PyPlink(prefix) as bed:
+        fam = bed.get_fam()
+        bim = bed.get_bim()
 
         # Extracting the samples
-        samples = fam.reset_index().loc[:, ["fid", "iid"]].to_numpy()
+        samples = fam.loc[:, ["fid", "iid"]].to_numpy()
 
         # The number of heterygous and total markers (zeros)
         nb_hetero = np.zeros(fam.shape[0], dtype=int)
         nb_markers = np.zeros(fam.shape[0], dtype=int)
 
-        for data in bed.iter_genotypes():
+        for variant_name, genotypes in bed:
             # Keeping only the autosomes
-            if data.variant.chrom not in autosomes:
+            if bim.loc[variant_name, "chrom"] not in autosomes:
                 continue
 
             # Counting the number of heterozygous and all markers
-            nb_hetero[data.genotypes == 1] += 1
-            nb_markers[~np.isnan(data.genotypes)] += 1
+            nb_hetero[genotypes == 1] += 1
+            nb_markers[~(genotypes == -1)] += 1
 
     return np.true_divide(nb_hetero, nb_markers), samples
 

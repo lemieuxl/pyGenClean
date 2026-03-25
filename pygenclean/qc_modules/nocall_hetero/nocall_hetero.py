@@ -6,8 +6,7 @@ import logging
 import shutil
 from typing import Dict, List, Optional
 
-import numpy as np
-from geneparse.readers.plink import PlinkReader
+from pyplink import PyPlink
 
 from ...error import ProgramError
 from ...report.summaries import NoCallHeteroSummary
@@ -86,22 +85,26 @@ def process_file(prefix: str, out_prefix: str, keep_het: bool,
     all_failed = set()
     all_hetero = set()
 
-    with PlinkReader(prefix) as bed:
-        for data in bed.iter_genotypes():
-            # Samples with no calls (i.e. NaN)
-            no_calls = np.isnan(data.genotypes)
+    mito_chrom = {26, "26", "M", "MT"}
 
-            # All genotyupes are 'no call'
+    with PyPlink(prefix) as bed:
+        bim = bed.get_bim()
+
+        for variant_name, genotypes in bed:
+            # Samples with no calls (i.e. NaN)
+            no_calls = genotypes == -1
+
+            # All genotypes are 'no call'
             if no_calls.all():
-                logger.debug("%s: all no call", data.variant.name)
-                all_failed.add(data.variant.name)
+                logger.debug("%s: all no call", variant_name)
+                all_failed.add(variant_name)
                 continue
 
-            if data.variant.chrom != "MT":
+            if bim.loc[variant_name, "chrom"] not in mito_chrom:
                 # Genotypes are either 'no call' or heterozygotes
-                if ((data.genotypes == 1) | no_calls).all():
-                    logger.debug("%s: all hetero", data.variant.name)
-                    all_hetero.add(data.variant.name)
+                if ((genotypes == 1) | no_calls).all():
+                    logger.debug("%s: all hetero", variant_name)
+                    all_hetero.add(variant_name)
                     continue
 
     # Printing the SNPs with no calls
