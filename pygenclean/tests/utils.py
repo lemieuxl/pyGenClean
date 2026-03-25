@@ -28,16 +28,12 @@ def generate_plink_files(bfile: str, genotypes: np.array,
 
     # Creating the BED and BIM files
     with PyPlink(bfile, "w") as bed, open(bfile + ".bim", "w") as bim:
-        for i, (chrom, var_genotypes) in enumerate(zip(chromosomes,
-                                                       genotypes)):
-            bed.write_genotypes(var_genotypes)
+        for i, (chrom, geno) in enumerate(zip(chromosomes, genotypes)):
+            bed.write_genotypes(geno)
             print(chrom, f"var{i}", 0, i + 1, "A", "B", sep="\t", file=bim)
 
 
-def generate_genotypes(
-    nb_samples: int,
-    nb_variants: int,
-) -> np.array:
+def generate_genotypes(nb_samples: int, nb_variants: int) -> np.array:
     """Generate random genotypes."""
     # Generating genotypes
     genotypes = np.empty((nb_variants, nb_samples), dtype=np.int8)
