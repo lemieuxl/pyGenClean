@@ -7,10 +7,12 @@ build
 conda_dist
 
 pyGenClean/version.py
+pygenclean/version.py
 pyGenClean.egg-info
 
 _build
 
 .coverage
+.tox
 
 /.luarc.json
