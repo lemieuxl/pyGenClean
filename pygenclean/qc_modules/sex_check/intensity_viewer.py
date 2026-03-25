@@ -31,7 +31,8 @@ def main(args: Optional[argparse.Namespace] = None,
 
     # Reading the data
     df = pd.read_csv(args.summarized_intensities, sep="\t")\
-        .set_index("sample_id", verify_integrity=True)
+        .set_index("sample_id")
+    assert df.index.is_unique
 
     # Creating the dash application
     application = create_application()

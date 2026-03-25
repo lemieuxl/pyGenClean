@@ -329,7 +329,8 @@ def compute_statistics(
     differences = []
     with PyPlink(bfile) as bed:
         bim = bed.get_bim()
-        fam = bed.get_fam().set_index(["fid", "iid"], verify_integrity=True)
+        fam = bed.get_fam().set_index(["fid", "iid"])
+        assert fam.index.is_unique
 
         # Getting the samples' information  and mask
         sexes = {}

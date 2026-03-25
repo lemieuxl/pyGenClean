@@ -215,7 +215,8 @@ class SexCheckSummary(Summary):
         # Reading samples with sex problems
         sex_problems = pd.read_csv(self.args.out + ".list_problem_sex",
                                    sep="\t")\
-            .set_index(["FID", "IID"], verify_integrity=True)
+            .set_index(["FID", "IID"])
+        assert sex_problems.index.is_unique
         nb_problems = sex_problems.shape[0]
 
         # Checking if we have a figure for sumarized intensities (there might
@@ -236,11 +237,13 @@ class SexCheckSummary(Summary):
         # Adding the heterozygosity on chromosome 23
         heterozygosity = pd.read_csv(self.args.out + ".chr23.hetero.tsv",
                                      sep="\t")\
-            .set_index(["FID", "IID"], verify_integrity=True)
+            .set_index(["FID", "IID"])
+        assert heterozygosity.index.is_unique
 
         # Adding the no call frequency on chromosome 24
         no_call = pd.read_csv(self.args.out + ".chr24.no_call.tsv", sep="\t")\
-            .set_index(["FID", "IID"], verify_integrity=True)
+            .set_index(["FID", "IID"])
+        assert no_call.index.is_unique
 
         # Merging
         sex_problems = sex_problems.assign(
@@ -412,7 +415,7 @@ class RelatedSamplesSummary(Summary):
     def get_results_information(self) -> Dict[str, Optional[Union[str, int]]]:
         """Get the summary information for the results."""
         # Getting the number of pruned markers
-        nb_markers = count_lines(self.args.out + ".pruned_data.bim")
+        nb_markers = count_lines(self.args.out + ".prune.in.autosomal")
 
         # Did we have enough?
         if nb_markers < self.args.min_nb_snp:

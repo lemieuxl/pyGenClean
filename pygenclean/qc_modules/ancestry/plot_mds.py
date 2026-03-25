@@ -61,12 +61,15 @@ def read_populations(filename: str) -> pd.DataFrame:
         A dictionary of population for each of the samples.
 
     """
-    return pd.read_csv(
+    df = pd.read_csv(
         filename,
         sep="\t",
         names=["fid", "iid", "population"],
         dtype={"fid": str, "iid": str},
-    ).set_index(["fid", "iid"], verify_integrity=True).sort_index()
+    ).set_index(["fid", "iid"]).sort_index()
+    assert df.index.is_unique
+
+    return df
 
 
 def plot_mds(df: pd.DataFrame, args: argparse.Namespace):
@@ -144,7 +147,8 @@ def read_mds(filename: str, populations: pd.DataFrame) -> pd.DataFrame:
         filename,
         sep=r"\s+",
         dtype={"FID": str, "IID": str},
-    ).set_index(["FID", "IID"], verify_integrity=True).sort_index()
+    ).set_index(["FID", "IID"]).sort_index()
+    assert mds.index.is_unique
 
     # Adding the population
     mds = mds.assign(population=populations.population)
