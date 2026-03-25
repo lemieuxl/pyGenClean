@@ -80,7 +80,6 @@ def setup_package():
             "pyplink >= 1.3.5",
             "matplotlib >= 3.7",
             "scikit-learn >= 1.2",
-            "pyplink >= 1.3.0",
             "dash >= 2.8.1",
             "argcomplete >= 2.0.0",
             "tabulate >= 0.9.0",
