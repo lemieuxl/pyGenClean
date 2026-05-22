@@ -415,7 +415,10 @@ class RelatedSamplesSummary(Summary):
     def get_results_information(self) -> Dict[str, Optional[Union[str, int]]]:
         """Get the summary information for the results."""
         # Getting the number of pruned markers
-        nb_markers = count_lines(self.args.out + ".prune.in.autosomal")
+        nb_markers = count_lines(
+            self.args.out + ".pruning_" + self.args.indep_pairwise[2]
+            + ".prune.in.autosomal"
+        )
 
         # Did we have enough?
         if nb_markers < self.args.min_nb_snp:
